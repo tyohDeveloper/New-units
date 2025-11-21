@@ -185,11 +185,11 @@ export default function UnitConverter() {
     <div className="w-full max-w-[1400px] mx-auto p-4 md:p-8 grid md:grid-cols-[260px_1fr] gap-8">
       
       {/* Sidebar */}
-      <nav className="space-y-4 h-fit sticky top-24 overflow-y-auto max-h-[calc(100vh-8rem)] pr-2">
+      <nav className="space-y-4 h-fit sticky top-[3pc] overflow-y-auto max-h-[calc(100vh-4rem)] pr-2">
         {CATEGORY_GROUPS.map((group) => (
           <div key={group.name} className="space-y-1">
             <h2 className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80 px-2 font-bold">{group.name}</h2>
-            <div className="space-y-0">
+            <div className="space-y-[3px]">
               {group.categories.map((catId) => {
                 const cat = CONVERSION_DATA.find(c => c.id === catId);
                 if (!cat) return null;
@@ -197,7 +197,7 @@ export default function UnitConverter() {
                   <button
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id as UnitCategory)}
-                    className={`w-full text-left px-3 py-1 rounded-sm text-xs font-medium transition-all duration-200 border-l-2 flex items-center justify-between group ${
+                    className={`w-full text-left px-3 py-0.5 rounded-sm text-xs font-medium transition-all duration-200 border-l-2 flex items-center justify-between group ${
                       activeCategory === cat.id 
                         ? 'bg-accent/10 border-accent text-accent-foreground' 
                         : 'hover:bg-muted/50 border-transparent text-muted-foreground hover:text-foreground'
