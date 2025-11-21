@@ -175,7 +175,8 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: 'bu', name: 'Bushel', symbol: 'bu', factor: 35.2391 },
       { id: 'shot', name: 'Shot (US)', symbol: 'shot', factor: 0.044 },
       { id: 'fifth', name: 'Fifth', symbol: 'fifth', factor: 0.757 },
-      { id: 'handle', name: 'Handle', symbol: 'handle', factor: 1.75 }
+      { id: 'handle', name: 'Handle', symbol: 'handle', factor: 1.75 },
+      { id: 'ac_ft', name: 'Acre-foot', symbol: 'ac⋅ft', factor: 1233481.84 }
     ]
   },
   {
