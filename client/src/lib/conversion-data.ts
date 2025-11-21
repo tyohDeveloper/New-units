@@ -496,7 +496,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "m⋅m⁻¹",
     units: [
       { id: "rad", name: "Radian", symbol: "rad", factor: 1, allowPrefixes: true },
-      { id: "deg", name: "Degree", symbol: "°", factor: 0.0174533, allowPrefixes: true },
+      { id: "deg", name: "Degree", symbol: "°", factor: 0.0174533 },
       { id: "deg_dms", name: "Degree (DMS)", symbol: "° ′ ″", factor: 0.0174533 },
       { id: "grad", name: "Gradian", symbol: "grad", factor: 0.015708 },
       { id: "arcmin", name: "Arcminute", symbol: "′", factor: 0.000290888 },
