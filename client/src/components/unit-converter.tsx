@@ -39,8 +39,8 @@ export default function UnitConverter() {
 
   // Calculator state
   const [calcValues, setCalcValues] = useState<Array<CalcValue | null>>([null, null, null, null]);
-  const [calcOp1, setCalcOp1] = useState<'*' | '/'>('*');
-  const [calcOp2, setCalcOp2] = useState<'*' | '/'>('*');
+  const [calcOp1, setCalcOp1] = useState<'*' | '/' | null>(null);
+  const [calcOp2, setCalcOp2] = useState<'*' | '/' | null>(null);
 
   const CATEGORY_GROUPS = [
     {
@@ -313,7 +313,7 @@ export default function UnitConverter() {
 
   // Calculate result field
   useEffect(() => {
-    if (calcValues[0] && calcValues[1]) {
+    if (calcValues[0] && calcValues[1] && calcOp1) {
       let resultValue = calcValues[0].value;
       let resultDimensions = { ...calcValues[0].dimensions };
       
@@ -325,7 +325,7 @@ export default function UnitConverter() {
         resultDimensions = divideDimensions(resultDimensions, calcValues[1].dimensions);
       }
       
-      if (calcValues[2]) {
+      if (calcValues[2] && calcOp2) {
         if (calcOp2 === '*') {
           resultValue = resultValue * calcValues[2].value;
           resultDimensions = multiplyDimensions(resultDimensions, calcValues[2].dimensions);
@@ -354,8 +354,8 @@ export default function UnitConverter() {
 
   const clearCalculator = () => {
     setCalcValues([null, null, null, null]);
-    setCalcOp1('*');
-    setCalcOp2('*');
+    setCalcOp1(null);
+    setCalcOp2(null);
   };
 
   const copyCalcResult = () => {
