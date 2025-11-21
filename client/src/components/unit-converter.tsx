@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CONVERSION_DATA, UnitCategory, convert } from '@/lib/conversion-data';
+import { CONVERSION_DATA, UnitCategory, convert, PREFIXES } from '@/lib/conversion-data';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,6 +14,8 @@ export default function UnitConverter() {
   const [activeCategory, setActiveCategory] = useState<UnitCategory>('length');
   const [fromUnit, setFromUnit] = useState<string>('');
   const [toUnit, setToUnit] = useState<string>('');
+  const [fromPrefix, setFromPrefix] = useState<string>('none');
+  const [toPrefix, setToPrefix] = useState<string>('none');
   const [inputValue, setInputValue] = useState<string>('1');
   const [result, setResult] = useState<number | null>(null);
   const { toast } = useToast();
@@ -51,8 +53,15 @@ export default function UnitConverter() {
       // Try to set a sensible second default (like m to ft) if possible, otherwise just 2nd unit
       const defaultTo = categoryData.units.find(u => u.id !== categoryData.units[0]?.id)?.id || categoryData.units[0]?.id;
       setToUnit(defaultTo || '');
+      setFromPrefix('none');
+      setToPrefix('none');
     }
   }, [activeCategory]);
+
+  const fromUnitData = categoryData.units.find(u => u.id === fromUnit);
+  const toUnitData = categoryData.units.find(u => u.id === toUnit);
+  const fromPrefixData = PREFIXES.find(p => p.id === fromPrefix) || PREFIXES[0];
+  const toPrefixData = PREFIXES.find(p => p.id === toPrefix) || PREFIXES[0];
 
   // Calculate result
   useEffect(() => {
@@ -61,28 +70,35 @@ export default function UnitConverter() {
       return;
     }
     const val = parseFloat(inputValue);
-    const res = convert(val, fromUnit, toUnit, activeCategory);
+    
+    // Determine prefix factors (1 if not supported or none selected)
+    const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData) ? fromPrefixData.factor : 1;
+    const toFactor = (toUnitData?.allowPrefixes && toPrefixData) ? toPrefixData.factor : 1;
+
+    const res = convert(val, fromUnit, toUnit, activeCategory, fromFactor, toFactor);
     setResult(res);
-  }, [inputValue, fromUnit, toUnit, activeCategory]);
+  }, [inputValue, fromUnit, toUnit, activeCategory, fromPrefix, toPrefix, fromUnitData, toUnitData]);
 
   const swapUnits = () => {
-    const temp = fromUnit;
+    const tempUnit = fromUnit;
+    const tempPrefix = fromPrefix;
     setFromUnit(toUnit);
-    setToUnit(temp);
+    setFromPrefix(toPrefix);
+    setToUnit(tempUnit);
+    setToPrefix(tempPrefix);
   };
 
   const copyResult = () => {
     if (result !== null) {
       navigator.clipboard.writeText(result.toString());
+      const unitSymbol = toUnitData?.symbol || '';
+      const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
       toast({
         title: "Copied to clipboard",
-        description: `${result} ${categoryData.units.find(u => u.id === toUnit)?.symbol}`,
+        description: `${result} ${prefixSymbol}${unitSymbol}`,
       });
     }
   };
-
-  const fromUnitData = categoryData.units.find(u => u.id === fromUnit);
-  const toUnitData = categoryData.units.find(u => u.id === toUnit);
 
   const formatFactor = (f: number) => {
     if (f === 1) return "Base Unit";
@@ -142,7 +158,7 @@ export default function UnitConverter() {
             {/* Input Section */}
             <div className="grid gap-4">
               <Label className="text-xs font-mono uppercase text-muted-foreground">From</Label>
-              <div className="grid sm:grid-cols-[1fr_140px] gap-2">
+              <div className="grid sm:grid-cols-[1fr_auto_140px] gap-2">
                 <Input 
                   type="number" 
                   value={inputValue}
@@ -150,7 +166,25 @@ export default function UnitConverter() {
                   className="text-2xl md:text-3xl font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all"
                   placeholder="0"
                 />
-                <Select value={fromUnit} onValueChange={setFromUnit}>
+                
+                {/* Prefix Dropdown */}
+                {fromUnitData?.allowPrefixes && (
+                  <Select value={fromPrefix} onValueChange={setFromPrefix}>
+                    <SelectTrigger className="h-16 w-[100px] bg-background/30 border-border font-medium">
+                      <SelectValue placeholder="Prefix" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px]">
+                      {PREFIXES.map((p) => (
+                        <SelectItem key={p.id} value={p.id} className="font-mono text-xs">
+                          <span className="font-bold mr-2 w-4 inline-block text-right">{p.symbol}</span>
+                          <span className="opacity-70">{p.name || 'None'}</span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+
+                <Select value={fromUnit} onValueChange={(val) => { setFromUnit(val); setFromPrefix('none'); }}>
                   <SelectTrigger className="h-16 bg-background/30 border-border font-medium">
                     <SelectValue placeholder="Unit" />
                   </SelectTrigger>
@@ -168,8 +202,8 @@ export default function UnitConverter() {
               <div className="grid grid-cols-2 gap-2">
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">Base Factor</div>
-                  <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData?.factor.toString()}>
-                    {fromUnitData ? formatFactor(fromUnitData.factor) : '-'}
+                  <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''}>
+                    {fromUnitData ? formatFactor(fromUnitData.factor * fromPrefixData.factor) : '-'}
                   </div>
                 </div>
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
@@ -202,13 +236,31 @@ export default function UnitConverter() {
             {/* Output Section */}
             <div className="grid gap-4">
               <Label className="text-xs font-mono uppercase text-muted-foreground">To</Label>
-              <div className="grid sm:grid-cols-[1fr_140px] gap-2">
+              <div className="grid sm:grid-cols-[1fr_auto_140px] gap-2">
                 <div className="h-16 px-4 bg-muted/30 border border-border/50 rounded-md flex items-center overflow-x-auto">
                   <span className="text-2xl md:text-3xl font-mono text-primary break-all">
                     {result !== null ? Number(result.toPrecision(10)).toString() : '...'}
                   </span>
                 </div>
-                <Select value={toUnit} onValueChange={setToUnit}>
+
+                {/* Prefix Dropdown */}
+                {toUnitData?.allowPrefixes && (
+                  <Select value={toPrefix} onValueChange={setToPrefix}>
+                    <SelectTrigger className="h-16 w-[100px] bg-background/30 border-border font-medium">
+                      <SelectValue placeholder="Prefix" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px]">
+                      {PREFIXES.map((p) => (
+                        <SelectItem key={p.id} value={p.id} className="font-mono text-xs">
+                          <span className="font-bold mr-2 w-4 inline-block text-right">{p.symbol}</span>
+                          <span className="opacity-70">{p.name || 'None'}</span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+
+                <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); }}>
                   <SelectTrigger className="h-16 bg-background/30 border-border font-medium">
                     <SelectValue placeholder="Unit" />
                   </SelectTrigger>
@@ -226,8 +278,8 @@ export default function UnitConverter() {
               <div className="grid grid-cols-2 gap-2">
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">Base Factor</div>
-                  <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData?.factor.toString()}>
-                    {toUnitData ? formatFactor(toUnitData.factor) : '-'}
+                  <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''}>
+                    {toUnitData ? formatFactor(toUnitData.factor * toPrefixData.factor) : '-'}
                   </div>
                 </div>
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
@@ -267,10 +319,12 @@ export default function UnitConverter() {
             className="rounded-lg border border-border p-4 bg-card/50 text-sm font-mono text-muted-foreground"
           >
             <div className="flex gap-2 items-center">
-              <span className="text-foreground font-bold">1 {fromUnitData.name}</span>
+              <span className="text-foreground font-bold">
+                1 {fromPrefixData.id !== 'none' ? fromPrefixData.name : ''}{fromUnitData.name}
+              </span>
               <span>=</span>
               <span className="text-foreground font-bold">
-                {Number(convert(1, fromUnit, toUnit, activeCategory).toPrecision(6))} {toUnitData.name}
+                {Number(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor).toPrecision(6))} {toPrefixData.id !== 'none' ? toPrefixData.name : ''}{toUnitData.name}
               </span>
             </div>
           </motion.div>

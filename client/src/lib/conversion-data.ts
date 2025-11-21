@@ -40,6 +40,37 @@ export type UnitCategory =
   | "refractive_power"
   | "sound_pressure";
 
+export interface Prefix {
+  id: string;
+  name: string;
+  symbol: string;
+  factor: number;
+}
+
+export const PREFIXES: Prefix[] = [
+  { id: 'none', name: 'None', symbol: '', factor: 1 },
+  { id: 'yotta', name: 'Yotta', symbol: 'Y', factor: 1e24 },
+  { id: 'zetta', name: 'Zetta', symbol: 'Z', factor: 1e21 },
+  { id: 'exa', name: 'Exa', symbol: 'E', factor: 1e18 },
+  { id: 'peta', name: 'Peta', symbol: 'P', factor: 1e15 },
+  { id: 'tera', name: 'Tera', symbol: 'T', factor: 1e12 },
+  { id: 'giga', name: 'Giga', symbol: 'G', factor: 1e9 },
+  { id: 'mega', name: 'Mega', symbol: 'M', factor: 1e6 },
+  { id: 'kilo', name: 'Kilo', symbol: 'k', factor: 1e3 },
+  { id: 'hecto', name: 'Hecto', symbol: 'h', factor: 1e2 },
+  { id: 'deca', name: 'Deca', symbol: 'da', factor: 1e1 },
+  { id: 'deci', name: 'Deci', symbol: 'd', factor: 1e-1 },
+  { id: 'centi', name: 'Centi', symbol: 'c', factor: 1e-2 },
+  { id: 'milli', name: 'Milli', symbol: 'm', factor: 1e-3 },
+  { id: 'micro', name: 'Micro', symbol: 'µ', factor: 1e-6 },
+  { id: 'nano', name: 'Nano', symbol: 'n', factor: 1e-9 },
+  { id: 'pico', name: 'Pico', symbol: 'p', factor: 1e-12 },
+  { id: 'femto', name: 'Femto', symbol: 'f', factor: 1e-15 },
+  { id: 'atto', name: 'Atto', symbol: 'a', factor: 1e-18 },
+  { id: 'zepto', name: 'Zepto', symbol: 'z', factor: 1e-21 },
+  { id: 'yocto', name: 'Yocto', symbol: 'y', factor: 1e-24 },
+];
+
 export interface UnitDefinition {
   id: string;
   name: string;
@@ -47,6 +78,7 @@ export interface UnitDefinition {
   factor: number; // Conversion factor to base unit
   offset?: number; // For temperature (e.g. Celsius to Kelvin)
   description?: string;
+  allowPrefixes?: boolean;
 }
 
 export interface CategoryDefinition {
@@ -65,12 +97,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "meter",
     baseSISymbol: "m",
     units: [
-      { id: "nm", name: "Nanometer", symbol: "nm", factor: 1e-9 },
-      { id: "um", name: "Micrometer", symbol: "µm", factor: 1e-6 },
-      { id: "mm", name: "Millimeter", symbol: "mm", factor: 0.001 },
-      { id: "cm", name: "Centimeter", symbol: "cm", factor: 0.01 },
-      { id: "m", name: "Meter", symbol: "m", factor: 1 },
-      { id: "km", name: "Kilometer", symbol: "km", factor: 1000 },
+      { id: "m", name: "Meter", symbol: "m", factor: 1, allowPrefixes: true },
       { id: "in", name: "Inch", symbol: "in", factor: 0.0254 },
       { id: "ft", name: "Foot", symbol: "ft", factor: 0.3048 },
       { id: "yd", name: "Yard", symbol: "yd", factor: 0.9144 },
@@ -93,9 +120,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "kilogram",
     baseSISymbol: "kg",
     units: [
-      { id: "mg", name: "Milligram", symbol: "mg", factor: 1e-6 },
-      { id: "g", name: "Gram", symbol: "g", factor: 0.001 },
-      { id: "kg", name: "Kilogram", symbol: "kg", factor: 1 },
+      { id: "g", name: "Gram", symbol: "g", factor: 0.001, allowPrefixes: true },
       { id: "t", name: "Tonne", symbol: "t", factor: 1000 },
       { id: "oz", name: "Ounce", symbol: "oz", factor: 0.0283495 },
       { id: "lb", name: "Pound", symbol: "lb", factor: 0.453592 },
@@ -115,10 +140,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "second",
     baseSISymbol: "s",
     units: [
-      { id: "ns", name: "Nanosecond", symbol: "ns", factor: 1e-9 },
-      { id: "us", name: "Microsecond", symbol: "µs", factor: 1e-6 },
-      { id: "ms", name: "Millisecond", symbol: "ms", factor: 0.001 },
-      { id: "s", name: "Second", symbol: "s", factor: 1 },
+      { id: "s", name: "Second", symbol: "s", factor: 1, allowPrefixes: true },
       { id: "min", name: "Minute", symbol: "min", factor: 60 },
       { id: "h", name: "Hour", symbol: "h", factor: 3600 },
       { id: "d", name: "Day", symbol: "d", factor: 86400 },
@@ -134,9 +156,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "ampere",
     baseSISymbol: "A",
     units: [
-      { id: "a", name: "Ampere", symbol: "A", factor: 1 },
-      { id: "ma", name: "Milliampere", symbol: "mA", factor: 0.001 },
-      { id: "ka", name: "Kiloampere", symbol: "kA", factor: 1000 },
+      { id: "a", name: "Ampere", symbol: "A", factor: 1, allowPrefixes: true },
       { id: "biot", name: "Biot (abampere)", symbol: "Bi", factor: 10 },
       { id: "statA", name: "Statampere", symbol: "statA", factor: 3.33564e-10 },
     ],
@@ -171,9 +191,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "mole",
     baseSISymbol: "mol",
     units: [
-      { id: "mol", name: "Mole", symbol: "mol", factor: 1 },
-      { id: "mmol", name: "Millimole", symbol: "mmol", factor: 0.001 },
-      { id: "kmol", name: "Kilomole", symbol: "kmol", factor: 1000 },
+      { id: "mol", name: "Mole", symbol: "mol", factor: 1, allowPrefixes: true },
       { id: "lbmol", name: "Pound-mole", symbol: "lb-mol", factor: 453.59237 },
     ],
   },
@@ -183,11 +201,12 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "candela",
     baseSISymbol: "cd",
     units: [
-      { id: "cd", name: "Candela", symbol: "cd", factor: 1 },
+      { id: "cd", name: "Candela", symbol: "cd", factor: 1, allowPrefixes: true },
       { id: "cp", name: "Candlepower", symbol: "cp", factor: 0.981 },
       { id: "hk", name: "Hefnerkerze", symbol: "HK", factor: 0.903 },
     ],
   },
+
 
   // --- DERIVED & PRACTICAL ---
   {
@@ -217,7 +236,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "m³",
     units: [
       { id: "ml", name: "Milliliter", symbol: "ml", factor: 0.001 },
-      { id: "l", name: "Liter", symbol: "L", factor: 1 },
+      { id: "l", name: "Liter", symbol: "L", factor: 1, allowPrefixes: true },
       { id: "m3", name: "Cubic Meter", symbol: "m³", factor: 1000 },
       { id: "tsp", name: "Teaspoon (US)", symbol: "tsp", factor: 0.00492892 },
       { id: "tsp_imp", name: "Teaspoon (Imp)", symbol: "tsp", factor: 0.00591939 },
@@ -643,6 +662,8 @@ export function convert(
   fromId: string,
   toId: string,
   categoryId: UnitCategory,
+  fromPrefixFactor: number = 1,
+  toPrefixFactor: number = 1
 ): number {
   const category = CONVERSION_DATA.find((c) => c.id === categoryId);
   if (!category) return 0;
@@ -652,13 +673,27 @@ export function convert(
 
   if (!fromUnit || !toUnit) return 0;
 
+  // Apply prefixes to the value directly for the input
+  const val = value * fromPrefixFactor;
+
   // Special handling for temperature (using offsets)
   if (categoryId === "temperature") {
-    const baseValue = (value + (fromUnit.offset || 0)) * fromUnit.factor;
-    return baseValue / toUnit.factor - (toUnit.offset || 0);
+    // Convert to base unit (Celsius in this config)
+    // Note: Prefixes on Temperature with offsets (C, F) are non-standard/ambiguous.
+    // Assuming prefix applies to the unit scale.
+    const baseValue = (val + (fromUnit.offset || 0)) * fromUnit.factor;
+    
+    // Convert from base unit to target
+    // We need to solve: result * toPrefixFactor = (baseValue / toUnit.factor) - toUnit.offset
+    // Actually, inverse of above:
+    // val_target_unit = baseValue / toUnit.factor - (toUnit.offset || 0)
+    // result = val_target_unit / toPrefixFactor
+    
+    const targetUnitValue = (baseValue / toUnit.factor) - (toUnit.offset || 0);
+    return targetUnitValue / toPrefixFactor;
   }
 
   // Standard conversion
-  const baseValue = value * fromUnit.factor;
-  return baseValue / toUnit.factor;
+  const baseValue = val * fromUnit.factor;
+  return baseValue / (toUnit.factor * toPrefixFactor);
 }
