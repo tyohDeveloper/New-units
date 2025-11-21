@@ -168,21 +168,23 @@ export default function UnitConverter() {
                 />
                 
                 {/* Prefix Dropdown */}
-                {fromUnitData?.allowPrefixes && (
-                  <Select value={fromPrefix} onValueChange={setFromPrefix}>
-                    <SelectTrigger className="h-16 w-[100px] bg-background/30 border-border font-medium">
-                      <SelectValue placeholder="Prefix" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[300px]">
-                      {PREFIXES.map((p) => (
-                        <SelectItem key={p.id} value={p.id} className="font-mono text-xs min-h-[2rem]">
-                          <span className="font-bold mr-2 w-4 inline-block text-right">{p.symbol}</span>
-                          <span className="opacity-70">{p.name}</span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                <Select 
+                  value={fromPrefix} 
+                  onValueChange={setFromPrefix}
+                  disabled={!fromUnitData?.allowPrefixes}
+                >
+                  <SelectTrigger className="h-16 w-[100px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                    <SelectValue placeholder="Prefix" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {PREFIXES.map((p) => (
+                      <SelectItem key={p.id} value={p.id} className="font-mono text-xs min-h-[2rem]">
+                        <span className="font-bold mr-2 w-4 inline-block text-right">{p.symbol}</span>
+                        <span className="opacity-70">{p.name}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
                 <Select value={fromUnit} onValueChange={(val) => { setFromUnit(val); setFromPrefix('none'); }}>
                   <SelectTrigger className="h-16 bg-background/30 border-border font-medium">
@@ -244,21 +246,23 @@ export default function UnitConverter() {
                 </div>
 
                 {/* Prefix Dropdown */}
-                {toUnitData?.allowPrefixes && (
-                  <Select value={toPrefix} onValueChange={setToPrefix}>
-                    <SelectTrigger className="h-16 w-[100px] bg-background/30 border-border font-medium">
-                      <SelectValue placeholder="Prefix" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[300px]">
-                      {PREFIXES.map((p) => (
-                        <SelectItem key={p.id} value={p.id} className="font-mono text-xs min-h-[2rem]">
-                          <span className="font-bold mr-2 w-4 inline-block text-right">{p.symbol}</span>
-                          <span className="opacity-70">{p.name}</span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                <Select 
+                  value={toPrefix} 
+                  onValueChange={setToPrefix}
+                  disabled={!toUnitData?.allowPrefixes}
+                >
+                  <SelectTrigger className="h-16 w-[100px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                    <SelectValue placeholder="Prefix" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {PREFIXES.map((p) => (
+                      <SelectItem key={p.id} value={p.id} className="font-mono text-xs min-h-[2rem]">
+                        <span className="font-bold mr-2 w-4 inline-block text-right">{p.symbol}</span>
+                        <span className="opacity-70">{p.name}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
                 <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); }}>
                   <SelectTrigger className="h-16 bg-background/30 border-border font-medium">
