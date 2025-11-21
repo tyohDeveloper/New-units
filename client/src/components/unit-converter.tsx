@@ -163,7 +163,7 @@ export default function UnitConverter() {
                   type="number" 
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  className="text-2xl md:text-3xl font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all"
+                  className="text-2xl font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left"
                   placeholder="0"
                 />
                 
@@ -187,7 +187,7 @@ export default function UnitConverter() {
                 </Select>
 
                 <Select value={fromUnit} onValueChange={(val) => { setFromUnit(val); setFromPrefix('none'); }}>
-                  <SelectTrigger className="h-16 bg-background/30 border-border font-medium">
+                  <SelectTrigger className="h-16 w-[140px] bg-background/30 border-border font-medium">
                     <SelectValue placeholder="Unit" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
@@ -239,9 +239,9 @@ export default function UnitConverter() {
             <div className="grid gap-4">
               <Label className="text-xs font-mono uppercase text-muted-foreground">To</Label>
               <div className="grid sm:grid-cols-[1fr_auto_140px] gap-2">
-                <div className="h-16 px-4 bg-muted/30 border border-border/50 rounded-md flex items-center overflow-x-auto">
-                  <span className="text-2xl md:text-3xl font-mono text-primary break-all">
-                    {result !== null ? Number(result.toPrecision(10)).toString() : '...'}
+                <div className="h-16 px-4 bg-muted/30 border border-border/50 rounded-md flex items-center overflow-x-auto text-left justify-start">
+                  <span className="text-2xl font-mono text-primary break-all">
+                    {result !== null ? Number(result.toFixed(8)).toString() : '...'}
                   </span>
                 </div>
 
@@ -265,7 +265,7 @@ export default function UnitConverter() {
                 </Select>
 
                 <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); }}>
-                  <SelectTrigger className="h-16 bg-background/30 border-border font-medium">
+                  <SelectTrigger className="h-16 w-[140px] bg-background/30 border-border font-medium">
                     <SelectValue placeholder="Unit" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
