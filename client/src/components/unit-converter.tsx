@@ -358,6 +358,24 @@ export default function UnitConverter() {
     setCalcOp2(null);
   };
 
+  const clearField1 = () => {
+    setCalcValues(prev => {
+      const newValues = [...prev];
+      newValues[0] = null;
+      return newValues;
+    });
+    setCalcOp1(null);
+  };
+
+  const clearField2 = () => {
+    setCalcValues(prev => {
+      const newValues = [...prev];
+      newValues[1] = null;
+      return newValues;
+    });
+    setCalcOp2(null);
+  };
+
   const copyCalcResult = () => {
     if (calcValues[3]) {
       navigator.clipboard.writeText(calcValues[3].value.toString());
@@ -659,6 +677,15 @@ export default function UnitConverter() {
                 >
                   /
                 </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={clearField1}
+                  disabled={!calcValues[0]}
+                  className="text-xs"
+                >
+                  Clear
+                </Button>
               </div>
             </div>
 
@@ -688,6 +715,15 @@ export default function UnitConverter() {
                   className={`text-sm ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
                 >
                   /
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={clearField2}
+                  disabled={!calcValues[1]}
+                  className="text-xs"
+                >
+                  Clear
                 </Button>
               </div>
             </div>
