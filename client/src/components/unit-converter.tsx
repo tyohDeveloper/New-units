@@ -429,6 +429,14 @@ export default function UnitConverter() {
     }
   };
 
+  // Helper to clean up trailing zeros from decimal numbers
+  const cleanNumber = (num: number, precision: number): string => {
+    const fixed = num.toFixed(precision);
+    // Remove trailing zeros after decimal point
+    const cleaned = fixed.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
+    return cleaned;
+  };
+
   const formatFactor = (f: number) => {
     if (f === 1) return "1";
     if (f >= 10000 || f <= 0.0001) return `×${f.toExponential(2)}`;
@@ -697,7 +705,7 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[0] ? Number(calcValues[0].value.toFixed(precision)).toString() : ''}
+                  {calcValues[0] ? cleanNumber(calcValues[0].value, precision) : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[0] ? formatDimensions(calcValues[0].dimensions) : ''}
@@ -736,7 +744,7 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[1] ? Number(calcValues[1].value.toFixed(precision)).toString() : ''}
+                  {calcValues[1] ? cleanNumber(calcValues[1].value, precision) : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[1] ? formatDimensions(calcValues[1].dimensions) : ''}
@@ -775,7 +783,7 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[2] ? Number(calcValues[2].value.toFixed(precision)).toString() : ''}
+                  {calcValues[2] ? cleanNumber(calcValues[2].value, precision) : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[2] ? formatDimensions(calcValues[2].dimensions) : ''}
@@ -787,7 +795,7 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-primary font-bold truncate">
-                  {calcValues[3] ? Number(calcValues[3].value.toFixed(precision)).toString() : ''}
+                  {calcValues[3] ? cleanNumber(calcValues[3].value, precision) : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[3] ? formatDimensions(calcValues[3].dimensions) : ''}
