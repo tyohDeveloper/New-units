@@ -308,7 +308,7 @@ export default function UnitConverter() {
                           ? formatDMS(result) 
                           : toUnit === 'ft_in'
                             ? formatFtIn(result)
-                            : Number(result.toFixed(8)).toString()) 
+                            : result.toFixed(8)) 
                       : '...'}
                   </span>
                 </div>
