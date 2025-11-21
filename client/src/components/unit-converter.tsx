@@ -392,12 +392,27 @@ export default function UnitConverter() {
                 </div>
               </div>
 
-              <div className="flex justify-between items-start">
-                {toUnitData?.description ? (
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Info className="w-3 h-3" /> {toUnitData.description}
-                  </p>
-                ) : <div />}
+              <div className="grid sm:grid-cols-[1fr_auto] gap-2 items-start">
+                <div className="space-y-2">
+                  {toUnitData?.description && (
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Info className="w-3 h-3" /> {toUnitData.description}
+                    </p>
+                  )}
+                  {result !== null && fromUnitData && toUnitData && (
+                    <div className="p-2 rounded bg-muted/20 border border-border/50">
+                      <div className="text-xs font-mono text-muted-foreground flex gap-2 items-center">
+                        <span className="text-foreground font-bold">
+                          1 {fromPrefixData.id !== 'none' ? fromPrefixData.name : ''}{fromUnitData.name}
+                        </span>
+                        <span>=</span>
+                        <span className="text-foreground font-bold">
+                          {Number(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor).toPrecision(6))} {toPrefixData.id !== 'none' ? toPrefixData.name : ''}{toUnitData.name}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
                 
                 <Button 
                   variant="ghost" 
@@ -412,25 +427,6 @@ export default function UnitConverter() {
 
           </div>
         </Card>
-
-        {/* Formula Display */}
-        {result !== null && fromUnitData && toUnitData && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-lg border border-border p-4 bg-card/50 text-sm font-mono text-muted-foreground"
-          >
-            <div className="flex gap-2 items-center">
-              <span className="text-foreground font-bold">
-                1 {fromPrefixData.id !== 'none' ? fromPrefixData.name : ''}{fromUnitData.name}
-              </span>
-              <span>=</span>
-              <span className="text-foreground font-bold">
-                {Number(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor).toPrecision(6))} {toPrefixData.id !== 'none' ? toPrefixData.name : ''}{toUnitData.name}
-              </span>
-            </div>
-          </motion.div>
-        )}
       </div>
     </div>
   );
