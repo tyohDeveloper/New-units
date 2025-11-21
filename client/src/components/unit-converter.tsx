@@ -182,7 +182,7 @@ export default function UnitConverter() {
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto p-4 md:p-8 grid md:grid-cols-[260px_1fr] gap-8">
+    <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:pb-8 md:pt-3 grid md:grid-cols-[260px_1fr] gap-8">
       
       {/* Sidebar */}
       <nav className="space-y-4 h-fit sticky top-[3pc] overflow-y-auto max-h-[calc(100vh-4rem)] pr-2">
