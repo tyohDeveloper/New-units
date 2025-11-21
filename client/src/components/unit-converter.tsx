@@ -20,16 +20,24 @@ export default function UnitConverter() {
 
   const CATEGORY_GROUPS = [
     {
-      name: "Fundamentals",
-      categories: ['length', 'mass', 'time', 'temperature', 'area', 'volume']
+      name: "Base Quantities",
+      categories: ['length', 'mass', 'time', 'current', 'temperature', 'amount', 'intensity']
     },
     {
-      name: "Physics & Engineering",
-      categories: ['force', 'pressure', 'energy', 'power', 'speed', 'torque', 'frequency']
+      name: "Mechanics",
+      categories: ['area', 'volume', 'speed', 'acceleration', 'force', 'pressure', 'energy', 'power', 'torque', 'flow', 'density', 'viscosity', 'surface_tension']
+    },
+    {
+      name: "Electricity & Magnetism",
+      categories: ['charge', 'potential', 'capacitance', 'resistance', 'conductance', 'inductance', 'magnetic_flux', 'magnetic_density']
+    },
+    {
+      name: "Radiation & Physics",
+      categories: ['radioactivity', 'radiation_dose', 'equivalent_dose', 'catalytic', 'angle', 'solid_angle', 'frequency', 'sound_pressure', 'refractive_power']
     },
     {
       name: "Specialized",
-      categories: ['digital', 'illuminance', 'printing']
+      categories: ['digital', 'printing', 'illuminance']
     }
   ];
 

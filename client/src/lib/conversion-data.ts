@@ -1,5 +1,10 @@
 
-export type UnitCategory = 'length' | 'mass' | 'volume' | 'area' | 'temperature' | 'time' | 'digital' | 'energy' | 'pressure' | 'power' | 'printing' | 'force' | 'illuminance' | 'speed' | 'torque' | 'frequency';
+export type UnitCategory = 
+  | 'length' | 'mass' | 'time' | 'current' | 'temperature' | 'amount' | 'intensity' // SI Base
+  | 'area' | 'volume' | 'frequency' | 'speed' | 'acceleration' | 'force' | 'pressure' | 'energy' | 'power'
+  | 'charge' | 'potential' | 'capacitance' | 'resistance' | 'conductance' | 'inductance' | 'magnetic_flux' | 'magnetic_density'
+  | 'radioactivity' | 'radiation_dose' | 'equivalent_dose' | 'catalytic' | 'angle' | 'solid_angle'
+  | 'digital' | 'printing' | 'illuminance' | 'torque' | 'density' | 'flow' | 'viscosity' | 'surface_tension' | 'refractive_power' | 'sound_pressure';
 
 export interface UnitDefinition {
   id: string;
@@ -18,163 +23,83 @@ export interface CategoryDefinition {
 }
 
 export const CONVERSION_DATA: CategoryDefinition[] = [
+  // --- SI BASE QUANTITIES ---
   {
     id: 'length',
-    name: 'Length & Distance',
+    name: 'Length',
     baseUnit: 'meter',
     units: [
-      // SI / Metric
       { id: 'nm', name: 'Nanometer', symbol: 'nm', factor: 1e-9 },
       { id: 'um', name: 'Micrometer', symbol: 'µm', factor: 1e-6 },
       { id: 'mm', name: 'Millimeter', symbol: 'mm', factor: 0.001 },
       { id: 'cm', name: 'Centimeter', symbol: 'cm', factor: 0.01 },
       { id: 'm', name: 'Meter', symbol: 'm', factor: 1 },
       { id: 'km', name: 'Kilometer', symbol: 'km', factor: 1000 },
-      
-      // US / Imperial
       { id: 'in', name: 'Inch', symbol: 'in', factor: 0.0254 },
       { id: 'ft', name: 'Foot', symbol: 'ft', factor: 0.3048 },
       { id: 'yd', name: 'Yard', symbol: 'yd', factor: 0.9144 },
       { id: 'mi', name: 'Mile', symbol: 'mi', factor: 1609.344 },
       { id: 'nmi', name: 'Nautical Mile', symbol: 'nmi', factor: 1852 },
-      
-      // Survey (US)
       { id: 'link', name: 'Link (Gunter)', symbol: 'li', factor: 0.201168 },
-      { id: 'rod', name: 'Rod / Pole / Perch', symbol: 'rd', factor: 5.0292 },
-      { id: 'chain', name: 'Chain (Gunter)', symbol: 'ch', factor: 20.1168 },
+      { id: 'rod', name: 'Rod', symbol: 'rd', factor: 5.0292 },
+      { id: 'chain', name: 'Chain', symbol: 'ch', factor: 20.1168 },
       { id: 'furlong', name: 'Furlong', symbol: 'fur', factor: 201.168 },
-      
-      // Archaic / Miscellaneous
-      { id: 'cubit_biblical', name: 'Biblical Cubit', symbol: 'cubit', factor: 0.4572, description: 'Approximate length of a forearm' },
-      { id: 'hand', name: 'Hand', symbol: 'hh', factor: 0.1016, description: 'Used for horses' },
-      { id: 'league_land', name: 'League (Land)', symbol: 'lea', factor: 4828.032 },
-      { id: 'fathom', name: 'Fathom', symbol: 'ftm', factor: 1.8288, description: 'Used for water depth' },
+      { id: 'fathom', name: 'Fathom', symbol: 'ftm', factor: 1.8288 },
       { id: 'parsec', name: 'Parsec', symbol: 'pc', factor: 3.0857e16 },
       { id: 'au', name: 'Astronomical Unit', symbol: 'AU', factor: 1.496e11 },
-      { id: 'lightyear', name: 'Light Year', symbol: 'ly', factor: 9.461e15 },
-      { id: 'smoot', name: 'Smoot', symbol: 'sm', factor: 1.7018, description: 'MIT bridge measurement' },
-
-      // French (Ancien Régime)
-      { id: 'point_fr', name: 'Point (French)', symbol: 'pt', factor: 0.000188 },
-      { id: 'ligne', name: 'Ligne (French Line)', symbol: 'l', factor: 0.002256 },
-      { id: 'pouce', name: 'Pouce (French Inch)', symbol: 'pouce', factor: 0.02707 },
-      { id: 'pied_roi', name: 'Pied de Roi (French Foot)', symbol: 'pied', factor: 0.3248 },
-      { id: 'toise', name: 'Toise', symbol: 'T', factor: 1.949, description: 'Standard pre-metric French length' },
-      { id: 'lieue', name: 'Lieue (French League)', symbol: 'lieue', factor: 3898 },
-
-      // Russian (Imperial)
-      { id: 'vershok', name: 'Vershok', symbol: 'ver', factor: 0.04445 },
-      { id: 'arshin', name: 'Arshin', symbol: 'arsh', factor: 0.7112 },
-      { id: 'sazhen', name: 'Sazhen', symbol: 'saz', factor: 2.1336 },
-      { id: 'verst', name: 'Verst', symbol: 'verst', factor: 1066.8 },
-
-      // Other European
-      { id: 'vara', name: 'Vara (Spanish)', symbol: 'vara', factor: 0.8359 },
-      { id: 'elle_prussian', name: 'Elle (Prussian)', symbol: 'elle', factor: 0.6669 },
-      { id: 'rute', name: 'Rute (Prussian)', symbol: 'rute', factor: 3.7662 },
-      { id: 'shaku', name: 'Shaku (Japan)', symbol: 'shaku', factor: 0.30303 },
-      { id: 'sun', name: 'Sun (Japan)', symbol: 'sun', factor: 0.030303 }
+      { id: 'ly', name: 'Light Year', symbol: 'ly', factor: 9.461e15 },
+      { id: 'angstrom', name: 'Angstrom', symbol: 'Å', factor: 1e-10 }
     ]
   },
   {
     id: 'mass',
-    name: 'Mass & Weight',
+    name: 'Mass',
     baseUnit: 'kilogram',
     units: [
-      // SI
       { id: 'mg', name: 'Milligram', symbol: 'mg', factor: 1e-6 },
       { id: 'g', name: 'Gram', symbol: 'g', factor: 0.001 },
       { id: 'kg', name: 'Kilogram', symbol: 'kg', factor: 1 },
-      { id: 't', name: 'Metric Tonne', symbol: 't', factor: 1000 },
-      
-      // US / Imperial
-      { id: 'oz', name: 'Ounce (Av)', symbol: 'oz', factor: 0.0283495 },
-      { id: 'lb', name: 'Pound (Av)', symbol: 'lb', factor: 0.453592 },
+      { id: 't', name: 'Tonne', symbol: 't', factor: 1000 },
+      { id: 'oz', name: 'Ounce', symbol: 'oz', factor: 0.0283495 },
+      { id: 'lb', name: 'Pound', symbol: 'lb', factor: 0.453592 },
       { id: 'st', name: 'Stone', symbol: 'st', factor: 6.35029 },
       { id: 'ton_us', name: 'Short Ton (US)', symbol: 'ton', factor: 907.185 },
       { id: 'ton_uk', name: 'Long Ton (UK)', symbol: 'ton', factor: 1016.05 },
-      
-      // Precious Metals (Troy)
       { id: 'gr', name: 'Grain', symbol: 'gr', factor: 6.47989e-5 },
       { id: 'dwt', name: 'Pennyweight', symbol: 'dwt', factor: 0.00155517 },
       { id: 'oz_t', name: 'Troy Ounce', symbol: 'oz t', factor: 0.0311035 },
-      { id: 'lb_t', name: 'Troy Pound', symbol: 'lb t', factor: 0.373242 },
-      { id: 'carat', name: 'Carat', symbol: 'ct', factor: 0.0002, description: 'For gems' },
-      
-      // Apothecary
-      { id: 'scruple', name: 'Scruple (Ap)', symbol: 's.ap', factor: 0.00129598, description: '20 grains' },
-      { id: 'drachm', name: 'Drachm (Ap)', symbol: 'dr.ap', factor: 0.00388793, description: '3 scruples' },
-      { id: 'oz_ap', name: 'Ounce (Ap)', symbol: 'oz.ap', factor: 0.0311035, description: 'Same as Troy oz' },
-      { id: 'lb_ap', name: 'Pound (Ap)', symbol: 'lb.ap', factor: 0.373242, description: 'Same as Troy lb' },
-
-      // Archaic / Historical
-      { id: 'slug', name: 'Slug', symbol: 'slug', factor: 14.5939 },
-      { id: 'talent_biblical', name: 'Talent (Biblical)', symbol: 'talent', factor: 34.2, description: 'Heavy biblical weight' },
-      { id: 'shekel', name: 'Shekel', symbol: 'shekel', factor: 0.0114 },
-      { id: 'mark', name: 'Mark (Cologne)', symbol: 'mk', factor: 0.233856 },
-      { id: 'pood', name: 'Pood (Russia)', symbol: 'pd', factor: 16.38 },
-      { id: 'kan', name: 'Kan (Japan)', symbol: 'kan', factor: 3.75 },
-      { id: 'kin', name: 'Kin (Japan)', symbol: 'kin', factor: 0.6 }
+      { id: 'carat', name: 'Carat', symbol: 'ct', factor: 0.0002 },
+      { id: 'slug', name: 'Slug', symbol: 'slug', factor: 14.5939 }
     ]
   },
   {
-    id: 'volume',
-    name: 'Volume & Capacity',
-    baseUnit: 'liter',
+    id: 'time',
+    name: 'Time',
+    baseUnit: 'second',
     units: [
-      // SI
-      { id: 'ml', name: 'Milliliter', symbol: 'ml', factor: 0.001 },
-      { id: 'l', name: 'Liter', symbol: 'L', factor: 1 },
-      { id: 'm3', name: 'Cubic Meter', symbol: 'm³', factor: 1000 },
-      
-      // US Liquid
-      { id: 'tsp', name: 'Teaspoon (US)', symbol: 'tsp', factor: 0.00492892 },
-      { id: 'tbsp', name: 'Tablespoon (US)', symbol: 'tbsp', factor: 0.0147868 },
-      { id: 'floz', name: 'Fluid Ounce (US)', symbol: 'fl oz', factor: 0.0295735 },
-      { id: 'cup', name: 'Cup (US)', symbol: 'cp', factor: 0.236588 },
-      { id: 'pt', name: 'Pint (US)', symbol: 'pt', factor: 0.473176 },
-      { id: 'qt', name: 'Quart (US)', symbol: 'qt', factor: 0.946353 },
-      { id: 'gal', name: 'Gallon (US)', symbol: 'gal', factor: 3.78541 },
-      
-      // Imperial
-      { id: 'floz_imp', name: 'Fluid Ounce (Imp)', symbol: 'fl oz', factor: 0.0284131 },
-      { id: 'pt_imp', name: 'Pint (Imp)', symbol: 'pt', factor: 0.568261 },
-      { id: 'gal_imp', name: 'Gallon (Imp)', symbol: 'gal', factor: 4.54609 },
-      
-      // Barrels & Casks
-      { id: 'bbl_oil', name: 'Oil Barrel', symbol: 'bbl', factor: 158.987 },
-      { id: 'bbl_beer', name: 'Beer Barrel (US)', symbol: 'bbl', factor: 117.348 },
-      { id: 'bbl_wine', name: 'Wine Barrel', symbol: 'bbl', factor: 119.24 },
-      { id: 'hogshead', name: 'Hogshead (US)', symbol: 'hhd', factor: 238.481 },
-      { id: 'butt', name: 'Butt / Pipe', symbol: 'butt', factor: 476.962, description: 'Two hogsheads' },
-      { id: 'tun', name: 'Tun', symbol: 'tun', factor: 953.924, description: 'Two butts' },
-      { id: 'firkin', name: 'Firkin', symbol: 'fir', factor: 40.9148, description: 'Quarter barrel' },
-      { id: 'kilderkin', name: 'Kilderkin', symbol: 'kil', factor: 81.8296, description: 'Half barrel' },
-      
-      // Dry
-      { id: 'pk', name: 'Peck (US)', symbol: 'pk', factor: 8.80977 },
-      { id: 'bu', name: 'Bushel (US)', symbol: 'bu', factor: 35.2391 },
-      
-      // Archaic / Cooking
-      { id: 'cord', name: 'Cord (Firewood)', symbol: 'cd', factor: 3624.56 },
-      { id: 'gill', name: 'Gill (US)', symbol: 'gi', factor: 0.118294 }
+      { id: 'ns', name: 'Nanosecond', symbol: 'ns', factor: 1e-9 },
+      { id: 'us', name: 'Microsecond', symbol: 'µs', factor: 1e-6 },
+      { id: 'ms', name: 'Millisecond', symbol: 'ms', factor: 0.001 },
+      { id: 's', name: 'Second', symbol: 's', factor: 1 },
+      { id: 'min', name: 'Minute', symbol: 'min', factor: 60 },
+      { id: 'h', name: 'Hour', symbol: 'h', factor: 3600 },
+      { id: 'd', name: 'Day', symbol: 'd', factor: 86400 },
+      { id: 'wk', name: 'Week', symbol: 'wk', factor: 604800 },
+      { id: 'mo', name: 'Month (Avg)', symbol: 'mo', factor: 2.628e6 },
+      { id: 'y', name: 'Year', symbol: 'yr', factor: 3.154e7 },
+      { id: 'shake', name: 'Shake', symbol: 'shake', factor: 1e-8 }
     ]
   },
   {
-    id: 'area',
-    name: 'Area',
-    baseUnit: 'square meter',
+    id: 'current',
+    name: 'Electric Current',
+    baseUnit: 'ampere',
     units: [
-      { id: 'm2', name: 'Square Meter', symbol: 'm²', factor: 1 },
-      { id: 'ha', name: 'Hectare', symbol: 'ha', factor: 10000 },
-      { id: 'km2', name: 'Square Kilometer', symbol: 'km²', factor: 1e6 },
-      { id: 'sqin', name: 'Square Inch', symbol: 'in²', factor: 0.00064516 },
-      { id: 'sqft', name: 'Square Foot', symbol: 'ft²', factor: 0.092903 },
-      { id: 'sqyd', name: 'Square Yard', symbol: 'yd²', factor: 0.836127 },
-      { id: 'acre', name: 'Acre', symbol: 'ac', factor: 4046.86 },
-      { id: 'sqmi', name: 'Square Mile', symbol: 'mi²', factor: 2.59e6 },
-      { id: 'barn', name: 'Barn', symbol: 'b', factor: 1e-28, description: 'Nuclear physics area' },
-      { id: 'dunam', name: 'Dunam', symbol: 'dunam', factor: 1000, description: 'Ottoman measure' }
+      { id: 'a', name: 'Ampere', symbol: 'A', factor: 1 },
+      { id: 'ma', name: 'Milliampere', symbol: 'mA', factor: 0.001 },
+      { id: 'ka', name: 'Kiloampere', symbol: 'kA', factor: 1000 },
+      { id: 'biot', name: 'Biot (abampere)', symbol: 'Bi', factor: 10 },
+      { id: 'statA', name: 'Statampere', symbol: 'statA', factor: 3.33564e-10 }
     ]
   },
   {
@@ -189,36 +114,105 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     ]
   },
   {
-    id: 'time',
-    name: 'Time',
-    baseUnit: 'second',
+    id: 'amount',
+    name: 'Amount of Substance',
+    baseUnit: 'mole',
     units: [
-      { id: 'ms', name: 'Millisecond', symbol: 'ms', factor: 0.001 },
-      { id: 's', name: 'Second', symbol: 's', factor: 1 },
-      { id: 'min', name: 'Minute', symbol: 'min', factor: 60 },
-      { id: 'h', name: 'Hour', symbol: 'h', factor: 3600 },
-      { id: 'd', name: 'Day', symbol: 'd', factor: 86400 },
-      { id: 'wk', name: 'Week', symbol: 'wk', factor: 604800 },
-      { id: 'mo', name: 'Month (Avg)', symbol: 'mo', factor: 2.628e6 },
-      { id: 'y', name: 'Year', symbol: 'yr', factor: 3.154e7 },
-      { id: 'fortnight', name: 'Fortnight', symbol: 'ftn', factor: 1.21e6 },
-      { id: 'jiffy', name: 'Jiffy (Physics)', symbol: 'jiffy', factor: 3e-24 },
-      { id: 'shake', name: 'Shake', symbol: 'shake', factor: 1e-8 }
+      { id: 'mol', name: 'Mole', symbol: 'mol', factor: 1 },
+      { id: 'mmol', name: 'Millimole', symbol: 'mmol', factor: 0.001 },
+      { id: 'kmol', name: 'Kilomole', symbol: 'kmol', factor: 1000 },
+      { id: 'lbmol', name: 'Pound-mole', symbol: 'lb-mol', factor: 453.59237 }
     ]
   },
   {
-    id: 'digital',
-    name: 'Digital Storage',
-    baseUnit: 'byte',
+    id: 'intensity',
+    name: 'Luminous Intensity',
+    baseUnit: 'candela',
     units: [
-      { id: 'b', name: 'Bit', symbol: 'b', factor: 0.125 },
-      { id: 'B', name: 'Byte', symbol: 'B', factor: 1 },
-      { id: 'KB', name: 'Kilobyte', symbol: 'KB', factor: 1024 },
-      { id: 'MB', name: 'Megabyte', symbol: 'MB', factor: 1048576 },
-      { id: 'GB', name: 'Gigabyte', symbol: 'GB', factor: 1.074e9 },
-      { id: 'TB', name: 'Terabyte', symbol: 'TB', factor: 1.1e12 },
-      { id: 'PB', name: 'Petabyte', symbol: 'PB', factor: 1.126e15 },
-      { id: 'nibble', name: 'Nibble', symbol: 'nibble', factor: 0.5, description: '4 bits' }
+      { id: 'cd', name: 'Candela', symbol: 'cd', factor: 1 },
+      { id: 'cp', name: 'Candlepower', symbol: 'cp', factor: 0.981 },
+      { id: 'hk', name: 'Hefnerkerze', symbol: 'HK', factor: 0.903 }
+    ]
+  },
+
+  // --- DERIVED & PRACTICAL ---
+  {
+    id: 'area',
+    name: 'Area',
+    baseUnit: 'square meter',
+    units: [
+      { id: 'm2', name: 'Square Meter', symbol: 'm²', factor: 1 },
+      { id: 'ha', name: 'Hectare', symbol: 'ha', factor: 10000 },
+      { id: 'km2', name: 'Square Kilometer', symbol: 'km²', factor: 1e6 },
+      { id: 'sqin', name: 'Square Inch', symbol: 'in²', factor: 0.00064516 },
+      { id: 'sqft', name: 'Square Foot', symbol: 'ft²', factor: 0.092903 },
+      { id: 'sqyd', name: 'Square Yard', symbol: 'yd²', factor: 0.836127 },
+      { id: 'acre', name: 'Acre', symbol: 'ac', factor: 4046.86 },
+      { id: 'sqmi', name: 'Square Mile', symbol: 'mi²', factor: 2.59e6 },
+      { id: 'barn', name: 'Barn', symbol: 'b', factor: 1e-28 },
+      { id: 'dunam', name: 'Dunam', symbol: 'dunam', factor: 1000 },
+      { id: 'township', name: 'Township (US)', symbol: 'twp', factor: 9.324e7 },
+      { id: 'section', name: 'Section (US)', symbol: 'sec', factor: 2.59e6 }
+    ]
+  },
+  {
+    id: 'volume',
+    name: 'Volume',
+    baseUnit: 'liter',
+    units: [
+      { id: 'ml', name: 'Milliliter', symbol: 'ml', factor: 0.001 },
+      { id: 'l', name: 'Liter', symbol: 'L', factor: 1 },
+      { id: 'm3', name: 'Cubic Meter', symbol: 'm³', factor: 1000 },
+      { id: 'tsp', name: 'Teaspoon (US)', symbol: 'tsp', factor: 0.00492892 },
+      { id: 'tbsp', name: 'Tablespoon (US)', symbol: 'tbsp', factor: 0.0147868 },
+      { id: 'floz', name: 'Fluid Ounce', symbol: 'fl oz', factor: 0.0295735 },
+      { id: 'cup', name: 'Cup', symbol: 'cp', factor: 0.236588 },
+      { id: 'pt', name: 'Pint', symbol: 'pt', factor: 0.473176 },
+      { id: 'qt', name: 'Quart', symbol: 'qt', factor: 0.946353 },
+      { id: 'gal', name: 'Gallon', symbol: 'gal', factor: 3.78541 },
+      { id: 'bbl', name: 'Barrel (Oil)', symbol: 'bbl', factor: 158.987 },
+      { id: 'bbl_beer', name: 'Barrel (Beer)', symbol: 'bbl', factor: 117.348 },
+      { id: 'bu', name: 'Bushel', symbol: 'bu', factor: 35.2391 },
+      { id: 'shot', name: 'Shot (US)', symbol: 'shot', factor: 0.044 },
+      { id: 'fifth', name: 'Fifth', symbol: 'fifth', factor: 0.757 },
+      { id: 'handle', name: 'Handle', symbol: 'handle', factor: 1.75 }
+    ]
+  },
+  {
+    id: 'speed',
+    name: 'Speed',
+    baseUnit: 'meter/second',
+    units: [
+      { id: 'mps', name: 'Meter/Second', symbol: 'm/s', factor: 1 },
+      { id: 'kmh', name: 'Kilometer/Hour', symbol: 'km/h', factor: 0.277778 },
+      { id: 'mph', name: 'Mile/Hour', symbol: 'mph', factor: 0.44704 },
+      { id: 'kn', name: 'Knot', symbol: 'kn', factor: 0.514444 },
+      { id: 'mach', name: 'Mach', symbol: 'Ma', factor: 343 },
+      { id: 'c', name: 'Speed of Light', symbol: 'c', factor: 299792458 }
+    ]
+  },
+  {
+    id: 'acceleration',
+    name: 'Acceleration',
+    baseUnit: 'meter/sq second',
+    units: [
+      { id: 'mps2', name: 'Meter/sq sec', symbol: 'm/s²', factor: 1 },
+      { id: 'g', name: 'g-force', symbol: 'g', factor: 9.80665 },
+      { id: 'ftps2', name: 'Foot/sq sec', symbol: 'ft/s²', factor: 0.3048 },
+      { id: 'gal', name: 'Gal', symbol: 'Gal', factor: 0.01 }
+    ]
+  },
+  {
+    id: 'force',
+    name: 'Force',
+    baseUnit: 'newton',
+    units: [
+      { id: 'n', name: 'Newton', symbol: 'N', factor: 1 },
+      { id: 'kn', name: 'Kilonewton', symbol: 'kN', factor: 1000 },
+      { id: 'dyn', name: 'Dyne', symbol: 'dyn', factor: 1e-5 },
+      { id: 'lbf', name: 'Pound-force', symbol: 'lbf', factor: 4.44822 },
+      { id: 'kgf', name: 'Kilogram-force', symbol: 'kgf', factor: 9.80665 },
+      { id: 'kip', name: 'Kip', symbol: 'kip', factor: 4448.22 }
     ]
   },
   {
@@ -231,7 +225,8 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: 'bar', name: 'Bar', symbol: 'bar', factor: 100000 },
       { id: 'psi', name: 'PSI', symbol: 'psi', factor: 6894.76 },
       { id: 'atm', name: 'Atmosphere', symbol: 'atm', factor: 101325 },
-      { id: 'torr', name: 'Torr', symbol: 'Torr', factor: 133.322 }
+      { id: 'torr', name: 'Torr', symbol: 'Torr', factor: 133.322 },
+      { id: 'mmhg', name: 'mmHg (Blood)', symbol: 'mmHg', factor: 133.322 }
     ]
   },
   {
@@ -246,24 +241,8 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: 'wh', name: 'Watt-hour', symbol: 'Wh', factor: 3600 },
       { id: 'kwh', name: 'Kilowatt-hour', symbol: 'kWh', factor: 3.6e6 },
       { id: 'btu', name: 'BTU', symbol: 'BTU', factor: 1055.06 },
-      { id: 'erg', name: 'Erg', symbol: 'erg', factor: 1e-7 },
       { id: 'ev', name: 'Electronvolt', symbol: 'eV', factor: 1.602e-19 },
       { id: 'tnt', name: 'Ton of TNT', symbol: 'tTNT', factor: 4.184e9 }
-    ]
-  },
-  {
-    id: 'printing',
-    name: 'Typography & Printing',
-    baseUnit: 'point',
-    units: [
-      { id: 'pt', name: 'Point (PostScript)', symbol: 'pt', factor: 1 },
-      { id: 'pc', name: 'Pica', symbol: 'pc', factor: 12 },
-      { id: 'in', name: 'Inch', symbol: 'in', factor: 72 },
-      { id: 'mm', name: 'Millimeter', symbol: 'mm', factor: 2.83465 },
-      { id: 'cm', name: 'Centimeter', symbol: 'cm', factor: 28.3465 },
-      { id: 'px', name: 'Pixel (96dpi)', symbol: 'px', factor: 0.75 },
-      { id: 'didot', name: 'Didot Point', symbol: 'dd', factor: 1.07 },
-      { id: 'cicero', name: 'Cicero', symbol: 'cic', factor: 12.84 }
     ]
   },
   {
@@ -273,46 +252,8 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     units: [
       { id: 'w', name: 'Watt', symbol: 'W', factor: 1 },
       { id: 'kw', name: 'Kilowatt', symbol: 'kW', factor: 1000 },
-      { id: 'hp', name: 'Horsepower (Mech)', symbol: 'hp', factor: 745.7 },
-      { id: 'hp_m', name: 'Horsepower (Metric)', symbol: 'hp', factor: 735.499 }
-    ]
-  },
-  {
-    id: 'force',
-    name: 'Force',
-    baseUnit: 'newton',
-    units: [
-      { id: 'n', name: 'Newton', symbol: 'N', factor: 1 },
-      { id: 'kn', name: 'Kilonewton', symbol: 'kN', factor: 1000 },
-      { id: 'dyn', name: 'Dyne', symbol: 'dyn', factor: 1e-5 },
-      { id: 'lbf', name: 'Pound-force', symbol: 'lbf', factor: 4.44822 },
-      { id: 'kgf', name: 'Kilogram-force', symbol: 'kgf', factor: 9.80665 },
-      { id: 'pdl', name: 'Poundal', symbol: 'pdl', factor: 0.138255 },
-      { id: 'kip', name: 'Kip', symbol: 'kip', factor: 4448.22 }
-    ]
-  },
-  {
-    id: 'illuminance',
-    name: 'Illuminance',
-    baseUnit: 'lux',
-    units: [
-      { id: 'lx', name: 'Lux', symbol: 'lx', factor: 1 },
-      { id: 'fc', name: 'Foot-candle', symbol: 'fc', factor: 10.7639 },
-      { id: 'ph', name: 'Phot', symbol: 'ph', factor: 10000 },
-      { id: 'nox', name: 'Nox', symbol: 'nox', factor: 0.001 }
-    ]
-  },
-  {
-    id: 'speed',
-    name: 'Speed & Velocity',
-    baseUnit: 'meter per second',
-    units: [
-      { id: 'mps', name: 'Meter/second', symbol: 'm/s', factor: 1 },
-      { id: 'kmh', name: 'Kilometer/hour', symbol: 'km/h', factor: 0.277778 },
-      { id: 'mph', name: 'Mile/hour', symbol: 'mph', factor: 0.44704 },
-      { id: 'kt', name: 'Knot', symbol: 'kn', factor: 0.514444 },
-      { id: 'mach', name: 'Mach (Standard)', symbol: 'Ma', factor: 343, description: 'Speed of sound at sea level' },
-      { id: 'c', name: 'Speed of Light', symbol: 'c', factor: 299792458 }
+      { id: 'hp', name: 'Horsepower', symbol: 'hp', factor: 745.7 },
+      { id: 'hp_m', name: 'Metric HP', symbol: 'hp', factor: 735.499 }
     ]
   },
   {
@@ -327,6 +268,182 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: 'rpm', name: 'RPM', symbol: 'rpm', factor: 0.0166667 }
     ]
   },
+  
+  // --- ELECTRICAL ---
+  {
+    id: 'charge',
+    name: 'Electric Charge',
+    baseUnit: 'coulomb',
+    units: [
+      { id: 'c', name: 'Coulomb', symbol: 'C', factor: 1 },
+      { id: 'mah', name: 'Milliamp-hour', symbol: 'mAh', factor: 3.6 },
+      { id: 'ah', name: 'Ampere-hour', symbol: 'Ah', factor: 3600 },
+      { id: 'faraday', name: 'Faraday', symbol: 'F', factor: 96485 }
+    ]
+  },
+  {
+    id: 'potential',
+    name: 'Electric Potential',
+    baseUnit: 'volt',
+    units: [
+      { id: 'v', name: 'Volt', symbol: 'V', factor: 1 },
+      { id: 'mv', name: 'Millivolt', symbol: 'mV', factor: 0.001 },
+      { id: 'kv', name: 'Kilovolt', symbol: 'kV', factor: 1000 },
+      { id: 'statv', name: 'Statvolt', symbol: 'statV', factor: 299.792 }
+    ]
+  },
+  {
+    id: 'capacitance',
+    name: 'Capacitance',
+    baseUnit: 'farad',
+    units: [
+      { id: 'f', name: 'Farad', symbol: 'F', factor: 1 },
+      { id: 'uf', name: 'Microfarad', symbol: 'µF', factor: 1e-6 },
+      { id: 'nf', name: 'Nanofarad', symbol: 'nF', factor: 1e-9 },
+      { id: 'pf', name: 'Picofarad', symbol: 'pF', factor: 1e-12 }
+    ]
+  },
+  {
+    id: 'resistance',
+    name: 'Resistance',
+    baseUnit: 'ohm',
+    units: [
+      { id: 'ohm', name: 'Ohm', symbol: 'Ω', factor: 1 },
+      { id: 'kohm', name: 'Kiloohm', symbol: 'kΩ', factor: 1000 },
+      { id: 'mohm', name: 'Megaohm', symbol: 'MΩ', factor: 1e6 }
+    ]
+  },
+  {
+    id: 'conductance',
+    name: 'Conductance',
+    baseUnit: 'siemens',
+    units: [
+      { id: 's', name: 'Siemens', symbol: 'S', factor: 1 },
+      { id: 'mho', name: 'Mho', symbol: '℧', factor: 1 }
+    ]
+  },
+  {
+    id: 'magnetic_flux',
+    name: 'Magnetic Flux',
+    baseUnit: 'weber',
+    units: [
+      { id: 'wb', name: 'Weber', symbol: 'Wb', factor: 1 },
+      { id: 'mx', name: 'Maxwell', symbol: 'Mx', factor: 1e-8 }
+    ]
+  },
+  {
+    id: 'magnetic_density',
+    name: 'Magnetic Flux Density',
+    baseUnit: 'tesla',
+    units: [
+      { id: 't', name: 'Tesla', symbol: 'T', factor: 1 },
+      { id: 'g', name: 'Gauss', symbol: 'G', factor: 1e-4 }
+    ]
+  },
+  {
+    id: 'inductance',
+    name: 'Inductance',
+    baseUnit: 'henry',
+    units: [
+      { id: 'h', name: 'Henry', symbol: 'H', factor: 1 },
+      { id: 'mh', name: 'Millihenry', symbol: 'mH', factor: 0.001 },
+      { id: 'uh', name: 'Microhenry', symbol: 'µH', factor: 1e-6 }
+    ]
+  },
+
+  // --- RADIATION & CHEMISTRY ---
+  {
+    id: 'radioactivity',
+    name: 'Radioactivity',
+    baseUnit: 'becquerel',
+    units: [
+      { id: 'bq', name: 'Becquerel', symbol: 'Bq', factor: 1 },
+      { id: 'ci', name: 'Curie', symbol: 'Ci', factor: 3.7e10 },
+      { id: 'rd', name: 'Rutherford', symbol: 'Rd', factor: 1e6 }
+    ]
+  },
+  {
+    id: 'radiation_dose',
+    name: 'Absorbed Radiation Dose',
+    baseUnit: 'gray',
+    units: [
+      { id: 'gy', name: 'Gray', symbol: 'Gy', factor: 1 },
+      { id: 'rad', name: 'Rad', symbol: 'rad', factor: 0.01 }
+    ]
+  },
+  {
+    id: 'equivalent_dose',
+    name: 'Equivalent Radiation Dose',
+    baseUnit: 'sievert',
+    units: [
+      { id: 'sv', name: 'Sievert', symbol: 'Sv', factor: 1 },
+      { id: 'rem', name: 'Rem', symbol: 'rem', factor: 0.01 }
+    ]
+  },
+  {
+    id: 'catalytic',
+    name: 'Catalytic Activity',
+    baseUnit: 'katal',
+    units: [
+      { id: 'kat', name: 'Katal', symbol: 'kat', factor: 1 },
+      { id: 'u', name: 'Enzyme Unit', symbol: 'U', factor: 1.667e-8 }
+    ]
+  },
+
+  // --- ANGLES ---
+  {
+    id: 'angle',
+    name: 'Plane Angle',
+    baseUnit: 'radian',
+    units: [
+      { id: 'rad', name: 'Radian', symbol: 'rad', factor: 1 },
+      { id: 'deg', name: 'Degree', symbol: '°', factor: 0.0174533 },
+      { id: 'grad', name: 'Gradian', symbol: 'grad', factor: 0.015708 },
+      { id: 'arcmin', name: 'Arcminute', symbol: '′', factor: 0.000290888 },
+      { id: 'arcsec', name: 'Arcsecond', symbol: '″', factor: 4.848e-6 }
+    ]
+  },
+  {
+    id: 'solid_angle',
+    name: 'Solid Angle',
+    baseUnit: 'steradian',
+    units: [
+      { id: 'sr', name: 'Steradian', symbol: 'sr', factor: 1 },
+      { id: 'sp', name: 'Spat', symbol: 'sp', factor: 12.56637 },
+      { id: 'sqdeg', name: 'Square Degree', symbol: 'deg²', factor: 0.0003046 }
+    ]
+  },
+
+  // --- OTHER PHYSICAL PROPERTIES ---
+  {
+    id: 'density',
+    name: 'Density',
+    baseUnit: 'kg/m³',
+    units: [
+      { id: 'kgm3', name: 'kg/m³', symbol: 'kg/m³', factor: 1 },
+      { id: 'gcm3', name: 'g/cm³', symbol: 'g/cm³', factor: 1000 },
+      { id: 'lbft3', name: 'lb/ft³', symbol: 'lb/ft³', factor: 16.0185 }
+    ]
+  },
+  {
+    id: 'viscosity',
+    name: 'Viscosity (Dynamic)',
+    baseUnit: 'pascal-second',
+    units: [
+      { id: 'pas', name: 'Pascal-second', symbol: 'Pa·s', factor: 1 },
+      { id: 'poise', name: 'Poise', symbol: 'P', factor: 0.1 },
+      { id: 'cp', name: 'Centipoise', symbol: 'cP', factor: 0.001 }
+    ]
+  },
+  {
+    id: 'surface_tension',
+    name: 'Surface Tension',
+    baseUnit: 'newton/meter',
+    units: [
+      { id: 'nm', name: 'Newton/meter', symbol: 'N/m', factor: 1 },
+      { id: 'dynecm', name: 'Dyne/centimeter', symbol: 'dyn/cm', factor: 0.001 }
+    ]
+  },
   {
     id: 'torque',
     name: 'Torque',
@@ -336,6 +453,76 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: 'ftlb', name: 'Foot-pound', symbol: 'ft⋅lb', factor: 1.35582 },
       { id: 'inlb', name: 'Inch-pound', symbol: 'in⋅lb', factor: 0.112985 },
       { id: 'kgm', name: 'Kilogram-meter', symbol: 'kg⋅m', factor: 9.80665 }
+    ]
+  },
+  {
+    id: 'flow',
+    name: 'Flow Rate (Volumetric)',
+    baseUnit: 'cubic meter/second',
+    units: [
+      { id: 'm3s', name: 'm³/s', symbol: 'm³/s', factor: 1 },
+      { id: 'lmin', name: 'Liter/minute', symbol: 'L/min', factor: 1.6667e-5 },
+      { id: 'cfm', name: 'Cubic ft/minute', symbol: 'CFM', factor: 0.000471947 },
+      { id: 'gpm', name: 'Gallon/minute', symbol: 'GPM', factor: 6.309e-5 }
+    ]
+  },
+
+  // --- LIGHT & SOUND ---
+  {
+    id: 'illuminance',
+    name: 'Illuminance',
+    baseUnit: 'lux',
+    units: [
+      { id: 'lx', name: 'Lux', symbol: 'lx', factor: 1 },
+      { id: 'fc', name: 'Foot-candle', symbol: 'fc', factor: 10.7639 },
+      { id: 'ph', name: 'Phot', symbol: 'ph', factor: 10000 },
+      { id: 'nox', name: 'Nox', symbol: 'nox', factor: 0.001 }
+    ]
+  },
+  {
+    id: 'refractive_power',
+    name: 'Refractive Power (Vision)',
+    baseUnit: 'diopter',
+    units: [
+      { id: 'd', name: 'Diopter', symbol: 'D', factor: 1 }
+    ]
+  },
+  {
+    id: 'sound_pressure',
+    name: 'Sound Pressure',
+    baseUnit: 'pascal',
+    units: [
+      { id: 'pa', name: 'Pascal', symbol: 'Pa', factor: 1 },
+      { id: 'bar', name: 'Microbar', symbol: 'µbar', factor: 0.1 },
+      { id: 'dyncm2', name: 'Dyne/cm²', symbol: 'dyn/cm²', factor: 0.1 }
+    ]
+  },
+
+  // --- SPECIALIZED ---
+  {
+    id: 'digital',
+    name: 'Digital Storage',
+    baseUnit: 'byte',
+    units: [
+      { id: 'b', name: 'Bit', symbol: 'b', factor: 0.125 },
+      { id: 'B', name: 'Byte', symbol: 'B', factor: 1 },
+      { id: 'KB', name: 'Kilobyte', symbol: 'KB', factor: 1024 },
+      { id: 'MB', name: 'Megabyte', symbol: 'MB', factor: 1048576 },
+      { id: 'GB', name: 'Gigabyte', symbol: 'GB', factor: 1.074e9 },
+      { id: 'TB', name: 'Terabyte', symbol: 'TB', factor: 1.1e12 },
+      { id: 'PB', name: 'Petabyte', symbol: 'PB', factor: 1.126e15 }
+    ]
+  },
+  {
+    id: 'printing',
+    name: 'Typography',
+    baseUnit: 'point',
+    units: [
+      { id: 'pt', name: 'Point', symbol: 'pt', factor: 1 },
+      { id: 'pc', name: 'Pica', symbol: 'pc', factor: 12 },
+      { id: 'in', name: 'Inch', symbol: 'in', factor: 72 },
+      { id: 'mm', name: 'Millimeter', symbol: 'mm', factor: 2.83465 },
+      { id: 'px', name: 'Pixel (96dpi)', symbol: 'px', factor: 0.75 }
     ]
   }
 ];
@@ -351,21 +538,6 @@ export function convert(value: number, fromId: string, toId: string, categoryId:
 
   // Special handling for temperature (using offsets)
   if (categoryId === 'temperature') {
-    // Convert to base (Celsius)
-    // Formula: (val - offset_from) / factor_from_base_to_unit ? 
-    // Actually, usually defined as: Celsius = (F - 32) * 5/9
-    // My definitions: F factor = 5/9, offset = -32.
-    // Base = (Value + Offset) * Factor? No that's not quite right for generic linear.
-    
-    // Let's stick to standard formula:
-    // Base = (Value + InputOffset) * InputFactor  <-- Wait, F to C is (F - 32) * 5/9.
-    // So if InputOffset is -32 and InputFactor is 5/9...
-    // (212 - 32) * 0.555 = 100. Correct.
-    
-    // Now Base to Target:
-    // Target = (Base / OutputFactor) - OutputOffset
-    // (100 / 0.555) - (-32) = 180 + 32 = 212. Correct.
-    
     const baseValue = (value + (fromUnit.offset || 0)) * fromUnit.factor;
     return (baseValue / toUnit.factor) - (toUnit.offset || 0);
   }
