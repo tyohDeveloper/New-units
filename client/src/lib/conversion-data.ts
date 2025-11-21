@@ -304,8 +304,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "newton",
     baseSISymbol: "kg⋅m⋅s⁻²",
     units: [
-      { id: "n", name: "Newton", symbol: "N", factor: 1 },
-      { id: "kn", name: "Kilonewton", symbol: "kN", factor: 1000 },
+      { id: "n", name: "Newton", symbol: "N", factor: 1, allowPrefixes: true },
       { id: "dyn", name: "Dyne", symbol: "dyn", factor: 1e-5 },
       { id: "lbf", name: "Pound-force", symbol: "lbf", factor: 4.44822 },
       { id: "kgf", name: "Kilogram-force", symbol: "kgf", factor: 9.80665 },
@@ -318,8 +317,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "pascal",
     baseSISymbol: "kg⋅m⁻¹⋅s⁻²",
     units: [
-      { id: "pa", name: "Pascal", symbol: "Pa", factor: 1 },
-      { id: "kpa", name: "Kilopascal", symbol: "kPa", factor: 1000 },
+      { id: "pa", name: "Pascal", symbol: "Pa", factor: 1, allowPrefixes: true },
       { id: "bar", name: "Bar", symbol: "bar", factor: 100000 },
       { id: "psi", name: "PSI", symbol: "psi", factor: 6894.76 },
       { id: "atm", name: "Atmosphere", symbol: "atm", factor: 101325 },
@@ -333,8 +331,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "joule",
     baseSISymbol: "kg⋅m²⋅s⁻²",
     units: [
-      { id: "j", name: "Joule", symbol: "J", factor: 1 },
-      { id: "kj", name: "Kilojoule", symbol: "kJ", factor: 1000 },
+      { id: "j", name: "Joule", symbol: "J", factor: 1, allowPrefixes: true },
       { id: "cal", name: "Calorie", symbol: "cal", factor: 4.184 },
       { id: "kcal", name: "Kilocalorie", symbol: "kcal", factor: 4184 },
       { id: "wh", name: "Watt-hour", symbol: "Wh", factor: 3600 },
@@ -350,8 +347,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "watt",
     baseSISymbol: "kg⋅m²⋅s⁻³",
     units: [
-      { id: "w", name: "Watt", symbol: "W", factor: 1 },
-      { id: "kw", name: "Kilowatt", symbol: "kW", factor: 1000 },
+      { id: "w", name: "Watt", symbol: "W", factor: 1, allowPrefixes: true },
       { id: "hp", name: "Horsepower", symbol: "hp", factor: 745.7 },
       { id: "hp_m", name: "Metric HP", symbol: "hp", factor: 735.499 },
     ],
@@ -362,10 +358,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "hertz",
     baseSISymbol: "s⁻¹",
     units: [
-      { id: "hz", name: "Hertz", symbol: "Hz", factor: 1 },
-      { id: "khz", name: "Kilohertz", symbol: "kHz", factor: 1000 },
-      { id: "mhz", name: "Megahertz", symbol: "MHz", factor: 1e6 },
-      { id: "ghz", name: "Gigahertz", symbol: "GHz", factor: 1e9 },
+      { id: "hz", name: "Hertz", symbol: "Hz", factor: 1, allowPrefixes: true },
       { id: "rpm", name: "RPM", symbol: "rpm", factor: 0.0166667 },
     ],
   },
@@ -389,9 +382,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "volt",
     baseSISymbol: "kg⋅m²⋅s⁻³⋅A⁻¹",
     units: [
-      { id: "v", name: "Volt", symbol: "V", factor: 1 },
-      { id: "mv", name: "Millivolt", symbol: "mV", factor: 0.001 },
-      { id: "kv", name: "Kilovolt", symbol: "kV", factor: 1000 },
+      { id: "v", name: "Volt", symbol: "V", factor: 1, allowPrefixes: true },
       { id: "statv", name: "Statvolt", symbol: "statV", factor: 299.792 },
     ],
   },
@@ -401,10 +392,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "farad",
     baseSISymbol: "kg⁻¹⋅m⁻²⋅s⁴⋅A²",
     units: [
-      { id: "f", name: "Farad", symbol: "F", factor: 1 },
-      { id: "uf", name: "Microfarad", symbol: "µF", factor: 1e-6 },
-      { id: "nf", name: "Nanofarad", symbol: "nF", factor: 1e-9 },
-      { id: "pf", name: "Picofarad", symbol: "pF", factor: 1e-12 },
+      { id: "f", name: "Farad", symbol: "F", factor: 1, allowPrefixes: true },
     ],
   },
   {
@@ -452,9 +440,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "henry",
     baseSISymbol: "kg⋅m²⋅s⁻²⋅A⁻²",
     units: [
-      { id: "h", name: "Henry", symbol: "H", factor: 1 },
-      { id: "mh", name: "Millihenry", symbol: "mH", factor: 0.001 },
-      { id: "uh", name: "Microhenry", symbol: "µH", factor: 1e-6 },
+      { id: "h", name: "Henry", symbol: "H", factor: 1, allowPrefixes: true },
     ],
   },
 
