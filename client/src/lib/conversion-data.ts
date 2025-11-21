@@ -1,5 +1,5 @@
 
-export type UnitCategory = 'length' | 'mass' | 'volume' | 'area' | 'temperature' | 'time' | 'digital' | 'energy' | 'pressure' | 'power' | 'printing';
+export type UnitCategory = 'length' | 'mass' | 'volume' | 'area' | 'temperature' | 'time' | 'digital' | 'energy' | 'pressure' | 'power' | 'printing' | 'force' | 'illuminance' | 'speed' | 'torque' | 'frequency';
 
 export interface UnitDefinition {
   id: string;
@@ -275,6 +275,67 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: 'kw', name: 'Kilowatt', symbol: 'kW', factor: 1000 },
       { id: 'hp', name: 'Horsepower (Mech)', symbol: 'hp', factor: 745.7 },
       { id: 'hp_m', name: 'Horsepower (Metric)', symbol: 'hp', factor: 735.499 }
+    ]
+  },
+  {
+    id: 'force',
+    name: 'Force',
+    baseUnit: 'newton',
+    units: [
+      { id: 'n', name: 'Newton', symbol: 'N', factor: 1 },
+      { id: 'kn', name: 'Kilonewton', symbol: 'kN', factor: 1000 },
+      { id: 'dyn', name: 'Dyne', symbol: 'dyn', factor: 1e-5 },
+      { id: 'lbf', name: 'Pound-force', symbol: 'lbf', factor: 4.44822 },
+      { id: 'kgf', name: 'Kilogram-force', symbol: 'kgf', factor: 9.80665 },
+      { id: 'pdl', name: 'Poundal', symbol: 'pdl', factor: 0.138255 },
+      { id: 'kip', name: 'Kip', symbol: 'kip', factor: 4448.22 }
+    ]
+  },
+  {
+    id: 'illuminance',
+    name: 'Illuminance',
+    baseUnit: 'lux',
+    units: [
+      { id: 'lx', name: 'Lux', symbol: 'lx', factor: 1 },
+      { id: 'fc', name: 'Foot-candle', symbol: 'fc', factor: 10.7639 },
+      { id: 'ph', name: 'Phot', symbol: 'ph', factor: 10000 },
+      { id: 'nox', name: 'Nox', symbol: 'nox', factor: 0.001 }
+    ]
+  },
+  {
+    id: 'speed',
+    name: 'Speed & Velocity',
+    baseUnit: 'meter per second',
+    units: [
+      { id: 'mps', name: 'Meter/second', symbol: 'm/s', factor: 1 },
+      { id: 'kmh', name: 'Kilometer/hour', symbol: 'km/h', factor: 0.277778 },
+      { id: 'mph', name: 'Mile/hour', symbol: 'mph', factor: 0.44704 },
+      { id: 'kt', name: 'Knot', symbol: 'kn', factor: 0.514444 },
+      { id: 'mach', name: 'Mach (Standard)', symbol: 'Ma', factor: 343, description: 'Speed of sound at sea level' },
+      { id: 'c', name: 'Speed of Light', symbol: 'c', factor: 299792458 }
+    ]
+  },
+  {
+    id: 'frequency',
+    name: 'Frequency',
+    baseUnit: 'hertz',
+    units: [
+      { id: 'hz', name: 'Hertz', symbol: 'Hz', factor: 1 },
+      { id: 'khz', name: 'Kilohertz', symbol: 'kHz', factor: 1000 },
+      { id: 'mhz', name: 'Megahertz', symbol: 'MHz', factor: 1e6 },
+      { id: 'ghz', name: 'Gigahertz', symbol: 'GHz', factor: 1e9 },
+      { id: 'rpm', name: 'RPM', symbol: 'rpm', factor: 0.0166667 }
+    ]
+  },
+  {
+    id: 'torque',
+    name: 'Torque',
+    baseUnit: 'newton meter',
+    units: [
+      { id: 'nm', name: 'Newton-meter', symbol: 'N⋅m', factor: 1 },
+      { id: 'ftlb', name: 'Foot-pound', symbol: 'ft⋅lb', factor: 1.35582 },
+      { id: 'inlb', name: 'Inch-pound', symbol: 'in⋅lb', factor: 0.112985 },
+      { id: 'kgm', name: 'Kilogram-meter', symbol: 'kg⋅m', factor: 9.80665 }
     ]
   }
 ];
