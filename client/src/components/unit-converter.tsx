@@ -499,10 +499,10 @@ export default function UnitConverter() {
         {/* Mini Calculator */}
         <Card className="p-6 bg-card border-border/50">
           <Label className="text-xs font-mono uppercase text-muted-foreground mb-4 block">Calculator</Label>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {/* Field 1 */}
-            <div className="flex gap-2 items-center">
-              <div className="flex-1 h-12 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
+            <div className="grid sm:grid-cols-[1fr_220px] gap-2">
+              <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[0] ? Number(calcValues[0].value.toFixed(precision)).toString() : ''}
                 </span>
@@ -510,7 +510,7 @@ export default function UnitConverter() {
                   {calcValues[0] ? categoryData.baseSISymbol : ''}
                 </span>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-1 justify-start">
                 <Button 
                   variant="ghost" 
                   size="sm"
@@ -531,8 +531,8 @@ export default function UnitConverter() {
             </div>
 
             {/* Field 2 */}
-            <div className="flex gap-2 items-center">
-              <div className="flex-1 h-12 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
+            <div className="grid sm:grid-cols-[1fr_220px] gap-2">
+              <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[1] ? Number(calcValues[1].value.toFixed(precision)).toString() : ''}
                 </span>
@@ -540,7 +540,7 @@ export default function UnitConverter() {
                   {calcValues[1] ? categoryData.baseSISymbol : ''}
                 </span>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-1 justify-start">
                 <Button 
                   variant="ghost" 
                   size="sm"
@@ -561,8 +561,8 @@ export default function UnitConverter() {
             </div>
 
             {/* Field 3 */}
-            <div className="flex gap-2 items-center">
-              <div className="flex-1 h-12 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
+            <div className="grid sm:grid-cols-[1fr_220px] gap-2">
+              <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[2] ? Number(calcValues[2].value.toFixed(precision)).toString() : ''}
                 </span>
@@ -573,8 +573,8 @@ export default function UnitConverter() {
             </div>
 
             {/* Result Field 4 */}
-            <div className="flex gap-2 items-center">
-              <div className="flex-1 h-12 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between min-w-0">
+            <div className="grid sm:grid-cols-[1fr_220px] gap-2">
+              <div className="h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-primary font-bold truncate">
                   {calcValues[3] ? Number(calcValues[3].value.toFixed(precision)).toString() : ''}
                 </span>
@@ -582,23 +582,25 @@ export default function UnitConverter() {
                   {calcValues[3]?.unit || ''}
                 </span>
               </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={copyCalcResult}
-                disabled={!calcValues[3]}
-                className="text-xs hover:text-accent gap-1"
-              >
-                <Copy className="w-3 h-3" /> Copy
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={clearCalculator}
-                className="text-xs hover:text-destructive gap-1"
-              >
-                Clear
-              </Button>
+              <div className="flex gap-1 justify-start">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={copyCalcResult}
+                  disabled={!calcValues[3]}
+                  className="text-xs hover:text-accent gap-1"
+                >
+                  <Copy className="w-3 h-3" /> Copy
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={clearCalculator}
+                  className="text-xs hover:text-destructive gap-1"
+                >
+                  Clear
+                </Button>
+              </div>
             </div>
           </div>
         </Card>
