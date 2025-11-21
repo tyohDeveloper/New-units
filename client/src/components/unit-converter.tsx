@@ -354,6 +354,8 @@ export default function UnitConverter() {
 
   const clearCalculator = () => {
     setCalcValues([null, null, null, null]);
+    setCalcOp1('*');
+    setCalcOp2('*');
   };
 
   const copyCalcResult = () => {
@@ -645,7 +647,7 @@ export default function UnitConverter() {
                   variant="ghost" 
                   size="sm"
                   onClick={() => setCalcOp1('*')}
-                  className={`text-sm ${calcOp1 === '*' && calcValues[3] ? 'font-bold' : ''}`}
+                  className={`text-sm ${calcOp1 === '*' ? 'font-bold' : ''}`}
                 >
                   ×
                 </Button>
@@ -653,7 +655,7 @@ export default function UnitConverter() {
                   variant="ghost" 
                   size="sm"
                   onClick={() => setCalcOp1('/')}
-                  className={`text-sm ${calcOp1 === '/' && calcValues[3] ? 'font-bold' : ''}`}
+                  className={`text-sm ${calcOp1 === '/' ? 'font-bold' : ''}`}
                 >
                   /
                 </Button>
@@ -675,7 +677,7 @@ export default function UnitConverter() {
                   variant="ghost" 
                   size="sm"
                   onClick={() => setCalcOp2('*')}
-                  className={`text-sm ${calcOp2 === '*' && calcValues[3] ? 'font-bold' : ''}`}
+                  className={`text-sm ${calcOp2 === '*' ? 'font-bold' : ''}`}
                 >
                   ×
                 </Button>
@@ -683,7 +685,7 @@ export default function UnitConverter() {
                   variant="ghost" 
                   size="sm"
                   onClick={() => setCalcOp2('/')}
-                  className={`text-sm ${calcOp2 === '/' && calcValues[3] ? 'font-bold' : ''}`}
+                  className={`text-sm ${calcOp2 === '/' ? 'font-bold' : ''}`}
                 >
                   /
                 </Button>
