@@ -216,7 +216,7 @@ export default function UnitConverter() {
       </nav>
 
       {/* Main Converter */}
-      <div className="space-y-4">
+      <div className="space-y-4 -mt-[3pc]">
         <div className="mb-2">
           <h1 className="text-3xl font-bold text-foreground tracking-tight">{categoryData.name}</h1>
           <p className="text-muted-foreground mt-1 text-sm font-mono">
