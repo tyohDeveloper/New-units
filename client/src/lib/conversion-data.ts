@@ -48,7 +48,6 @@ export interface Prefix {
 }
 
 export const PREFIXES: Prefix[] = [
-  { id: 'none', name: 'None', symbol: '', factor: 1 },
   { id: 'yotta', name: 'Yotta', symbol: 'Y', factor: 1e24 },
   { id: 'zetta', name: 'Zetta', symbol: 'Z', factor: 1e21 },
   { id: 'exa', name: 'Exa', symbol: 'E', factor: 1e18 },
@@ -59,6 +58,7 @@ export const PREFIXES: Prefix[] = [
   { id: 'kilo', name: 'Kilo', symbol: 'k', factor: 1e3 },
   { id: 'hecto', name: 'Hecto', symbol: 'h', factor: 1e2 },
   { id: 'deca', name: 'Deca', symbol: 'da', factor: 1e1 },
+  { id: 'none', name: '', symbol: '', factor: 1 },
   { id: 'deci', name: 'Deci', symbol: 'd', factor: 1e-1 },
   { id: 'centi', name: 'Centi', symbol: 'c', factor: 1e-2 },
   { id: 'milli', name: 'Milli', symbol: 'm', factor: 1e-3 },

@@ -60,8 +60,8 @@ export default function UnitConverter() {
 
   const fromUnitData = categoryData.units.find(u => u.id === fromUnit);
   const toUnitData = categoryData.units.find(u => u.id === toUnit);
-  const fromPrefixData = PREFIXES.find(p => p.id === fromPrefix) || PREFIXES[0];
-  const toPrefixData = PREFIXES.find(p => p.id === toPrefix) || PREFIXES[0];
+  const fromPrefixData = PREFIXES.find(p => p.id === fromPrefix) || PREFIXES.find(p => p.id === 'none') || PREFIXES[0];
+  const toPrefixData = PREFIXES.find(p => p.id === toPrefix) || PREFIXES.find(p => p.id === 'none') || PREFIXES[0];
 
   // Calculate result
   useEffect(() => {
@@ -175,9 +175,9 @@ export default function UnitConverter() {
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px]">
                       {PREFIXES.map((p) => (
-                        <SelectItem key={p.id} value={p.id} className="font-mono text-xs">
+                        <SelectItem key={p.id} value={p.id} className="font-mono text-xs min-h-[2rem]">
                           <span className="font-bold mr-2 w-4 inline-block text-right">{p.symbol}</span>
-                          <span className="opacity-70">{p.name || 'None'}</span>
+                          <span className="opacity-70">{p.name}</span>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -251,9 +251,9 @@ export default function UnitConverter() {
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px]">
                       {PREFIXES.map((p) => (
-                        <SelectItem key={p.id} value={p.id} className="font-mono text-xs">
+                        <SelectItem key={p.id} value={p.id} className="font-mono text-xs min-h-[2rem]">
                           <span className="font-bold mr-2 w-4 inline-block text-right">{p.symbol}</span>
-                          <span className="opacity-70">{p.name || 'None'}</span>
+                          <span className="opacity-70">{p.name}</span>
                         </SelectItem>
                       ))}
                     </SelectContent>
