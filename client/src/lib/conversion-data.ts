@@ -52,7 +52,28 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: 'parsec', name: 'Parsec', symbol: 'pc', factor: 3.0857e16 },
       { id: 'au', name: 'Astronomical Unit', symbol: 'AU', factor: 1.496e11 },
       { id: 'lightyear', name: 'Light Year', symbol: 'ly', factor: 9.461e15 },
-      { id: 'smoot', name: 'Smoot', symbol: 'sm', factor: 1.7018, description: 'MIT bridge measurement' }
+      { id: 'smoot', name: 'Smoot', symbol: 'sm', factor: 1.7018, description: 'MIT bridge measurement' },
+
+      // French (Ancien Régime)
+      { id: 'point_fr', name: 'Point (French)', symbol: 'pt', factor: 0.000188 },
+      { id: 'ligne', name: 'Ligne (French Line)', symbol: 'l', factor: 0.002256 },
+      { id: 'pouce', name: 'Pouce (French Inch)', symbol: 'pouce', factor: 0.02707 },
+      { id: 'pied_roi', name: 'Pied de Roi (French Foot)', symbol: 'pied', factor: 0.3248 },
+      { id: 'toise', name: 'Toise', symbol: 'T', factor: 1.949, description: 'Standard pre-metric French length' },
+      { id: 'lieue', name: 'Lieue (French League)', symbol: 'lieue', factor: 3898 },
+
+      // Russian (Imperial)
+      { id: 'vershok', name: 'Vershok', symbol: 'ver', factor: 0.04445 },
+      { id: 'arshin', name: 'Arshin', symbol: 'arsh', factor: 0.7112 },
+      { id: 'sazhen', name: 'Sazhen', symbol: 'saz', factor: 2.1336 },
+      { id: 'verst', name: 'Verst', symbol: 'verst', factor: 1066.8 },
+
+      // Other European
+      { id: 'vara', name: 'Vara (Spanish)', symbol: 'vara', factor: 0.8359 },
+      { id: 'elle_prussian', name: 'Elle (Prussian)', symbol: 'elle', factor: 0.6669 },
+      { id: 'rute', name: 'Rute (Prussian)', symbol: 'rute', factor: 3.7662 },
+      { id: 'shaku', name: 'Shaku (Japan)', symbol: 'shaku', factor: 0.30303 },
+      { id: 'sun', name: 'Sun (Japan)', symbol: 'sun', factor: 0.030303 }
     ]
   },
   {
@@ -80,10 +101,20 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: 'lb_t', name: 'Troy Pound', symbol: 'lb t', factor: 0.373242 },
       { id: 'carat', name: 'Carat', symbol: 'ct', factor: 0.0002, description: 'For gems' },
       
-      // Archaic
+      // Apothecary
+      { id: 'scruple', name: 'Scruple (Ap)', symbol: 's.ap', factor: 0.00129598, description: '20 grains' },
+      { id: 'drachm', name: 'Drachm (Ap)', symbol: 'dr.ap', factor: 0.00388793, description: '3 scruples' },
+      { id: 'oz_ap', name: 'Ounce (Ap)', symbol: 'oz.ap', factor: 0.0311035, description: 'Same as Troy oz' },
+      { id: 'lb_ap', name: 'Pound (Ap)', symbol: 'lb.ap', factor: 0.373242, description: 'Same as Troy lb' },
+
+      // Archaic / Historical
       { id: 'slug', name: 'Slug', symbol: 'slug', factor: 14.5939 },
       { id: 'talent_biblical', name: 'Talent (Biblical)', symbol: 'talent', factor: 34.2, description: 'Heavy biblical weight' },
-      { id: 'shekel', name: 'Shekel', symbol: 'shekel', factor: 0.0114 }
+      { id: 'shekel', name: 'Shekel', symbol: 'shekel', factor: 0.0114 },
+      { id: 'mark', name: 'Mark (Cologne)', symbol: 'mk', factor: 0.233856 },
+      { id: 'pood', name: 'Pood (Russia)', symbol: 'pd', factor: 16.38 },
+      { id: 'kan', name: 'Kan (Japan)', symbol: 'kan', factor: 3.75 },
+      { id: 'kin', name: 'Kin (Japan)', symbol: 'kin', factor: 0.6 }
     ]
   },
   {
