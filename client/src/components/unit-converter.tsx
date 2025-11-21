@@ -18,6 +18,21 @@ export default function UnitConverter() {
   const [result, setResult] = useState<number | null>(null);
   const { toast } = useToast();
 
+  const CATEGORY_GROUPS = [
+    {
+      name: "Fundamentals",
+      categories: ['length', 'mass', 'time', 'temperature', 'area', 'volume']
+    },
+    {
+      name: "Physics & Engineering",
+      categories: ['force', 'pressure', 'energy', 'power', 'speed', 'torque', 'frequency']
+    },
+    {
+      name: "Specialized",
+      categories: ['digital', 'illuminance', 'printing']
+    }
+  ];
+
   const categoryData = CONVERSION_DATA.find(c => c.id === activeCategory)!;
 
   // Reset units when category changes
@@ -62,26 +77,37 @@ export default function UnitConverter() {
   const toUnitData = categoryData.units.find(u => u.id === toUnit);
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4 md:p-8 grid md:grid-cols-[250px_1fr] gap-8">
+    <div className="w-full max-w-4xl mx-auto p-4 md:p-8 grid md:grid-cols-[280px_1fr] gap-8">
       
       {/* Sidebar */}
-      <nav className="space-y-2">
-        <h2 className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-4 px-2">Measurement Type</h2>
-        <div className="space-y-1">
-          {CONVERSION_DATA.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`w-full text-left px-4 py-3 rounded-sm text-sm font-medium transition-all duration-200 border-l-2 ${
-                activeCategory === cat.id 
-                  ? 'bg-accent/10 border-accent text-accent-foreground' 
-                  : 'hover:bg-muted/50 border-transparent text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
+      <nav className="space-y-6 h-fit sticky top-24 overflow-y-auto max-h-[calc(100vh-8rem)] pr-2">
+        {CATEGORY_GROUPS.map((group) => (
+          <div key={group.name} className="space-y-2">
+            <h2 className="text-xs font-mono uppercase tracking-wider text-muted-foreground px-2 font-bold">{group.name}</h2>
+            <div className="space-y-0.5">
+              {group.categories.map((catId) => {
+                const cat = CONVERSION_DATA.find(c => c.id === catId);
+                if (!cat) return null;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id as UnitCategory)}
+                    className={`w-full text-left px-4 py-2 rounded-sm text-sm font-medium transition-all duration-200 border-l-2 flex items-center justify-between group ${
+                      activeCategory === cat.id 
+                        ? 'bg-accent/10 border-accent text-accent-foreground' 
+                        : 'hover:bg-muted/50 border-transparent text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {cat.name}
+                    {activeCategory === cat.id && (
+                      <motion.div layoutId="active-indicator" className="w-1.5 h-1.5 rounded-full bg-accent" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* Main Converter */}
