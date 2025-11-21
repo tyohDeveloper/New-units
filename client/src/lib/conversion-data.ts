@@ -53,6 +53,7 @@ export interface CategoryDefinition {
   id: UnitCategory;
   name: string;
   baseUnit: string;
+  baseSISymbol?: string;
   units: UnitDefinition[];
 }
 
@@ -62,6 +63,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "length",
     name: "Length",
     baseUnit: "meter",
+    baseSISymbol: "m",
     units: [
       { id: "nm", name: "Nanometer", symbol: "nm", factor: 1e-9 },
       { id: "um", name: "Micrometer", symbol: "µm", factor: 1e-6 },
@@ -89,6 +91,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "mass",
     name: "Mass",
     baseUnit: "kilogram",
+    baseSISymbol: "kg",
     units: [
       { id: "mg", name: "Milligram", symbol: "mg", factor: 1e-6 },
       { id: "g", name: "Gram", symbol: "g", factor: 0.001 },
@@ -110,6 +113,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "time",
     name: "Time",
     baseUnit: "second",
+    baseSISymbol: "s",
     units: [
       { id: "ns", name: "Nanosecond", symbol: "ns", factor: 1e-9 },
       { id: "us", name: "Microsecond", symbol: "µs", factor: 1e-6 },
@@ -128,6 +132,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "current",
     name: "Electric Current",
     baseUnit: "ampere",
+    baseSISymbol: "A",
     units: [
       { id: "a", name: "Ampere", symbol: "A", factor: 1 },
       { id: "ma", name: "Milliampere", symbol: "mA", factor: 0.001 },
@@ -140,6 +145,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "temperature",
     name: "Temperature",
     baseUnit: "celsius",
+    baseSISymbol: "K",
     units: [
       { id: "c", name: "Celsius", symbol: "°C", factor: 1, offset: 0 },
       {
@@ -163,6 +169,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "amount",
     name: "Amount of Substance",
     baseUnit: "mole",
+    baseSISymbol: "mol",
     units: [
       { id: "mol", name: "Mole", symbol: "mol", factor: 1 },
       { id: "mmol", name: "Millimole", symbol: "mmol", factor: 0.001 },
@@ -174,6 +181,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "intensity",
     name: "Luminous Intensity",
     baseUnit: "candela",
+    baseSISymbol: "cd",
     units: [
       { id: "cd", name: "Candela", symbol: "cd", factor: 1 },
       { id: "cp", name: "Candlepower", symbol: "cp", factor: 0.981 },
@@ -186,6 +194,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "area",
     name: "Area",
     baseUnit: "square meter",
+    baseSISymbol: "m²",
     units: [
       { id: "m2", name: "Square Meter", symbol: "m²", factor: 1 },
       { id: "ha", name: "Hectare", symbol: "ha", factor: 10000 },
@@ -205,6 +214,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "volume",
     name: "Volume",
     baseUnit: "liter",
+    baseSISymbol: "m³",
     units: [
       { id: "ml", name: "Milliliter", symbol: "ml", factor: 0.001 },
       { id: "l", name: "Liter", symbol: "L", factor: 1 },
@@ -236,6 +246,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "speed",
     name: "Speed",
     baseUnit: "meter/second",
+    baseSISymbol: "m⋅s⁻¹",
     units: [
       { id: "mps", name: "Meter/Second", symbol: "m/s", factor: 1 },
       { id: "kmh", name: "Kilometer/Hour", symbol: "km/h", factor: 0.277778 },
@@ -249,6 +260,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "acceleration",
     name: "Acceleration",
     baseUnit: "meter/sq second",
+    baseSISymbol: "m⋅s⁻²",
     units: [
       { id: "mps2", name: "Meter/sq sec", symbol: "m/s²", factor: 1 },
       { id: "g", name: "g-force", symbol: "g", factor: 9.80665 },
@@ -260,6 +272,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "force",
     name: "Force",
     baseUnit: "newton",
+    baseSISymbol: "kg⋅m⋅s⁻²",
     units: [
       { id: "n", name: "Newton", symbol: "N", factor: 1 },
       { id: "kn", name: "Kilonewton", symbol: "kN", factor: 1000 },
@@ -273,6 +286,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "pressure",
     name: "Pressure",
     baseUnit: "pascal",
+    baseSISymbol: "kg⋅m⁻¹⋅s⁻²",
     units: [
       { id: "pa", name: "Pascal", symbol: "Pa", factor: 1 },
       { id: "kpa", name: "Kilopascal", symbol: "kPa", factor: 1000 },
@@ -287,6 +301,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "energy",
     name: "Energy",
     baseUnit: "joule",
+    baseSISymbol: "kg⋅m²⋅s⁻²",
     units: [
       { id: "j", name: "Joule", symbol: "J", factor: 1 },
       { id: "kj", name: "Kilojoule", symbol: "kJ", factor: 1000 },
@@ -303,6 +318,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "power",
     name: "Power",
     baseUnit: "watt",
+    baseSISymbol: "kg⋅m²⋅s⁻³",
     units: [
       { id: "w", name: "Watt", symbol: "W", factor: 1 },
       { id: "kw", name: "Kilowatt", symbol: "kW", factor: 1000 },
@@ -314,6 +330,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "frequency",
     name: "Frequency",
     baseUnit: "hertz",
+    baseSISymbol: "s⁻¹",
     units: [
       { id: "hz", name: "Hertz", symbol: "Hz", factor: 1 },
       { id: "khz", name: "Kilohertz", symbol: "kHz", factor: 1000 },
@@ -328,6 +345,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "charge",
     name: "Electric Charge",
     baseUnit: "coulomb",
+    baseSISymbol: "A⋅s",
     units: [
       { id: "c", name: "Coulomb", symbol: "C", factor: 1 },
       { id: "mah", name: "Milliamp-hour", symbol: "mAh", factor: 3.6 },
@@ -339,6 +357,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "potential",
     name: "Electric Potential",
     baseUnit: "volt",
+    baseSISymbol: "kg⋅m²⋅s⁻³⋅A⁻¹",
     units: [
       { id: "v", name: "Volt", symbol: "V", factor: 1 },
       { id: "mv", name: "Millivolt", symbol: "mV", factor: 0.001 },
@@ -350,6 +369,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "capacitance",
     name: "Capacitance",
     baseUnit: "farad",
+    baseSISymbol: "kg⁻¹⋅m⁻²⋅s⁴⋅A²",
     units: [
       { id: "f", name: "Farad", symbol: "F", factor: 1 },
       { id: "uf", name: "Microfarad", symbol: "µF", factor: 1e-6 },
@@ -361,6 +381,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "resistance",
     name: "Resistance",
     baseUnit: "ohm",
+    baseSISymbol: "kg⋅m²⋅s⁻³⋅A⁻²",
     units: [
       { id: "ohm", name: "Ohm", symbol: "Ω", factor: 1 },
       { id: "kohm", name: "Kiloohm", symbol: "kΩ", factor: 1000 },
@@ -371,6 +392,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "conductance",
     name: "Conductance",
     baseUnit: "siemens",
+    baseSISymbol: "kg⁻¹⋅m⁻²⋅s³⋅A²",
     units: [
       { id: "s", name: "Siemens", symbol: "S", factor: 1 },
       { id: "mho", name: "Mho", symbol: "℧", factor: 1 },
@@ -380,6 +402,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "magnetic_flux",
     name: "Magnetic Flux",
     baseUnit: "weber",
+    baseSISymbol: "kg⋅m²⋅s⁻²⋅A⁻¹",
     units: [
       { id: "wb", name: "Weber", symbol: "Wb", factor: 1 },
       { id: "mx", name: "Maxwell", symbol: "Mx", factor: 1e-8 },
@@ -389,6 +412,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "magnetic_density",
     name: "Magnetic Flux Density",
     baseUnit: "tesla",
+    baseSISymbol: "kg⋅s⁻²⋅A⁻¹",
     units: [
       { id: "t", name: "Tesla", symbol: "T", factor: 1 },
       { id: "g", name: "Gauss", symbol: "G", factor: 1e-4 },
@@ -398,6 +422,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "inductance",
     name: "Inductance",
     baseUnit: "henry",
+    baseSISymbol: "kg⋅m²⋅s⁻²⋅A⁻²",
     units: [
       { id: "h", name: "Henry", symbol: "H", factor: 1 },
       { id: "mh", name: "Millihenry", symbol: "mH", factor: 0.001 },
@@ -410,6 +435,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "radioactivity",
     name: "Radioactivity",
     baseUnit: "becquerel",
+    baseSISymbol: "s⁻¹",
     units: [
       { id: "bq", name: "Becquerel", symbol: "Bq", factor: 1 },
       { id: "ci", name: "Curie", symbol: "Ci", factor: 3.7e10 },
@@ -420,6 +446,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "radiation_dose",
     name: "Absorbed Radiation Dose",
     baseUnit: "gray",
+    baseSISymbol: "m²⋅s⁻²",
     units: [
       { id: "gy", name: "Gray", symbol: "Gy", factor: 1 },
       { id: "rad", name: "Rad", symbol: "rad", factor: 0.01 },
@@ -429,6 +456,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "equivalent_dose",
     name: "Equivalent Radiation Dose",
     baseUnit: "sievert",
+    baseSISymbol: "m²⋅s⁻²",
     units: [
       { id: "sv", name: "Sievert", symbol: "Sv", factor: 1 },
       { id: "rem", name: "Rem", symbol: "rem", factor: 0.01 },
@@ -438,6 +466,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "catalytic",
     name: "Catalytic Activity",
     baseUnit: "katal",
+    baseSISymbol: "mol⋅s⁻¹",
     units: [
       { id: "kat", name: "Katal", symbol: "kat", factor: 1 },
       { id: "u", name: "Enzyme Unit", symbol: "U", factor: 1.667e-8 },
@@ -449,6 +478,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "angle",
     name: "Plane Angle",
     baseUnit: "radian",
+    baseSISymbol: "m⋅m⁻¹",
     units: [
       { id: "rad", name: "Radian", symbol: "rad", factor: 1 },
       { id: "deg", name: "Degree", symbol: "°", factor: 0.0174533 },
@@ -461,6 +491,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "solid_angle",
     name: "Solid Angle",
     baseUnit: "steradian",
+    baseSISymbol: "m²⋅m⁻²",
     units: [
       { id: "sr", name: "Steradian", symbol: "sr", factor: 1 },
       { id: "sp", name: "Spat", symbol: "sp", factor: 12.56637 },
@@ -473,6 +504,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "density",
     name: "Density",
     baseUnit: "kg/m³",
+    baseSISymbol: "kg⋅m⁻³",
     units: [
       { id: "kgm3", name: "kg/m³", symbol: "kg/m³", factor: 1 },
       { id: "gcm3", name: "g/cm³", symbol: "g/cm³", factor: 1000 },
@@ -483,6 +515,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "viscosity",
     name: "Viscosity (Dynamic)",
     baseUnit: "pascal-second",
+    baseSISymbol: "kg⋅m⁻¹⋅s⁻¹",
     units: [
       { id: "pas", name: "Pascal-second", symbol: "Pa·s", factor: 1 },
       { id: "poise", name: "Poise", symbol: "P", factor: 0.1 },
@@ -493,6 +526,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "surface_tension",
     name: "Surface Tension",
     baseUnit: "newton/meter",
+    baseSISymbol: "kg⋅s⁻²",
     units: [
       { id: "nm", name: "Newton/meter", symbol: "N/m", factor: 1 },
       {
@@ -507,6 +541,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "torque",
     name: "Torque",
     baseUnit: "newton meter",
+    baseSISymbol: "kg⋅m²⋅s⁻²",
     units: [
       { id: "nm", name: "Newton-meter", symbol: "N⋅m", factor: 1 },
       { id: "ftlb", name: "Foot-pound", symbol: "ft⋅lb", factor: 1.35582 },
@@ -518,6 +553,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "flow",
     name: "Flow Rate (Volumetric)",
     baseUnit: "cubic meter/second",
+    baseSISymbol: "m³⋅s⁻¹",
     units: [
       { id: "m3s", name: "m³/s", symbol: "m³/s", factor: 1 },
       { id: "lmin", name: "Liter/minute", symbol: "L/min", factor: 1.6667e-5 },
@@ -536,6 +572,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "illuminance",
     name: "Illuminance",
     baseUnit: "lux",
+    baseSISymbol: "cd⋅sr⋅m⁻²",
     units: [
       { id: "lx", name: "Lux", symbol: "lx", factor: 1 },
       { id: "fc", name: "Foot-candle", symbol: "fc", factor: 10.7639 },
@@ -553,6 +590,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "sound_pressure",
     name: "Sound Pressure",
     baseUnit: "pascal",
+    baseSISymbol: "kg⋅m⁻¹⋅s⁻²",
     units: [
       { id: "pa", name: "Pascal", symbol: "Pa", factor: 1 },
       { id: "bar", name: "Microbar", symbol: "µbar", factor: 0.1 },
