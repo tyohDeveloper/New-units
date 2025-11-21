@@ -169,7 +169,7 @@ export default function UnitConverter() {
   };
 
   const formatFactor = (f: number) => {
-    if (f === 1) return "";
+    if (f === 1) return "1";
     if (f >= 10000 || f <= 0.0001) return `×${f.toExponential(2)}`;
     return `×${Number(f.toPrecision(4))}`;
   };
