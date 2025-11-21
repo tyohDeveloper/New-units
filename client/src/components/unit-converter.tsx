@@ -69,7 +69,7 @@ export default function UnitConverter() {
     const m = Math.floor(mFloat);
     const s = (mFloat - m) * 60;
     const sign = decimal < 0 ? "-" : "";
-    return `${sign}${d}:${m.toString().padStart(2, '0')}:${s.toFixed(4).padStart(7, '0')}`;
+    return `${sign}${d}:${m.toString().padStart(2, '0')}:${s.toFixed(8).padStart(11, '0')}`;
   };
 
   const parseDMS = (dms: string): number => {
@@ -87,7 +87,7 @@ export default function UnitConverter() {
     const absVal = Math.abs(decimalFeet);
     const ft = Math.floor(absVal);
     const inches = (absVal - ft) * 12;
-    return `${sign}${ft}:${inches.toFixed(4).padStart(7, '0')}`;
+    return `${sign}${ft}:${inches.toFixed(8).padStart(11, '0')}`;
   };
 
   const parseFtIn = (ftIn: string): number => {
