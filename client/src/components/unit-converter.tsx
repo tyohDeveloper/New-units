@@ -158,7 +158,7 @@ export default function UnitConverter() {
   };
 
   const copyResult = () => {
-    if (result !== null) {
+    if (result !== null && toUnitData) {
       let formattedResult = result.toString();
       if (toUnit === 'deg_dms') formattedResult = formatDMS(result);
       if (toUnit === 'ft_in') formattedResult = formatFtIn(result);
@@ -167,12 +167,15 @@ export default function UnitConverter() {
       const unitSymbol = toUnitData?.symbol || '';
       const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
       
-      // Add to calculator (first three fields only)
+      // Add to calculator (first three fields only) - convert to SI base units
       const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
       if (firstEmptyIndex !== -1) {
+        // Convert result to SI base units
+        const baseUnitValue = result * toUnitData.factor * toPrefixData.factor;
+        
         const newCalcValues = [...calcValues];
         newCalcValues[firstEmptyIndex] = {
-          value: result,
+          value: baseUnitValue,
           unit: `${prefixSymbol}${unitSymbol}`
         };
         setCalcValues(newCalcValues);
@@ -496,92 +499,107 @@ export default function UnitConverter() {
         {/* Mini Calculator */}
         <Card className="p-6 bg-card border-border/50">
           <Label className="text-xs font-mono uppercase text-muted-foreground mb-4 block">Calculator</Label>
-          <div className="grid sm:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr_auto_auto] gap-2 items-center">
+          <div className="space-y-3">
             {/* Field 1 */}
-            <div className="h-12 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
-              <span className="text-sm font-mono text-foreground truncate">
-                {calcValues[0] ? Number(calcValues[0].value.toFixed(precision)).toString() : ''}
-              </span>
-              <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                {calcValues[0]?.unit || ''}
-              </span>
+            <div className="flex gap-2 items-center">
+              <div className="flex-1 h-12 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
+                <span className="text-sm font-mono text-foreground truncate">
+                  {calcValues[0] ? Number(calcValues[0].value.toFixed(precision)).toString() : ''}
+                </span>
+                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
+                  {calcValues[0] ? categoryData.baseSISymbol : ''}
+                </span>
+              </div>
+              <div className="flex gap-1">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setCalcOp1('*')}
+                  className={`text-sm ${calcOp1 === '*' && calcValues[3] ? 'font-bold' : ''}`}
+                >
+                  ×
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setCalcOp1('/')}
+                  className={`text-sm ${calcOp1 === '/' && calcValues[3] ? 'font-bold' : ''}`}
+                >
+                  /
+                </Button>
+              </div>
             </div>
-
-            {/* Operation 1 */}
-            <Select value={calcOp1} onValueChange={(val) => setCalcOp1(val as '*' | '/')}>
-              <SelectTrigger className="h-12 w-[60px] bg-background/30 border-border">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="*">×</SelectItem>
-                <SelectItem value="/">/</SelectItem>
-              </SelectContent>
-            </Select>
 
             {/* Field 2 */}
-            <div className="h-12 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
-              <span className="text-sm font-mono text-foreground truncate">
-                {calcValues[1] ? Number(calcValues[1].value.toFixed(precision)).toString() : ''}
-              </span>
-              <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                {calcValues[1]?.unit || ''}
-              </span>
+            <div className="flex gap-2 items-center">
+              <div className="flex-1 h-12 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
+                <span className="text-sm font-mono text-foreground truncate">
+                  {calcValues[1] ? Number(calcValues[1].value.toFixed(precision)).toString() : ''}
+                </span>
+                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
+                  {calcValues[1] ? categoryData.baseSISymbol : ''}
+                </span>
+              </div>
+              <div className="flex gap-1">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setCalcOp2('*')}
+                  className={`text-sm ${calcOp2 === '*' && calcValues[3] ? 'font-bold' : ''}`}
+                >
+                  ×
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setCalcOp2('/')}
+                  className={`text-sm ${calcOp2 === '/' && calcValues[3] ? 'font-bold' : ''}`}
+                >
+                  /
+                </Button>
+              </div>
             </div>
-
-            {/* Operation 2 */}
-            <Select value={calcOp2} onValueChange={(val) => setCalcOp2(val as '*' | '/')}>
-              <SelectTrigger className="h-12 w-[60px] bg-background/30 border-border">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="*">×</SelectItem>
-                <SelectItem value="/">/</SelectItem>
-              </SelectContent>
-            </Select>
 
             {/* Field 3 */}
-            <div className="h-12 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
-              <span className="text-sm font-mono text-foreground truncate">
-                {calcValues[2] ? Number(calcValues[2].value.toFixed(precision)).toString() : ''}
-              </span>
-              <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                {calcValues[2]?.unit || ''}
-              </span>
+            <div className="flex gap-2 items-center">
+              <div className="flex-1 h-12 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
+                <span className="text-sm font-mono text-foreground truncate">
+                  {calcValues[2] ? Number(calcValues[2].value.toFixed(precision)).toString() : ''}
+                </span>
+                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
+                  {calcValues[2] ? categoryData.baseSISymbol : ''}
+                </span>
+              </div>
             </div>
-
-            {/* Equals */}
-            <span className="text-muted-foreground">=</span>
 
             {/* Result Field 4 */}
-            <div className="h-12 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between min-w-0">
-              <span className="text-sm font-mono text-primary font-bold truncate">
-                {calcValues[3] ? Number(calcValues[3].value.toFixed(precision)).toString() : ''}
-              </span>
-              <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                {calcValues[3]?.unit || ''}
-              </span>
+            <div className="flex gap-2 items-center">
+              <div className="flex-1 h-12 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between min-w-0">
+                <span className="text-sm font-mono text-primary font-bold truncate">
+                  {calcValues[3] ? Number(calcValues[3].value.toFixed(precision)).toString() : ''}
+                </span>
+                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
+                  {calcValues[3]?.unit || ''}
+                </span>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={copyCalcResult}
+                disabled={!calcValues[3]}
+                className="text-xs hover:text-accent gap-1"
+              >
+                <Copy className="w-3 h-3" /> Copy
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={clearCalculator}
+                className="text-xs hover:text-destructive gap-1"
+              >
+                Clear
+              </Button>
             </div>
-
-            {/* Copy Button */}
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={copyCalcResult}
-              disabled={!calcValues[3]}
-              className="text-xs hover:text-accent gap-1"
-            >
-              <Copy className="w-3 h-3" /> Copy
-            </Button>
-
-            {/* Clear Button */}
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={clearCalculator}
-              className="text-xs hover:text-destructive gap-1"
-            >
-              Clear
-            </Button>
           </div>
         </Card>
       </div>
