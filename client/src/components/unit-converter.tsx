@@ -69,7 +69,7 @@ export default function UnitConverter() {
     const m = Math.floor(mFloat);
     const s = (mFloat - m) * 60;
     const sign = decimal < 0 ? "-" : "";
-    return `${sign}${d}:${m.toString().padStart(2, '0')}:${s.toFixed(4).padStart(7, '0')}`; // e.g. 12:05:04.1234
+    return `${sign}${d}:${m.toString().padStart(2, '0')}:${s.toFixed(4).padStart(7, '0')}`;
   };
 
   const parseDMS = (dms: string): number => {
@@ -79,6 +79,23 @@ export default function UnitConverter() {
     if (parts.length > 0) val += parts[0];
     if (parts.length > 1) val += (parts[0] >= 0 ? parts[1] : -parts[1]) / 60;
     if (parts.length > 2) val += (parts[0] >= 0 ? parts[2] : -parts[2]) / 3600;
+    return val;
+  };
+
+  const formatFtIn = (decimalFeet: number): string => {
+    const sign = decimalFeet < 0 ? "-" : "";
+    const absVal = Math.abs(decimalFeet);
+    const ft = Math.floor(absVal);
+    const inches = (absVal - ft) * 12;
+    return `${sign}${ft}:${inches.toFixed(4).padStart(7, '0')}`;
+  };
+
+  const parseFtIn = (ftIn: string): number => {
+    if (!ftIn.includes(':')) return parseFloat(ftIn);
+    const parts = ftIn.split(':').map(p => parseFloat(p));
+    let val = 0;
+    if (parts.length > 0) val += parts[0];
+    if (parts.length > 1) val += (parts[0] >= 0 ? parts[1] : -parts[1]) / 12;
     return val;
   };
 
@@ -93,15 +110,21 @@ export default function UnitConverter() {
     if (fromPrefix === 'dms') {
       val = parseDMS(inputValue);
       if (isNaN(val)) { setResult(null); return; }
+    } else if (fromPrefix === 'ft_in') {
+      val = parseFtIn(inputValue);
+      if (isNaN(val)) { setResult(null); return; }
     } else {
       if (isNaN(parseFloat(inputValue))) { setResult(null); return; }
       val = parseFloat(inputValue);
     }
     
     // Determine prefix factors (1 if not supported or none selected)
-    // For DMS, we use factor 1 because we handled the value parsing manually
-    const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData && fromPrefix !== 'dms') ? fromPrefixData.factor : 1;
-    const toFactor = (toUnitData?.allowPrefixes && toPrefixData && toPrefix !== 'dms') ? toPrefixData.factor : 1;
+    // For DMS/FtIn, we use factor 1 because we handled the value parsing manually
+    const isSpecialFrom = fromPrefix === 'dms' || fromPrefix === 'ft_in';
+    const isSpecialTo = toPrefix === 'dms' || toPrefix === 'ft_in';
+
+    const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData && !isSpecialFrom) ? fromPrefixData.factor : 1;
+    const toFactor = (toUnitData?.allowPrefixes && toPrefixData && !isSpecialTo) ? toPrefixData.factor : 1;
 
     const res = convert(val, fromUnit, toUnit, activeCategory, fromFactor, toFactor);
     setResult(res);
@@ -132,6 +155,24 @@ export default function UnitConverter() {
     if (f === 1) return "Base Unit";
     if (f >= 10000 || f <= 0.0001) return `×${f.toExponential(2)}`;
     return `×${Number(f.toPrecision(4))}`;
+  };
+
+  // Helper to determine input placeholder
+  const getPlaceholder = () => {
+    if (fromPrefix === 'dms') return "dd:mm:ss";
+    if (fromPrefix === 'ft_in') return "ft:in";
+    return "0";
+  };
+
+  // Helper to filter prefixes based on unit compatibility
+  const getCompatiblePrefixes = (unitId: string | undefined) => {
+    return PREFIXES.filter(p => {
+      if (p.id === 'dms') return unitId === 'deg';
+      if (p.id === 'ft_in') return unitId === 'ft';
+      // Hide special prefixes for other units
+      if (unitId !== 'deg' && unitId !== 'ft') return p.id !== 'dms' && p.id !== 'ft_in';
+      return true;
+    });
   };
 
   return (
@@ -192,7 +233,7 @@ export default function UnitConverter() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   className="text-2xl font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left"
-                  placeholder={fromPrefix === 'dms' ? "dd:mm:ss" : "0"}
+                  placeholder={getPlaceholder()}
                 />
                 
                 {/* Prefix Dropdown */}
@@ -201,13 +242,13 @@ export default function UnitConverter() {
                   onValueChange={setFromPrefix}
                   disabled={!fromUnitData?.allowPrefixes}
                 >
-                  <SelectTrigger className="h-16 w-[100px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                  <SelectTrigger className="h-16 w-[130px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed">
                     <SelectValue placeholder="Prefix" />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {PREFIXES.map((p) => (
+                  <SelectContent className="max-h-[300px] w-[200px]">
+                    {getCompatiblePrefixes(fromUnit).map((p) => (
                       <SelectItem key={p.id} value={p.id} className="font-mono text-xs min-h-[2rem]">
-                        <span className="font-bold mr-2 w-4 inline-block text-right">{p.symbol}</span>
+                        <span className="font-bold mr-2 w-6 inline-block text-right">{p.symbol}</span>
                         <span className="opacity-70">{p.name}</span>
                       </SelectItem>
                     ))}
@@ -272,7 +313,9 @@ export default function UnitConverter() {
                     {result !== null 
                       ? (toPrefix === 'dms' 
                           ? formatDMS(result) 
-                          : Number(result.toFixed(8)).toString()) 
+                          : toPrefix === 'ft_in'
+                            ? formatFtIn(result)
+                            : Number(result.toFixed(8)).toString()) 
                       : '...'}
                   </span>
                 </div>
@@ -283,13 +326,13 @@ export default function UnitConverter() {
                   onValueChange={setToPrefix}
                   disabled={!toUnitData?.allowPrefixes}
                 >
-                  <SelectTrigger className="h-16 w-[100px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                  <SelectTrigger className="h-16 w-[130px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed">
                     <SelectValue placeholder="Prefix" />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {PREFIXES.map((p) => (
+                  <SelectContent className="max-h-[300px] w-[200px]">
+                    {getCompatiblePrefixes(toUnit).map((p) => (
                       <SelectItem key={p.id} value={p.id} className="font-mono text-xs min-h-[2rem]">
-                        <span className="font-bold mr-2 w-4 inline-block text-right">{p.symbol}</span>
+                        <span className="font-bold mr-2 w-6 inline-block text-right">{p.symbol}</span>
                         <span className="opacity-70">{p.name}</span>
                       </SelectItem>
                     ))}

@@ -59,7 +59,8 @@ export const PREFIXES: Prefix[] = [
   { id: 'hecto', name: 'Hecto', symbol: 'h', factor: 1e2 },
   { id: 'deca', name: 'Deca', symbol: 'da', factor: 1e1 },
   { id: 'none', name: '', symbol: '', factor: 1 },
-  { id: 'dms', name: 'DMS', symbol: '° ′ ″', factor: 1 },
+  { id: 'dms', name: 'dd:mm:ss', symbol: '° ′ ″', factor: 1 },
+  { id: 'ft_in', name: 'ft:in', symbol: '′ ″', factor: 1 },
   { id: 'deci', name: 'Deci', symbol: 'd', factor: 1e-1 },
   { id: 'centi', name: 'Centi', symbol: 'c', factor: 1e-2 },
   { id: 'milli', name: 'Milli', symbol: 'm', factor: 1e-3 },
@@ -100,7 +101,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     units: [
       { id: "m", name: "Meter", symbol: "m", factor: 1, allowPrefixes: true },
       { id: "in", name: "Inch", symbol: "in", factor: 0.0254 },
-      { id: "ft", name: "Foot", symbol: "ft", factor: 0.3048 },
+      { id: "ft", name: "Foot", symbol: "ft", factor: 0.3048, allowPrefixes: true },
       { id: "yd", name: "Yard", symbol: "yd", factor: 0.9144 },
       { id: "mi", name: "Mile", symbol: "mi", factor: 1609.344 },
       { id: "nmi", name: "Nautical Mile", symbol: "nmi", factor: 1852 },
