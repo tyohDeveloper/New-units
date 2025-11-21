@@ -70,7 +70,13 @@ export default function UnitConverter() {
     const m = Math.floor(mFloat);
     const s = (mFloat - m) * 60;
     const sign = decimal < 0 ? "-" : "";
-    return `${sign}${d}:${m.toString().padStart(2, '0')}:${Number(s.toFixed(precision)).toString().padStart(precision > 0 ? precision + 3 : 2, '0')}`;
+    
+    const sNum = Number(s.toFixed(precision));
+    const sStr = sNum.toString();
+    const [sInt, sDec] = sStr.split('.');
+    const sDisplay = `${sInt.padStart(2, '0')}${sDec ? '.' + sDec : ''}`;
+
+    return `${sign}${d}:${m.toString().padStart(2, '0')}:${sDisplay}`;
   };
 
   const parseDMS = (dms: string): number => {
@@ -88,7 +94,13 @@ export default function UnitConverter() {
     const absVal = Math.abs(decimalFeet);
     const ft = Math.floor(absVal);
     const inches = (absVal - ft) * 12;
-    return `${sign}${ft}:${Number(inches.toFixed(precision)).toString().padStart(precision > 0 ? precision + 3 : 2, '0')}`;
+
+    const inNum = Number(inches.toFixed(precision));
+    const inStr = inNum.toString();
+    const [inInt, inDec] = inStr.split('.');
+    const inDisplay = `${inInt.padStart(2, '0')}${inDec ? '.' + inDec : ''}`;
+
+    return `${sign}${ft}:${inDisplay}`;
   };
 
   const parseFtIn = (ftIn: string): number => {
