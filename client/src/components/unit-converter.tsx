@@ -182,7 +182,7 @@ export default function UnitConverter() {
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:pb-8 md:pt-3 grid md:grid-cols-[260px_1fr] gap-8">
+    <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:pb-8 md:pt-1 grid md:grid-cols-[260px_1fr] gap-8">
       
       {/* Sidebar */}
       <nav className="space-y-4 h-fit sticky top-[3pc] overflow-y-auto max-h-[calc(100vh-4rem)] pr-2">
@@ -216,10 +216,10 @@ export default function UnitConverter() {
       </nav>
 
       {/* Main Converter */}
-      <div className="space-y-6">
-        <div className="mb-8">
+      <div className="space-y-4">
+        <div className="mb-2">
           <h1 className="text-3xl font-bold text-foreground tracking-tight">{categoryData.name}</h1>
-          <p className="text-muted-foreground mt-2 text-sm font-mono">
+          <p className="text-muted-foreground mt-1 text-sm font-mono">
             Base unit: <span className="text-primary">{categoryData.baseUnit}</span>
           </p>
         </div>
