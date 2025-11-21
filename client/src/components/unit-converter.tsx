@@ -189,7 +189,7 @@ export default function UnitConverter() {
         {CATEGORY_GROUPS.map((group) => (
           <div key={group.name} className="space-y-1">
             <h2 className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80 px-2 font-bold">{group.name}</h2>
-            <div className="space-y-[1px]">
+            <div className="space-y-0">
               {group.categories.map((catId) => {
                 const cat = CONVERSION_DATA.find(c => c.id === catId);
                 if (!cat) return null;
