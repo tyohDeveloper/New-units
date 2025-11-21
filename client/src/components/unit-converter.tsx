@@ -192,35 +192,44 @@ export default function UnitConverter() {
     return parts.join('⋅');
   };
 
-  // Helper: Get derived unit name from dimensions
+  // Helper: Get derived unit symbol from dimensions
   const getDerivedUnit = (dims: DimensionalFormula): string => {
     const dimsStr = JSON.stringify(dims);
     
     const derivedUnits: Record<string, string> = {
-      [JSON.stringify({ length: 2 })]: 'Area',
-      [JSON.stringify({ length: 3 })]: 'Volume',
-      [JSON.stringify({ time: -1 })]: 'Frequency (Hz)',
-      [JSON.stringify({ length: 1, time: -1 })]: 'Velocity',
-      [JSON.stringify({ length: 1, time: -2 })]: 'Acceleration',
-      [JSON.stringify({ mass: 1, length: 1, time: -2 })]: 'Force (N)',
-      [JSON.stringify({ mass: 1, length: -1, time: -2 })]: 'Pressure (Pa)',
-      [JSON.stringify({ mass: 1, length: 2, time: -2 })]: 'Energy (J)',
-      [JSON.stringify({ mass: 1, length: 2, time: -3 })]: 'Power (W)',
-      [JSON.stringify({ current: 1, time: 1 })]: 'Charge (C)',
-      [JSON.stringify({ mass: 1, length: 2, time: -3, current: -1 })]: 'Voltage (V)',
-      [JSON.stringify({ mass: -1, length: -2, time: 4, current: 2 })]: 'Capacitance (F)',
-      [JSON.stringify({ mass: 1, length: 2, time: -3, current: -2 })]: 'Resistance (Ω)',
-      [JSON.stringify({ mass: -1, length: -2, time: 3, current: 2 })]: 'Conductance (S)',
-      [JSON.stringify({ mass: 1, length: 2, time: -2, current: -2 })]: 'Inductance (H)',
-      [JSON.stringify({ mass: 1, length: 2, time: -2, current: -1 })]: 'Magnetic Flux (Wb)',
-      [JSON.stringify({ mass: 1, time: -2, current: -1 })]: 'Magnetic Field (T)',
-      [JSON.stringify({ intensity: 1, length: -2 })]: 'Illuminance (lx)',
-      [JSON.stringify({ mass: 1, length: -3 })]: 'Density',
-      [JSON.stringify({ length: 3, time: -1 })]: 'Flow Rate',
-      [JSON.stringify({ mass: 1, length: -1, time: -1 })]: 'Viscosity',
-      [JSON.stringify({ mass: 1, time: -2 })]: 'Surface Tension',
-      [JSON.stringify({ length: -1 })]: 'Refractive Power',
-      [JSON.stringify({ amount: 1, time: -1 })]: 'Catalytic Activity (kat)'
+      // Base units
+      [JSON.stringify({ length: 1 })]: 'm',
+      [JSON.stringify({ mass: 1 })]: 'kg',
+      [JSON.stringify({ time: 1 })]: 's',
+      [JSON.stringify({ current: 1 })]: 'A',
+      [JSON.stringify({ temperature: 1 })]: 'K',
+      [JSON.stringify({ amount: 1 })]: 'mol',
+      [JSON.stringify({ intensity: 1 })]: 'cd',
+      // Derived units
+      [JSON.stringify({ length: 2 })]: 'm²',
+      [JSON.stringify({ length: 3 })]: 'm³',
+      [JSON.stringify({ time: -1 })]: 'Hz',
+      [JSON.stringify({ length: 1, time: -1 })]: 'm/s',
+      [JSON.stringify({ length: 1, time: -2 })]: 'm/s²',
+      [JSON.stringify({ mass: 1, length: 1, time: -2 })]: 'N',
+      [JSON.stringify({ mass: 1, length: -1, time: -2 })]: 'Pa',
+      [JSON.stringify({ mass: 1, length: 2, time: -2 })]: 'J',
+      [JSON.stringify({ mass: 1, length: 2, time: -3 })]: 'W',
+      [JSON.stringify({ current: 1, time: 1 })]: 'C',
+      [JSON.stringify({ mass: 1, length: 2, time: -3, current: -1 })]: 'V',
+      [JSON.stringify({ mass: -1, length: -2, time: 4, current: 2 })]: 'F',
+      [JSON.stringify({ mass: 1, length: 2, time: -3, current: -2 })]: 'Ω',
+      [JSON.stringify({ mass: -1, length: -2, time: 3, current: 2 })]: 'S',
+      [JSON.stringify({ mass: 1, length: 2, time: -2, current: -2 })]: 'H',
+      [JSON.stringify({ mass: 1, length: 2, time: -2, current: -1 })]: 'Wb',
+      [JSON.stringify({ mass: 1, time: -2, current: -1 })]: 'T',
+      [JSON.stringify({ intensity: 1, length: -2 })]: 'lx',
+      [JSON.stringify({ mass: 1, length: -3 })]: 'kg/m³',
+      [JSON.stringify({ length: 3, time: -1 })]: 'm³/s',
+      [JSON.stringify({ mass: 1, length: -1, time: -1 })]: 'Pa⋅s',
+      [JSON.stringify({ mass: 1, time: -2 })]: 'N/m',
+      [JSON.stringify({ length: -1 })]: 'm⁻¹',
+      [JSON.stringify({ amount: 1, time: -1 })]: 'kat'
     };
 
     return derivedUnits[dimsStr] || '';
@@ -775,43 +784,41 @@ export default function UnitConverter() {
             </div>
 
             {/* Result Field 4 */}
-            <div className="space-y-2">
-              <div className="grid sm:grid-cols-[1fr_220px] gap-2">
-                <div className="h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between min-w-0">
-                  <span className="text-sm font-mono text-primary font-bold truncate">
-                    {calcValues[3] ? Number(calcValues[3].value.toFixed(precision)).toString() : ''}
-                  </span>
-                  <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                    {calcValues[3] ? formatDimensions(calcValues[3].dimensions) : ''}
-                  </span>
-                </div>
-                <div className="flex gap-1 justify-start">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={copyCalcResult}
-                    disabled={!calcValues[3]}
-                    className="text-xs hover:text-accent gap-1"
-                  >
-                    <Copy className="w-3 h-3" /> Copy
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={clearCalculator}
-                    className="text-xs hover:text-destructive gap-1"
-                  >
-                    Clear
-                  </Button>
-                </div>
+            <div className="grid sm:grid-cols-[1fr_220px] gap-2">
+              <div className="h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between min-w-0">
+                <span className="text-sm font-mono text-primary font-bold truncate">
+                  {calcValues[3] ? Number(calcValues[3].value.toFixed(precision)).toString() : ''}
+                </span>
+                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
+                  {calcValues[3] ? formatDimensions(calcValues[3].dimensions) : ''}
+                </span>
               </div>
-              {calcValues[3] && getDerivedUnit(calcValues[3].dimensions) && (
-                <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center">
-                  <span className="text-xs font-mono text-muted-foreground">
-                    {getDerivedUnit(calcValues[3].dimensions)}
-                  </span>
-                </div>
-              )}
+              <div className="flex gap-1 justify-start">
+                {calcValues[3] && getDerivedUnit(calcValues[3].dimensions) && (
+                  <div className="h-9 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center">
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {getDerivedUnit(calcValues[3].dimensions)}
+                    </span>
+                  </div>
+                )}
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={copyCalcResult}
+                  disabled={!calcValues[3]}
+                  className="text-xs hover:text-accent gap-1"
+                >
+                  <Copy className="w-3 h-3" /> Copy
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={clearCalculator}
+                  className="text-xs hover:text-destructive gap-1"
+                >
+                  Clear
+                </Button>
+              </div>
             </div>
           </div>
         </Card>
