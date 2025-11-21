@@ -220,12 +220,12 @@ export default function UnitConverter() {
             {/* Input Section */}
             <div className="grid gap-4">
               <Label className="text-xs font-mono uppercase text-muted-foreground">From</Label>
-              <div className="grid sm:grid-cols-[1fr_auto_140px] gap-2">
+              <div className="grid sm:grid-cols-[1fr_auto_auto] gap-2">
                 <Input 
                   type="text" 
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  className="text-2xl font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left"
+                  className="text-2xl font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left w-full min-w-0"
                   placeholder={getPlaceholder()}
                 />
                 
@@ -235,7 +235,7 @@ export default function UnitConverter() {
                   onValueChange={setFromPrefix}
                   disabled={!fromUnitData?.allowPrefixes}
                 >
-                  <SelectTrigger className="h-16 w-[130px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                  <SelectTrigger className="h-16 w-[130px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                     <SelectValue placeholder="Prefix" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px] w-[200px]">
@@ -249,7 +249,7 @@ export default function UnitConverter() {
                 </Select>
 
                 <Select value={fromUnit} onValueChange={(val) => { setFromUnit(val); setFromPrefix('none'); }}>
-                  <SelectTrigger className="h-16 w-[140px] bg-background/30 border-border font-medium">
+                  <SelectTrigger className="h-16 w-[140px] bg-background/30 border-border font-medium shrink-0">
                     <SelectValue placeholder="Unit" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
@@ -300,9 +300,9 @@ export default function UnitConverter() {
             {/* Output Section */}
             <div className="grid gap-4">
               <Label className="text-xs font-mono uppercase text-muted-foreground">To</Label>
-              <div className="grid sm:grid-cols-[1fr_auto_140px] gap-2">
-                <div className="h-16 px-4 bg-muted/30 border border-border/50 rounded-md flex items-center overflow-x-auto text-left justify-start">
-                  <span className="text-2xl font-mono text-primary break-all">
+              <div className="grid sm:grid-cols-[1fr_auto_auto] gap-2">
+                <div className="h-16 px-4 bg-muted/30 border border-border/50 rounded-md flex items-center overflow-x-auto text-left justify-start w-full min-w-0">
+                  <span className="text-2xl font-mono text-primary break-all whitespace-nowrap">
                     {result !== null 
                       ? (toUnit === 'deg_dms' 
                           ? formatDMS(result) 
@@ -319,7 +319,7 @@ export default function UnitConverter() {
                   onValueChange={setToPrefix}
                   disabled={!toUnitData?.allowPrefixes}
                 >
-                  <SelectTrigger className="h-16 w-[130px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                  <SelectTrigger className="h-16 w-[130px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                     <SelectValue placeholder="Prefix" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px] w-[200px]">
@@ -333,7 +333,7 @@ export default function UnitConverter() {
                 </Select>
 
                 <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); }}>
-                  <SelectTrigger className="h-16 w-[140px] bg-background/30 border-border font-medium">
+                  <SelectTrigger className="h-16 w-[140px] bg-background/30 border-border font-medium shrink-0">
                     <SelectValue placeholder="Unit" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
