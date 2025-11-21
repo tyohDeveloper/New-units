@@ -190,7 +190,7 @@ export default function UnitConverter() {
 
   // Calculate result field
   useEffect(() => {
-    if (calcValues[0] && calcValues[1] && calcValues[2]) {
+    if (calcValues[0] && calcValues[1]) {
       let result = calcValues[0].value;
       
       if (calcOp1 === '*') {
@@ -199,10 +199,12 @@ export default function UnitConverter() {
         result = result / calcValues[1].value;
       }
       
-      if (calcOp2 === '*') {
-        result = result * calcValues[2].value;
-      } else {
-        result = result / calcValues[2].value;
+      if (calcValues[2]) {
+        if (calcOp2 === '*') {
+          result = result * calcValues[2].value;
+        } else {
+          result = result / calcValues[2].value;
+        }
       }
       
       setCalcValues(prev => {
