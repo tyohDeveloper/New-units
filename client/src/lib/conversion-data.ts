@@ -176,7 +176,11 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: 'shot', name: 'Shot (US)', symbol: 'shot', factor: 0.044 },
       { id: 'fifth', name: 'Fifth', symbol: 'fifth', factor: 0.757 },
       { id: 'handle', name: 'Handle', symbol: 'handle', factor: 1.75 },
-      { id: 'ac_ft', name: 'Acre-foot', symbol: 'ac⋅ft', factor: 1233481.84 }
+      { id: 'ac_ft', name: 'Acre-foot', symbol: 'ac⋅ft', factor: 1233481.84 },
+      { id: 'km3', name: 'Cubic Kilometer', symbol: 'km³', factor: 1e12 },
+      { id: 'mi3', name: 'Cubic Mile', symbol: 'mi³', factor: 4.16818e12 },
+      { id: 'osp', name: 'Olympic Swimming Pool', symbol: 'OSP', factor: 2.5e6 },
+      { id: 'sydharb', name: 'Sydney Harbour', symbol: 'sydharb', factor: 5e11 }
     ]
   },
   {
