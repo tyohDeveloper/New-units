@@ -1,0 +1,38 @@
+import UnitConverter from '@/components/unit-converter';
+
+export default function Home() {
+  return (
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent selection:text-accent-foreground">
+      
+      {/* Header */}
+      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center text-primary-foreground font-bold font-mono text-lg">
+              Ω
+            </div>
+            <span className="font-bold text-xl tracking-tight">Omni<span className="text-primary">Unit</span></span>
+          </div>
+          <div className="text-xs font-mono text-muted-foreground hidden sm:block">
+            v1.0.0 // ARCHIVAL_EDITION
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="py-8 md:py-12">
+        <UnitConverter />
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-border mt-12 py-8 bg-card/30">
+        <div className="max-w-7xl mx-auto px-4 text-center text-sm text-muted-foreground">
+          <p className="font-mono mb-2">Designed for Precision & History</p>
+          <p className="opacity-50">
+            Supports SI, Imperial, US Customary, Archaic, and specialized industrial units.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+}
