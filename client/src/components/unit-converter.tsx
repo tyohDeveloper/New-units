@@ -107,10 +107,10 @@ export default function UnitConverter() {
     }
 
     let val: number;
-    if (fromPrefix === 'dms') {
+    if (fromUnit === 'deg_dms') {
       val = parseDMS(inputValue);
       if (isNaN(val)) { setResult(null); return; }
-    } else if (fromPrefix === 'ft_in') {
+    } else if (fromUnit === 'ft_in') {
       val = parseFtIn(inputValue);
       if (isNaN(val)) { setResult(null); return; }
     } else {
@@ -119,9 +119,9 @@ export default function UnitConverter() {
     }
     
     // Determine prefix factors (1 if not supported or none selected)
-    // For DMS/FtIn, we use factor 1 because we handled the value parsing manually
-    const isSpecialFrom = fromPrefix === 'dms' || fromPrefix === 'ft_in';
-    const isSpecialTo = toPrefix === 'dms' || toPrefix === 'ft_in';
+    // For special units (DMS/FtIn), we ignore prefixes
+    const isSpecialFrom = fromUnit === 'deg_dms' || fromUnit === 'ft_in';
+    const isSpecialTo = toUnit === 'deg_dms' || toUnit === 'ft_in';
 
     const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData && !isSpecialFrom) ? fromPrefixData.factor : 1;
     const toFactor = (toUnitData?.allowPrefixes && toPrefixData && !isSpecialTo) ? toPrefixData.factor : 1;
@@ -141,12 +141,16 @@ export default function UnitConverter() {
 
   const copyResult = () => {
     if (result !== null) {
-      navigator.clipboard.writeText(result.toString());
+      let formattedResult = result.toString();
+      if (toUnit === 'deg_dms') formattedResult = formatDMS(result);
+      if (toUnit === 'ft_in') formattedResult = formatFtIn(result);
+
+      navigator.clipboard.writeText(formattedResult);
       const unitSymbol = toUnitData?.symbol || '';
       const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
       toast({
         title: "Copied to clipboard",
-        description: `${result} ${prefixSymbol}${unitSymbol}`,
+        description: `${formattedResult} ${prefixSymbol}${unitSymbol}`,
       });
     }
   };
@@ -159,20 +163,9 @@ export default function UnitConverter() {
 
   // Helper to determine input placeholder
   const getPlaceholder = () => {
-    if (fromPrefix === 'dms') return "dd:mm:ss";
-    if (fromPrefix === 'ft_in') return "ft:in";
+    if (fromUnit === 'deg_dms') return "dd:mm:ss";
+    if (fromUnit === 'ft_in') return "ft:in";
     return "0";
-  };
-
-  // Helper to filter prefixes based on unit compatibility
-  const getCompatiblePrefixes = (unitId: string | undefined) => {
-    return PREFIXES.filter(p => {
-      if (p.id === 'dms') return unitId === 'deg';
-      if (p.id === 'ft_in') return unitId === 'ft';
-      // Hide special prefixes for other units
-      if (unitId !== 'deg' && unitId !== 'ft') return p.id !== 'dms' && p.id !== 'ft_in';
-      return true;
-    });
   };
 
   return (
@@ -246,7 +239,7 @@ export default function UnitConverter() {
                     <SelectValue placeholder="Prefix" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px] w-[200px]">
-                    {getCompatiblePrefixes(fromUnit).map((p) => (
+                    {PREFIXES.map((p) => (
                       <SelectItem key={p.id} value={p.id} className="font-mono text-xs min-h-[2rem]">
                         <span className="font-bold mr-2 w-6 inline-block text-right">{p.symbol}</span>
                         <span className="opacity-70">{p.name}</span>
@@ -311,9 +304,9 @@ export default function UnitConverter() {
                 <div className="h-16 px-4 bg-muted/30 border border-border/50 rounded-md flex items-center overflow-x-auto text-left justify-start">
                   <span className="text-2xl font-mono text-primary break-all">
                     {result !== null 
-                      ? (toPrefix === 'dms' 
+                      ? (toUnit === 'deg_dms' 
                           ? formatDMS(result) 
-                          : toPrefix === 'ft_in'
+                          : toUnit === 'ft_in'
                             ? formatFtIn(result)
                             : Number(result.toFixed(8)).toString()) 
                       : '...'}
@@ -330,7 +323,7 @@ export default function UnitConverter() {
                     <SelectValue placeholder="Prefix" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px] w-[200px]">
-                    {getCompatiblePrefixes(toUnit).map((p) => (
+                    {PREFIXES.map((p) => (
                       <SelectItem key={p.id} value={p.id} className="font-mono text-xs min-h-[2rem]">
                         <span className="font-bold mr-2 w-6 inline-block text-right">{p.symbol}</span>
                         <span className="opacity-70">{p.name}</span>
