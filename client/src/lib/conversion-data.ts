@@ -413,9 +413,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "ohm",
     baseSISymbol: "kg⋅m²⋅s⁻³⋅A⁻²",
     units: [
-      { id: "ohm", name: "Ohm", symbol: "Ω", factor: 1 },
-      { id: "kohm", name: "Kiloohm", symbol: "kΩ", factor: 1000 },
-      { id: "mohm", name: "Megaohm", symbol: "MΩ", factor: 1e6 },
+      { id: "ohm", name: "Ohm", symbol: "Ω", factor: 1, allowPrefixes: true },
     ],
   },
   {
