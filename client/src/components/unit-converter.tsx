@@ -276,7 +276,7 @@ export default function UnitConverter() {
                 </Select>
               </div>
               
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid sm:grid-cols-[1fr_220px] gap-2">
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">Base Factor</div>
                   <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''}>
@@ -377,7 +377,7 @@ export default function UnitConverter() {
                 </Select>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid sm:grid-cols-[1fr_220px] gap-2">
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">Base Factor</div>
                   <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''}>
