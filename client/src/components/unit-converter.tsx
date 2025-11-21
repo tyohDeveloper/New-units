@@ -84,6 +84,12 @@ export default function UnitConverter() {
   const fromUnitData = categoryData.units.find(u => u.id === fromUnit);
   const toUnitData = categoryData.units.find(u => u.id === toUnit);
 
+  const formatFactor = (f: number) => {
+    if (f === 1) return "Base Unit";
+    if (f >= 10000 || f <= 0.0001) return `×${f.toExponential(2)}`;
+    return `×${Number(f.toPrecision(4))}`;
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto p-4 md:p-8 grid md:grid-cols-[280px_1fr] gap-8">
       
@@ -136,7 +142,7 @@ export default function UnitConverter() {
             {/* Input Section */}
             <div className="grid gap-4">
               <Label className="text-xs font-mono uppercase text-muted-foreground">From</Label>
-              <div className="grid sm:grid-cols-[1fr_140px] gap-2">
+              <div className="grid sm:grid-cols-[1fr_140px_100px] gap-2">
                 <Input 
                   type="number" 
                   value={inputValue}
@@ -157,6 +163,14 @@ export default function UnitConverter() {
                     ))}
                   </SelectContent>
                 </Select>
+                <div className="h-16 px-3 bg-muted/20 border border-border/50 rounded-md flex flex-col justify-center text-xs font-mono text-muted-foreground select-none">
+                   <div className="flex items-center justify-between w-full">
+                     <span className="font-bold text-foreground text-sm">{fromUnitData?.symbol}</span>
+                   </div>
+                   <span className="opacity-70 truncate" title={fromUnitData ? formatFactor(fromUnitData.factor) : ''}>
+                     {fromUnitData ? formatFactor(fromUnitData.factor) : '-'}
+                   </span>
+                </div>
               </div>
               {fromUnitData?.description && (
                 <p className="text-xs text-muted-foreground flex items-center gap-1">
@@ -180,7 +194,7 @@ export default function UnitConverter() {
             {/* Output Section */}
             <div className="grid gap-4">
               <Label className="text-xs font-mono uppercase text-muted-foreground">To</Label>
-              <div className="grid sm:grid-cols-[1fr_140px] gap-2">
+              <div className="grid sm:grid-cols-[1fr_140px_100px] gap-2">
                 <div className="h-16 px-4 bg-muted/30 border border-border/50 rounded-md flex items-center overflow-x-auto">
                   <span className="text-2xl md:text-3xl font-mono text-primary break-all">
                     {result !== null ? Number(result.toPrecision(10)).toString() : '...'}
@@ -199,6 +213,14 @@ export default function UnitConverter() {
                     ))}
                   </SelectContent>
                 </Select>
+                <div className="h-16 px-3 bg-muted/20 border border-border/50 rounded-md flex flex-col justify-center text-xs font-mono text-muted-foreground select-none">
+                   <div className="flex items-center justify-between w-full">
+                     <span className="font-bold text-foreground text-sm">{toUnitData?.symbol}</span>
+                   </div>
+                   <span className="opacity-70 truncate" title={toUnitData ? formatFactor(toUnitData.factor) : ''}>
+                     {toUnitData ? formatFactor(toUnitData.factor) : '-'}
+                   </span>
+                </div>
               </div>
               <div className="flex justify-between items-start">
                 {toUnitData?.description ? (
