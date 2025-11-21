@@ -249,7 +249,7 @@ export default function UnitConverter() {
                 </Select>
 
                 <Select value={fromUnit} onValueChange={(val) => { setFromUnit(val); setFromPrefix('none'); }}>
-                  <SelectTrigger className="h-16 w-[140px] bg-background/30 border-border font-medium shrink-0">
+                  <SelectTrigger className="h-16 w-[220px] bg-background/30 border-border font-medium shrink-0">
                     <SelectValue placeholder="Unit" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
@@ -333,7 +333,7 @@ export default function UnitConverter() {
                 </Select>
 
                 <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); }}>
-                  <SelectTrigger className="h-16 w-[140px] bg-background/30 border-border font-medium shrink-0">
+                  <SelectTrigger className="h-16 w-[220px] bg-background/30 border-border font-medium shrink-0">
                     <SelectValue placeholder="Unit" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
