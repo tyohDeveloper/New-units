@@ -59,6 +59,7 @@ export const PREFIXES: Prefix[] = [
   { id: 'hecto', name: 'Hecto', symbol: 'h', factor: 1e2 },
   { id: 'deca', name: 'Deca', symbol: 'da', factor: 1e1 },
   { id: 'none', name: '', symbol: '', factor: 1 },
+  { id: 'dms', name: 'DMS', symbol: '° ′ ″', factor: 1 },
   { id: 'deci', name: 'Deci', symbol: 'd', factor: 1e-1 },
   { id: 'centi', name: 'Centi', symbol: 'c', factor: 1e-2 },
   { id: 'milli', name: 'Milli', symbol: 'm', factor: 1e-3 },
@@ -494,8 +495,8 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "radian",
     baseSISymbol: "m⋅m⁻¹",
     units: [
-      { id: "rad", name: "Radian", symbol: "rad", factor: 1 },
-      { id: "deg", name: "Degree", symbol: "°", factor: 0.0174533 },
+      { id: "rad", name: "Radian", symbol: "rad", factor: 1, allowPrefixes: true },
+      { id: "deg", name: "Degree", symbol: "°", factor: 0.0174533, allowPrefixes: true },
       { id: "grad", name: "Gradian", symbol: "grad", factor: 0.015708 },
       { id: "arcmin", name: "Arcminute", symbol: "′", factor: 0.000290888 },
       { id: "arcsec", name: "Arcsecond", symbol: "″", factor: 4.848e-6 },

@@ -63,17 +63,45 @@ export default function UnitConverter() {
   const fromPrefixData = PREFIXES.find(p => p.id === fromPrefix) || PREFIXES.find(p => p.id === 'none') || PREFIXES[0];
   const toPrefixData = PREFIXES.find(p => p.id === toPrefix) || PREFIXES.find(p => p.id === 'none') || PREFIXES[0];
 
+  const formatDMS = (decimal: number): string => {
+    const d = Math.floor(Math.abs(decimal));
+    const mFloat = (Math.abs(decimal) - d) * 60;
+    const m = Math.floor(mFloat);
+    const s = (mFloat - m) * 60;
+    const sign = decimal < 0 ? "-" : "";
+    return `${sign}${d}:${m.toString().padStart(2, '0')}:${s.toFixed(4).padStart(7, '0')}`; // e.g. 12:05:04.1234
+  };
+
+  const parseDMS = (dms: string): number => {
+    if (!dms.includes(':')) return parseFloat(dms);
+    const parts = dms.split(':').map(p => parseFloat(p));
+    let val = 0;
+    if (parts.length > 0) val += parts[0];
+    if (parts.length > 1) val += (parts[0] >= 0 ? parts[1] : -parts[1]) / 60;
+    if (parts.length > 2) val += (parts[0] >= 0 ? parts[2] : -parts[2]) / 3600;
+    return val;
+  };
+
   // Calculate result
   useEffect(() => {
-    if (!inputValue || isNaN(parseFloat(inputValue)) || !fromUnit || !toUnit) {
+    if (!inputValue || !fromUnit || !toUnit) {
       setResult(null);
       return;
     }
-    const val = parseFloat(inputValue);
+
+    let val: number;
+    if (fromPrefix === 'dms') {
+      val = parseDMS(inputValue);
+      if (isNaN(val)) { setResult(null); return; }
+    } else {
+      if (isNaN(parseFloat(inputValue))) { setResult(null); return; }
+      val = parseFloat(inputValue);
+    }
     
     // Determine prefix factors (1 if not supported or none selected)
-    const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData) ? fromPrefixData.factor : 1;
-    const toFactor = (toUnitData?.allowPrefixes && toPrefixData) ? toPrefixData.factor : 1;
+    // For DMS, we use factor 1 because we handled the value parsing manually
+    const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData && fromPrefix !== 'dms') ? fromPrefixData.factor : 1;
+    const toFactor = (toUnitData?.allowPrefixes && toPrefixData && toPrefix !== 'dms') ? toPrefixData.factor : 1;
 
     const res = convert(val, fromUnit, toUnit, activeCategory, fromFactor, toFactor);
     setResult(res);
@@ -160,11 +188,11 @@ export default function UnitConverter() {
               <Label className="text-xs font-mono uppercase text-muted-foreground">From</Label>
               <div className="grid sm:grid-cols-[1fr_auto_140px] gap-2">
                 <Input 
-                  type="number" 
+                  type="text" 
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   className="text-2xl font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left"
-                  placeholder="0"
+                  placeholder={fromPrefix === 'dms' ? "dd:mm:ss" : "0"}
                 />
                 
                 {/* Prefix Dropdown */}
@@ -241,7 +269,11 @@ export default function UnitConverter() {
               <div className="grid sm:grid-cols-[1fr_auto_140px] gap-2">
                 <div className="h-16 px-4 bg-muted/30 border border-border/50 rounded-md flex items-center overflow-x-auto text-left justify-start">
                   <span className="text-2xl font-mono text-primary break-all">
-                    {result !== null ? Number(result.toFixed(8)).toString() : '...'}
+                    {result !== null 
+                      ? (toPrefix === 'dms' 
+                          ? formatDMS(result) 
+                          : Number(result.toFixed(8)).toString()) 
+                      : '...'}
                   </span>
                 </div>
 
