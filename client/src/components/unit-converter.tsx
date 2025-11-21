@@ -647,7 +647,7 @@ export default function UnitConverter() {
                   variant="ghost" 
                   size="sm"
                   onClick={() => setCalcOp1('*')}
-                  className={`text-sm ${calcOp1 === '*' ? 'font-bold' : ''}`}
+                  className={`text-sm ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
                 >
                   ×
                 </Button>
@@ -655,7 +655,7 @@ export default function UnitConverter() {
                   variant="ghost" 
                   size="sm"
                   onClick={() => setCalcOp1('/')}
-                  className={`text-sm ${calcOp1 === '/' ? 'font-bold' : ''}`}
+                  className={`text-sm ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
                 >
                   /
                 </Button>
@@ -677,7 +677,7 @@ export default function UnitConverter() {
                   variant="ghost" 
                   size="sm"
                   onClick={() => setCalcOp2('*')}
-                  className={`text-sm ${calcOp2 === '*' ? 'font-bold' : ''}`}
+                  className={`text-sm ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
                 >
                   ×
                 </Button>
@@ -685,7 +685,7 @@ export default function UnitConverter() {
                   variant="ghost" 
                   size="sm"
                   onClick={() => setCalcOp2('/')}
-                  className={`text-sm ${calcOp2 === '/' ? 'font-bold' : ''}`}
+                  className={`text-sm ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
                 >
                   /
                 </Button>
