@@ -18,6 +18,7 @@ export default function UnitConverter() {
   const [toPrefix, setToPrefix] = useState<string>('none');
   const [inputValue, setInputValue] = useState<string>('1');
   const [result, setResult] = useState<number | null>(null);
+  const [precision, setPrecision] = useState<number>(8);
   const { toast } = useToast();
 
   const CATEGORY_GROUPS = [
@@ -69,7 +70,7 @@ export default function UnitConverter() {
     const m = Math.floor(mFloat);
     const s = (mFloat - m) * 60;
     const sign = decimal < 0 ? "-" : "";
-    return `${sign}${d}:${m.toString().padStart(2, '0')}:${s.toFixed(8).padStart(11, '0')}`;
+    return `${sign}${d}:${m.toString().padStart(2, '0')}:${Number(s.toFixed(precision)).toString().padStart(precision > 0 ? precision + 3 : 2, '0')}`;
   };
 
   const parseDMS = (dms: string): number => {
@@ -87,7 +88,7 @@ export default function UnitConverter() {
     const absVal = Math.abs(decimalFeet);
     const ft = Math.floor(absVal);
     const inches = (absVal - ft) * 12;
-    return `${sign}${ft}:${inches.toFixed(8).padStart(11, '0')}`;
+    return `${sign}${ft}:${Number(inches.toFixed(precision)).toString().padStart(precision > 0 ? precision + 3 : 2, '0')}`;
   };
 
   const parseFtIn = (ftIn: string): number => {
@@ -299,7 +300,24 @@ export default function UnitConverter() {
 
             {/* Output Section */}
             <div className="grid gap-4">
-              <Label className="text-xs font-mono uppercase text-muted-foreground">To</Label>
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-mono uppercase text-muted-foreground">To</Label>
+                <Select 
+                  value={precision.toString()} 
+                  onValueChange={(val) => setPrecision(parseInt(val))}
+                >
+                  <SelectTrigger className="h-6 w-[100px] text-xs bg-transparent border-border/50">
+                    <SelectValue placeholder="Digits" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[0,1,2,3,4,5,6,7,8].map(n => (
+                      <SelectItem key={n} value={n.toString()} className="text-xs">
+                        {n} Decimals
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="grid sm:grid-cols-[1fr_auto_auto] gap-2">
                 <div className="h-16 px-4 bg-muted/30 border border-border/50 rounded-md flex items-center overflow-x-auto text-left justify-start w-full min-w-0">
                   <span className="text-2xl font-mono text-primary break-all whitespace-nowrap">
@@ -308,7 +326,7 @@ export default function UnitConverter() {
                           ? formatDMS(result) 
                           : toUnit === 'ft_in'
                             ? formatFtIn(result)
-                            : result.toFixed(8)) 
+                            : Number(result.toFixed(precision)).toString()) 
                       : '...'}
                   </span>
                 </div>
