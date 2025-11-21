@@ -21,8 +21,24 @@ export default function UnitConverter() {
   const [precision, setPrecision] = useState<number>(8);
   const { toast } = useToast();
 
+  // Dimensional formula tracking for calculator
+  interface DimensionalFormula {
+    length?: number;
+    mass?: number;
+    time?: number;
+    current?: number;
+    temperature?: number;
+    amount?: number;
+    intensity?: number;
+  }
+
+  interface CalcValue {
+    value: number;
+    dimensions: DimensionalFormula;
+  }
+
   // Calculator state
-  const [calcValues, setCalcValues] = useState<Array<{value: number, unit: string} | null>>([null, null, null, null]);
+  const [calcValues, setCalcValues] = useState<Array<CalcValue | null>>([null, null, null, null]);
   const [calcOp1, setCalcOp1] = useState<'*' | '/'>('*');
   const [calcOp2, setCalcOp2] = useState<'*' | '/'>('*');
 
@@ -68,6 +84,113 @@ export default function UnitConverter() {
   const toUnitData = categoryData.units.find(u => u.id === toUnit);
   const fromPrefixData = PREFIXES.find(p => p.id === fromPrefix) || PREFIXES.find(p => p.id === 'none') || PREFIXES[0];
   const toPrefixData = PREFIXES.find(p => p.id === toPrefix) || PREFIXES.find(p => p.id === 'none') || PREFIXES[0];
+
+  // Helper: Map category to dimensional formula
+  const getCategoryDimensions = (category: UnitCategory): DimensionalFormula => {
+    const dimensionMap: Record<UnitCategory, DimensionalFormula> = {
+      length: { length: 1 },
+      mass: { mass: 1 },
+      time: { time: 1 },
+      current: { current: 1 },
+      temperature: { temperature: 1 },
+      amount: { amount: 1 },
+      intensity: { intensity: 1 },
+      area: { length: 2 },
+      volume: { length: 3 },
+      frequency: { time: -1 },
+      speed: { length: 1, time: -1 },
+      acceleration: { length: 1, time: -2 },
+      force: { mass: 1, length: 1, time: -2 },
+      pressure: { mass: 1, length: -1, time: -2 },
+      energy: { mass: 1, length: 2, time: -2 },
+      power: { mass: 1, length: 2, time: -3 },
+      charge: { current: 1, time: 1 },
+      potential: { mass: 1, length: 2, time: -3, current: -1 },
+      capacitance: { mass: -1, length: -2, time: 4, current: 2 },
+      resistance: { mass: 1, length: 2, time: -3, current: -2 },
+      conductance: { mass: -1, length: -2, time: 3, current: 2 },
+      inductance: { mass: 1, length: 2, time: -2, current: -2 },
+      magnetic_flux: { mass: 1, length: 2, time: -2, current: -1 },
+      magnetic_density: { mass: 1, time: -2, current: -1 },
+      radioactivity: { time: -1 },
+      radiation_dose: { length: 2, time: -2 },
+      equivalent_dose: { length: 2, time: -2 },
+      catalytic: { amount: 1, time: -1 },
+      angle: {},
+      solid_angle: {},
+      digital: {},
+      printing: { length: 1 },
+      illuminance: { intensity: 1, length: -2 },
+      torque: { mass: 1, length: 2, time: -2 },
+      density: { mass: 1, length: -3 },
+      flow: { length: 3, time: -1 },
+      viscosity: { mass: 1, length: -1, time: -1 },
+      surface_tension: { mass: 1, time: -2 },
+      refractive_power: { length: -1 },
+      sound_pressure: { mass: 1, length: -1, time: -2 }
+    };
+    return dimensionMap[category] || {};
+  };
+
+  // Helper: Multiply dimensional formulas
+  const multiplyDimensions = (d1: DimensionalFormula, d2: DimensionalFormula): DimensionalFormula => {
+    const result: DimensionalFormula = { ...d1 };
+    for (const [dim, exp] of Object.entries(d2)) {
+      const key = dim as keyof DimensionalFormula;
+      result[key] = (result[key] || 0) + exp;
+      if (result[key] === 0) delete result[key];
+    }
+    return result;
+  };
+
+  // Helper: Divide dimensional formulas
+  const divideDimensions = (d1: DimensionalFormula, d2: DimensionalFormula): DimensionalFormula => {
+    const result: DimensionalFormula = { ...d1 };
+    for (const [dim, exp] of Object.entries(d2)) {
+      const key = dim as keyof DimensionalFormula;
+      result[key] = (result[key] || 0) - exp;
+      if (result[key] === 0) delete result[key];
+    }
+    return result;
+  };
+
+  // Helper: Format dimensional formula as unit string
+  const formatDimensions = (dims: DimensionalFormula): string => {
+    const dimSymbols: Record<keyof DimensionalFormula, string> = {
+      length: 'm',
+      mass: 'kg',
+      time: 's',
+      current: 'A',
+      temperature: 'K',
+      amount: 'mol',
+      intensity: 'cd'
+    };
+
+    const superscripts: Record<string, string> = {
+      '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+      '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+      '-': '⁻'
+    };
+
+    const toSuperscript = (num: number): string => {
+      return num.toString().split('').map(c => superscripts[c] || c).join('');
+    };
+
+    const parts: string[] = [];
+
+    for (const [dim, exp] of Object.entries(dims)) {
+      const symbol = dimSymbols[dim as keyof DimensionalFormula];
+      if (!symbol) continue;
+
+      if (exp === 1) {
+        parts.push(symbol);
+      } else {
+        parts.push(symbol + toSuperscript(exp));
+      }
+    }
+
+    return parts.join('⋅');
+  };
 
   const formatDMS = (decimal: number): string => {
     const d = Math.floor(Math.abs(decimal));
@@ -176,7 +299,7 @@ export default function UnitConverter() {
         const newCalcValues = [...calcValues];
         newCalcValues[firstEmptyIndex] = {
           value: baseUnitValue,
-          unit: `${prefixSymbol}${unitSymbol}`
+          dimensions: getCategoryDimensions(activeCategory)
         };
         setCalcValues(newCalcValues);
       }
@@ -191,27 +314,32 @@ export default function UnitConverter() {
   // Calculate result field
   useEffect(() => {
     if (calcValues[0] && calcValues[1]) {
-      let result = calcValues[0].value;
+      let resultValue = calcValues[0].value;
+      let resultDimensions = { ...calcValues[0].dimensions };
       
       if (calcOp1 === '*') {
-        result = result * calcValues[1].value;
+        resultValue = resultValue * calcValues[1].value;
+        resultDimensions = multiplyDimensions(resultDimensions, calcValues[1].dimensions);
       } else {
-        result = result / calcValues[1].value;
+        resultValue = resultValue / calcValues[1].value;
+        resultDimensions = divideDimensions(resultDimensions, calcValues[1].dimensions);
       }
       
       if (calcValues[2]) {
         if (calcOp2 === '*') {
-          result = result * calcValues[2].value;
+          resultValue = resultValue * calcValues[2].value;
+          resultDimensions = multiplyDimensions(resultDimensions, calcValues[2].dimensions);
         } else {
-          result = result / calcValues[2].value;
+          resultValue = resultValue / calcValues[2].value;
+          resultDimensions = divideDimensions(resultDimensions, calcValues[2].dimensions);
         }
       }
       
       setCalcValues(prev => {
         const newValues = [...prev];
         newValues[3] = {
-          value: result,
-          unit: categoryData.baseSISymbol || ''
+          value: resultValue,
+          dimensions: resultDimensions
         };
         return newValues;
       });
@@ -222,7 +350,7 @@ export default function UnitConverter() {
         return newValues;
       });
     }
-  }, [calcValues[0], calcValues[1], calcValues[2], calcOp1, calcOp2, categoryData.baseSISymbol]);
+  }, [calcValues[0], calcValues[1], calcValues[2], calcOp1, calcOp2]);
 
   const clearCalculator = () => {
     setCalcValues([null, null, null, null]);
@@ -509,7 +637,7 @@ export default function UnitConverter() {
                   {calcValues[0] ? Number(calcValues[0].value.toFixed(precision)).toString() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[0] ? categoryData.baseSISymbol : ''}
+                  {calcValues[0] ? formatDimensions(calcValues[0].dimensions) : ''}
                 </span>
               </div>
               <div className="flex gap-1 justify-start">
@@ -539,7 +667,7 @@ export default function UnitConverter() {
                   {calcValues[1] ? Number(calcValues[1].value.toFixed(precision)).toString() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[1] ? categoryData.baseSISymbol : ''}
+                  {calcValues[1] ? formatDimensions(calcValues[1].dimensions) : ''}
                 </span>
               </div>
               <div className="flex gap-1 justify-start">
@@ -569,7 +697,7 @@ export default function UnitConverter() {
                   {calcValues[2] ? Number(calcValues[2].value.toFixed(precision)).toString() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[2] ? categoryData.baseSISymbol : ''}
+                  {calcValues[2] ? formatDimensions(calcValues[2].dimensions) : ''}
                 </span>
               </div>
             </div>
@@ -581,7 +709,7 @@ export default function UnitConverter() {
                   {calcValues[3] ? Number(calcValues[3].value.toFixed(precision)).toString() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[3]?.unit || ''}
+                  {calcValues[3] ? formatDimensions(calcValues[3].dimensions) : ''}
                 </span>
               </div>
               <div className="flex gap-1 justify-start">
