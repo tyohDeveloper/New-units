@@ -340,6 +340,13 @@ export default function UnitConverter() {
 
     const res = convert(val, fromUnit, toUnit, activeCategory, fromFactor, toFactor);
     setResult(res);
+    
+    // Auto-select best prefix for TO field if unit allows prefixes
+    if (toUnitData?.allowPrefixes && !isSpecialTo && res !== null) {
+      const baseValue = res * toFactor; // Convert back to base unit value
+      const bestPrefix = findBestPrefix(baseValue);
+      setToPrefix(bestPrefix);
+    }
   }, [inputValue, fromUnit, toUnit, activeCategory, fromPrefix, toPrefix, fromUnitData, toUnitData]);
 
   const swapUnits = () => {
