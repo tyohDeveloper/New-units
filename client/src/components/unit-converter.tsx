@@ -111,16 +111,16 @@ export default function UnitConverter() {
     ? categoryData.units.filter(u => !u.beerWine)
     : categoryData.units;
     
-  // Sort: SI units first, then by size (factor)
+  // Sort: SI units by size first, then non-SI units by size
   filteredUnits = [...filteredUnits].sort((a, b) => {
     const aIsSI = isSIUnit(a);
     const bIsSI = isSIUnit(b);
     
-    // SI units come first
+    // SI units come first, sorted by size
     if (aIsSI && !bIsSI) return -1;
     if (!aIsSI && bIsSI) return 1;
     
-    // Within same group (SI or non-SI), sort by size
+    // Within same group (SI or non-SI), sort by size (factor)
     return a.factor - b.factor;
   });
 
