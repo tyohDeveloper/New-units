@@ -214,9 +214,8 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "square meter",
     baseSISymbol: "m²",
     units: [
-      { id: "m2", name: "Square Meter", symbol: "m²", factor: 1 },
+      { id: "m2", name: "Square Meter", symbol: "m²", factor: 1, allowPrefixes: true },
       { id: "ha", name: "Hectare", symbol: "ha", factor: 10000 },
-      { id: "km2", name: "Square Kilometer", symbol: "km²", factor: 1e6 },
       { id: "sqin", name: "Square Inch", symbol: "in²", factor: 0.00064516 },
       { id: "sqft", name: "Square Foot", symbol: "ft²", factor: 0.092903 },
       { id: "sqyd", name: "Square Yard", symbol: "yd²", factor: 0.836127 },

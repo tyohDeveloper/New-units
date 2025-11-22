@@ -96,7 +96,7 @@ export default function UnitConverter() {
       'temperature': ['k', 'c'],
       'amount': ['mol'],
       'intensity': ['cd'],
-      'area': ['m2', 'ha', 'km2'],
+      'area': ['m2', 'ha'],
       'volume': ['l'],
       'speed': ['mps', 'kmh'],
       'acceleration': ['mps2'],
@@ -488,7 +488,7 @@ export default function UnitConverter() {
 
     // Define SI units for each category
     const siUnits: Record<string, string[]> = {
-      'area': ['m2', 'ha', 'km2'],
+      'area': ['m2', 'ha'],
       'volume': ['ml', 'l', 'm3'],
       'length': ['m'],
       'mass': ['kg', 'g'],
