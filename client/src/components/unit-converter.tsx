@@ -149,12 +149,17 @@ export default function UnitConverter() {
 
   // Reset units when category changes
   useEffect(() => {
-    const sorted = getFilteredSortedUnits(activeCategory, includeBeerWine);
-    if (sorted.length > 0) {
-      // Default to base SI unit for both FROM and TO
-      // Base SI unit is always the first in sorted list (meter for length, liter for volume, etc.)
-      setFromUnit(sorted[0]?.id || '');
-      setToUnit(sorted[0]?.id || '');
+    const catData = CONVERSION_DATA.find(c => c.id === activeCategory);
+    if (catData) {
+      // Find the base SI unit using baseSISymbol
+      const baseUnit = catData.baseSISymbol 
+        ? catData.units.find(u => u.symbol === catData.baseSISymbol)
+        : catData.units[0];
+      
+      if (baseUnit) {
+        setFromUnit(baseUnit.id);
+        setToUnit(baseUnit.id);
+      }
       setFromPrefix('none');
       setToPrefix('none');
     }
