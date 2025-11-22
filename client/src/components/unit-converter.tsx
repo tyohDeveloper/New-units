@@ -464,7 +464,7 @@ export default function UnitConverter() {
     return bestUnit;
   };
 
-  // Helper: Find best SI prefix for a value (prefix that produces number closest to 1)
+  // Helper: Find best SI prefix for a value (prefix that produces smallest integer)
   const findBestPrefix = (value: number): string => {
     if (value === 0) return 'none';
     
@@ -474,7 +474,17 @@ export default function UnitConverter() {
 
     for (const prefix of PREFIXES) {
       const convertedValue = absValue / prefix.factor;
-      const score = Math.abs(Math.log10(convertedValue));
+      
+      // Calculate score based on integer part length
+      let score: number;
+      if (convertedValue >= 1) {
+        const integerPart = Math.floor(convertedValue);
+        const numDigits = integerPart === 0 ? 1 : Math.floor(Math.log10(integerPart)) + 1;
+        score = numDigits;
+      } else {
+        // Penalize fractional results heavily
+        score = 1000 + (1 - convertedValue);
+      }
       
       if (score < bestScore) {
         bestScore = score;
