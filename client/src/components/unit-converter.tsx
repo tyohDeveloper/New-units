@@ -156,17 +156,11 @@ export default function UnitConverter() {
 
   // Reset units when category changes
   useEffect(() => {
-    const catData = CONVERSION_DATA.find(c => c.id === activeCategory);
-    if (catData) {
-      // Find the base SI unit using baseSISymbol
-      const baseUnit = catData.baseSISymbol 
-        ? catData.units.find(u => u.symbol === catData.baseSISymbol)
-        : catData.units[0];
-      
-      if (baseUnit) {
-        setFromUnit(baseUnit.id);
-        setToUnit(baseUnit.id);
-      }
+    const sorted = getFilteredSortedUnits(activeCategory, includeBeerWine);
+    if (sorted.length > 0) {
+      // Default to first unit in sorted list (SI units are sorted first)
+      setFromUnit(sorted[0].id);
+      setToUnit(sorted[0].id);
       setFromPrefix('none');
       setToPrefix('none');
     }
