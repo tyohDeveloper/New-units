@@ -171,6 +171,13 @@ export default function UnitConverter() {
     }
   }, [activeCategory, includeBeerWine]);
 
+  // When FROM prefix changes, reset TO prefix to 'none' (plain base unit)
+  useEffect(() => {
+    if (fromPrefix !== 'none') {
+      setToPrefix('none');
+    }
+  }, [fromPrefix]);
+
   const fromUnitData = categoryData.units.find(u => u.id === fromUnit);
   const toUnitData = categoryData.units.find(u => u.id === toUnit);
   const fromPrefixData = PREFIXES.find(p => p.id === fromPrefix) || PREFIXES.find(p => p.id === 'none') || PREFIXES[0];
