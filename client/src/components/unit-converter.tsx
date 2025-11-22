@@ -107,6 +107,7 @@ export default function UnitConverter() {
       'frequency': ['hz'],
       'torque': ['nm'],
       'viscosity': ['pas'],
+      'surface_tension': ['nm'],
     };
     
     // Define astronomy units (for length category)
