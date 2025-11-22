@@ -1240,21 +1240,42 @@ export default function UnitConverter() {
               </div>
               <div className="flex gap-1 justify-start">
                 {calcValues[3] && resultCategory && (
-                  <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
-                    <SelectTrigger className="h-9 w-[100px] text-xs">
-                      <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="base" className="text-xs font-mono">
-                        {CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"}
-                      </SelectItem>
-                      {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
-                        <SelectItem key={unit.id} value={unit.id} className="text-xs">
-                          {unit.name}
+                  <>
+                    <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
+                      <SelectTrigger className="h-9 w-[100px] text-xs">
+                        <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="base" className="text-xs font-mono">
+                          {CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"}
                         </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                        {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
+                          <SelectItem key={unit.id} value={unit.id} className="text-xs">
+                            {unit.name}
+                          </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {(() => {
+                    const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+                    const unit = resultUnit ? cat?.units.find(u => u.id === resultUnit) : null;
+                    const allowsPrefixes = unit?.allowPrefixes || false;
+                    return allowsPrefixes && (
+                      <Select value={resultPrefix} onValueChange={setResultPrefix}>
+                        <SelectTrigger className="h-9 w-[70px] text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {PREFIXES.map(prefix => (
+                            <SelectItem key={prefix.id} value={prefix.id} className="text-xs">
+                              {prefix.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    );
+                  })()}
+                  </>
                 )}
                 <Button 
                   variant="ghost" 
