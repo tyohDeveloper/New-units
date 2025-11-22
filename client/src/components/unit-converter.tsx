@@ -49,6 +49,7 @@ export default function UnitConverter() {
   // Number format state
   type NumberFormat = 'us-uk' | 'europe' | 'si-period' | 'si-comma' | 'period' | 'comma';
   const [numberFormat, setNumberFormat] = useState<NumberFormat>('us-uk');
+  const [includeBeerWine, setIncludeBeerWine] = useState<boolean>(false);
 
   const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string }> = {
     'us-uk': { name: 'US/UK', thousands: ',', decimal: '.' },
@@ -749,19 +750,30 @@ export default function UnitConverter() {
             <p className="text-muted-foreground text-sm font-mono">
               Base unit: <span className="text-primary">{categoryData.baseUnit}</span>
             </p>
-            <Select value={numberFormat} onValueChange={(val) => setNumberFormat(val as NumberFormat)}>
-              <SelectTrigger className="h-6 w-[100px] text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="us-uk" className="text-xs">US/UK</SelectItem>
-                <SelectItem value="europe" className="text-xs">Europe</SelectItem>
-                <SelectItem value="si-period" className="text-xs">SI Period</SelectItem>
-                <SelectItem value="si-comma" className="text-xs">SI Comma</SelectItem>
-                <SelectItem value="period" className="text-xs">Period</SelectItem>
-                <SelectItem value="comma" className="text-xs">Comma</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-3">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={includeBeerWine}
+                  onChange={(e) => setIncludeBeerWine(e.target.checked)}
+                  className="w-3 h-3 cursor-pointer accent-accent"
+                />
+                <span className="text-xs text-muted-foreground">include beer/wine</span>
+              </label>
+              <Select value={numberFormat} onValueChange={(val) => setNumberFormat(val as NumberFormat)}>
+                <SelectTrigger className="h-6 w-[100px] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="us-uk" className="text-xs">US/UK</SelectItem>
+                  <SelectItem value="europe" className="text-xs">Europe</SelectItem>
+                  <SelectItem value="si-period" className="text-xs">SI Period</SelectItem>
+                  <SelectItem value="si-comma" className="text-xs">SI Comma</SelectItem>
+                  <SelectItem value="period" className="text-xs">Period</SelectItem>
+                  <SelectItem value="comma" className="text-xs">Comma</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
