@@ -367,30 +367,6 @@ export default function UnitConverter() {
     return null;
   };
 
-  // Helper: Find best unit for a value (unit that produces number closest to 1)
-  const findBestUnit = (value: number, category: UnitCategory): string | null => {
-    const cat = CONVERSION_DATA.find(c => c.id === category);
-    if (!cat) return null;
-
-    let bestUnit: string | null = null;
-    let bestScore = Infinity;
-
-    for (const unit of cat.units) {
-      const convertedValue = Math.abs(value / unit.factor);
-      // Prefer values close to 1, penalize very large or very small numbers
-      const score = convertedValue >= 1 
-        ? Math.log10(convertedValue) 
-        : Math.log10(1 / convertedValue) + 10; // Heavily penalize values < 1
-      
-      if (score < bestScore) {
-        bestScore = score;
-        bestUnit = unit.id;
-      }
-    }
-
-    return bestUnit;
-  };
-
   // Calculate result field
   useEffect(() => {
     if (calcValues[0] && calcValues[1] && calcOp1) {
@@ -424,13 +400,9 @@ export default function UnitConverter() {
         return newValues;
       });
 
-      // Find matching category and auto-select best unit
+      // Find matching category but don't auto-select a unit (show base units by default)
       const matchingCategory = findCategoryForDimensions(resultDimensions);
       setResultCategory(matchingCategory);
-      if (matchingCategory) {
-        const bestUnit = findBestUnit(resultValue, matchingCategory);
-        setResultUnit(bestUnit);
-      }
     } else if (calcValues[3] !== null) {
       setCalcValues(prev => {
         const newValues = [...prev];
