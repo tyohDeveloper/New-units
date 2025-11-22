@@ -407,7 +407,7 @@ export default function UnitConverter() {
     return null;
   };
 
-  // Helper: Find best unit for a value (unit that produces number closest to 1)
+  // Helper: Find best unit for a value (unit that produces numerically shortest representation)
   const findBestUnit = (value: number, category: UnitCategory): string | null => {
     const cat = CONVERSION_DATA.find(c => c.id === category);
     if (!cat) return null;
@@ -417,10 +417,14 @@ export default function UnitConverter() {
 
     for (const unit of cat.units) {
       const convertedValue = Math.abs(value / unit.factor);
-      // Prefer values close to 1, penalize very large or very small numbers
-      const score = convertedValue >= 1 
-        ? Math.log10(convertedValue) 
-        : Math.log10(1 / convertedValue) + 10; // Heavily penalize values < 1
+      
+      // Calculate the length of the numeric representation
+      // Prefer shorter numbers (fewer digits)
+      const integerPart = Math.floor(convertedValue);
+      const numDigits = integerPart === 0 ? 1 : Math.floor(Math.log10(integerPart)) + 1;
+      
+      // Score: prefer fewer digits, and among same digit count, prefer closer to 1
+      const score = numDigits + Math.abs(Math.log10(convertedValue)) * 0.01;
       
       if (score < bestScore) {
         bestScore = score;
