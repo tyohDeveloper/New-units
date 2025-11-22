@@ -273,7 +273,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "speed",
     name: "Speed",
     baseUnit: "meter/second",
-    baseSISymbol: "m⋅s⁻¹",
+    baseSISymbol: "m/s",
     units: [
       { id: "mps", name: "Meter/Second", symbol: "m/s", factor: 1 },
       { id: "kmh", name: "Kilometer/Hour", symbol: "km/h", factor: 0.277778 },
