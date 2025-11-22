@@ -109,6 +109,7 @@ export default function UnitConverter() {
       'viscosity': ['pas'],
       'surface_tension': ['nm'],
       'radiation_dose': ['gy'],
+      'equivalent_dose': ['sv'],
     };
     
     // Define astronomy units (for length category)
