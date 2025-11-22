@@ -680,7 +680,7 @@ export default function UnitConverter() {
             {/* Input Section */}
             <div className="grid gap-4">
               <Label className="text-xs font-mono uppercase text-muted-foreground">From</Label>
-              <div className="grid sm:grid-cols-[1fr_auto_auto] gap-2">
+              <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2">
                 <Input 
                   type="text" 
                   value={inputValue}
@@ -695,14 +695,13 @@ export default function UnitConverter() {
                   onValueChange={setFromPrefix}
                   disabled={!fromUnitData?.allowPrefixes}
                 >
-                  <SelectTrigger className="h-16 w-[130px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                  <SelectTrigger className="h-16 w-[80px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                     <SelectValue placeholder="Prefix" />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[300px] w-[200px]">
+                  <SelectContent className="max-h-[300px]">
                     {PREFIXES.map((p) => (
-                      <SelectItem key={p.id} value={p.id} className="font-mono text-xs min-h-[2rem]">
-                        <span className="font-bold mr-2 w-6 inline-block text-right">{p.symbol}</span>
-                        <span className="opacity-70">{p.name}</span>
+                      <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
+                        {p.symbol}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -723,7 +722,7 @@ export default function UnitConverter() {
                 </Select>
               </div>
               
-              <div className="grid sm:grid-cols-[1fr_220px] gap-2">
+              <div className="grid sm:grid-cols-[1fr_220px_120px] gap-2">
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">Base Factor</div>
                   <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''}>
@@ -735,6 +734,21 @@ export default function UnitConverter() {
                   <div className="font-mono text-sm text-foreground/80 truncate">
                     {categoryData.baseSISymbol || '-'}
                   </div>
+                </div>
+                <div className="p-2 rounded bg-muted/20 border border-border/50 flex items-center justify-center">
+                  <Select value={numberFormat} onValueChange={(val) => setNumberFormat(val as NumberFormat)}>
+                    <SelectTrigger className="h-7 w-full text-xs border-none bg-transparent">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="us-uk" className="text-xs">US/UK</SelectItem>
+                      <SelectItem value="europe" className="text-xs">Europe</SelectItem>
+                      <SelectItem value="si-period" className="text-xs">SI Period</SelectItem>
+                      <SelectItem value="si-comma" className="text-xs">SI Comma</SelectItem>
+                      <SelectItem value="period" className="text-xs">Period</SelectItem>
+                      <SelectItem value="comma" className="text-xs">Comma</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -777,7 +791,7 @@ export default function UnitConverter() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="grid sm:grid-cols-[1fr_auto_auto] gap-2">
+              <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2">
                 <div className="h-16 px-4 bg-muted/30 border border-border/50 rounded-md flex items-center overflow-x-auto text-left justify-start w-full min-w-0">
                   <span className="text-2xl font-mono text-primary break-all whitespace-nowrap">
                     {result !== null 
@@ -796,14 +810,13 @@ export default function UnitConverter() {
                   onValueChange={setToPrefix}
                   disabled={!toUnitData?.allowPrefixes}
                 >
-                  <SelectTrigger className="h-16 w-[130px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                  <SelectTrigger className="h-16 w-[80px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                     <SelectValue placeholder="Prefix" />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[300px] w-[200px]">
+                  <SelectContent className="max-h-[300px]">
                     {PREFIXES.map((p) => (
-                      <SelectItem key={p.id} value={p.id} className="font-mono text-xs min-h-[2rem]">
-                        <span className="font-bold mr-2 w-6 inline-block text-right">{p.symbol}</span>
-                        <span className="opacity-70">{p.name}</span>
+                      <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
+                        {p.symbol}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -824,7 +837,7 @@ export default function UnitConverter() {
                 </Select>
               </div>
 
-              <div className="grid sm:grid-cols-[1fr_220px] gap-2">
+              <div className="grid sm:grid-cols-[1fr_220px_120px] gap-2">
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">Base Factor</div>
                   <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''}>
@@ -835,6 +848,12 @@ export default function UnitConverter() {
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">SI Base Units</div>
                   <div className="font-mono text-sm text-foreground/80 truncate">
                     {categoryData.baseSISymbol || '-'}
+                  </div>
+                </div>
+                <div className="p-2 rounded bg-muted/20 border border-border/50">
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">Format</div>
+                  <div className="font-mono text-xs text-foreground/80 truncate">
+                    {NUMBER_FORMATS[numberFormat].name}
                   </div>
                 </div>
               </div>
@@ -999,56 +1018,41 @@ export default function UnitConverter() {
                   })() : calcValues[3] ? formatDimensions(calcValues[3].dimensions) : ''}
                 </span>
               </div>
-              <div className="flex gap-1 justify-between items-center w-full">
-                <div className="flex gap-1">
-                  {calcValues[3] && resultCategory && (
-                    <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
-                      <SelectTrigger className="h-9 w-[100px] text-xs">
-                        <SelectValue placeholder="Base Units" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="base" className="text-xs">
-                          Base Units
+              <div className="flex gap-1 justify-start">
+                {calcValues[3] && resultCategory && (
+                  <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
+                    <SelectTrigger className="h-9 w-[100px] text-xs">
+                      <SelectValue placeholder="Base Units" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="base" className="text-xs">
+                        Base Units
+                      </SelectItem>
+                      {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
+                        <SelectItem key={unit.id} value={unit.id} className="text-xs">
+                          {unit.name}
                         </SelectItem>
-                        {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
-                          <SelectItem key={unit.id} value={unit.id} className="text-xs">
-                            {unit.name}
-                          </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  )}
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={copyCalcResult}
-                    disabled={!calcValues[3]}
-                    className="text-xs hover:text-accent gap-1"
-                  >
-                    <Copy className="w-3 h-3" /> Copy
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={clearCalculator}
-                    className="text-xs hover:text-destructive gap-1"
-                  >
-                    Clear
-                  </Button>
-                </div>
-                <Select value={numberFormat} onValueChange={(val) => setNumberFormat(val as NumberFormat)}>
-                  <SelectTrigger className="h-9 w-[100px] text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="us-uk" className="text-xs">US/UK</SelectItem>
-                    <SelectItem value="europe" className="text-xs">Europe</SelectItem>
-                    <SelectItem value="si-period" className="text-xs">SI Period</SelectItem>
-                    <SelectItem value="si-comma" className="text-xs">SI Comma</SelectItem>
-                    <SelectItem value="period" className="text-xs">Period</SelectItem>
-                    <SelectItem value="comma" className="text-xs">Comma</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
+                )}
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={copyCalcResult}
+                  disabled={!calcValues[3]}
+                  className="text-xs hover:text-accent gap-1"
+                >
+                  <Copy className="w-3 h-3" /> Copy
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={clearCalculator}
+                  className="text-xs hover:text-destructive gap-1"
+                >
+                  Clear
+                </Button>
               </div>
             </div>
           </div>
