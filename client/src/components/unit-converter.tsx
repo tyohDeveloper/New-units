@@ -1141,11 +1141,11 @@ export default function UnitConverter() {
                 {calcValues[3] && resultCategory && (
                   <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
                     <SelectTrigger className="h-9 w-[100px] text-xs">
-                      <SelectValue placeholder="Base Units" />
+                      <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="base" className="text-xs">
-                        Base Units
+                      <SelectItem value="base" className="text-xs font-mono">
+                        {CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"}
                       </SelectItem>
                       {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
                         <SelectItem key={unit.id} value={unit.id} className="text-xs">
