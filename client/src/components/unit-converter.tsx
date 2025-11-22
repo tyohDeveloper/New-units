@@ -957,15 +957,19 @@ export default function UnitConverter() {
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[0] ? (() => {
-                    const prefix = PREFIXES.find(p => p.id === calcValues[0].prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    const displayValue = calcValues[0].value / prefix.factor;
+                    const val = calcValues[0];
+                    if (!val) return '';
+                    const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    const displayValue = val.value / prefix.factor;
                     return formatNumberWithSeparators(displayValue, precision);
                   })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[0] ? (() => {
-                    const prefix = PREFIXES.find(p => p.id === calcValues[0].prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    return `${prefix.symbol}${formatDimensions(calcValues[0].dimensions)}`;
+                    const val = calcValues[0];
+                    if (!val) return '';
+                    const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
                 </span>
               </div>
@@ -1003,15 +1007,19 @@ export default function UnitConverter() {
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[1] ? (() => {
-                    const prefix = PREFIXES.find(p => p.id === calcValues[1].prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    const displayValue = calcValues[1].value / prefix.factor;
+                    const val = calcValues[1];
+                    if (!val) return '';
+                    const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    const displayValue = val.value / prefix.factor;
                     return formatNumberWithSeparators(displayValue, precision);
                   })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[1] ? (() => {
-                    const prefix = PREFIXES.find(p => p.id === calcValues[1].prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    return `${prefix.symbol}${formatDimensions(calcValues[1].dimensions)}`;
+                    const val = calcValues[1];
+                    if (!val) return '';
+                    const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
                 </span>
               </div>
@@ -1049,15 +1057,19 @@ export default function UnitConverter() {
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[2] ? (() => {
-                    const prefix = PREFIXES.find(p => p.id === calcValues[2].prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    const displayValue = calcValues[2].value / prefix.factor;
+                    const val = calcValues[2];
+                    if (!val) return '';
+                    const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    const displayValue = val.value / prefix.factor;
                     return formatNumberWithSeparators(displayValue, precision);
                   })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[2] ? (() => {
-                    const prefix = PREFIXES.find(p => p.id === calcValues[2].prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    return `${prefix.symbol}${formatDimensions(calcValues[2].dimensions)}`;
+                    const val = calcValues[2];
+                    if (!val) return '';
+                    const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
                 </span>
               </div>
@@ -1082,21 +1094,27 @@ export default function UnitConverter() {
                     }
                     return formatNumberWithSeparators(calcValues[3].value, precision);
                   })() : calcValues[3] ? (() => {
-                    const prefix = PREFIXES.find(p => p.id === calcValues[3].prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    const displayValue = calcValues[3].value / prefix.factor;
+                    const val = calcValues[3];
+                    if (!val) return '';
+                    const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    const displayValue = val.value / prefix.factor;
                     return formatNumberWithSeparators(displayValue, precision);
                   })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[3] && resultUnit && resultCategory ? (() => {
+                    const val = calcValues[3];
+                    if (!val) return '';
                     const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                     const unit = cat?.units.find(u => u.id === resultUnit);
                     const prefix = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
                     const prefixSymbol = unit?.allowPrefixes && prefix.id !== 'none' ? prefix.symbol : '';
-                    return prefixSymbol + (unit?.symbol || formatDimensions(calcValues[3].dimensions));
+                    return prefixSymbol + (unit?.symbol || formatDimensions(val.dimensions));
                   })() : calcValues[3] ? (() => {
-                    const prefix = PREFIXES.find(p => p.id === calcValues[3].prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    return `${prefix.symbol}${formatDimensions(calcValues[3].dimensions)}`;
+                    const val = calcValues[3];
+                    if (!val) return '';
+                    const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
                 </span>
               </div>
