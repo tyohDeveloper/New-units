@@ -86,39 +86,34 @@ export default function UnitConverter() {
   const categoryData = CONVERSION_DATA.find(c => c.id === activeCategory)!;
   
   // Helper to categorize units
-  const getUnitCategory = (unit: any, category: string): 'si-base' | 'si-derived' | 'non-si' => {
-    // Define SI base units for each category (the fundamental unit)
-    const siBaseUnits: Record<string, string[]> = {
+  const getUnitCategory = (unit: any, category: string): 'si' | 'non-si' | 'astronomy' => {
+    // Define SI units for each category
+    const siUnits: Record<string, string[]> = {
       'length': ['m'],
-      'mass': ['kg'],
+      'mass': ['kg', 'g', 't'],
       'time': ['s'],
       'current': ['a'],
-      'temperature': ['k'],
+      'temperature': ['k', 'c'],
       'amount': ['mol'],
       'intensity': ['cd'],
-      'area': ['m2'],
-      'volume': ['l', 'm3'],
-      'speed': ['mps'],
+      'area': ['m2', 'ha', 'km2'],
+      'volume': ['ml', 'l', 'm3', 'km3'],
+      'speed': ['mps', 'kmh'],
       'acceleration': ['mps2'],
       'force': ['n'],
-      'pressure': ['pa'],
-      'energy': ['j'],
+      'pressure': ['pa', 'bar'],
+      'energy': ['j', 'kwh', 'wh'],
       'power': ['w'],
       'frequency': ['hz'],
     };
     
-    // Define SI derived units for each category
-    const siDerivedUnits: Record<string, string[]> = {
-      'area': ['ha', 'km2'],
-      'volume': ['ml', 'km3'],
-      'speed': ['kmh'],
-      'energy': ['kwh', 'wh'],
-    };
+    // Define astronomy units (for length category)
+    const astronomyUnits: string[] = ['au', 'ly', 'parsec'];
     
-    if (siBaseUnits[category]?.includes(unit.id) || unit.allowPrefixes) {
-      return 'si-base';
-    } else if (siDerivedUnits[category]?.includes(unit.id)) {
-      return 'si-derived';
+    if (siUnits[category]?.includes(unit.id)) {
+      return 'si';
+    } else if (category === 'length' && astronomyUnits.includes(unit.id)) {
+      return 'astronomy';
     } else {
       return 'non-si';
     }
@@ -134,13 +129,13 @@ export default function UnitConverter() {
       ? catData.units.filter(u => !u.beerWine)
       : catData.units;
       
-    // Sort: SI base units first, then SI derived, then non-SI units by size
+    // Sort: SI units first, then non-SI, then astronomy units (for length)
     return [...units].sort((a, b) => {
       const aCat = getUnitCategory(a, category);
       const bCat = getUnitCategory(b, category);
       
-      // Order: si-base < si-derived < non-si
-      const order = { 'si-base': 0, 'si-derived': 1, 'non-si': 2 };
+      // Order: si < non-si < astronomy
+      const order = { 'si': 0, 'non-si': 1, 'astronomy': 2 };
       if (order[aCat] !== order[bCat]) {
         return order[aCat] - order[bCat];
       }
@@ -156,9 +151,16 @@ export default function UnitConverter() {
   useEffect(() => {
     const sorted = getFilteredSortedUnits(activeCategory, includeBeerWine);
     if (sorted.length > 0) {
-      // Default to first two SI units (which are now sorted to the top)
-      setFromUnit(sorted[0]?.id || '');
-      setToUnit(sorted[1]?.id || sorted[0]?.id || '');
+      // For length, default to meter (m) specifically
+      if (activeCategory === 'length') {
+        const meterUnit = sorted.find(u => u.id === 'm');
+        setFromUnit(meterUnit?.id || sorted[0]?.id || '');
+        setToUnit(sorted[1]?.id || sorted[0]?.id || '');
+      } else {
+        // For other categories, default to first two SI units (which are now sorted to the top)
+        setFromUnit(sorted[0]?.id || '');
+        setToUnit(sorted[1]?.id || sorted[0]?.id || '');
+      }
       setFromPrefix('none');
       setToPrefix('none');
     }
