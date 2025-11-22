@@ -45,6 +45,19 @@ export default function UnitConverter() {
   const [resultCategory, setResultCategory] = useState<UnitCategory | null>(null);
   const [resultPrefix, setResultPrefix] = useState<string>('none');
 
+  // Number format state
+  type NumberFormat = 'us-uk' | 'europe' | 'si-period' | 'si-comma' | 'period' | 'comma';
+  const [numberFormat, setNumberFormat] = useState<NumberFormat>('us-uk');
+
+  const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string }> = {
+    'us-uk': { name: 'US/UK', thousands: ',', decimal: '.' },
+    'europe': { name: 'Europe', thousands: '.', decimal: ',' },
+    'si-period': { name: 'SI Period', thousands: ' ', decimal: '.' },
+    'si-comma': { name: 'SI Comma', thousands: ' ', decimal: ',' },
+    'period': { name: 'Period', thousands: '', decimal: '.' },
+    'comma': { name: 'Comma', thousands: '', decimal: ',' },
+  };
+
   const CATEGORY_GROUPS = [
     {
       name: "Base Quantities",
@@ -313,8 +326,8 @@ export default function UnitConverter() {
       val = parseFtIn(inputValue);
       if (isNaN(val)) { setResult(null); return; }
     } else {
-      if (isNaN(parseFloat(inputValue))) { setResult(null); return; }
-      val = parseFloat(inputValue);
+      val = parseNumberWithFormat(inputValue);
+      if (isNaN(val)) { setResult(null); return; }
     }
     
     // Determine prefix factors (1 if not supported or none selected)
@@ -550,12 +563,15 @@ export default function UnitConverter() {
 
   const copyCalcResult = () => {
     if (calcValues[3]) {
-      // Copy without comma separators
+      // Copy with only decimal separator, no thousands separator
+      const format = NUMBER_FORMATS[numberFormat];
       const valueStr = cleanNumber(calcValues[3].value, precision);
-      navigator.clipboard.writeText(valueStr);
+      // Replace period with format's decimal separator
+      const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
+      navigator.clipboard.writeText(formattedStr);
       toast({
         title: "Copied to clipboard",
-        description: valueStr,
+        description: formattedStr,
       });
     }
   };
@@ -568,12 +584,35 @@ export default function UnitConverter() {
     return cleaned;
   };
 
-  // Helper to format number with comma separators for display
-  const formatNumberWithCommas = (num: number, precision: number): string => {
+  // Helper to format number with separators based on selected format
+  const formatNumberWithSeparators = (num: number, precision: number): string => {
+    const format = NUMBER_FORMATS[numberFormat];
     const cleaned = cleanNumber(num, precision);
     const [integer, decimal] = cleaned.split('.');
-    const withCommas = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return decimal ? `${withCommas}.${decimal}` : withCommas;
+    
+    // Add thousands separator if format has one
+    let formattedInteger = integer;
+    if (format.thousands) {
+      formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, format.thousands);
+    }
+    
+    // Use format's decimal separator
+    return decimal ? `${formattedInteger}${format.decimal}${decimal}` : formattedInteger;
+  };
+
+  // Helper to parse number from string with current format
+  const parseNumberWithFormat = (str: string): number => {
+    const format = NUMBER_FORMATS[numberFormat];
+    // Remove thousands separator
+    let cleaned = str;
+    if (format.thousands) {
+      cleaned = cleaned.split(format.thousands).join('');
+    }
+    // Replace decimal separator with period for parsing
+    if (format.decimal !== '.') {
+      cleaned = cleaned.replace(format.decimal, '.');
+    }
+    return parseFloat(cleaned);
   };
 
   const formatFactor = (f: number) => {
@@ -746,7 +785,7 @@ export default function UnitConverter() {
                           ? formatDMS(result) 
                           : toUnit === 'ft_in'
                             ? formatFtIn(result)
-                            : Number(result.toFixed(precision)).toString()) 
+                            : formatNumberWithSeparators(result, precision)) 
                       : '...'}
                   </span>
                 </div>
@@ -844,7 +883,7 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[0] ? formatNumberWithCommas(calcValues[0].value, precision) : ''}
+                  {calcValues[0] ? formatNumberWithSeparators(calcValues[0].value, precision) : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[0] ? formatDimensions(calcValues[0].dimensions) : ''}
@@ -883,7 +922,7 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[1] ? formatNumberWithCommas(calcValues[1].value, precision) : ''}
+                  {calcValues[1] ? formatNumberWithSeparators(calcValues[1].value, precision) : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[1] ? formatDimensions(calcValues[1].dimensions) : ''}
@@ -922,7 +961,7 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[2] ? formatNumberWithCommas(calcValues[2].value, precision) : ''}
+                  {calcValues[2] ? formatNumberWithSeparators(calcValues[2].value, precision) : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[2] ? formatDimensions(calcValues[2].dimensions) : ''}
@@ -945,10 +984,10 @@ export default function UnitConverter() {
                         categoryBaseValue = calcValues[3].value * 1000; // m³ to L
                       }
                       const convertedValue = categoryBaseValue / (unit.factor * prefix.factor);
-                      return formatNumberWithCommas(convertedValue, precision);
+                      return formatNumberWithSeparators(convertedValue, precision);
                     }
-                    return formatNumberWithCommas(calcValues[3].value, precision);
-                  })() : calcValues[3] ? formatNumberWithCommas(calcValues[3].value, precision) : ''}
+                    return formatNumberWithSeparators(calcValues[3].value, precision);
+                  })() : calcValues[3] ? formatNumberWithSeparators(calcValues[3].value, precision) : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[3] && resultUnit && resultCategory ? (() => {
@@ -960,41 +999,56 @@ export default function UnitConverter() {
                   })() : calcValues[3] ? formatDimensions(calcValues[3].dimensions) : ''}
                 </span>
               </div>
-              <div className="flex gap-1 justify-start">
-                {calcValues[3] && resultCategory && (
-                  <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
-                    <SelectTrigger className="h-9 w-[100px] text-xs">
-                      <SelectValue placeholder="Base Units" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="base" className="text-xs">
-                        Base Units
-                      </SelectItem>
-                      {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
-                        <SelectItem key={unit.id} value={unit.id} className="text-xs">
-                          {unit.name}
+              <div className="flex gap-1 justify-between items-center w-full">
+                <div className="flex gap-1">
+                  {calcValues[3] && resultCategory && (
+                    <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
+                      <SelectTrigger className="h-9 w-[100px] text-xs">
+                        <SelectValue placeholder="Base Units" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="base" className="text-xs">
+                          Base Units
                         </SelectItem>
+                        {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
+                          <SelectItem key={unit.id} value={unit.id} className="text-xs">
+                            {unit.name}
+                          </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                )}
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={copyCalcResult}
-                  disabled={!calcValues[3]}
-                  className="text-xs hover:text-accent gap-1"
-                >
-                  <Copy className="w-3 h-3" /> Copy
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={clearCalculator}
-                  className="text-xs hover:text-destructive gap-1"
-                >
-                  Clear
-                </Button>
+                  )}
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={copyCalcResult}
+                    disabled={!calcValues[3]}
+                    className="text-xs hover:text-accent gap-1"
+                  >
+                    <Copy className="w-3 h-3" /> Copy
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={clearCalculator}
+                    className="text-xs hover:text-destructive gap-1"
+                  >
+                    Clear
+                  </Button>
+                </div>
+                <Select value={numberFormat} onValueChange={(val) => setNumberFormat(val as NumberFormat)}>
+                  <SelectTrigger className="h-9 w-[100px] text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="us-uk" className="text-xs">US/UK</SelectItem>
+                    <SelectItem value="europe" className="text-xs">Europe</SelectItem>
+                    <SelectItem value="si-period" className="text-xs">SI Period</SelectItem>
+                    <SelectItem value="si-comma" className="text-xs">SI Comma</SelectItem>
+                    <SelectItem value="period" className="text-xs">Period</SelectItem>
+                    <SelectItem value="comma" className="text-xs">Comma</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
