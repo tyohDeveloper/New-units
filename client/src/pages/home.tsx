@@ -1,4 +1,5 @@
 import UnitConverter from '@/components/unit-converter';
+import packageJson from '../../../package.json';
 
 export default function Home() {
   return (
@@ -14,7 +15,7 @@ export default function Home() {
             <span className="font-bold text-xl tracking-tight">Omni<span className="text-primary">Unit</span></span>
           </div>
           <div className="text-xs font-mono text-muted-foreground hidden sm:block">
-            v2.0.0 // ARCHIVAL_EDITION
+            v{packageJson.version} // ARCHIVAL_EDITION
           </div>
         </div>
       </header>
