@@ -116,6 +116,7 @@ export default function UnitConverter() {
       'sound_pressure': ['pa'],
       'refractive_power': ['m-1'],
       'digital': ['B'],
+      'printing': ['pt'],
     };
     
     // Define astronomy units (for length category)
