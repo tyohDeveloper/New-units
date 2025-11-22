@@ -675,11 +675,11 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
   {
     id: "luminance",
     name: "Luminance",
-    baseUnit: "nit",
+    baseUnit: "candela/square-meter",
     baseSISymbol: "cd⋅m⁻²",
     units: [
-      { id: "nit", name: "Nit", symbol: "nt", factor: 1 },
       { id: "cdm2", name: "Candela/m²", symbol: "cd/m²", factor: 1 },
+      { id: "nit", name: "Nit", symbol: "nt", factor: 1 },
       { id: "stilb", name: "Stilb", symbol: "sb", factor: 10000 },
       { id: "lambert", name: "Lambert", symbol: "L", factor: 3183.1 },
       { id: "ftl", name: "Foot-lambert", symbol: "fL", factor: 3.42626 },
