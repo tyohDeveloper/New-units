@@ -617,9 +617,9 @@ export default function UnitConverter() {
 
   const formatFactor = (f: number) => {
     if (f === 1) return "1";
-    if (f >= 10000 || f <= 0.0001) return `×${f.toExponential(2)}`;
-    const value = Number(f.toPrecision(4));
-    return `×${formatNumberWithSeparators(value, 4)}`;
+    if (f >= 10000 || f <= 0.0001) return `×${f.toExponential(7)}`;
+    const value = Number(f.toPrecision(8));
+    return `×${formatNumberWithSeparators(value, 8)}`;
   };
 
   // Helper to determine input placeholder
@@ -667,9 +667,24 @@ export default function UnitConverter() {
       <div className="space-y-4 -mt-1">
         <div className="mb-2">
           <h1 className="text-3xl font-bold text-foreground tracking-tight">{categoryData.name}</h1>
-          <p className="text-muted-foreground mt-1 text-sm font-mono">
-            Base unit: <span className="text-primary">{categoryData.baseUnit}</span>
-          </p>
+          <div className="flex items-center justify-between mt-1">
+            <p className="text-muted-foreground text-sm font-mono">
+              Base unit: <span className="text-primary">{categoryData.baseUnit}</span>
+            </p>
+            <Select value={numberFormat} onValueChange={(val) => setNumberFormat(val as NumberFormat)}>
+              <SelectTrigger className="h-6 w-[100px] text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="us-uk" className="text-xs">US/UK</SelectItem>
+                <SelectItem value="europe" className="text-xs">Europe</SelectItem>
+                <SelectItem value="si-period" className="text-xs">SI Period</SelectItem>
+                <SelectItem value="si-comma" className="text-xs">SI Comma</SelectItem>
+                <SelectItem value="period" className="text-xs">Period</SelectItem>
+                <SelectItem value="comma" className="text-xs">Comma</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <Card className="p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden">
@@ -731,22 +746,7 @@ export default function UnitConverter() {
                   </div>
                 </div>
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono flex items-center justify-between">
-                    <span>SI Base Units</span>
-                    <Select value={numberFormat} onValueChange={(val) => setNumberFormat(val as NumberFormat)}>
-                      <SelectTrigger className="h-5 w-[80px] text-xs border-none bg-transparent p-0">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="us-uk" className="text-xs">US/UK</SelectItem>
-                        <SelectItem value="europe" className="text-xs">Europe</SelectItem>
-                        <SelectItem value="si-period" className="text-xs">SI Period</SelectItem>
-                        <SelectItem value="si-comma" className="text-xs">SI Comma</SelectItem>
-                        <SelectItem value="period" className="text-xs">Period</SelectItem>
-                        <SelectItem value="comma" className="text-xs">Comma</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">SI Base Units</div>
                   <div className="font-mono text-sm text-foreground/80 truncate">
                     {categoryData.baseSISymbol || '-'}
                   </div>
