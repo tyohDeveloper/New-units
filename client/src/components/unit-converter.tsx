@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CONVERSION_DATA, UnitCategory, convert, PREFIXES } from '@/lib/conversion-data';
 import { Card } from '@/components/ui/card';
@@ -1240,7 +1240,7 @@ export default function UnitConverter() {
               </div>
               <div className="flex gap-1 justify-start">
                 {calcValues[3] && resultCategory && (
-                  <>
+                  <React.Fragment>
                     <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
                       <SelectTrigger className="h-9 w-[100px] text-xs">
                         <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
@@ -1275,7 +1275,7 @@ export default function UnitConverter() {
                       </Select>
                     );
                   })()}
-                  </>
+                  </React.Fragment>
                 )}
                 <Button 
                   variant="ghost" 
