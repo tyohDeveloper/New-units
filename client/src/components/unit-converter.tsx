@@ -112,6 +112,7 @@ export default function UnitConverter() {
       'equivalent_dose': ['sv'],
       'catalytic': ['kat'],
       'angle': ['rad'],
+      'solid_angle': ['sr'],
     };
     
     // Define astronomy units (for length category)
