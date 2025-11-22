@@ -113,6 +113,7 @@ export default function UnitConverter() {
       'catalytic': ['kat'],
       'angle': ['rad'],
       'solid_angle': ['sr'],
+      'sound_pressure': ['pa'],
     };
     
     // Define astronomy units (for length category)
