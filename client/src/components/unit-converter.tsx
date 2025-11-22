@@ -400,15 +400,9 @@ export default function UnitConverter() {
         return newValues;
       });
 
-      // Find matching category and set default unit
+      // Find matching category but don't auto-select a unit (show base units by default)
       const matchingCategory = findCategoryForDimensions(resultDimensions);
       setResultCategory(matchingCategory);
-      if (matchingCategory && !resultUnit) {
-        const categoryData = CONVERSION_DATA.find(c => c.id === matchingCategory);
-        if (categoryData) {
-          setResultUnit(categoryData.units[0]?.id || null);
-        }
-      }
     } else if (calcValues[3] !== null) {
       setCalcValues(prev => {
         const newValues = [...prev];
@@ -842,11 +836,14 @@ export default function UnitConverter() {
               </div>
               <div className="flex gap-1 justify-start">
                 {calcValues[3] && resultCategory && (
-                  <Select value={resultUnit || undefined} onValueChange={setResultUnit}>
+                  <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
                     <SelectTrigger className="h-9 w-[100px] text-xs">
-                      <SelectValue />
+                      <SelectValue placeholder="Base Units" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="base" className="text-xs">
+                        Base Units
+                      </SelectItem>
                       {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
                         <SelectItem key={unit.id} value={unit.id} className="text-xs">
                           {unit.name}
