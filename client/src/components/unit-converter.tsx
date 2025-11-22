@@ -427,6 +427,19 @@ export default function UnitConverter() {
     return bestPrefix;
   };
 
+  // Auto-select multiplication operator when values are entered
+  useEffect(() => {
+    if (calcValues[0] && calcValues[1] && !calcOp1) {
+      setCalcOp1('*');
+    }
+  }, [calcValues[0], calcValues[1], calcOp1]);
+
+  useEffect(() => {
+    if (calcValues[1] && calcValues[2] && !calcOp2) {
+      setCalcOp2('*');
+    }
+  }, [calcValues[1], calcValues[2], calcOp2]);
+
   // Calculate result field
   useEffect(() => {
     if (calcValues[0] && calcValues[1] && calcOp1) {
