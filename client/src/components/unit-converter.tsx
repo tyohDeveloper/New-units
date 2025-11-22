@@ -477,14 +477,22 @@ export default function UnitConverter() {
       const matchingCategory = findCategoryForDimensions(resultDimensions);
       setResultCategory(matchingCategory);
       if (matchingCategory) {
-        const bestUnit = findBestUnit(resultValue, matchingCategory);
+        // Convert result value to category's base unit
+        // For volume: 1 m³ = 1000 L, for area: 1 m² = 1 m² (no conversion needed)
+        let categoryBaseValue = resultValue;
+        if (matchingCategory === 'volume') {
+          // Volume category base is liter, calculator gives m³, so convert: 1 m³ = 1000 L
+          categoryBaseValue = resultValue * 1000;
+        }
+        
+        const bestUnit = findBestUnit(categoryBaseValue, matchingCategory);
         setResultUnit(bestUnit);
         
         // Find best prefix if unit allows prefixes
         const cat = CONVERSION_DATA.find(c => c.id === matchingCategory);
         const unit = cat?.units.find(u => u.id === bestUnit);
         if (unit?.allowPrefixes) {
-          const bestPrefix = findBestPrefix(resultValue / unit.factor);
+          const bestPrefix = findBestPrefix(categoryBaseValue / unit.factor);
           setResultPrefix(bestPrefix);
         } else {
           setResultPrefix('none');
@@ -909,7 +917,12 @@ export default function UnitConverter() {
                     const unit = cat?.units.find(u => u.id === resultUnit);
                     const prefix = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
                     if (unit) {
-                      const convertedValue = calcValues[3].value / (unit.factor * prefix.factor);
+                      // Convert from SI base units to category base units
+                      let categoryBaseValue = calcValues[3].value;
+                      if (resultCategory === 'volume') {
+                        categoryBaseValue = calcValues[3].value * 1000; // m³ to L
+                      }
+                      const convertedValue = categoryBaseValue / (unit.factor * prefix.factor);
                       return cleanNumber(convertedValue, precision);
                     }
                     return cleanNumber(calcValues[3].value, precision);
