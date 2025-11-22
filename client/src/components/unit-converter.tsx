@@ -43,6 +43,7 @@ export default function UnitConverter() {
   const [calcOp2, setCalcOp2] = useState<'*' | '/' | null>(null);
   const [resultUnit, setResultUnit] = useState<string | null>(null);
   const [resultCategory, setResultCategory] = useState<UnitCategory | null>(null);
+  const [resultPrefix, setResultPrefix] = useState<string>('none');
 
   const CATEGORY_GROUPS = [
     {
@@ -391,6 +392,27 @@ export default function UnitConverter() {
     return bestUnit;
   };
 
+  // Helper: Find best SI prefix for a value (prefix that produces number closest to 1)
+  const findBestPrefix = (value: number): string => {
+    if (value === 0) return 'none';
+    
+    const absValue = Math.abs(value);
+    let bestPrefix = 'none';
+    let bestScore = Infinity;
+
+    for (const prefix of PREFIXES) {
+      const convertedValue = absValue / prefix.factor;
+      const score = Math.abs(Math.log10(convertedValue));
+      
+      if (score < bestScore) {
+        bestScore = score;
+        bestPrefix = prefix.id;
+      }
+    }
+
+    return bestPrefix;
+  };
+
   // Calculate result field
   useEffect(() => {
     if (calcValues[0] && calcValues[1] && calcOp1) {
@@ -430,6 +452,16 @@ export default function UnitConverter() {
       if (matchingCategory) {
         const bestUnit = findBestUnit(resultValue, matchingCategory);
         setResultUnit(bestUnit);
+        
+        // Find best prefix if unit allows prefixes
+        const cat = CONVERSION_DATA.find(c => c.id === matchingCategory);
+        const unit = cat?.units.find(u => u.id === bestUnit);
+        if (unit?.allowPrefixes) {
+          const bestPrefix = findBestPrefix(resultValue / unit.factor);
+          setResultPrefix(bestPrefix);
+        } else {
+          setResultPrefix('none');
+        }
       }
     } else if (calcValues[3] !== null) {
       setCalcValues(prev => {
@@ -448,6 +480,7 @@ export default function UnitConverter() {
     setCalcOp2(null);
     setResultUnit(null);
     setResultCategory(null);
+    setResultPrefix('none');
   };
 
   const clearField1 = () => {
@@ -847,8 +880,9 @@ export default function UnitConverter() {
                   {calcValues[3] && resultUnit && resultCategory ? (() => {
                     const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                     const unit = cat?.units.find(u => u.id === resultUnit);
+                    const prefix = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
                     if (unit) {
-                      const convertedValue = calcValues[3].value / unit.factor;
+                      const convertedValue = calcValues[3].value / (unit.factor * prefix.factor);
                       return cleanNumber(convertedValue, precision);
                     }
                     return cleanNumber(calcValues[3].value, precision);
@@ -858,7 +892,9 @@ export default function UnitConverter() {
                   {calcValues[3] && resultUnit && resultCategory ? (() => {
                     const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                     const unit = cat?.units.find(u => u.id === resultUnit);
-                    return unit?.symbol || formatDimensions(calcValues[3].dimensions);
+                    const prefix = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
+                    const prefixSymbol = unit?.allowPrefixes && prefix.id !== 'none' ? prefix.symbol : '';
+                    return prefixSymbol + (unit?.symbol || formatDimensions(calcValues[3].dimensions));
                   })() : calcValues[3] ? formatDimensions(calcValues[3].dimensions) : ''}
                 </span>
               </div>
