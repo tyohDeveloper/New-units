@@ -564,11 +564,12 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
   {
     id: "flow",
     name: "Flow Rate (Volumetric)",
-    baseUnit: "cubic meter/second",
-    baseSISymbol: "m³⋅s⁻¹",
+    baseUnit: "liter/second",
+    baseSISymbol: "L⋅s⁻¹",
     units: [
-      { id: "m3s", name: "m³/s", symbol: "m³/s", factor: 1 },
+      { id: "ls", name: "Liter/second", symbol: "L⋅s⁻¹", factor: 0.001 },
       { id: "lmin", name: "Liter/minute", symbol: "L/min", factor: 1.6667e-5 },
+      { id: "m3s", name: "m³/s", symbol: "m³/s", factor: 1 },
       {
         id: "cfm",
         name: "Cubic ft/minute",
