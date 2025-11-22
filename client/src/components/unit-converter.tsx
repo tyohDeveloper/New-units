@@ -111,6 +111,7 @@ export default function UnitConverter() {
       'radiation_dose': ['gy'],
       'equivalent_dose': ['sv'],
       'catalytic': ['kat'],
+      'angle': ['rad'],
     };
     
     // Define astronomy units (for length category)
