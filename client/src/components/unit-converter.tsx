@@ -617,9 +617,16 @@ export default function UnitConverter() {
 
   const formatFactor = (f: number) => {
     if (f === 1) return "1";
-    if (f >= 10000 || f <= 0.0001) return `×${f.toExponential(7)}`;
-    const value = Number(f.toPrecision(8));
-    return `×${formatNumberWithSeparators(value, 8)}`;
+    if (f >= 1e9 || f <= 1e-8) return `×${f.toExponential(7)}`;
+    
+    // Format with up to 9 total digits and 8 decimal places
+    // Use toPrecision for total significant figures, then clean up
+    const str = f.toPrecision(9);
+    const num = parseFloat(str);
+    
+    // Format with up to 8 decimal places, removing trailing zeros
+    const formatted = formatNumberWithSeparators(num, 8);
+    return `×${formatted}`;
   };
 
   // Helper to determine input placeholder
