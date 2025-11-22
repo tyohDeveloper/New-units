@@ -41,6 +41,8 @@ export default function UnitConverter() {
   const [calcValues, setCalcValues] = useState<Array<CalcValue | null>>([null, null, null, null]);
   const [calcOp1, setCalcOp1] = useState<'*' | '/' | null>(null);
   const [calcOp2, setCalcOp2] = useState<'*' | '/' | null>(null);
+  const [resultUnit, setResultUnit] = useState<string | null>(null);
+  const [resultCategory, setResultCategory] = useState<UnitCategory | null>(null);
 
   const CATEGORY_GROUPS = [
     {
@@ -354,6 +356,17 @@ export default function UnitConverter() {
     }
   };
 
+  // Helper: Find category that matches dimensions
+  const findCategoryForDimensions = (dims: DimensionalFormula): UnitCategory | null => {
+    for (const cat of CONVERSION_DATA) {
+      const catDims = getCategoryDimensions(cat.id);
+      if (JSON.stringify(catDims) === JSON.stringify(dims)) {
+        return cat.id;
+      }
+    }
+    return null;
+  };
+
   // Calculate result field
   useEffect(() => {
     if (calcValues[0] && calcValues[1] && calcOp1) {
@@ -386,12 +399,24 @@ export default function UnitConverter() {
         };
         return newValues;
       });
+
+      // Find matching category and set default unit
+      const matchingCategory = findCategoryForDimensions(resultDimensions);
+      setResultCategory(matchingCategory);
+      if (matchingCategory && !resultUnit) {
+        const categoryData = CONVERSION_DATA.find(c => c.id === matchingCategory);
+        if (categoryData) {
+          setResultUnit(categoryData.units[0]?.id || null);
+        }
+      }
     } else if (calcValues[3] !== null) {
       setCalcValues(prev => {
         const newValues = [...prev];
         newValues[3] = null;
         return newValues;
       });
+      setResultUnit(null);
+      setResultCategory(null);
     }
   }, [calcValues[0], calcValues[1], calcValues[2], calcOp1, calcOp2]);
 
@@ -399,6 +424,8 @@ export default function UnitConverter() {
     setCalcValues([null, null, null, null]);
     setCalcOp1(null);
     setCalcOp2(null);
+    setResultUnit(null);
+    setResultCategory(null);
   };
 
   const clearField1 = () => {
@@ -795,19 +822,38 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-primary font-bold truncate">
-                  {calcValues[3] ? cleanNumber(calcValues[3].value, precision) : ''}
+                  {calcValues[3] && resultUnit && resultCategory ? (() => {
+                    const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+                    const unit = cat?.units.find(u => u.id === resultUnit);
+                    if (unit) {
+                      const convertedValue = calcValues[3].value / unit.factor;
+                      return cleanNumber(convertedValue, precision);
+                    }
+                    return cleanNumber(calcValues[3].value, precision);
+                  })() : calcValues[3] ? cleanNumber(calcValues[3].value, precision) : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[3] ? formatDimensions(calcValues[3].dimensions) : ''}
+                  {calcValues[3] && resultUnit && resultCategory ? (() => {
+                    const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+                    const unit = cat?.units.find(u => u.id === resultUnit);
+                    return unit?.symbol || formatDimensions(calcValues[3].dimensions);
+                  })() : calcValues[3] ? formatDimensions(calcValues[3].dimensions) : ''}
                 </span>
               </div>
               <div className="flex gap-1 justify-start">
-                {calcValues[3] && getDerivedUnit(calcValues[3].dimensions) && (
-                  <div className="h-9 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center">
-                    <span className="text-xs font-mono text-muted-foreground">
-                      {getDerivedUnit(calcValues[3].dimensions)}
-                    </span>
-                  </div>
+                {calcValues[3] && resultCategory && (
+                  <Select value={resultUnit || undefined} onValueChange={setResultUnit}>
+                    <SelectTrigger className="h-9 w-[100px] text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
+                        <SelectItem key={unit.id} value={unit.id} className="text-xs">
+                          {unit.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
                 <Button 
                   variant="ghost" 
