@@ -110,6 +110,7 @@ export default function UnitConverter() {
       'surface_tension': ['nm'],
       'radiation_dose': ['gy'],
       'equivalent_dose': ['sv'],
+      'catalytic': ['kat'],
     };
     
     // Define astronomy units (for length category)
