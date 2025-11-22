@@ -118,7 +118,7 @@ export default function UnitConverter() {
       'digital': ['B'],
       'printing': ['pt'],
       'illuminance': ['lx'],
-      'luminance': ['cdm2'],
+      'luminance': ['nit'],
     };
     
     // Define astronomy units (for length category)
