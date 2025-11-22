@@ -117,7 +117,9 @@ export default function UnitConverter() {
       'refractive_power': ['m-1'],
       'digital': ['B'],
       'printing': ['pt'],
+      'luminous_flux': ['lm'],
       'illuminance': ['lx'],
+      'luminous_exitance': ['lmm2'],
       'luminance': ['nit'],
     };
     
@@ -219,7 +221,9 @@ export default function UnitConverter() {
       solid_angle: {},
       digital: {},
       printing: { length: 1 },
+      luminous_flux: { intensity: 1 },
       illuminance: { intensity: 1, length: -2 },
+      luminous_exitance: { intensity: 1, length: -2 },
       luminance: { intensity: 1, length: -2 },
       torque: { mass: 1, length: 2, time: -2 },
       density: { mass: 1, length: -3 },

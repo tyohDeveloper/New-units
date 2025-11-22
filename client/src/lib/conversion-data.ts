@@ -31,7 +31,9 @@ export type UnitCategory =
   | "solid_angle"
   | "digital"
   | "printing"
+  | "luminous_flux"
   | "illuminance"
+  | "luminous_exitance"
   | "luminance"
   | "torque"
   | "density"
@@ -583,6 +585,15 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
 
   // --- LIGHT & SOUND ---
   {
+    id: "luminous_flux",
+    name: "Luminous Flux",
+    baseUnit: "lumen",
+    baseSISymbol: "cd⋅sr",
+    units: [
+      { id: "lm", name: "Lumen", symbol: "lm", factor: 1, allowPrefixes: true },
+    ],
+  },
+  {
     id: "illuminance",
     name: "Illuminance",
     baseUnit: "lux",
@@ -592,6 +603,15 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "fc", name: "Foot-candle", symbol: "fc", factor: 10.7639 },
       { id: "ph", name: "Phot", symbol: "ph", factor: 10000 },
       { id: "nox", name: "Nox", symbol: "nox", factor: 0.001 },
+    ],
+  },
+  {
+    id: "luminous_exitance",
+    name: "Luminous Exitance",
+    baseUnit: "lumen/square-meter",
+    baseSISymbol: "cd⋅sr⋅m⁻²",
+    units: [
+      { id: "lmm2", name: "Lumen/m²", symbol: "lm/m²", factor: 1 },
     ],
   },
   {
