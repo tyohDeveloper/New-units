@@ -596,8 +596,12 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
   {
     id: "refractive_power",
     name: "Refractive Power (Vision)",
-    baseUnit: "diopter",
-    units: [{ id: "d", name: "Diopter", symbol: "D", factor: 1 }],
+    baseUnit: "reciprocal-meter",
+    baseSISymbol: "m⁻¹",
+    units: [
+      { id: "m-1", name: "Reciprocal Meter", symbol: "m⁻¹", factor: 1 },
+      { id: "d", name: "Diopter", symbol: "D", factor: 1 },
+    ],
   },
   {
     id: "sound_pressure",

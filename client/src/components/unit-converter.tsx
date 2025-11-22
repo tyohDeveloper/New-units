@@ -114,6 +114,7 @@ export default function UnitConverter() {
       'angle': ['rad'],
       'solid_angle': ['sr'],
       'sound_pressure': ['pa'],
+      'refractive_power': ['m-1'],
     };
     
     // Define astronomy units (for length category)
