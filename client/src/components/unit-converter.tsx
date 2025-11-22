@@ -84,6 +84,11 @@ export default function UnitConverter() {
   ];
 
   const categoryData = CONVERSION_DATA.find(c => c.id === activeCategory)!;
+  
+  // Filter units based on includeBeerWine checkbox for volume category
+  const filteredUnits = activeCategory === 'volume' && !includeBeerWine 
+    ? categoryData.units.filter(u => !u.beerWine)
+    : categoryData.units;
 
   // Reset units when category changes
   useEffect(() => {
@@ -820,7 +825,7 @@ export default function UnitConverter() {
                     <SelectValue placeholder="Unit" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
-                    {categoryData.units.map((u) => (
+                    {filteredUnits.map((u) => (
                       <SelectItem key={u.id} value={u.id} className="font-mono text-sm">
                         {u.symbol === u.name ? (
                           <span className="font-bold">{u.symbol}</span>
@@ -926,7 +931,7 @@ export default function UnitConverter() {
                     <SelectValue placeholder="Unit" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
-                    {categoryData.units.map((u) => (
+                    {filteredUnits.map((u) => (
                       <SelectItem key={u.id} value={u.id} className="font-mono text-sm">
                         {u.symbol === u.name ? (
                           <span className="font-bold">{u.symbol}</span>

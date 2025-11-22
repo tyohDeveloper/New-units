@@ -75,6 +75,7 @@ export interface UnitDefinition {
   offset?: number; // For temperature (e.g. Celsius to Kelvin)
   description?: string;
   allowPrefixes?: boolean;
+  beerWine?: boolean; // For beer/wine units that are conditionally shown
 }
 
 export interface CategoryDefinition {
@@ -264,6 +265,12 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "ac_ft", name: "Acre-foot", symbol: "ac⋅ft", factor: 1233481.84 },
       { id: "km3", name: "Cubic Kilometer", symbol: "km³", factor: 1e12 },
       { id: "mi3", name: "Cubic Mile", symbol: "mi³", factor: 4.16818e12 },
+      { id: "bottle_wine", name: "Bottle (Wine)", symbol: "btl", factor: 0.75, beerWine: true },
+      { id: "magnum_wine", name: "Magnum (Wine)", symbol: "mag", factor: 1.5, beerWine: true },
+      { id: "mini_keg", name: "Mini Keg (Beer)", symbol: "mini keg", factor: 5, beerWine: true },
+      { id: "pony_keg", name: "Pony Keg (Beer)", symbol: "pony", factor: 14.7, beerWine: true },
+      { id: "keg_beer", name: "Keg (Beer)", symbol: "keg", factor: 58.7, beerWine: true },
+      { id: "bbl_beer", name: "Barrel (Beer)", symbol: "bbl", factor: 117, beerWine: true },
     ],
   },
   {
