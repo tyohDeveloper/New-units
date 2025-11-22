@@ -117,6 +117,7 @@ export default function UnitConverter() {
       'refractive_power': ['m-1'],
       'digital': ['B'],
       'printing': ['pt'],
+      'illuminance': ['lx'],
     };
     
     // Define astronomy units (for length category)
