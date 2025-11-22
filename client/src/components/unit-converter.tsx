@@ -73,11 +73,23 @@ export default function UnitConverter() {
   // Reset units when category changes
   useEffect(() => {
     if (categoryData) {
-      // Default to first two units if available
-      setFromUnit(categoryData.units[0]?.id || '');
-      // Try to set a sensible second default (like m to ft) if possible, otherwise just 2nd unit
-      const defaultTo = categoryData.units.find(u => u.id !== categoryData.units[0]?.id)?.id || categoryData.units[0]?.id;
-      setToUnit(defaultTo || '');
+      // For length category, default both to meters
+      if (activeCategory === 'length') {
+        const meterUnit = categoryData.units.find(u => u.id === 'm');
+        if (meterUnit) {
+          setFromUnit('m');
+          setToUnit('m');
+        } else {
+          setFromUnit(categoryData.units[0]?.id || '');
+          setToUnit(categoryData.units[0]?.id || '');
+        }
+      } else {
+        // Default to first two units if available
+        setFromUnit(categoryData.units[0]?.id || '');
+        // Try to set a sensible second default (like m to ft) if possible, otherwise just 2nd unit
+        const defaultTo = categoryData.units.find(u => u.id !== categoryData.units[0]?.id)?.id || categoryData.units[0]?.id;
+        setToUnit(defaultTo || '');
+      }
       setFromPrefix('none');
       setToPrefix('none');
     }
