@@ -151,16 +151,10 @@ export default function UnitConverter() {
   useEffect(() => {
     const sorted = getFilteredSortedUnits(activeCategory, includeBeerWine);
     if (sorted.length > 0) {
-      // For length, default to meter (m) specifically
-      if (activeCategory === 'length') {
-        const meterUnit = sorted.find(u => u.id === 'm');
-        setFromUnit(meterUnit?.id || sorted[0]?.id || '');
-        setToUnit(sorted[1]?.id || sorted[0]?.id || '');
-      } else {
-        // For other categories, default to first two SI units (which are now sorted to the top)
-        setFromUnit(sorted[0]?.id || '');
-        setToUnit(sorted[1]?.id || sorted[0]?.id || '');
-      }
+      // Default to base SI unit for both FROM and TO
+      // Base SI unit is always the first in sorted list (meter for length, liter for volume, etc.)
+      setFromUnit(sorted[0]?.id || '');
+      setToUnit(sorted[0]?.id || '');
       setFromPrefix('none');
       setToPrefix('none');
     }
