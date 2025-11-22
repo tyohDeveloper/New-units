@@ -75,11 +75,15 @@ export default function UnitConverter() {
     },
     {
       name: "Radiation & Physics",
-      categories: ['radioactivity', 'radiation_dose', 'equivalent_dose', 'catalytic', 'angle', 'solid_angle', 'frequency', 'sound_pressure', 'refractive_power']
+      categories: ['radioactivity', 'radiation_dose', 'equivalent_dose', 'catalytic', 'angle', 'solid_angle', 'frequency', 'sound_pressure']
+    },
+    {
+      name: "Human Response",
+      categories: ['luminous_flux', 'illuminance', 'luminous_exitance', 'luminance', 'refractive_power']
     },
     {
       name: "Specialized",
-      categories: ['digital', 'printing', 'luminous_flux', 'illuminance', 'luminous_exitance', 'luminance']
+      categories: ['digital', 'printing']
     }
   ];
 
