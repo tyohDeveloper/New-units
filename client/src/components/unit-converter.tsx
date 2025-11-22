@@ -822,8 +822,14 @@ export default function UnitConverter() {
                   <SelectContent className="max-h-[300px]">
                     {categoryData.units.map((u) => (
                       <SelectItem key={u.id} value={u.id} className="font-mono text-sm">
-                        <span className="font-bold mr-2">{u.symbol}</span>
-                        <span className="opacity-70">{u.name}</span>
+                        {u.symbol === u.name ? (
+                          <span className="font-bold">{u.symbol}</span>
+                        ) : (
+                          <>
+                            <span className="font-bold mr-2">{u.symbol}</span>
+                            <span className="opacity-70">{u.name}</span>
+                          </>
+                        )}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -922,8 +928,14 @@ export default function UnitConverter() {
                   <SelectContent className="max-h-[300px]">
                     {categoryData.units.map((u) => (
                       <SelectItem key={u.id} value={u.id} className="font-mono text-sm">
-                        <span className="font-bold mr-2">{u.symbol}</span>
-                        <span className="opacity-70">{u.name}</span>
+                        {u.symbol === u.name ? (
+                          <span className="font-bold">{u.symbol}</span>
+                        ) : (
+                          <>
+                            <span className="font-bold mr-2">{u.symbol}</span>
+                            <span className="opacity-70">{u.name}</span>
+                          </>
+                        )}
                       </SelectItem>
                     ))}
                   </SelectContent>
