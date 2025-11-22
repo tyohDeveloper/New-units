@@ -759,7 +759,7 @@ export default function UnitConverter() {
                     onChange={(e) => setIncludeBeerWine(e.target.checked)}
                     className="w-3 h-3 cursor-pointer accent-accent"
                   />
-                  <span className="text-xs text-muted-foreground">include beer/wine</span>
+                  <span className="text-xs text-muted-foreground">Include Beer/Wine</span>
                 </label>
               )}
               <Select value={numberFormat} onValueChange={(val) => setNumberFormat(val as NumberFormat)}>
