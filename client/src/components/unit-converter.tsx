@@ -85,10 +85,44 @@ export default function UnitConverter() {
 
   const categoryData = CONVERSION_DATA.find(c => c.id === activeCategory)!;
   
-  // Filter units based on includeBeerWine checkbox for volume category
-  const filteredUnits = activeCategory === 'volume' && !includeBeerWine 
+  // Helper to determine if a unit is SI
+  const isSIUnit = (unit: any): boolean => {
+    // Define SI units for each category
+    const siUnits: Record<string, string[]> = {
+      'area': ['m2', 'ha', 'km2'],
+      'volume': ['ml', 'l', 'm3', 'km3'],
+      'length': ['m'],
+      'mass': ['kg', 'g', 't'],
+      'time': ['s'],
+      'speed': ['mps', 'kmh'],
+      'acceleration': ['mps2'],
+      'force': ['n'],
+      'pressure': ['pa', 'bar'],
+      'energy': ['j', 'kwh', 'wh'],
+      'power': ['w'],
+      'frequency': ['hz'],
+    };
+    
+    return siUnits[activeCategory]?.includes(unit.id) || unit.allowPrefixes || false;
+  };
+  
+  // Filter and sort units
+  let filteredUnits = activeCategory === 'volume' && !includeBeerWine 
     ? categoryData.units.filter(u => !u.beerWine)
     : categoryData.units;
+    
+  // Sort: SI units first, then by size (factor)
+  filteredUnits = [...filteredUnits].sort((a, b) => {
+    const aIsSI = isSIUnit(a);
+    const bIsSI = isSIUnit(b);
+    
+    // SI units come first
+    if (aIsSI && !bIsSI) return -1;
+    if (!aIsSI && bIsSI) return 1;
+    
+    // Within same group (SI or non-SI), sort by size
+    return a.factor - b.factor;
+  });
 
   // Reset units when category changes
   useEffect(() => {
