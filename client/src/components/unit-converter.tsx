@@ -33,8 +33,9 @@ export default function UnitConverter() {
   }
 
   interface CalcValue {
-    value: number;
+    value: number; // SI base unit value
     dimensions: DimensionalFormula;
+    prefix: string; // The prefix to display with (e.g., 'k', 'M', 'none')
   }
 
   // Calculator state
@@ -374,10 +375,14 @@ export default function UnitConverter() {
         // Convert result to SI base units
         const baseUnitValue = result * toUnitData.factor * toPrefixData.factor;
         
+        // Auto-select best prefix for the calculator field
+        const bestPrefix = findBestPrefix(baseUnitValue);
+        
         const newCalcValues = [...calcValues];
         newCalcValues[firstEmptyIndex] = {
           value: baseUnitValue,
-          dimensions: getCategoryDimensions(activeCategory)
+          dimensions: getCategoryDimensions(activeCategory),
+          prefix: bestPrefix
         };
         setCalcValues(newCalcValues);
       }
@@ -532,11 +537,15 @@ export default function UnitConverter() {
         }
       }
       
+      // Auto-select best prefix for result field
+      const resultBestPrefix = findBestPrefix(resultValue);
+      
       setCalcValues(prev => {
         const newValues = [...prev];
         newValues[3] = {
           value: resultValue,
-          dimensions: resultDimensions
+          dimensions: resultDimensions,
+          prefix: resultBestPrefix
         };
         return newValues;
       });
@@ -947,10 +956,17 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[0] ? formatNumberWithSeparators(calcValues[0].value, precision) : ''}
+                  {calcValues[0] ? (() => {
+                    const prefix = PREFIXES.find(p => p.id === calcValues[0].prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    const displayValue = calcValues[0].value / prefix.factor;
+                    return formatNumberWithSeparators(displayValue, precision);
+                  })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[0] ? formatDimensions(calcValues[0].dimensions) : ''}
+                  {calcValues[0] ? (() => {
+                    const prefix = PREFIXES.find(p => p.id === calcValues[0].prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    return `${prefix.symbol}${formatDimensions(calcValues[0].dimensions)}`;
+                  })() : ''}
                 </span>
               </div>
               <div className="flex gap-1 justify-start">
@@ -986,10 +1002,17 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[1] ? formatNumberWithSeparators(calcValues[1].value, precision) : ''}
+                  {calcValues[1] ? (() => {
+                    const prefix = PREFIXES.find(p => p.id === calcValues[1].prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    const displayValue = calcValues[1].value / prefix.factor;
+                    return formatNumberWithSeparators(displayValue, precision);
+                  })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[1] ? formatDimensions(calcValues[1].dimensions) : ''}
+                  {calcValues[1] ? (() => {
+                    const prefix = PREFIXES.find(p => p.id === calcValues[1].prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    return `${prefix.symbol}${formatDimensions(calcValues[1].dimensions)}`;
+                  })() : ''}
                 </span>
               </div>
               <div className="flex gap-1 justify-start">
@@ -1025,10 +1048,17 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[2] ? formatNumberWithSeparators(calcValues[2].value, precision) : ''}
+                  {calcValues[2] ? (() => {
+                    const prefix = PREFIXES.find(p => p.id === calcValues[2].prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    const displayValue = calcValues[2].value / prefix.factor;
+                    return formatNumberWithSeparators(displayValue, precision);
+                  })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[2] ? formatDimensions(calcValues[2].dimensions) : ''}
+                  {calcValues[2] ? (() => {
+                    const prefix = PREFIXES.find(p => p.id === calcValues[2].prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    return `${prefix.symbol}${formatDimensions(calcValues[2].dimensions)}`;
+                  })() : ''}
                 </span>
               </div>
             </div>
@@ -1051,7 +1081,11 @@ export default function UnitConverter() {
                       return formatNumberWithSeparators(convertedValue, precision);
                     }
                     return formatNumberWithSeparators(calcValues[3].value, precision);
-                  })() : calcValues[3] ? formatNumberWithSeparators(calcValues[3].value, precision) : ''}
+                  })() : calcValues[3] ? (() => {
+                    const prefix = PREFIXES.find(p => p.id === calcValues[3].prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    const displayValue = calcValues[3].value / prefix.factor;
+                    return formatNumberWithSeparators(displayValue, precision);
+                  })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[3] && resultUnit && resultCategory ? (() => {
@@ -1060,7 +1094,10 @@ export default function UnitConverter() {
                     const prefix = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
                     const prefixSymbol = unit?.allowPrefixes && prefix.id !== 'none' ? prefix.symbol : '';
                     return prefixSymbol + (unit?.symbol || formatDimensions(calcValues[3].dimensions));
-                  })() : calcValues[3] ? formatDimensions(calcValues[3].dimensions) : ''}
+                  })() : calcValues[3] ? (() => {
+                    const prefix = PREFIXES.find(p => p.id === calcValues[3].prefix) || PREFIXES.find(p => p.id === 'none')!;
+                    return `${prefix.symbol}${formatDimensions(calcValues[3].dimensions)}`;
+                  })() : ''}
                 </span>
               </div>
               <div className="flex gap-1 justify-start">
