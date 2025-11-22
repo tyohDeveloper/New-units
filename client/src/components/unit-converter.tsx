@@ -407,10 +407,20 @@ export default function UnitConverter() {
     return null;
   };
 
-  // Helper: Find best unit for a value (unit that produces numerically shortest representation)
+  // Helper: Find best unit for a value (prefer SI units with numerically shortest representation)
   const findBestUnit = (value: number, category: UnitCategory): string | null => {
     const cat = CONVERSION_DATA.find(c => c.id === category);
     if (!cat) return null;
+
+    // Define SI units for each category
+    const siUnits: Record<string, string[]> = {
+      'area': ['m2', 'ha', 'km2'],
+      'volume': ['ml', 'l', 'm3'],
+      'length': ['m'],
+      'mass': ['kg', 'g'],
+      'time': ['s'],
+      // Add other categories as needed - most use allowPrefixes for SI units
+    };
 
     let bestUnit: string | null = null;
     let bestScore = Infinity;
@@ -419,12 +429,15 @@ export default function UnitConverter() {
       const convertedValue = Math.abs(value / unit.factor);
       
       // Calculate the length of the numeric representation
-      // Prefer shorter numbers (fewer digits)
       const integerPart = Math.floor(convertedValue);
       const numDigits = integerPart === 0 ? 1 : Math.floor(Math.log10(integerPart)) + 1;
       
-      // Score: prefer fewer digits, and among same digit count, prefer closer to 1
-      const score = numDigits + Math.abs(Math.log10(convertedValue)) * 0.01;
+      // Check if this is an SI unit
+      const isSI = siUnits[category]?.includes(unit.id) || unit.allowPrefixes;
+      
+      // Score: heavily favor SI units, then prefer fewer digits
+      const siPenalty = isSI ? 0 : 1000; // Non-SI units get huge penalty
+      const score = siPenalty + numDigits + Math.abs(Math.log10(convertedValue)) * 0.01;
       
       if (score < bestScore) {
         bestScore = score;
