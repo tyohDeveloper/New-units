@@ -275,7 +275,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "meter/second",
     baseSISymbol: "m⋅s⁻¹",
     units: [
-      { id: "mps", name: "Meter/Second", symbol: "m/s", factor: 1 },
+      { id: "mps", name: "Meter/Second", symbol: "m⋅s⁻¹", factor: 1 },
       { id: "kmh", name: "Kilometer/Hour", symbol: "km/h", factor: 0.277778 },
       { id: "mph", name: "Mile/Hour", symbol: "mph", factor: 0.44704 },
       { id: "kn", name: "Knot", symbol: "kn", factor: 0.514444 },
@@ -289,7 +289,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "meter/sq second",
     baseSISymbol: "m⋅s⁻²",
     units: [
-      { id: "mps2", name: "Meter/sq sec", symbol: "m/s²", factor: 1 },
+      { id: "mps2", name: "Meter/sq sec", symbol: "m⋅s⁻²", factor: 1 },
       { id: "g", name: "g-force", symbol: "g", factor: 9.80665 },
       { id: "ftps2", name: "Foot/sq sec", symbol: "ft/s²", factor: 0.3048 },
       { id: "gal", name: "Gal", symbol: "Gal", factor: 0.01 },
