@@ -140,7 +140,13 @@ export default function UnitConverter() {
         return order[aCat] - order[bCat];
       }
       
-      // Within same category, sort by size (factor)
+      // Within same category, prioritize base SI unit first
+      const aIsBase = catData.baseSISymbol && a.symbol === catData.baseSISymbol;
+      const bIsBase = catData.baseSISymbol && b.symbol === catData.baseSISymbol;
+      if (aIsBase && !bIsBase) return -1;
+      if (!aIsBase && bIsBase) return 1;
+      
+      // Then sort by size (factor)
       return a.factor - b.factor;
     });
   };
