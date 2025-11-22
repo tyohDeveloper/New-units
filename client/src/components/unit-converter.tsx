@@ -51,7 +51,7 @@ export default function UnitConverter() {
 
   const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string }> = {
     'us-uk': { name: 'US/UK', thousands: ',', decimal: '.' },
-    'europe': { name: 'Europe', thousands: '.', decimal: ',' },
+    'europe': { name: 'Europe', thousands: ' ', decimal: ',' },
     'si-period': { name: 'SI Period', thousands: ' ', decimal: '.' },
     'si-comma': { name: 'SI Comma', thousands: ' ', decimal: ',' },
     'period': { name: 'Period', thousands: '', decimal: '.' },
