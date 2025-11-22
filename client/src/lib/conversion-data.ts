@@ -287,7 +287,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "acceleration",
     name: "Acceleration",
     baseUnit: "meter/sq second",
-    baseSISymbol: "m/s²",
+    baseSISymbol: "m⋅s⁻²",
     units: [
       { id: "mps2", name: "Meter/sq sec", symbol: "m/s²", factor: 1 },
       { id: "g", name: "g-force", symbol: "g", factor: 9.80665 },
