@@ -589,11 +589,13 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
   // --- LIGHT & SOUND ---
   {
     id: "luminous_flux",
-    name: "Luminous Flux",
+    name: "Luminous Flux (Human)",
     baseUnit: "lumen",
     baseSISymbol: "cd⋅sr",
     units: [
       { id: "lm", name: "Lumen", symbol: "lm", factor: 1, allowPrefixes: true },
+      { id: "candlepower", name: "Candlepower (spherical)", symbol: "cp", factor: 12.566371 },
+      { id: "talbot", name: "Talbot", symbol: "T", factor: 1, description: "Lumen-second (photographic)" },
     ],
   },
   {
