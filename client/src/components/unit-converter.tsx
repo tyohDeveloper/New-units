@@ -108,6 +108,7 @@ export default function UnitConverter() {
       'torque': ['nm'],
       'viscosity': ['pas'],
       'surface_tension': ['nm'],
+      'radiation_dose': ['gy'],
     };
     
     // Define astronomy units (for length category)
