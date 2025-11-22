@@ -850,11 +850,11 @@ export default function UnitConverter() {
                     <div className="p-2 rounded bg-muted/20 border border-border/50">
                       <div className="text-xs font-mono text-muted-foreground flex gap-2 items-center">
                         <span className="text-foreground font-bold">
-                          1 {fromPrefixData.id !== 'none' ? fromPrefixData.name : ''}{fromUnitData.name}
+                          1 {fromPrefixData.id !== 'none' ? fromPrefixData.symbol : ''}{fromUnitData.symbol}
                         </span>
                         <span>=</span>
                         <span className="text-foreground font-bold">
-                          {Number(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor).toPrecision(6))} {toPrefixData.id !== 'none' ? toPrefixData.name : ''}{toUnitData.name}
+                          {Number(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor).toPrecision(6))} {toPrefixData.id !== 'none' ? toPrefixData.symbol : ''}{toUnitData.symbol}
                         </span>
                       </div>
                     </div>
