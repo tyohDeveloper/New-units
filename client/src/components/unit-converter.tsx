@@ -723,7 +723,7 @@ export default function UnitConverter() {
                 </Select>
               </div>
               
-              <div className="grid sm:grid-cols-[1fr_220px_120px] gap-2">
+              <div className="grid sm:grid-cols-[1fr_220px] gap-2">
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">Base Factor</div>
                   <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''}>
@@ -731,25 +731,25 @@ export default function UnitConverter() {
                   </div>
                 </div>
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">SI Base Units</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono flex items-center justify-between">
+                    <span>SI Base Units</span>
+                    <Select value={numberFormat} onValueChange={(val) => setNumberFormat(val as NumberFormat)}>
+                      <SelectTrigger className="h-5 w-[80px] text-xs border-none bg-transparent p-0">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="us-uk" className="text-xs">US/UK</SelectItem>
+                        <SelectItem value="europe" className="text-xs">Europe</SelectItem>
+                        <SelectItem value="si-period" className="text-xs">SI Period</SelectItem>
+                        <SelectItem value="si-comma" className="text-xs">SI Comma</SelectItem>
+                        <SelectItem value="period" className="text-xs">Period</SelectItem>
+                        <SelectItem value="comma" className="text-xs">Comma</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <div className="font-mono text-sm text-foreground/80 truncate">
                     {categoryData.baseSISymbol || '-'}
                   </div>
-                </div>
-                <div className="p-2 rounded bg-muted/20 border border-border/50 flex items-center justify-center">
-                  <Select value={numberFormat} onValueChange={(val) => setNumberFormat(val as NumberFormat)}>
-                    <SelectTrigger className="h-7 w-full text-xs border-none bg-transparent">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="us-uk" className="text-xs">US/UK</SelectItem>
-                      <SelectItem value="europe" className="text-xs">Europe</SelectItem>
-                      <SelectItem value="si-period" className="text-xs">SI Period</SelectItem>
-                      <SelectItem value="si-comma" className="text-xs">SI Comma</SelectItem>
-                      <SelectItem value="period" className="text-xs">Period</SelectItem>
-                      <SelectItem value="comma" className="text-xs">Comma</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
               </div>
 
@@ -838,7 +838,7 @@ export default function UnitConverter() {
                 </Select>
               </div>
 
-              <div className="grid sm:grid-cols-[1fr_220px_120px] gap-2">
+              <div className="grid sm:grid-cols-[1fr_220px] gap-2">
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">Base Factor</div>
                   <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''}>
@@ -849,12 +849,6 @@ export default function UnitConverter() {
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">SI Base Units</div>
                   <div className="font-mono text-sm text-foreground/80 truncate">
                     {categoryData.baseSISymbol || '-'}
-                  </div>
-                </div>
-                <div className="p-2 rounded bg-muted/20 border border-border/50">
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">Format</div>
-                  <div className="font-mono text-xs text-foreground/80 truncate">
-                    {NUMBER_FORMATS[numberFormat].name}
                   </div>
                 </div>
               </div>
