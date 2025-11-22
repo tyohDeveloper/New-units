@@ -32,6 +32,7 @@ export type UnitCategory =
   | "digital"
   | "printing"
   | "illuminance"
+  | "luminance"
   | "torque"
   | "density"
   | "flow"
@@ -591,6 +592,19 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "fc", name: "Foot-candle", symbol: "fc", factor: 10.7639 },
       { id: "ph", name: "Phot", symbol: "ph", factor: 10000 },
       { id: "nox", name: "Nox", symbol: "nox", factor: 0.001 },
+    ],
+  },
+  {
+    id: "luminance",
+    name: "Luminance",
+    baseUnit: "candela/square-meter",
+    baseSISymbol: "cd⋅m⁻²",
+    units: [
+      { id: "cdm2", name: "Candela/m²", symbol: "cd/m²", factor: 1 },
+      { id: "nit", name: "Nit", symbol: "nt", factor: 1 },
+      { id: "stilb", name: "Stilb", symbol: "sb", factor: 10000 },
+      { id: "lambert", name: "Lambert", symbol: "L", factor: 3183.1 },
+      { id: "ftl", name: "Foot-lambert", symbol: "fL", factor: 3.42626 },
     ],
   },
   {

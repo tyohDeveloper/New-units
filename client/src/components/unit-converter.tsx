@@ -118,6 +118,7 @@ export default function UnitConverter() {
       'digital': ['B'],
       'printing': ['pt'],
       'illuminance': ['lx'],
+      'luminance': ['cdm2'],
     };
     
     // Define astronomy units (for length category)
@@ -219,6 +220,7 @@ export default function UnitConverter() {
       digital: {},
       printing: { length: 1 },
       illuminance: { intensity: 1, length: -2 },
+      luminance: { intensity: 1, length: -2 },
       torque: { mass: 1, length: 2, time: -2 },
       density: { mass: 1, length: -3 },
       flow: { length: 3, time: -1 },
