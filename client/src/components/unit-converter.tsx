@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { ArrowRightLeft, Copy, Info } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function UnitConverter() {
@@ -19,7 +18,6 @@ export default function UnitConverter() {
   const [inputValue, setInputValue] = useState<string>('1');
   const [result, setResult] = useState<number | null>(null);
   const [precision, setPrecision] = useState<number>(8);
-  const { toast } = useToast();
 
   // Dimensional formula tracking for calculator
   interface DimensionalFormula {
@@ -454,11 +452,6 @@ export default function UnitConverter() {
         };
         setCalcValues(newCalcValues);
       }
-      
-      toast({
-        title: "Copied to clipboard",
-        description: `${formattedResult} ${prefixSymbol}${unitSymbol}`,
-      });
     }
   };
 
@@ -708,10 +701,6 @@ export default function UnitConverter() {
       // Replace period with format's decimal separator
       const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
       navigator.clipboard.writeText(formattedStr);
-      toast({
-        title: "Copied to clipboard",
-        description: formattedStr,
-      });
     }
   };
 
