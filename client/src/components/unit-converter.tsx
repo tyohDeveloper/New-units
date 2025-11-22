@@ -79,7 +79,7 @@ export default function UnitConverter() {
     },
     {
       name: "Specialized",
-      categories: ['digital', 'printing', 'illuminance']
+      categories: ['digital', 'printing', 'luminous_flux', 'illuminance', 'luminous_exitance', 'luminance']
     }
   ];
 
