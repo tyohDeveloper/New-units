@@ -18,6 +18,8 @@ export default function UnitConverter() {
   const [inputValue, setInputValue] = useState<string>('1');
   const [result, setResult] = useState<number | null>(null);
   const [precision, setPrecision] = useState<number>(8);
+  const [flashCopyResult, setFlashCopyResult] = useState<boolean>(false);
+  const [flashCopyCalc, setFlashCopyCalc] = useState<boolean>(false);
 
   // Dimensional formula tracking for calculator
   interface DimensionalFormula {
@@ -432,6 +434,10 @@ export default function UnitConverter() {
       if (toUnit === 'ft_in') formattedResult = formatFtIn(result);
 
       navigator.clipboard.writeText(formattedResult);
+      
+      // Trigger flash animation
+      setFlashCopyResult(true);
+      setTimeout(() => setFlashCopyResult(false), 300);
       const unitSymbol = toUnitData?.symbol || '';
       const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
       
@@ -701,6 +707,10 @@ export default function UnitConverter() {
       // Replace period with format's decimal separator
       const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
       navigator.clipboard.writeText(formattedStr);
+      
+      // Trigger flash animation
+      setFlashCopyCalc(true);
+      setTimeout(() => setFlashCopyCalc(false), 300);
     }
   };
 
@@ -1041,7 +1051,16 @@ export default function UnitConverter() {
                   onClick={copyResult}
                   className="text-xs hover:text-accent gap-2"
                 >
-                  <Copy className="w-3 h-3" /> Copy Result
+                  <Copy className="w-3 h-3" />
+                  <motion.span
+                    animate={{
+                      opacity: flashCopyResult ? [1, 0.3, 1] : 1,
+                      scale: flashCopyResult ? [1, 1.1, 1] : 1
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    Copy Result
+                  </motion.span>
                 </Button>
               </div>
             </div>
@@ -1244,7 +1263,16 @@ export default function UnitConverter() {
                   disabled={!calcValues[3]}
                   className="text-xs hover:text-accent gap-1"
                 >
-                  <Copy className="w-3 h-3" /> Copy
+                  <Copy className="w-3 h-3" />
+                  <motion.span
+                    animate={{
+                      opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                      scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    Copy
+                  </motion.span>
                 </Button>
                 <Button 
                   variant="ghost" 
