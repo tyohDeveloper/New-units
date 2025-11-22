@@ -299,7 +299,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "force",
     name: "Force",
     baseUnit: "newton",
-    baseSISymbol: "N",
+    baseSISymbol: "kg⋅m⋅s⁻²",
     units: [
       { id: "n", name: "Newton", symbol: "N", factor: 1, allowPrefixes: true },
       { id: "dyn", name: "Dyne", symbol: "dyn", factor: 1e-5 },
@@ -312,7 +312,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "pressure",
     name: "Pressure",
     baseUnit: "pascal",
-    baseSISymbol: "Pa",
+    baseSISymbol: "kg⋅m⁻¹⋅s⁻²",
     units: [
       { id: "pa", name: "Pascal", symbol: "Pa", factor: 1, allowPrefixes: true },
       { id: "bar", name: "Bar", symbol: "bar", factor: 100000 },
@@ -326,7 +326,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "energy",
     name: "Energy",
     baseUnit: "joule",
-    baseSISymbol: "J",
+    baseSISymbol: "kg⋅m²⋅s⁻²",
     units: [
       { id: "j", name: "Joule", symbol: "J", factor: 1, allowPrefixes: true },
       { id: "cal", name: "Calorie", symbol: "cal", factor: 4.184 },
@@ -342,7 +342,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "power",
     name: "Power",
     baseUnit: "watt",
-    baseSISymbol: "W",
+    baseSISymbol: "kg⋅m²⋅s⁻³",
     units: [
       { id: "w", name: "Watt", symbol: "W", factor: 1, allowPrefixes: true },
       { id: "hp", name: "Horsepower", symbol: "hp", factor: 745.7 },
@@ -353,7 +353,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "frequency",
     name: "Frequency",
     baseUnit: "hertz",
-    baseSISymbol: "Hz",
+    baseSISymbol: "s⁻¹",
     units: [
       { id: "hz", name: "Hertz", symbol: "Hz", factor: 1, allowPrefixes: true },
       { id: "rpm", name: "RPM", symbol: "rpm", factor: 0.0166667 },
@@ -365,7 +365,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "charge",
     name: "Electric Charge",
     baseUnit: "coulomb",
-    baseSISymbol: "C",
+    baseSISymbol: "A⋅s",
     units: [
       { id: "c", name: "Coulomb", symbol: "C", factor: 1 },
       { id: "mah", name: "Milliamp-hour", symbol: "mAh", factor: 3.6 },
@@ -377,7 +377,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "potential",
     name: "Electric Potential",
     baseUnit: "volt",
-    baseSISymbol: "V",
+    baseSISymbol: "kg⋅m²⋅s⁻³⋅A⁻¹",
     units: [
       { id: "v", name: "Volt", symbol: "V", factor: 1, allowPrefixes: true },
       { id: "statv", name: "Statvolt", symbol: "statV", factor: 299.792 },
@@ -387,7 +387,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "capacitance",
     name: "Capacitance",
     baseUnit: "farad",
-    baseSISymbol: "F",
+    baseSISymbol: "kg⁻¹⋅m⁻²⋅s⁴⋅A²",
     units: [
       { id: "f", name: "Farad", symbol: "F", factor: 1, allowPrefixes: true },
     ],
@@ -396,7 +396,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "resistance",
     name: "Resistance",
     baseUnit: "ohm",
-    baseSISymbol: "Ω",
+    baseSISymbol: "kg⋅m²⋅s⁻³⋅A⁻²",
     units: [
       { id: "ohm", name: "Ohm", symbol: "Ω", factor: 1, allowPrefixes: true },
     ],
@@ -405,7 +405,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "conductance",
     name: "Conductance",
     baseUnit: "siemens",
-    baseSISymbol: "S",
+    baseSISymbol: "kg⁻¹⋅m⁻²⋅s³⋅A²",
     units: [
       { id: "s", name: "Siemens", symbol: "S", factor: 1 },
       { id: "mho", name: "Mho", symbol: "℧", factor: 1 },
@@ -415,7 +415,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "magnetic_flux",
     name: "Magnetic Flux",
     baseUnit: "weber",
-    baseSISymbol: "Wb",
+    baseSISymbol: "kg⋅m²⋅s⁻²⋅A⁻¹",
     units: [
       { id: "wb", name: "Weber", symbol: "Wb", factor: 1 },
       { id: "mx", name: "Maxwell", symbol: "Mx", factor: 1e-8 },
@@ -425,7 +425,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "magnetic_density",
     name: "Magnetic Flux Density",
     baseUnit: "tesla",
-    baseSISymbol: "T",
+    baseSISymbol: "kg⋅s⁻²⋅A⁻¹",
     units: [
       { id: "t", name: "Tesla", symbol: "T", factor: 1 },
       { id: "g", name: "Gauss", symbol: "G", factor: 1e-4 },
@@ -435,7 +435,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "inductance",
     name: "Inductance",
     baseUnit: "henry",
-    baseSISymbol: "H",
+    baseSISymbol: "kg⋅m²⋅s⁻²⋅A⁻²",
     units: [
       { id: "h", name: "Henry", symbol: "H", factor: 1, allowPrefixes: true },
     ],
@@ -553,7 +553,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "torque",
     name: "Torque",
     baseUnit: "newton meter",
-    baseSISymbol: "N⋅m",
+    baseSISymbol: "kg⋅m²⋅s⁻²",
     units: [
       { id: "nm", name: "Newton-meter", symbol: "N⋅m", factor: 1 },
       { id: "ftlb", name: "Foot-pound", symbol: "ft⋅lb", factor: 1.35582 },
