@@ -407,7 +407,7 @@ export default function UnitConverter() {
     return null;
   };
 
-  // Helper: Find best unit for a value (prefer SI units with numerically shortest representation)
+  // Helper: Find best unit for a value (prefer SI units with shortest integer representation)
   const findBestUnit = (value: number, category: UnitCategory): string | null => {
     const cat = CONVERSION_DATA.find(c => c.id === category);
     if (!cat) return null;
@@ -428,16 +428,25 @@ export default function UnitConverter() {
     for (const unit of cat.units) {
       const convertedValue = Math.abs(value / unit.factor);
       
-      // Calculate the length of the numeric representation
-      const integerPart = Math.floor(convertedValue);
-      const numDigits = integerPart === 0 ? 1 : Math.floor(Math.log10(integerPart)) + 1;
-      
       // Check if this is an SI unit
       const isSI = siUnits[category]?.includes(unit.id) || unit.allowPrefixes;
       
-      // Score: heavily favor SI units, then prefer fewer digits
-      const siPenalty = isSI ? 0 : 1000; // Non-SI units get huge penalty
-      const score = siPenalty + numDigits + Math.abs(Math.log10(convertedValue)) * 0.01;
+      // Only consider SI units
+      if (!isSI) continue;
+      
+      // Calculate the length of the integer part
+      const integerPart = Math.floor(convertedValue);
+      
+      // Prefer values >= 1 (integers), then prefer fewest digits
+      let score: number;
+      if (convertedValue >= 1) {
+        // For values >= 1, score is the number of digits
+        const numDigits = integerPart === 0 ? 1 : Math.floor(Math.log10(integerPart)) + 1;
+        score = numDigits;
+      } else {
+        // For values < 1, add a large penalty to avoid fractional results
+        score = 1000 + (1 - convertedValue); // Heavily penalize < 1
+      }
       
       if (score < bestScore) {
         bestScore = score;
