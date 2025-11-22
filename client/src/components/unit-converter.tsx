@@ -854,7 +854,7 @@ export default function UnitConverter() {
                         </span>
                         <span>=</span>
                         <span className="text-foreground font-bold">
-                          {Number(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor).toPrecision(6))} {toPrefixData.id !== 'none' ? toPrefixData.symbol : ''}{toUnitData.symbol}
+                          {formatNumberWithSeparators(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor), precision)} {toPrefixData.id !== 'none' ? toPrefixData.symbol : ''}{toUnitData.symbol}
                         </span>
                       </div>
                     </div>
