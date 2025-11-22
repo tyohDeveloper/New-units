@@ -751,15 +751,17 @@ export default function UnitConverter() {
               Base unit: <span className="text-primary">{categoryData.baseUnit}</span>
             </p>
             <div className="flex items-center gap-3">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={includeBeerWine}
-                  onChange={(e) => setIncludeBeerWine(e.target.checked)}
-                  className="w-3 h-3 cursor-pointer accent-accent"
-                />
-                <span className="text-xs text-muted-foreground">include beer/wine</span>
-              </label>
+              {activeCategory === 'volume' && (
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={includeBeerWine}
+                    onChange={(e) => setIncludeBeerWine(e.target.checked)}
+                    className="w-3 h-3 cursor-pointer accent-accent"
+                  />
+                  <span className="text-xs text-muted-foreground">include beer/wine</span>
+                </label>
+              )}
               <Select value={numberFormat} onValueChange={(val) => setNumberFormat(val as NumberFormat)}>
                 <SelectTrigger className="h-6 w-[100px] text-xs">
                   <SelectValue />
