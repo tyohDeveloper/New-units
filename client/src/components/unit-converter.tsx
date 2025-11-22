@@ -85,25 +85,43 @@ export default function UnitConverter() {
 
   const categoryData = CONVERSION_DATA.find(c => c.id === activeCategory)!;
   
-  // Helper to determine if a unit is SI
-  const isSIUnit = (unit: any, category: string): boolean => {
-    // Define SI units for each category
-    const siUnits: Record<string, string[]> = {
-      'area': ['m2', 'ha', 'km2'],
-      'volume': ['ml', 'l', 'm3', 'km3'],
+  // Helper to categorize units
+  const getUnitCategory = (unit: any, category: string): 'si-base' | 'si-derived' | 'non-si' => {
+    // Define SI base units for each category (the fundamental unit)
+    const siBaseUnits: Record<string, string[]> = {
       'length': ['m'],
-      'mass': ['kg', 'g', 't'],
+      'mass': ['kg'],
       'time': ['s'],
-      'speed': ['mps', 'kmh'],
+      'current': ['a'],
+      'temperature': ['k'],
+      'amount': ['mol'],
+      'intensity': ['cd'],
+      'area': ['m2'],
+      'volume': ['l', 'm3'],
+      'speed': ['mps'],
       'acceleration': ['mps2'],
       'force': ['n'],
-      'pressure': ['pa', 'bar'],
-      'energy': ['j', 'kwh', 'wh'],
+      'pressure': ['pa'],
+      'energy': ['j'],
       'power': ['w'],
       'frequency': ['hz'],
     };
     
-    return siUnits[category]?.includes(unit.id) || unit.allowPrefixes || false;
+    // Define SI derived units for each category
+    const siDerivedUnits: Record<string, string[]> = {
+      'area': ['ha', 'km2'],
+      'volume': ['ml', 'km3'],
+      'speed': ['kmh'],
+      'energy': ['kwh', 'wh'],
+    };
+    
+    if (siBaseUnits[category]?.includes(unit.id) || unit.allowPrefixes) {
+      return 'si-base';
+    } else if (siDerivedUnits[category]?.includes(unit.id)) {
+      return 'si-derived';
+    } else {
+      return 'non-si';
+    }
   };
   
   // Helper to get filtered and sorted units
@@ -116,16 +134,18 @@ export default function UnitConverter() {
       ? catData.units.filter(u => !u.beerWine)
       : catData.units;
       
-    // Sort: SI units by size first, then non-SI units by size
+    // Sort: SI base units first, then SI derived, then non-SI units by size
     return [...units].sort((a, b) => {
-      const aIsSI = isSIUnit(a, category);
-      const bIsSI = isSIUnit(b, category);
+      const aCat = getUnitCategory(a, category);
+      const bCat = getUnitCategory(b, category);
       
-      // SI units come first, sorted by size
-      if (aIsSI && !bIsSI) return -1;
-      if (!aIsSI && bIsSI) return 1;
+      // Order: si-base < si-derived < non-si
+      const order = { 'si-base': 0, 'si-derived': 1, 'non-si': 2 };
+      if (order[aCat] !== order[bCat]) {
+        return order[aCat] - order[bCat];
+      }
       
-      // Within same group (SI or non-SI), sort by size (factor)
+      // Within same category, sort by size (factor)
       return a.factor - b.factor;
     });
   };
