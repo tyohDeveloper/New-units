@@ -550,10 +550,12 @@ export default function UnitConverter() {
 
   const copyCalcResult = () => {
     if (calcValues[3]) {
-      navigator.clipboard.writeText(calcValues[3].value.toString());
+      // Copy without comma separators
+      const valueStr = cleanNumber(calcValues[3].value, precision);
+      navigator.clipboard.writeText(valueStr);
       toast({
         title: "Copied to clipboard",
-        description: calcValues[3].value.toString(),
+        description: valueStr,
       });
     }
   };
@@ -564,6 +566,14 @@ export default function UnitConverter() {
     // Remove trailing zeros after decimal point
     const cleaned = fixed.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
     return cleaned;
+  };
+
+  // Helper to format number with comma separators for display
+  const formatNumberWithCommas = (num: number, precision: number): string => {
+    const cleaned = cleanNumber(num, precision);
+    const [integer, decimal] = cleaned.split('.');
+    const withCommas = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return decimal ? `${withCommas}.${decimal}` : withCommas;
   };
 
   const formatFactor = (f: number) => {
@@ -834,7 +844,7 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[0] ? cleanNumber(calcValues[0].value, precision) : ''}
+                  {calcValues[0] ? formatNumberWithCommas(calcValues[0].value, precision) : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[0] ? formatDimensions(calcValues[0].dimensions) : ''}
@@ -873,7 +883,7 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[1] ? cleanNumber(calcValues[1].value, precision) : ''}
+                  {calcValues[1] ? formatNumberWithCommas(calcValues[1].value, precision) : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[1] ? formatDimensions(calcValues[1].dimensions) : ''}
@@ -912,7 +922,7 @@ export default function UnitConverter() {
             <div className="grid sm:grid-cols-[1fr_220px] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[2] ? cleanNumber(calcValues[2].value, precision) : ''}
+                  {calcValues[2] ? formatNumberWithCommas(calcValues[2].value, precision) : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[2] ? formatDimensions(calcValues[2].dimensions) : ''}
@@ -935,10 +945,10 @@ export default function UnitConverter() {
                         categoryBaseValue = calcValues[3].value * 1000; // m³ to L
                       }
                       const convertedValue = categoryBaseValue / (unit.factor * prefix.factor);
-                      return cleanNumber(convertedValue, precision);
+                      return formatNumberWithCommas(convertedValue, precision);
                     }
-                    return cleanNumber(calcValues[3].value, precision);
-                  })() : calcValues[3] ? cleanNumber(calcValues[3].value, precision) : ''}
+                    return formatNumberWithCommas(calcValues[3].value, precision);
+                  })() : calcValues[3] ? formatNumberWithCommas(calcValues[3].value, precision) : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
                   {calcValues[3] && resultUnit && resultCategory ? (() => {
