@@ -86,7 +86,7 @@ export default function UnitConverter() {
   const categoryData = CONVERSION_DATA.find(c => c.id === activeCategory)!;
   
   // Helper to determine if a unit is SI
-  const isSIUnit = (unit: any): boolean => {
+  const isSIUnit = (unit: any, category: string): boolean => {
     // Define SI units for each category
     const siUnits: Record<string, string[]> = {
       'area': ['m2', 'ha', 'km2'],
@@ -103,51 +103,46 @@ export default function UnitConverter() {
       'frequency': ['hz'],
     };
     
-    return siUnits[activeCategory]?.includes(unit.id) || unit.allowPrefixes || false;
+    return siUnits[category]?.includes(unit.id) || unit.allowPrefixes || false;
   };
   
-  // Filter and sort units
-  let filteredUnits = activeCategory === 'volume' && !includeBeerWine 
-    ? categoryData.units.filter(u => !u.beerWine)
-    : categoryData.units;
+  // Helper to get filtered and sorted units
+  const getFilteredSortedUnits = (category: string, includeBeer: boolean) => {
+    const catData = CONVERSION_DATA.find(c => c.id === category);
+    if (!catData) return [];
     
-  // Sort: SI units by size first, then non-SI units by size
-  filteredUnits = [...filteredUnits].sort((a, b) => {
-    const aIsSI = isSIUnit(a);
-    const bIsSI = isSIUnit(b);
-    
-    // SI units come first, sorted by size
-    if (aIsSI && !bIsSI) return -1;
-    if (!aIsSI && bIsSI) return 1;
-    
-    // Within same group (SI or non-SI), sort by size (factor)
-    return a.factor - b.factor;
-  });
+    // Filter based on beer/wine checkbox
+    let units = category === 'volume' && !includeBeer 
+      ? catData.units.filter(u => !u.beerWine)
+      : catData.units;
+      
+    // Sort: SI units by size first, then non-SI units by size
+    return [...units].sort((a, b) => {
+      const aIsSI = isSIUnit(a, category);
+      const bIsSI = isSIUnit(b, category);
+      
+      // SI units come first, sorted by size
+      if (aIsSI && !bIsSI) return -1;
+      if (!aIsSI && bIsSI) return 1;
+      
+      // Within same group (SI or non-SI), sort by size (factor)
+      return a.factor - b.factor;
+    });
+  };
+  
+  const filteredUnits = getFilteredSortedUnits(activeCategory, includeBeerWine);
 
   // Reset units when category changes
   useEffect(() => {
-    if (categoryData) {
-      // For length category, default both to meters
-      if (activeCategory === 'length') {
-        const meterUnit = categoryData.units.find(u => u.id === 'm');
-        if (meterUnit) {
-          setFromUnit('m');
-          setToUnit('m');
-        } else {
-          setFromUnit(categoryData.units[0]?.id || '');
-          setToUnit(categoryData.units[0]?.id || '');
-        }
-      } else {
-        // Default to first two units if available
-        setFromUnit(categoryData.units[0]?.id || '');
-        // Try to set a sensible second default (like m to ft) if possible, otherwise just 2nd unit
-        const defaultTo = categoryData.units.find(u => u.id !== categoryData.units[0]?.id)?.id || categoryData.units[0]?.id;
-        setToUnit(defaultTo || '');
-      }
+    const sorted = getFilteredSortedUnits(activeCategory, includeBeerWine);
+    if (sorted.length > 0) {
+      // Default to first two SI units (which are now sorted to the top)
+      setFromUnit(sorted[0]?.id || '');
+      setToUnit(sorted[1]?.id || sorted[0]?.id || '');
       setFromPrefix('none');
       setToPrefix('none');
     }
-  }, [activeCategory]);
+  }, [activeCategory, includeBeerWine]);
 
   const fromUnitData = categoryData.units.find(u => u.id === fromUnit);
   const toUnitData = categoryData.units.find(u => u.id === toUnit);
