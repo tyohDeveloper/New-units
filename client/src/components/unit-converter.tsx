@@ -701,9 +701,27 @@ export default function UnitConverter() {
 
   const copyCalcResult = () => {
     if (calcValues[3]) {
+      let valueToCopy = calcValues[3].value;
+      
+      // If user has selected a specific unit, convert to that unit
+      if (resultUnit && resultCategory) {
+        const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+        const unit = cat?.units.find(u => u.id === resultUnit);
+        const prefix = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
+        
+        if (unit) {
+          // Convert from SI base units to category base units
+          let categoryBaseValue = calcValues[3].value;
+          if (resultCategory === 'volume') {
+            categoryBaseValue = calcValues[3].value * 1000; // m³ to L
+          }
+          valueToCopy = categoryBaseValue / (unit.factor * prefix.factor);
+        }
+      }
+      
       // Copy with only decimal separator, no thousands separator
       const format = NUMBER_FORMATS[numberFormat];
-      const valueStr = cleanNumber(calcValues[3].value, precision);
+      const valueStr = cleanNumber(valueToCopy, precision);
       // Replace period with format's decimal separator
       const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
       navigator.clipboard.writeText(formattedStr);
