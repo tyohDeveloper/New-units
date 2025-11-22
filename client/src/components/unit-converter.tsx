@@ -105,6 +105,7 @@ export default function UnitConverter() {
       'energy': ['j', 'kwh', 'wh'],
       'power': ['w'],
       'frequency': ['hz'],
+      'torque': ['nm'],
     };
     
     // Define astronomy units (for length category)

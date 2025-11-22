@@ -553,7 +553,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "torque",
     name: "Torque",
     baseUnit: "newton meter",
-    baseSISymbol: "kg⋅m²⋅s⁻²",
+    baseSISymbol: "N⋅m",
     units: [
       { id: "nm", name: "Newton-meter", symbol: "N⋅m", factor: 1 },
       { id: "ftlb", name: "Foot-pound", symbol: "ft⋅lb", factor: 1.35582 },
