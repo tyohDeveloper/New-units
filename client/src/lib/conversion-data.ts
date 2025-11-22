@@ -232,11 +232,9 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "volume",
     name: "Volume",
     baseUnit: "liter",
-    baseSISymbol: "m³",
+    baseSISymbol: "L",
     units: [
-      { id: "ml", name: "Milliliter", symbol: "ml", factor: 0.001 },
       { id: "l", name: "Liter", symbol: "L", factor: 1, allowPrefixes: true },
-      { id: "m3", name: "Cubic Meter", symbol: "m³", factor: 1000 },
       { id: "tsp", name: "Teaspoon (US)", symbol: "tsp", factor: 0.00492892 },
       { id: "tsp_imp", name: "Teaspoon (Imp)", symbol: "tsp", factor: 0.00591939 },
       {
@@ -263,7 +261,6 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "bbl", name: "Barrel (Oil)", symbol: "bbl", factor: 158.987 },
       { id: "bu", name: "Bushel", symbol: "bu", factor: 35.2391 },
       { id: "ac_ft", name: "Acre-foot", symbol: "ac⋅ft", factor: 1233481.84 },
-      { id: "km3", name: "Cubic Kilometer", symbol: "km³", factor: 1e12 },
       { id: "mi3", name: "Cubic Mile", symbol: "mi³", factor: 4.16818e12 },
       { id: "bottle_wine", name: "Bottle (Wine)", symbol: "btl", factor: 0.75, beerWine: true },
       { id: "magnum_wine", name: "Magnum (Wine)", symbol: "mag", factor: 1.5, beerWine: true },

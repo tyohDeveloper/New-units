@@ -97,7 +97,7 @@ export default function UnitConverter() {
       'amount': ['mol'],
       'intensity': ['cd'],
       'area': ['m2', 'ha', 'km2'],
-      'volume': ['ml', 'l', 'm3', 'km3'],
+      'volume': ['l'],
       'speed': ['mps', 'kmh'],
       'acceleration': ['mps2'],
       'force': ['n'],
