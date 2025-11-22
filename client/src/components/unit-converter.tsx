@@ -357,11 +357,25 @@ export default function UnitConverter() {
     }
   };
 
+  // Helper: Compare two dimensional formulas
+  const dimensionsEqual = (d1: DimensionalFormula, d2: DimensionalFormula): boolean => {
+    const keys1 = Object.keys(d1) as (keyof DimensionalFormula)[];
+    const keys2 = Object.keys(d2) as (keyof DimensionalFormula)[];
+    
+    if (keys1.length !== keys2.length) return false;
+    
+    for (const key of keys1) {
+      if (d1[key] !== d2[key]) return false;
+    }
+    
+    return true;
+  };
+
   // Helper: Find category that matches dimensions
   const findCategoryForDimensions = (dims: DimensionalFormula): UnitCategory | null => {
     for (const cat of CONVERSION_DATA) {
       const catDims = getCategoryDimensions(cat.id);
-      if (JSON.stringify(catDims) === JSON.stringify(dims)) {
+      if (dimensionsEqual(catDims, dims)) {
         return cat.id;
       }
     }
