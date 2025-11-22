@@ -586,6 +586,25 @@ export default function UnitConverter() {
     }
   }, [calcValues[0], calcValues[1], calcValues[2], calcOp1, calcOp2]);
 
+  // Auto-select prefix when user manually changes result unit
+  useEffect(() => {
+    if (resultUnit && resultCategory && calcValues[3]) {
+      const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+      const unit = cat?.units.find(u => u.id === resultUnit);
+      if (unit?.allowPrefixes) {
+        // Convert result value to category's base unit
+        let categoryBaseValue = calcValues[3].value;
+        if (resultCategory === 'volume') {
+          categoryBaseValue = calcValues[3].value * 1000; // m³ to L
+        }
+        const bestPrefix = findBestPrefix(categoryBaseValue / unit.factor);
+        setResultPrefix(bestPrefix);
+      } else {
+        setResultPrefix('none');
+      }
+    }
+  }, [resultUnit]);
+
   const clearCalculator = () => {
     setCalcValues([null, null, null, null]);
     setCalcOp1(null);
