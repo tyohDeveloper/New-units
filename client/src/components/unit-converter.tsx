@@ -608,8 +608,11 @@ export default function UnitConverter() {
         }
       }
       
-      // Auto-select best prefix for result field
-      const resultBestPrefix = findBestPrefix(resultValue);
+      // Check if result is dimensionless (unitless)
+      const isDimensionless = Object.keys(resultDimensions).length === 0;
+      
+      // Auto-select best prefix for result field (only if not dimensionless)
+      const resultBestPrefix = isDimensionless ? 'none' : findBestPrefix(resultValue);
       
       setCalcValues(prev => {
         const newValues = [...prev];
@@ -621,29 +624,36 @@ export default function UnitConverter() {
         return newValues;
       });
 
-      // Find matching category and auto-select best unit
-      const matchingCategory = findCategoryForDimensions(resultDimensions);
-      setResultCategory(matchingCategory);
-      if (matchingCategory) {
-        // Convert result value to category's base unit
-        // For volume: 1 m³ = 1000 L, for area: 1 m² = 1 m² (no conversion needed)
-        let categoryBaseValue = resultValue;
-        if (matchingCategory === 'volume') {
-          // Volume category base is liter, calculator gives m³, so convert: 1 m³ = 1000 L
-          categoryBaseValue = resultValue * 1000;
-        }
-        
-        const bestUnit = findBestUnit(categoryBaseValue, matchingCategory);
-        setResultUnit(bestUnit);
-        
-        // Find best prefix if unit allows prefixes
-        const cat = CONVERSION_DATA.find(c => c.id === matchingCategory);
-        const unit = cat?.units.find(u => u.id === bestUnit);
-        if (unit?.allowPrefixes) {
-          const bestPrefix = findBestPrefix(categoryBaseValue / unit.factor);
-          setResultPrefix(bestPrefix);
-        } else {
-          setResultPrefix('none');
+      // Find matching category and auto-select best unit (only if not dimensionless)
+      if (isDimensionless) {
+        // For dimensionless results, clear unit selection
+        setResultCategory(null);
+        setResultUnit(null);
+        setResultPrefix('none');
+      } else {
+        const matchingCategory = findCategoryForDimensions(resultDimensions);
+        setResultCategory(matchingCategory);
+        if (matchingCategory) {
+          // Convert result value to category's base unit
+          // For volume: 1 m³ = 1000 L, for area: 1 m² = 1 m² (no conversion needed)
+          let categoryBaseValue = resultValue;
+          if (matchingCategory === 'volume') {
+            // Volume category base is liter, calculator gives m³, so convert: 1 m³ = 1000 L
+            categoryBaseValue = resultValue * 1000;
+          }
+          
+          const bestUnit = findBestUnit(categoryBaseValue, matchingCategory);
+          setResultUnit(bestUnit);
+          
+          // Find best prefix if unit allows prefixes
+          const cat = CONVERSION_DATA.find(c => c.id === matchingCategory);
+          const unit = cat?.units.find(u => u.id === bestUnit);
+          if (unit?.allowPrefixes) {
+            const bestPrefix = findBestPrefix(categoryBaseValue / unit.factor);
+            setResultPrefix(bestPrefix);
+          } else {
+            setResultPrefix('none');
+          }
         }
       }
     } else if (calcValues[3] !== null) {
