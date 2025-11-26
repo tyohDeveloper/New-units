@@ -1181,23 +1181,25 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </div>
-              <div className="flex gap-1 justify-end w-[220px]">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setCalcOp1('*')}
-                  className={`text-sm ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
-                >
-                  ×
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setCalcOp1('/')}
-                  className={`text-sm ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
-                >
-                  /
-                </Button>
+              <div className="flex gap-1 justify-between w-[220px]">
+                <div className="flex gap-1">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setCalcOp1('*')}
+                    className={`text-sm ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
+                  >
+                    ×
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setCalcOp1('/')}
+                    className={`text-sm ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
+                  >
+                    /
+                  </Button>
+                </div>
                 <Button 
                   variant="ghost" 
                   size="sm"
@@ -1231,7 +1233,7 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </div>
-              <div className="flex gap-1 justify-end w-[220px]">
+              <div className="flex gap-1 justify-start w-[220px]">
                 <Button 
                   variant="ghost" 
                   size="sm"
