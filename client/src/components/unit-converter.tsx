@@ -101,6 +101,82 @@ export default function UnitConverter() {
     }
   };
 
+  // Arabic translations
+  const TRANSLATIONS: Record<string, { en: string; ar: string }> = {
+    // Category Groups
+    'Base Quantities': { en: 'Base Quantities', ar: 'الكميات الأساسية' },
+    'Mechanics': { en: 'Mechanics', ar: 'الميكانيكا' },
+    'Electricity & Magnetism': { en: 'Electricity & Magnetism', ar: 'الكهرباء والمغناطيسية' },
+    'Radiation & Physics': { en: 'Radiation & Physics', ar: 'الإشعاع والفيزياء' },
+    'Human Response': { en: 'Human Response', ar: 'الاستجابة البشرية' },
+    'Specialized': { en: 'Specialized', ar: 'متخصص' },
+    // Categories
+    'Length': { en: 'Length', ar: 'الطول' },
+    'Mass': { en: 'Mass', ar: 'الكتلة' },
+    'Time': { en: 'Time', ar: 'الوقت' },
+    'Electric Current': { en: 'Electric Current', ar: 'التيار الكهربائي' },
+    'Temperature': { en: 'Temperature', ar: 'درجة الحرارة' },
+    'Amount of Substance': { en: 'Amount of Substance', ar: 'كمية المادة' },
+    'Luminous Intensity': { en: 'Luminous Intensity', ar: 'شدة الإضاءة' },
+    'Area': { en: 'Area', ar: 'المساحة' },
+    'Volume': { en: 'Volume', ar: 'الحجم' },
+    'Speed': { en: 'Speed', ar: 'السرعة' },
+    'Acceleration': { en: 'Acceleration', ar: 'التسارع' },
+    'Force': { en: 'Force', ar: 'القوة' },
+    'Pressure': { en: 'Pressure', ar: 'الضغط' },
+    'Energy': { en: 'Energy', ar: 'الطاقة' },
+    'Power': { en: 'Power', ar: 'القدرة' },
+    'Torque': { en: 'Torque', ar: 'عزم الدوران' },
+    'Flow Rate': { en: 'Flow Rate', ar: 'معدل التدفق' },
+    'Density': { en: 'Density', ar: 'الكثافة' },
+    'Dynamic Viscosity': { en: 'Dynamic Viscosity', ar: 'اللزوجة الديناميكية' },
+    'Surface Tension': { en: 'Surface Tension', ar: 'التوتر السطحي' },
+    'Charge': { en: 'Charge', ar: 'الشحنة' },
+    'Potential': { en: 'Potential', ar: 'الجهد' },
+    'Capacitance': { en: 'Capacitance', ar: 'السعة' },
+    'Resistance': { en: 'Resistance', ar: 'المقاومة' },
+    'Conductance': { en: 'Conductance', ar: 'الموصلية' },
+    'Inductance': { en: 'Inductance', ar: 'الحث' },
+    'Magnetic Flux': { en: 'Magnetic Flux', ar: 'التدفق المغناطيسي' },
+    'Magnetic Flux Density': { en: 'Magnetic Flux Density', ar: 'كثافة التدفق المغناطيسي' },
+    'Radioactivity': { en: 'Radioactivity', ar: 'النشاط الإشعاعي' },
+    'Radiation Dose': { en: 'Radiation Dose', ar: 'جرعة الإشعاع' },
+    'Equivalent Dose': { en: 'Equivalent Dose', ar: 'الجرعة المكافئة' },
+    'Catalytic Activity': { en: 'Catalytic Activity', ar: 'النشاط التحفيزي' },
+    'Angle': { en: 'Angle', ar: 'الزاوية' },
+    'Solid Angle': { en: 'Solid Angle', ar: 'الزاوية المجسمة' },
+    'Frequency': { en: 'Frequency', ar: 'التردد' },
+    'Sound Pressure': { en: 'Sound Pressure', ar: 'ضغط الصوت' },
+    'Luminous Flux': { en: 'Luminous Flux', ar: 'التدفق الضوئي' },
+    'Illuminance': { en: 'Illuminance', ar: 'الإضاءة' },
+    'Luminous Exitance': { en: 'Luminous Exitance', ar: 'الإشعاع الضوئي' },
+    'Luminance': { en: 'Luminance', ar: 'اللمعان' },
+    'Refractive Power': { en: 'Refractive Power', ar: 'قوة الانكسار' },
+    'Digital Storage': { en: 'Digital Storage', ar: 'التخزين الرقمي' },
+    'Typographic Units': { en: 'Typographic Units', ar: 'وحدات الطباعة' },
+    // UI Labels
+    'Base unit:': { en: 'Base unit:', ar: ':الوحدة الأساسية' },
+    'Include Beer/Wine': { en: 'Include Beer/Wine', ar: 'تضمين البيرة/النبيذ' },
+    'Base Factor': { en: 'Base Factor', ar: 'العامل الأساسي' },
+    'SI Base Units': { en: 'SI Base Units', ar: 'وحدات SI الأساسية' },
+    'Decimals': { en: 'Decimals', ar: 'الكسور العشرية' },
+    'Copy': { en: 'Copy', ar: 'نسخ' },
+    'Prefix': { en: 'Prefix', ar: 'بادئة' },
+    'Unit': { en: 'Unit', ar: 'وحدة' },
+    'Result': { en: 'Result', ar: 'النتيجة' },
+    'Calculator': { en: 'Calculator', ar: 'الآلة الحاسبة' },
+    'Clear': { en: 'Clear', ar: 'مسح' },
+    'Dimensional Analysis': { en: 'Dimensional Analysis', ar: 'التحليل البعدي' },
+  };
+
+  // Helper: Get translated text
+  const t = (key: string): string => {
+    if (numberFormat === 'arabic' && TRANSLATIONS[key]) {
+      return TRANSLATIONS[key].ar;
+    }
+    return TRANSLATIONS[key]?.en || key;
+  };
+
   const CATEGORY_GROUPS = [
     {
       name: "Base Quantities",
@@ -941,7 +1017,7 @@ export default function UnitConverter() {
       <nav className="space-y-2 h-fit sticky top-0 overflow-y-auto max-h-[calc(100vh-2rem)] pr-2 -mt-1">
         {CATEGORY_GROUPS.map((group) => (
           <div key={group.name} className="space-y-1">
-            <h2 className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80 px-2 font-bold">{group.name}</h2>
+            <h2 className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80 px-2 font-bold">{t(group.name)}</h2>
             <div className="space-y-0">
               {group.categories.map((catId) => {
                 const cat = CONVERSION_DATA.find(c => c.id === catId);
@@ -956,7 +1032,7 @@ export default function UnitConverter() {
                         : 'hover:bg-muted/50 border-transparent text-muted-foreground hover:text-foreground'
                     }`}
                   >
-                    {cat.name}
+                    {t(cat.name)}
                     {activeCategory === cat.id && (
                       <motion.div layoutId="active-indicator" className="w-1 h-1 rounded-full bg-accent" />
                     )}
@@ -971,10 +1047,10 @@ export default function UnitConverter() {
       {/* Main Converter */}
       <div className="space-y-4 -mt-1">
         <div className="mb-2">
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">{applyRegionalSpelling(categoryData.name)}</h1>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">{t(applyRegionalSpelling(categoryData.name))}</h1>
           <div className="flex items-center justify-between mt-1">
             <p className="text-muted-foreground text-sm font-mono">
-              Base unit: <span className="text-primary">{applyRegionalSpelling(categoryData.baseUnit)}</span>
+              {t('Base unit:')} <span className="text-primary">{applyRegionalSpelling(categoryData.baseUnit)}</span>
             </p>
             <div className="flex items-center gap-3">
               {activeCategory === 'volume' && (
@@ -985,7 +1061,7 @@ export default function UnitConverter() {
                     onChange={(e) => setIncludeBeerWine(e.target.checked)}
                     className="w-3 h-3 cursor-pointer accent-accent"
                   />
-                  <span className="text-xs text-muted-foreground">Include Beer/Wine</span>
+                  <span className="text-xs text-muted-foreground">{t('Include Beer/Wine')}</span>
                 </label>
               )}
               <Select 
@@ -1043,7 +1119,7 @@ export default function UnitConverter() {
                   disabled={!fromUnitData?.allowPrefixes}
                 >
                   <SelectTrigger tabIndex={2} className="h-16 w-[80px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
-                    <SelectValue placeholder="Prefix" />
+                    <SelectValue placeholder={t('Prefix')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
                     {PREFIXES.map((p) => (
@@ -1060,7 +1136,7 @@ export default function UnitConverter() {
                   onOpenChange={(open) => { if (!open) refocusInput(); }}
                 >
                   <SelectTrigger tabIndex={3} className="h-16 w-[220px] bg-background/30 border-border font-medium shrink-0">
-                    <SelectValue placeholder="Unit" />
+                    <SelectValue placeholder={t('Unit')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
                     {filteredUnits.map((u) => (
@@ -1081,13 +1157,13 @@ export default function UnitConverter() {
               
               <div className="grid sm:grid-cols-[1fr_220px] gap-2">
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">Base Factor</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">{t('Base Factor')}</div>
                   <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''}>
                     {fromUnitData ? formatFactor(fromUnitData.factor * fromPrefixData.factor) : '-'}
                   </div>
                 </div>
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">SI Base Units</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">{t('SI Base Units')}</div>
                   <div className="font-mono text-sm text-foreground/80 truncate">
                     {categoryData.baseSISymbol || '-'}
                   </div>
@@ -1128,7 +1204,7 @@ export default function UnitConverter() {
                   <SelectContent>
                     {[0,1,2,3,4,5,6,7,8].map(n => (
                       <SelectItem key={n} value={n.toString()} className="text-xs">
-                        {n} Decimals
+                        {n} {t('Decimals')}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -1154,7 +1230,7 @@ export default function UnitConverter() {
                   disabled={!toUnitData?.allowPrefixes}
                 >
                   <SelectTrigger className="h-16 w-[80px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
-                    <SelectValue placeholder="Prefix" />
+                    <SelectValue placeholder={t('Prefix')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
                     {PREFIXES.map((p) => (
@@ -1167,7 +1243,7 @@ export default function UnitConverter() {
 
                 <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); }}>
                   <SelectTrigger className="h-16 w-[220px] bg-background/30 border-border font-medium shrink-0">
-                    <SelectValue placeholder="Unit" />
+                    <SelectValue placeholder={t('Unit')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
                     {filteredUnits.map((u) => (
@@ -1188,13 +1264,13 @@ export default function UnitConverter() {
 
               <div className="grid sm:grid-cols-[1fr_220px] gap-2">
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">Base Factor</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">{t('Base Factor')}</div>
                   <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''}>
                     {toUnitData ? formatFactor(toUnitData.factor * toPrefixData.factor) : '-'}
                   </div>
                 </div>
                 <div className="p-2 rounded bg-muted/20 border border-border/50">
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">SI Base Units</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">{t('SI Base Units')}</div>
                   <div className="font-mono text-sm text-foreground/80 truncate">
                     {categoryData.baseSISymbol || '-'}
                   </div>
@@ -1239,7 +1315,7 @@ export default function UnitConverter() {
                     }}
                     transition={{ duration: 0.3 }}
                   >
-                    Copy Result
+                    {t('Copy')} {t('Result')}
                   </motion.span>
                 </Button>
               </div>
@@ -1252,9 +1328,9 @@ export default function UnitConverter() {
         <Card className="p-6 bg-card border-border/50">
           <div className="flex gap-2 mb-4">
             <div className="flex-1 flex items-center justify-between">
-              <Label className="text-xs font-mono uppercase text-muted-foreground">Calculator</Label>
+              <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Calculator')}</Label>
               <div className="flex items-center gap-2">
-                <Label className="text-xs text-muted-foreground">Decimals</Label>
+                <Label className="text-xs text-muted-foreground">{t('Decimals')}</Label>
                 <Select 
                   value={calculatorPrecision.toString()} 
                   onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
@@ -1279,7 +1355,7 @@ export default function UnitConverter() {
                 onClick={clearCalculator}
                 className="text-xs"
               >
-                Clear calculator
+                {t('Clear')} {t('Calculator')}
               </Button>
             </div>
           </div>
@@ -1313,7 +1389,7 @@ export default function UnitConverter() {
                   disabled={!calcValues[0]}
                   className="text-xs"
                 >
-                  Clear
+                  {t('Clear')}
                 </Button>
               </div>
             </div>
@@ -1365,7 +1441,7 @@ export default function UnitConverter() {
                   disabled={!calcValues[1]}
                   className="text-xs"
                 >
-                  Clear
+                  {t('Clear')}
                 </Button>
               </div>
             </div>
@@ -1417,7 +1493,7 @@ export default function UnitConverter() {
                   disabled={!calcValues[2]}
                   className="text-xs"
                 >
-                  Clear
+                  {t('Clear')}
                 </Button>
               </div>
             </div>
@@ -1506,7 +1582,7 @@ export default function UnitConverter() {
                         }}
                         transition={{ duration: 0.3 }}
                       >
-                        Copy
+                        {t('Copy')}
                       </motion.span>
                     </Button>
                   </React.Fragment>
