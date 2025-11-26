@@ -985,13 +985,15 @@ export default function UnitConverter() {
   };
 
   // Helper: Translate unit names while keeping symbols in Latin
-  // Unit NAMES are translated (e.g., "Meter" → "متر"), but unit SYMBOLS remain Latin (e.g., "m" stays "m")
+  // Unit NAMES are translated (e.g., "Meter" → "Metro" in Spanish), but unit SYMBOLS remain Latin (e.g., "m" stays "m")
   const translateUnitName = (unitName: string): string => {
-    // If Arabic language is selected, use Arabic translation
-    if (language === 'ar') {
-      return t(unitName);
+    // First try to get translation using t() function
+    const translated = t(unitName);
+    // If translation found (different from key), use it
+    if (translated !== unitName) {
+      return translated;
     }
-    // For English and other languages, apply regional spelling variations (meter vs metre)
+    // Otherwise, apply regional spelling variations (meter vs metre) for English variations
     return applyRegionalSpelling(unitName);
   };
 
