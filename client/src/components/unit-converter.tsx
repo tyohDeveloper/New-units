@@ -377,12 +377,14 @@ export default function UnitConverter() {
     const inNum = Number(inches.toFixed(precision));
     const inStr = inNum.toString();
 
-    return `${sign}${ft}:${inStr}`;
+    return `${sign}${ft}'${inStr}"`;
   };
 
   const parseFtIn = (ftIn: string): number => {
-    if (!ftIn.includes(':')) return parseFloat(ftIn);
-    const parts = ftIn.split(':').map(p => parseFloat(p));
+    // Remove quotes and replace with colon for parsing
+    const cleaned = ftIn.replace(/['"]/g, ':');
+    if (!cleaned.includes(':')) return parseFloat(cleaned);
+    const parts = cleaned.split(':').map(p => parseFloat(p));
     let val = 0;
     if (parts.length > 0) val += parts[0];
     if (parts.length > 1) val += (parts[0] >= 0 ? parts[1] : -parts[1]) / 12;
@@ -808,15 +810,15 @@ export default function UnitConverter() {
   // Helper to determine input placeholder
   const getPlaceholder = () => {
     if (fromUnit === 'deg_dms') return "dd:mm:ss";
-    if (fromUnit === 'ft_in') return "ft:in";
+    if (fromUnit === 'ft_in') return "ft'in\"";
     return "0";
   };
 
   // Helper to validate and filter input
   const handleInputChange = (value: string) => {
-    // For special formats (DMS/FtIn), allow: digits, colon, period, comma, minus
+    // For special formats (DMS/FtIn), allow: digits, colon, period, comma, minus, quotes
     if (fromUnit === 'deg_dms' || fromUnit === 'ft_in') {
-      const filtered = value.replace(/[^0-9:.,\-]/g, '');
+      const filtered = value.replace(/[^0-9:.,\-'"]/g, '');
       setInputValue(filtered);
       return;
     }
