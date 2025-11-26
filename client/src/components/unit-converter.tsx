@@ -105,12 +105,31 @@ export default function UnitConverter() {
 
   // Helper: Round to nearest even (banker's rounding)
   const roundToNearestEven = (num: number, precision: number): number => {
+    // For extremely large or small numbers, check if we're beyond floating-point precision
+    const absNum = Math.abs(num);
+    if (absNum > 1e15 || (absNum < 1e-15 && absNum > 0)) {
+      // Beyond reliable precision - just round to the nearest integer if precision allows
+      if (precision === 0) {
+        return Math.round(num);
+      }
+    }
+    
     const multiplier = Math.pow(10, precision);
     const scaled = num * multiplier;
+    
+    // Check for floating-point errors in scaled value
+    const nearestInt = Math.round(scaled);
+    const diff = Math.abs(scaled - nearestInt);
+    
+    // If the difference is tiny (floating-point error), treat as exact integer
+    if (diff < 1e-10) {
+      return nearestInt / multiplier;
+    }
+    
     const floor = Math.floor(scaled);
     const fraction = scaled - floor;
     
-    if (fraction === 0.5) {
+    if (Math.abs(fraction - 0.5) < 1e-10) {
       // Exactly halfway - round to nearest even number
       return (floor % 2 === 0 ? floor : floor + 1) / multiplier;
     } else {
