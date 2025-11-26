@@ -1135,19 +1135,24 @@ export default function UnitConverter() {
         <Card className="p-6 bg-card border-border/50">
           <div className="flex items-center justify-between mb-4">
             <Label className="text-xs font-mono uppercase text-muted-foreground">Calculator</Label>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                const precisions = [2, 4, 6, 8, 10, 12];
-                const currentIndex = precisions.indexOf(calculatorPrecision);
-                const nextIndex = (currentIndex + 1) % precisions.length;
-                setCalculatorPrecision(precisions[nextIndex]);
-              }}
-              className="text-xs h-7 px-2"
-            >
-              Decimals: {calculatorPrecision}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Label className="text-xs text-muted-foreground">Decimals</Label>
+              <Select 
+                value={calculatorPrecision.toString()} 
+                onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
+              >
+                <SelectTrigger className="h-7 w-[70px] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent align="end">
+                  {[2, 4, 6, 8, 10, 12].map(p => (
+                    <SelectItem key={p} value={p.toString()} className="text-xs">
+                      {p}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div className="space-y-2">
             {/* Field 1 */}
