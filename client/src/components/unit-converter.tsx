@@ -1016,7 +1016,22 @@ export default function UnitConverter() {
     // Add thousands separator if format has one
     let formattedInteger = integer;
     if (format.thousands) {
-      formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, format.thousands);
+      if (numberFormat === 'south-asian') {
+        // Indian numbering system: 3-2-2 grouping (e.g., 12,34,56,789)
+        // First separator after 3 digits from right, then every 2 digits
+        const reversed = integer.split('').reverse().join('');
+        let result = '';
+        for (let i = 0; i < reversed.length; i++) {
+          if (i === 3 || (i > 3 && (i - 3) % 2 === 0)) {
+            result += format.thousands;
+          }
+          result += reversed[i];
+        }
+        formattedInteger = result.split('').reverse().join('');
+      } else {
+        // Standard 3-3-3 grouping for other formats
+        formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, format.thousands);
+      }
     }
     
     // Use format's decimal separator
