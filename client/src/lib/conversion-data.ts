@@ -30,7 +30,7 @@ export type UnitCategory =
   | "angle"
   | "solid_angle"
   | "digital"
-  | "printing"
+  // | "printing"  // TEMPORARILY DISABLED
   | "luminous_flux"
   | "illuminance"
   | "luminous_exitance"
@@ -656,22 +656,23 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "PB", name: "Petabyte", symbol: "PB", factor: 1.126e15 },
     ],
   },
-  {
-    id: "printing",
-    name: "Typography",
-    baseUnit: "point (PostScript)",
-    units: [
-      { id: "pt", name: "Point (PostScript)", symbol: "pt", factor: 1 },
-      { id: "pt_am", name: "Point (Traditional American)", symbol: "pt", factor: 0.996264 },
-      { id: "pc", name: "Pica (PostScript)", symbol: "pc", factor: 12 },
-      { id: "pc_am", name: "Pica (Traditional American)", symbol: "pc", factor: 11.955168 },
-      { id: "in", name: "Inch", symbol: "in", factor: 72 },
-      { id: "mm", name: "Millimeter", symbol: "mm", factor: 2.83465 },
-      { id: "px", name: "Pixel (96dpi)", symbol: "px", factor: 0.75 },
-      { id: "didot", name: "Didot", symbol: "dd", factor: 1.07 },
-      { id: "cicero", name: "Cicero", symbol: "cc", factor: 12.84 },
-    ],
-  },
+  // TEMPORARILY DISABLED - Typography category needs more work
+  // {
+  //   id: "printing",
+  //   name: "Typography",
+  //   baseUnit: "point (PostScript)",
+  //   units: [
+  //     { id: "pt", name: "Point (PostScript)", symbol: "pt", factor: 1 },
+  //     { id: "pt_am", name: "Point (Traditional American)", symbol: "pt", factor: 0.996264 },
+  //     { id: "pc", name: "Pica (PostScript)", symbol: "pc", factor: 12 },
+  //     { id: "pc_am", name: "Pica (Traditional American)", symbol: "pc", factor: 11.955168 },
+  //     { id: "in", name: "Inch", symbol: "in", factor: 72 },
+  //     { id: "mm", name: "Millimeter", symbol: "mm", factor: 2.83465 },
+  //     { id: "px", name: "Pixel (96dpi)", symbol: "px", factor: 0.75 },
+  //     { id: "didot", name: "Didot", symbol: "dd", factor: 1.07 },
+  //     { id: "cicero", name: "Cicero", symbol: "cc", factor: 12.84 },
+  //   ],
+  // },
   {
     id: "luminance",
     name: "Luminance",
