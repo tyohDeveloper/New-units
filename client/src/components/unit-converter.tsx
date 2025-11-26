@@ -1134,27 +1134,28 @@ export default function UnitConverter() {
         {/* Mini Calculator */}
         <Card className="p-6 bg-card border-border/50">
           <div className="flex gap-2 mb-4">
-            <div className="flex-1">
+            <div className="flex-1 flex items-center justify-between">
               <Label className="text-xs font-mono uppercase text-muted-foreground">Calculator</Label>
+              <div className="flex items-center gap-2">
+                <Label className="text-xs text-muted-foreground">Decimals</Label>
+                <Select 
+                  value={calculatorPrecision.toString()} 
+                  onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
+                >
+                  <SelectTrigger className="h-7 w-[70px] text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent align="end">
+                    {[2, 4, 6, 8, 10, 12].map(p => (
+                      <SelectItem key={p} value={p.toString()} className="text-xs">
+                        {p}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div className="flex items-center gap-2 justify-end w-[220px]">
-              <Label className="text-xs text-muted-foreground">Decimals</Label>
-              <Select 
-                value={calculatorPrecision.toString()} 
-                onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
-              >
-                <SelectTrigger className="h-7 w-[70px] text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent align="end">
-                  {[2, 4, 6, 8, 10, 12].map(p => (
-                    <SelectItem key={p} value={p.toString()} className="text-xs">
-                      {p}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <div className="w-[220px]"></div>
           </div>
           <div className="space-y-2">
             {/* Field 1 */}
