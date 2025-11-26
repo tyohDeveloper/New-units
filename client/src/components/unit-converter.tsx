@@ -506,6 +506,8 @@ export default function UnitConverter() {
   };
 
   // Helper: Get translated text - uses language dropdown
+  // Translates ALL labels: UI labels, category names, quantity names, and unit names
+  // NOTE: Symbols (m, ft, kg) and prefixes (k, M, G) are NEVER translated - they always remain in Latin/ISO SI
   const t = (key: string): string => {
     // Check if we have a translation for the selected language
     if (TRANSLATIONS[key]) {
@@ -513,18 +515,20 @@ export default function UnitConverter() {
         return TRANSLATIONS[key].ar;
       }
       // For other languages, we only have English translations currently
+      // Falls back to English if no translation exists for the selected language
       return TRANSLATIONS[key].en || key;
     }
     return key;
   };
 
   // Helper: Translate unit names while keeping symbols in Latin
+  // Unit NAMES are translated (e.g., "Meter" → "متر"), but unit SYMBOLS remain Latin (e.g., "m" stays "m")
   const translateUnitName = (unitName: string): string => {
     // If Arabic language is selected, use Arabic translation
     if (language === 'ar') {
       return t(unitName);
     }
-    // For English and other languages, apply regional spelling variations
+    // For English and other languages, apply regional spelling variations (meter vs metre)
     return applyRegionalSpelling(unitName);
   };
 
