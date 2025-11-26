@@ -2408,7 +2408,7 @@ export default function UnitConverter() {
                           </SelectItem>
                           {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
                             <SelectItem key={unit.id} value={unit.id} className="text-xs">
-                              {applyRegionalSpelling(unit.name)}
+                              {translateUnitName(unit.name)}
                             </SelectItem>
                           ))}
                         </SelectContent>
