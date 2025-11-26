@@ -55,35 +55,126 @@ export default function UnitConverter() {
   // Language state (ISO 639-1 codes)
   const [language, setLanguage] = useState<string>('en');
   
-  // ISO 639-1 language codes (en first, then alphabetically sorted)
+  // ISO 639-1 language codes with 100,000+ native speakers (en first, then alphabetically sorted)
+  // Based on Ethnologue and Wikipedia data - approximately 80+ major world languages
   const ISO_LANGUAGES = [
-    'en', // English first
-    'aa', 'ab', 'ae', 'af', 'ak', 'am', 'an', 'ar', 'as', 'av', 'ay', 'az',
-    'ba', 'be', 'bg', 'bh', 'bi', 'bm', 'bn', 'bo', 'br', 'bs',
-    'ca', 'ce', 'ch', 'co', 'cr', 'cs', 'cu', 'cv', 'cy',
-    'da', 'de', 'dv', 'dz',
-    'ee', 'el', 'eo', 'es', 'et', 'eu',
-    'fa', 'ff', 'fi', 'fj', 'fo', 'fr', 'fy',
-    'ga', 'gd', 'gl', 'gn', 'gu', 'gv',
-    'ha', 'he', 'hi', 'ho', 'hr', 'ht', 'hu', 'hy', 'hz',
-    'ia', 'id', 'ie', 'ig', 'ii', 'ik', 'io', 'is', 'it', 'iu',
-    'ja', 'jv',
-    'ka', 'kg', 'ki', 'kj', 'kk', 'kl', 'km', 'kn', 'ko', 'kr', 'ks', 'ku', 'kv', 'kw', 'ky',
-    'la', 'lb', 'lg', 'li', 'ln', 'lo', 'lt', 'lu', 'lv',
-    'mg', 'mh', 'mi', 'mk', 'ml', 'mn', 'mr', 'ms', 'mt', 'my',
-    'na', 'nb', 'nd', 'ne', 'ng', 'nl', 'nn', 'no', 'nr', 'nv', 'ny',
-    'oc', 'oj', 'om', 'or', 'os',
-    'pa', 'pi', 'pl', 'ps', 'pt',
-    'qu',
-    'rm', 'rn', 'ro', 'ru', 'rw',
-    'sa', 'sc', 'sd', 'se', 'sg', 'si', 'sk', 'sl', 'sm', 'sn', 'so', 'sq', 'sr', 'ss', 'st', 'su', 'sv', 'sw',
-    'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'tn', 'to', 'tr', 'ts', 'tt', 'tw', 'ty',
-    'ug', 'uk', 'ur', 'uz',
-    've', 'vi', 'vo',
-    'wa', 'wo',
-    'xh',
-    'yi', 'yo',
-    'za', 'zh', 'zu'
+    'en', // English (380M) - first
+    'af', // Afrikaans (7M)
+    'ak', // Akan (11M)
+    'am', // Amharic (32M)
+    'ar', // Arabic (274M+)
+    'as', // Assamese (15M)
+    'az', // Azerbaijani (23M)
+    'ba', // Bashkir (1.2M)
+    'be', // Belarusian (5M)
+    'bg', // Bulgarian (8M)
+    'bm', // Bambara (14M)
+    'bn', // Bengali (230M)
+    'bo', // Tibetan (1.2M)
+    'bs', // Bosnian (2.2M)
+    'ca', // Catalan (10M)
+    'ce', // Chechen (1.4M)
+    'cs', // Czech (10M)
+    'cv', // Chuvash (1M)
+    'cy', // Welsh (580K)
+    'da', // Danish (6M)
+    'de', // German (76M)
+    'dv', // Dhivehi (340K)
+    'dz', // Dzongkha (160K)
+    'el', // Greek (13M)
+    'es', // Spanish (486M)
+    'et', // Estonian (1.1M)
+    'eu', // Basque (750K)
+    'fa', // Persian/Farsi (62M)
+    'ff', // Fulah (25M)
+    'fi', // Finnish (5.5M)
+    'fr', // French (77M native, 280M total)
+    'ga', // Irish (170K native, 1.9M total)
+    'gl', // Galician (2.4M)
+    'gn', // Guarani (6.5M)
+    'gu', // Gujarati (60M)
+    'ha', // Hausa (63M)
+    'he', // Hebrew (9M)
+    'hi', // Hindi (345M)
+    'hr', // Croatian (5.6M)
+    'ht', // Haitian Creole (12M)
+    'hu', // Hungarian (13M)
+    'hy', // Armenian (6.7M)
+    'id', // Indonesian (43M native, 200M+ total)
+    'ig', // Igbo (27M)
+    'is', // Icelandic (314K)
+    'it', // Italian (64M)
+    'ja', // Japanese (125M)
+    'jv', // Javanese (68M)
+    'ka', // Georgian (3.7M)
+    'kk', // Kazakh (13M)
+    'km', // Khmer (16M)
+    'kn', // Kannada (44M)
+    'ko', // Korean (77M)
+    'ku', // Kurdish (30M)
+    'ky', // Kyrgyz (4.3M)
+    'lb', // Luxembourgish (400K)
+    'lg', // Ganda (5.6M)
+    'ln', // Lingala (15M)
+    'lo', // Lao (30M)
+    'lt', // Lithuanian (3M)
+    'lv', // Latvian (1.75M)
+    'mg', // Malagasy (25M)
+    'mi', // Maori (150K)
+    'mk', // Macedonian (1.4M)
+    'ml', // Malayalam (38M)
+    'mn', // Mongolian (5.7M)
+    'mr', // Marathi (83M)
+    'ms', // Malay (77M)
+    'mt', // Maltese (520K)
+    'my', // Burmese (33M)
+    'nb', // Norwegian Bokmål (part of 5.3M Norwegian)
+    'ne', // Nepali (16M)
+    'nl', // Dutch (24M)
+    'nn', // Norwegian Nynorsk (part of 5.3M Norwegian)
+    'no', // Norwegian (5.3M)
+    'ny', // Chichewa (12M)
+    'om', // Oromo (37M)
+    'or', // Odia/Oriya (35M)
+    'pa', // Punjabi (125M)
+    'pl', // Polish (40M)
+    'ps', // Pashto (60M)
+    'pt', // Portuguese (236M)
+    'qu', // Quechua (8M)
+    'ro', // Romanian (24M)
+    'ru', // Russian (150M)
+    'rw', // Kinyarwanda (12M)
+    'sd', // Sindhi (25M)
+    'si', // Sinhala (17M)
+    'sk', // Slovak (5.2M)
+    'sl', // Slovenian (2.5M)
+    'sn', // Shona (14M)
+    'so', // Somali (21M)
+    'sq', // Albanian (7.6M)
+    'sr', // Serbian (12M)
+    'su', // Sundanese (42M)
+    'sv', // Swedish (10M)
+    'sw', // Swahili (16M native, 98M total)
+    'ta', // Tamil (80M)
+    'te', // Telugu (82M)
+    'tg', // Tajik (8.2M)
+    'th', // Thai (60M)
+    'ti', // Tigrinya (9M)
+    'tk', // Turkmen (7M)
+    'tl', // Tagalog (28M native, 45M total)
+    'tr', // Turkish (80M)
+    'tt', // Tatar (5.2M)
+    'ug', // Uyghur (10M)
+    'uk', // Ukrainian (32M)
+    'ur', // Urdu (70M)
+    'uz', // Uzbek (34M)
+    'vi', // Vietnamese (85M)
+    'wo', // Wolof (12M)
+    'xh', // Xhosa (8.2M)
+    'yi', // Yiddish (600K)
+    'yo', // Yoruba (45M)
+    'zh', // Chinese (920M+)
+    'zu', // Zulu (12M)
   ];
   
   const [includeBeerWine, setIncludeBeerWine] = useState<boolean>(false);
