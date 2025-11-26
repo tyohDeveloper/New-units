@@ -505,19 +505,26 @@ export default function UnitConverter() {
     'Dyne/centimeter': { en: 'Dyne/centimeter', ar: 'داين/سنتيمتر' },
   };
 
-  // Helper: Get translated text
+  // Helper: Get translated text - uses language dropdown
   const t = (key: string): string => {
-    if (language === 'ar' && TRANSLATIONS[key]) {
-      return TRANSLATIONS[key].ar;
+    // Check if we have a translation for the selected language
+    if (TRANSLATIONS[key]) {
+      if (language === 'ar' && TRANSLATIONS[key].ar) {
+        return TRANSLATIONS[key].ar;
+      }
+      // For other languages, we only have English translations currently
+      return TRANSLATIONS[key].en || key;
     }
-    return TRANSLATIONS[key]?.en || key;
+    return key;
   };
 
   // Helper: Translate unit names while keeping symbols in Latin
   const translateUnitName = (unitName: string): string => {
+    // If Arabic language is selected, use Arabic translation
     if (language === 'ar') {
       return t(unitName);
     }
+    // For English and other languages, apply regional spelling variations
     return applyRegionalSpelling(unitName);
   };
 
