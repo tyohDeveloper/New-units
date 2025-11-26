@@ -145,6 +145,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "min", name: "Minute", symbol: "min", factor: 60 },
       { id: "h", name: "Hour", symbol: "h", factor: 3600 },
       { id: "d", name: "Day", symbol: "d", factor: 86400 },
+      { id: "d_sid", name: "Sidereal Day", symbol: "d (sid)", factor: 86164.0905 },
       { id: "wk", name: "Week", symbol: "wk", factor: 604800 },
       { id: "mo", name: "Month (Avg)", symbol: "mo", factor: 2.628e6 },
       { id: "y", name: "Year", symbol: "yr", factor: 3.154e7 },

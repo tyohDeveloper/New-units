@@ -1187,7 +1187,6 @@ export default function UnitConverter() {
       angle: {},
       solid_angle: {},
       digital: {},
-      printing: { length: 1 },
       luminous_flux: { intensity: 1 },
       illuminance: { intensity: 1, length: -2 },
       luminous_exitance: { intensity: 1, length: -2 },
