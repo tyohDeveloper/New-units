@@ -1227,7 +1227,7 @@ export default function UnitConverter() {
             </div>
 
             {/* Field 3 */}
-            <div className="grid sm:grid-cols-[1fr_220px] gap-2">
+            <div className="grid grid-cols-[1fr_auto] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[2] ? (() => {
@@ -1247,10 +1247,11 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </div>
+              <div className="w-[220px]"></div>
             </div>
 
             {/* Result Field 4 */}
-            <div className="grid sm:grid-cols-[1fr_220px] gap-2">
+            <div className="grid grid-cols-[1fr_auto] gap-2">
               <div className="h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-primary font-bold truncate">
                   {calcValues[3] && resultUnit && resultCategory ? (() => {
@@ -1292,71 +1293,84 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </div>
-              <div className="flex gap-1 justify-start">
-                {calcValues[3] && resultCategory && (
+              <div className="flex gap-1 justify-start w-[220px]">
+                {calcValues[3] && (
                   <React.Fragment>
-                    <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
-                      <SelectTrigger className="h-9 w-[100px] text-xs">
-                        <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="base" className="text-xs font-mono">
-                          {CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"}
-                        </SelectItem>
-                        {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
-                          <SelectItem key={unit.id} value={unit.id} className="text-xs">
-                            {unit.name}
-                          </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {(() => {
-                    const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                    const unit = resultUnit ? cat?.units.find(u => u.id === resultUnit) : null;
-                    const allowsPrefixes = unit?.allowPrefixes || false;
-                    return allowsPrefixes && (
-                      <Select value={resultPrefix} onValueChange={setResultPrefix}>
-                        <SelectTrigger className="h-9 w-[70px] text-xs">
-                          <SelectValue />
+                    {resultCategory ? (
+                      <>
+                        <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
+                          <SelectTrigger className="h-9 w-[100px] text-xs">
+                            <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="base" className="text-xs font-mono">
+                              {CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"}
+                            </SelectItem>
+                            {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
+                              <SelectItem key={unit.id} value={unit.id} className="text-xs">
+                                {unit.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {(() => {
+                          const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+                          const unit = resultUnit ? cat?.units.find(u => u.id === resultUnit) : null;
+                          const allowsPrefixes = unit?.allowPrefixes || false;
+                          return allowsPrefixes && (
+                            <Select value={resultPrefix} onValueChange={setResultPrefix}>
+                              <SelectTrigger className="h-9 w-[70px] text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {PREFIXES.map(prefix => (
+                                  <SelectItem key={prefix.id} value={prefix.id} className="text-xs">
+                                    {prefix.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          );
+                        })()}
+                      </>
+                    ) : (
+                      <Select value="unitless" disabled>
+                        <SelectTrigger className="h-9 w-[100px] text-xs">
+                          <SelectValue placeholder="" />
                         </SelectTrigger>
                         <SelectContent>
-                          {PREFIXES.map(prefix => (
-                            <SelectItem key={prefix.id} value={prefix.id} className="text-xs">
-                              {prefix.name}
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="unitless" className="text-xs"></SelectItem>
                         </SelectContent>
                       </Select>
-                    );
-                  })()}
+                    )}
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={copyCalcResult}
+                      disabled={!calcValues[3]}
+                      className="text-xs hover:text-accent gap-1 shrink-0"
+                    >
+                      <Copy className="w-3 h-3" />
+                      <motion.span
+                        animate={{
+                          opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                          scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        Copy
+                      </motion.span>
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={clearCalculator}
+                      className="text-xs hover:text-destructive gap-1 shrink-0"
+                    >
+                      Clear
+                    </Button>
                   </React.Fragment>
                 )}
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={copyCalcResult}
-                  disabled={!calcValues[3]}
-                  className="text-xs hover:text-accent gap-1"
-                >
-                  <Copy className="w-3 h-3" />
-                  <motion.span
-                    animate={{
-                      opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
-                      scale: flashCopyCalc ? [1, 1.1, 1] : 1
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    Copy
-                  </motion.span>
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={clearCalculator}
-                  className="text-xs hover:text-destructive gap-1"
-                >
-                  Clear
-                </Button>
               </div>
             </div>
           </div>
