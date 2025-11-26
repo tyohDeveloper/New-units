@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CONVERSION_DATA, UnitCategory, convert, PREFIXES } from '@/lib/conversion-data';
 import { Card } from '@/components/ui/card';
@@ -10,6 +10,7 @@ import { ArrowRightLeft, Copy, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function UnitConverter() {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [activeCategory, setActiveCategory] = useState<UnitCategory>('length');
   const [fromUnit, setFromUnit] = useState<string>('');
   const [toUnit, setToUnit] = useState<string>('');
@@ -183,6 +184,11 @@ export default function UnitConverter() {
       setToPrefix('none');
     }
   }, [activeCategory, includeBeerWine]);
+
+  // Focus input field on mount
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const fromUnitData = categoryData.units.find(u => u.id === fromUnit);
   const toUnitData = categoryData.units.find(u => u.id === toUnit);
@@ -948,6 +954,7 @@ export default function UnitConverter() {
               <Label className="text-xs font-mono uppercase text-muted-foreground">From</Label>
               <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2">
                 <Input 
+                  ref={inputRef}
                   type="text" 
                   inputMode="decimal"
                   value={inputValue}
