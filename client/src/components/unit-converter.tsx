@@ -160,30 +160,128 @@ export default function UnitConverter() {
   };
 
   // Translations for multiple languages
-  const TRANSLATIONS: Record<string, { en: string; ar: string; de?: string }> = {
+  // Supported languages: en (English), ar (Arabic), de (German), es (Spanish), fr (French), 
+  // it (Italian), pt (Portuguese), ru (Russian), zh (Chinese), ja (Japanese)
+  // Other languages fall back to English
+  const TRANSLATIONS: Record<string, { 
+    en: string; 
+    ar: string; 
+    de?: string;
+    es?: string;
+    fr?: string;
+    it?: string;
+    pt?: string;
+    ru?: string;
+    zh?: string;
+    ja?: string;
+  }> = {
     // Category Groups
-    'Base Quantities': { en: 'Base Quantities', ar: 'الكميات الأساسية', de: 'Basisgrößen' },
-    'Mechanics': { en: 'Mechanics', ar: 'الميكانيكا', de: 'Mechanik' },
-    'Electricity & Magnetism': { en: 'Electricity & Magnetism', ar: 'الكهرباء والمغناطيسية', de: 'Elektrizität & Magnetismus' },
-    'Radiation & Physics': { en: 'Radiation & Physics', ar: 'الإشعاع والفيزياء', de: 'Strahlung & Physik' },
-    'Human Response': { en: 'Human Response', ar: 'الاستجابة البشرية', de: 'Menschliche Wahrnehmung' },
-    'Specialized': { en: 'Specialized', ar: 'متخصص', de: 'Spezialisiert' },
+    'Base Quantities': { 
+      en: 'Base Quantities', ar: 'الكميات الأساسية', de: 'Basisgrößen',
+      es: 'Cantidades Base', fr: 'Grandeurs de Base', it: 'Grandezze di Base',
+      pt: 'Grandezas Base', ru: 'Базовые Величины', zh: '基本量', ja: '基本量'
+    },
+    'Mechanics': { 
+      en: 'Mechanics', ar: 'الميكانيكا', de: 'Mechanik',
+      es: 'Mecánica', fr: 'Mécanique', it: 'Meccanica',
+      pt: 'Mecânica', ru: 'Механика', zh: '力学', ja: '力学'
+    },
+    'Electricity & Magnetism': { 
+      en: 'Electricity & Magnetism', ar: 'الكهرباء والمغناطيسية', de: 'Elektrizität & Magnetismus',
+      es: 'Electricidad y Magnetismo', fr: 'Électricité et Magnétisme', it: 'Elettricità e Magnetismo',
+      pt: 'Eletricidade e Magnetismo', ru: 'Электричество и Магнетизм', zh: '电磁学', ja: '電気と磁気'
+    },
+    'Radiation & Physics': { 
+      en: 'Radiation & Physics', ar: 'الإشعاع والفيزياء', de: 'Strahlung & Physik',
+      es: 'Radiación y Física', fr: 'Radiation et Physique', it: 'Radiazione e Fisica',
+      pt: 'Radiação e Física', ru: 'Излучение и Физика', zh: '辐射与物理', ja: '放射線と物理学'
+    },
+    'Human Response': { 
+      en: 'Human Response', ar: 'الاستجابة البشرية', de: 'Menschliche Wahrnehmung',
+      es: 'Respuesta Humana', fr: 'Réponse Humaine', it: 'Risposta Umana',
+      pt: 'Resposta Humana', ru: 'Человеческое Восприятие', zh: '人体响应', ja: '人間の反応'
+    },
+    'Specialized': { 
+      en: 'Specialized', ar: 'متخصص', de: 'Spezialisiert',
+      es: 'Especializado', fr: 'Spécialisé', it: 'Specializzato',
+      pt: 'Especializado', ru: 'Специализированные', zh: '专业', ja: '専門'
+    },
     // Categories
-    'Length': { en: 'Length', ar: 'الطول', de: 'Länge' },
-    'Mass': { en: 'Mass', ar: 'الكتلة', de: 'Masse' },
-    'Time': { en: 'Time', ar: 'الوقت', de: 'Zeit' },
-    'Electric Current': { en: 'Electric Current', ar: 'التيار الكهربائي', de: 'Elektrischer Strom' },
-    'Temperature': { en: 'Temperature', ar: 'درجة الحرارة', de: 'Temperatur' },
-    'Amount of Substance': { en: 'Amount of Substance', ar: 'كمية المادة', de: 'Stoffmenge' },
-    'Luminous Intensity': { en: 'Luminous Intensity', ar: 'شدة الإضاءة', de: 'Lichtstärke' },
-    'Area': { en: 'Area', ar: 'المساحة', de: 'Fläche' },
-    'Volume': { en: 'Volume', ar: 'الحجم', de: 'Volumen' },
-    'Speed': { en: 'Speed', ar: 'السرعة', de: 'Geschwindigkeit' },
-    'Acceleration': { en: 'Acceleration', ar: 'التسارع', de: 'Beschleunigung' },
-    'Force': { en: 'Force', ar: 'القوة', de: 'Kraft' },
-    'Pressure': { en: 'Pressure', ar: 'الضغط', de: 'Druck' },
-    'Energy': { en: 'Energy', ar: 'الطاقة', de: 'Energie' },
-    'Power': { en: 'Power', ar: 'القدرة', de: 'Leistung' },
+    'Length': { 
+      en: 'Length', ar: 'الطول', de: 'Länge',
+      es: 'Longitud', fr: 'Longueur', it: 'Lunghezza',
+      pt: 'Comprimento', ru: 'Длина', zh: '长度', ja: '長さ'
+    },
+    'Mass': { 
+      en: 'Mass', ar: 'الكتلة', de: 'Masse',
+      es: 'Masa', fr: 'Masse', it: 'Massa',
+      pt: 'Massa', ru: 'Масса', zh: '质量', ja: '質量'
+    },
+    'Time': { 
+      en: 'Time', ar: 'الوقت', de: 'Zeit',
+      es: 'Tiempo', fr: 'Temps', it: 'Tempo',
+      pt: 'Tempo', ru: 'Время', zh: '时间', ja: '時間'
+    },
+    'Electric Current': { 
+      en: 'Electric Current', ar: 'التيار الكهربائي', de: 'Elektrischer Strom',
+      es: 'Corriente Eléctrica', fr: 'Courant Électrique', it: 'Corrente Elettrica',
+      pt: 'Corrente Elétrica', ru: 'Электрический Ток', zh: '电流', ja: '電流'
+    },
+    'Temperature': { 
+      en: 'Temperature', ar: 'درجة الحرارة', de: 'Temperatur',
+      es: 'Temperatura', fr: 'Température', it: 'Temperatura',
+      pt: 'Temperatura', ru: 'Температура', zh: '温度', ja: '温度'
+    },
+    'Amount of Substance': { 
+      en: 'Amount of Substance', ar: 'كمية المادة', de: 'Stoffmenge',
+      es: 'Cantidad de Sustancia', fr: 'Quantité de Matière', it: 'Quantità di Sostanza',
+      pt: 'Quantidade de Substância', ru: 'Количество Вещества', zh: '物质的量', ja: '物質量'
+    },
+    'Luminous Intensity': { 
+      en: 'Luminous Intensity', ar: 'شدة الإضاءة', de: 'Lichtstärke',
+      es: 'Intensidad Luminosa', fr: 'Intensité Lumineuse', it: 'Intensità Luminosa',
+      pt: 'Intensidade Luminosa', ru: 'Сила Света', zh: '发光强度', ja: '光度'
+    },
+    'Area': { 
+      en: 'Area', ar: 'المساحة', de: 'Fläche',
+      es: 'Área', fr: 'Surface', it: 'Area',
+      pt: 'Área', ru: 'Площадь', zh: '面积', ja: '面積'
+    },
+    'Volume': { 
+      en: 'Volume', ar: 'الحجم', de: 'Volumen',
+      es: 'Volumen', fr: 'Volume', it: 'Volume',
+      pt: 'Volume', ru: 'Объём', zh: '体积', ja: '体積'
+    },
+    'Speed': { 
+      en: 'Speed', ar: 'السرعة', de: 'Geschwindigkeit',
+      es: 'Velocidad', fr: 'Vitesse', it: 'Velocità',
+      pt: 'Velocidade', ru: 'Скорость', zh: '速度', ja: '速度'
+    },
+    'Acceleration': { 
+      en: 'Acceleration', ar: 'التسارع', de: 'Beschleunigung',
+      es: 'Aceleración', fr: 'Accélération', it: 'Accelerazione',
+      pt: 'Aceleração', ru: 'Ускорение', zh: '加速度', ja: '加速度'
+    },
+    'Force': { 
+      en: 'Force', ar: 'القوة', de: 'Kraft',
+      es: 'Fuerza', fr: 'Force', it: 'Forza',
+      pt: 'Força', ru: 'Сила', zh: '力', ja: '力'
+    },
+    'Pressure': { 
+      en: 'Pressure', ar: 'الضغط', de: 'Druck',
+      es: 'Presión', fr: 'Pression', it: 'Pressione',
+      pt: 'Pressão', ru: 'Давление', zh: '压力', ja: '圧力'
+    },
+    'Energy': { 
+      en: 'Energy', ar: 'الطاقة', de: 'Energie',
+      es: 'Energía', fr: 'Énergie', it: 'Energia',
+      pt: 'Energia', ru: 'Энергия', zh: '能量', ja: 'エネルギー'
+    },
+    'Power': { 
+      en: 'Power', ar: 'القدرة', de: 'Leistung',
+      es: 'Potencia', fr: 'Puissance', it: 'Potenza',
+      pt: 'Potência', ru: 'Мощность', zh: '功率', ja: '仕事率'
+    },
     'Torque': { en: 'Torque', ar: 'عزم الدوران', de: 'Drehmoment' },
     'Flow Rate': { en: 'Flow Rate', ar: 'معدل التدفق', de: 'Durchflussrate' },
     'Flow Rate (Volumetric)': { en: 'Flow Rate (Volumetric)', ar: 'معدل التدفق (الحجمي)', de: 'Durchflussrate (Volumetrisch)' },
@@ -511,14 +609,19 @@ export default function UnitConverter() {
   const t = (key: string): string => {
     // Check if we have a translation for the selected language
     if (TRANSLATIONS[key]) {
-      if (language === 'de' && TRANSLATIONS[key].de) {
-        return TRANSLATIONS[key].de;
-      }
-      if (language === 'ar' && TRANSLATIONS[key].ar) {
-        return TRANSLATIONS[key].ar;
-      }
+      const trans = TRANSLATIONS[key];
+      // Check for translation in selected language
+      if (language === 'de' && trans.de) return trans.de;
+      if (language === 'es' && trans.es) return trans.es;
+      if (language === 'fr' && trans.fr) return trans.fr;
+      if (language === 'it' && trans.it) return trans.it;
+      if (language === 'pt' && trans.pt) return trans.pt;
+      if (language === 'ru' && trans.ru) return trans.ru;
+      if (language === 'zh' && trans.zh) return trans.zh;
+      if (language === 'ja' && trans.ja) return trans.ja;
+      if (language === 'ar' && trans.ar) return trans.ar;
       // Falls back to English if no translation exists for the selected language
-      return TRANSLATIONS[key].en || key;
+      return trans.en || key;
     }
     return key;
   };
