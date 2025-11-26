@@ -1117,7 +1117,7 @@ export default function UnitConverter() {
           <Label className="text-xs font-mono uppercase text-muted-foreground mb-4 block">Calculator</Label>
           <div className="space-y-2">
             {/* Field 1 */}
-            <div className="space-y-1">
+            <div className="grid grid-cols-[1fr_auto] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[0] ? (() => {
@@ -1167,7 +1167,7 @@ export default function UnitConverter() {
             </div>
 
             {/* Field 2 */}
-            <div className="space-y-1">
+            <div className="grid grid-cols-[1fr_auto] gap-2">
               <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[1] ? (() => {
