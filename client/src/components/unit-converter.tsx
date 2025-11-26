@@ -18,6 +18,7 @@ export default function UnitConverter() {
   const [inputValue, setInputValue] = useState<string>('1');
   const [result, setResult] = useState<number | null>(null);
   const [precision, setPrecision] = useState<number>(8);
+  const [calculatorPrecision, setCalculatorPrecision] = useState<number>(8);
   const [flashCopyResult, setFlashCopyResult] = useState<boolean>(false);
   const [flashCopyCalc, setFlashCopyCalc] = useState<boolean>(false);
 
@@ -1132,7 +1133,22 @@ export default function UnitConverter() {
 
         {/* Mini Calculator */}
         <Card className="p-6 bg-card border-border/50">
-          <Label className="text-xs font-mono uppercase text-muted-foreground mb-4 block">Calculator</Label>
+          <div className="flex items-center justify-between mb-4">
+            <Label className="text-xs font-mono uppercase text-muted-foreground">Calculator</Label>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                const precisions = [2, 4, 6, 8, 10, 12];
+                const currentIndex = precisions.indexOf(calculatorPrecision);
+                const nextIndex = (currentIndex + 1) % precisions.length;
+                setCalculatorPrecision(precisions[nextIndex]);
+              }}
+              className="text-xs h-7 px-2"
+            >
+              Decimals: {calculatorPrecision}
+            </Button>
+          </div>
           <div className="space-y-2">
             {/* Field 1 */}
             <div className="flex gap-2">
@@ -1143,7 +1159,7 @@ export default function UnitConverter() {
                     if (!val) return '';
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     const displayValue = val.value / prefix.factor;
-                    return formatNumberWithSeparators(displayValue, precision);
+                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
@@ -1177,7 +1193,7 @@ export default function UnitConverter() {
                     if (!val) return '';
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     const displayValue = val.value / prefix.factor;
-                    return formatNumberWithSeparators(displayValue, precision);
+                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
@@ -1229,7 +1245,7 @@ export default function UnitConverter() {
                     if (!val) return '';
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     const displayValue = val.value / prefix.factor;
-                    return formatNumberWithSeparators(displayValue, precision);
+                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
@@ -1286,15 +1302,15 @@ export default function UnitConverter() {
                         categoryBaseValue = calcValues[3].value * 1000; // m³ to L
                       }
                       const convertedValue = categoryBaseValue / unit.factor;
-                      return formatNumberWithSeparators(convertedValue, precision);
+                      return formatNumberWithSeparators(convertedValue, calculatorPrecision);
                     }
-                    return formatNumberWithSeparators(calcValues[3].value, precision);
+                    return formatNumberWithSeparators(calcValues[3].value, calculatorPrecision);
                   })() : calcValues[3] ? (() => {
                     const val = calcValues[3];
                     if (!val) return '';
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     const displayValue = val.value / prefix.factor;
-                    return formatNumberWithSeparators(displayValue, precision);
+                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
