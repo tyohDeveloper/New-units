@@ -713,6 +713,14 @@ export default function UnitConverter() {
     setCalcOp2(null);
   };
 
+  const clearField3 = () => {
+    setCalcValues(prev => {
+      const newValues = [...prev];
+      newValues[2] = null;
+      return newValues;
+    });
+  };
+
   const copyCalcResult = () => {
     if (calcValues[3]) {
       let valueToCopy = calcValues[3].value;
@@ -1233,22 +1241,33 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </div>
-              <div className="flex gap-1 justify-start w-[220px]">
+              <div className="flex gap-1 justify-between w-[220px]">
+                <div className="flex gap-1">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setCalcOp2('*')}
+                    className={`text-sm ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
+                  >
+                    ×
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setCalcOp2('/')}
+                    className={`text-sm ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
+                  >
+                    /
+                  </Button>
+                </div>
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => setCalcOp2('*')}
-                  className={`text-sm ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
+                  onClick={clearField3}
+                  disabled={!calcValues[2]}
+                  className="text-xs"
                 >
-                  ×
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setCalcOp2('/')}
-                  className={`text-sm ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
-                >
-                  /
+                  Clear
                 </Button>
               </div>
             </div>
