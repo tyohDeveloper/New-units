@@ -48,15 +48,13 @@ export default function UnitConverter() {
   const [resultPrefix, setResultPrefix] = useState<string>('none');
 
   // Number format state
-  type NumberFormat = 'us-uk' | 'europe' | 'si-period' | 'si-comma' | 'period' | 'comma';
+  type NumberFormat = 'us-uk' | 'europe' | 'period' | 'comma';
   const [numberFormat, setNumberFormat] = useState<NumberFormat>('us-uk');
   const [includeBeerWine, setIncludeBeerWine] = useState<boolean>(false);
 
   const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string }> = {
     'us-uk': { name: 'US/UK', thousands: ',', decimal: '.' },
     'europe': { name: 'Europe', thousands: ' ', decimal: ',' },
-    'si-period': { name: 'SI Period', thousands: ' ', decimal: '.' },
-    'si-comma': { name: 'SI Comma', thousands: ' ', decimal: ',' },
     'period': { name: 'Period', thousands: '', decimal: '.' },
     'comma': { name: 'Comma', thousands: '', decimal: ',' },
   };
@@ -909,8 +907,6 @@ export default function UnitConverter() {
                 <SelectContent>
                   <SelectItem value="us-uk" className="text-xs">US/UK</SelectItem>
                   <SelectItem value="europe" className="text-xs">Europe</SelectItem>
-                  <SelectItem value="si-period" className="text-xs">SI Period</SelectItem>
-                  <SelectItem value="si-comma" className="text-xs">SI Comma</SelectItem>
                   <SelectItem value="period" className="text-xs">Period</SelectItem>
                   <SelectItem value="comma" className="text-xs">Comma</SelectItem>
                 </SelectContent>
