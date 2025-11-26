@@ -49,12 +49,13 @@ export default function UnitConverter() {
   const [resultPrefix, setResultPrefix] = useState<string>('none');
 
   // Number format state
-  type NumberFormat = 'us-uk' | 'south-asian' | 'europe-latin' | 'swiss' | 'arabic' | 'arabic-latin' | 'east-asian' | 'period' | 'comma';
-  const [numberFormat, setNumberFormat] = useState<NumberFormat>('us-uk');
+  type NumberFormat = 'us' | 'uk' | 'south-asian' | 'europe-latin' | 'swiss' | 'arabic' | 'arabic-latin' | 'east-asian' | 'period' | 'comma';
+  const [numberFormat, setNumberFormat] = useState<NumberFormat>('us');
   const [includeBeerWine, setIncludeBeerWine] = useState<boolean>(false);
 
   const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string; useArabicNumerals?: boolean }> = {
-    'us-uk': { name: 'US/UK & offshoots', thousands: ',', decimal: '.' },
+    'us': { name: 'US', thousands: ',', decimal: '.' },
+    'uk': { name: 'UK & offshoots', thousands: ',', decimal: '.' },
     'south-asian': { name: 'South Asian (Indian)', thousands: ',', decimal: '.' },
     'europe-latin': { name: 'Europe/Latin', thousands: ' ', decimal: ',' },
     'swiss': { name: 'Swiss', thousands: "'", decimal: '.' },
@@ -108,13 +109,13 @@ export default function UnitConverter() {
   // Helper: Apply regional spelling variations
   const applyRegionalSpelling = (unitName: string): string => {
     // US-style formats use "meter" and "liter"
-    const usFormats: NumberFormat[] = ['us-uk', 'arabic-latin', 'period'];
+    const usFormats: NumberFormat[] = ['us', 'arabic-latin', 'period'];
     
     if (usFormats.includes(numberFormat)) {
       // Already using US spelling, no change needed
       return unitName;
     } else {
-      // European/International formats use "metre" and "litre"
+      // European/International formats (including UK) use "metre" and "litre"
       return unitName
         .replace(/Meter/g, 'Metre')
         .replace(/meter/g, 'metre')
@@ -1160,7 +1161,8 @@ export default function UnitConverter() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="us-uk" className="text-xs">US/UK & offshoots</SelectItem>
+                  <SelectItem value="us" className="text-xs">US</SelectItem>
+                  <SelectItem value="uk" className="text-xs">UK & offshoots</SelectItem>
                   <SelectItem value="south-asian" className="text-xs">South Asian (Indian)</SelectItem>
                   <SelectItem value="europe-latin" className="text-xs">Europe/Latin</SelectItem>
                   <SelectItem value="swiss" className="text-xs">Swiss</SelectItem>
