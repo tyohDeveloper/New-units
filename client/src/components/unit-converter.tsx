@@ -51,6 +51,11 @@ export default function UnitConverter() {
   // Number format state
   type NumberFormat = 'us' | 'uk' | 'south-asian' | 'europe-latin' | 'swiss' | 'arabic' | 'arabic-latin' | 'east-asian' | 'period' | 'comma';
   const [numberFormat, setNumberFormat] = useState<NumberFormat>('us');
+  
+  // Language state
+  type Language = 'en' | 'ar';
+  const [language, setLanguage] = useState<Language>('en');
+  
   const [includeBeerWine, setIncludeBeerWine] = useState<boolean>(false);
 
   const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string; useArabicNumerals?: boolean }> = {
@@ -472,7 +477,7 @@ export default function UnitConverter() {
 
   // Helper: Get translated text
   const t = (key: string): string => {
-    if ((numberFormat === 'arabic' || numberFormat === 'arabic-latin') && TRANSLATIONS[key]) {
+    if (language === 'ar' && TRANSLATIONS[key]) {
       return TRANSLATIONS[key].ar;
     }
     return TRANSLATIONS[key]?.en || key;
@@ -480,11 +485,18 @@ export default function UnitConverter() {
 
   // Helper: Translate unit names while keeping symbols in Latin
   const translateUnitName = (unitName: string): string => {
-    if (numberFormat === 'arabic' || numberFormat === 'arabic-latin') {
+    if (language === 'ar') {
       return t(unitName);
     }
     return applyRegionalSpelling(unitName);
   };
+
+  // Auto-set language to Arabic when Arabic number formats are selected
+  React.useEffect(() => {
+    if (numberFormat === 'arabic' || numberFormat === 'arabic-latin') {
+      setLanguage('ar');
+    }
+  }, [numberFormat]);
 
   const CATEGORY_GROUPS = [
     {
@@ -1405,6 +1417,20 @@ export default function UnitConverter() {
                   <SelectItem value="east-asian" className="text-xs">East Asian</SelectItem>
                   <SelectItem value="south-asian" className="text-xs">South Asian (Indian)</SelectItem>
                   <SelectItem value="swiss" className="text-xs">Swiss</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select 
+                value={numberFormat === 'arabic' || numberFormat === 'arabic-latin' ? '' : language} 
+                onValueChange={(val) => { setLanguage(val as Language); refocusInput(); }}
+                onOpenChange={(open) => { if (!open) refocusInput(); }}
+                disabled={numberFormat === 'arabic' || numberFormat === 'arabic-latin'}
+              >
+                <SelectTrigger tabIndex={7} className="h-6 w-[60px] text-xs">
+                  <SelectValue placeholder="" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en" className="text-xs">en</SelectItem>
+                  <SelectItem value="ar" className="text-xs">ar</SelectItem>
                 </SelectContent>
               </Select>
             </div>
