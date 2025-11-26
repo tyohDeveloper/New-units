@@ -1349,35 +1349,9 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </div>
-              <div className="flex gap-1 justify-end w-[220px]">
+              <div className="flex gap-1 w-[220px]">
                 {calcValues[3] && (
                   <React.Fragment>
-                    {resultCategory ? (
-                      <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
-                        <SelectTrigger className="h-9 w-[100px] text-xs">
-                          <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="base" className="text-xs font-mono">
-                            {CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"}
-                          </SelectItem>
-                          {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
-                            <SelectItem key={unit.id} value={unit.id} className="text-xs">
-                              {unit.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      <Select value="unitless" disabled>
-                        <SelectTrigger className="h-9 w-[100px] text-xs">
-                          <SelectValue placeholder="" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="unitless" className="text-xs"></SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
                     <Button 
                       variant="ghost" 
                       size="sm" 
@@ -1396,6 +1370,32 @@ export default function UnitConverter() {
                         Copy
                       </motion.span>
                     </Button>
+                    {resultCategory ? (
+                      <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
+                        <SelectTrigger className="h-9 flex-1 text-xs">
+                          <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="base" className="text-xs font-mono">
+                            {CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"}
+                          </SelectItem>
+                          {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
+                            <SelectItem key={unit.id} value={unit.id} className="text-xs">
+                              {unit.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Select value="unitless" disabled>
+                        <SelectTrigger className="h-9 flex-1 text-xs">
+                          <SelectValue placeholder="" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="unitless" className="text-xs"></SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
                   </React.Fragment>
                 )}
               </div>
