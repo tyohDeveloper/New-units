@@ -185,10 +185,17 @@ export default function UnitConverter() {
     }
   }, [activeCategory, includeBeerWine]);
 
-  // Focus input field on mount
+  // Focus input field on mount and keep it focused
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  // Refocus input after interactions
+  const refocusInput = () => {
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+  };
 
   const fromUnitData = categoryData.units.find(u => u.id === fromUnit);
   const toUnitData = categoryData.units.find(u => u.id === toUnit);
@@ -928,8 +935,12 @@ export default function UnitConverter() {
                   <span className="text-xs text-muted-foreground">Include Beer/Wine</span>
                 </label>
               )}
-              <Select value={numberFormat} onValueChange={(val) => setNumberFormat(val as NumberFormat)}>
-                <SelectTrigger className="h-6 w-[100px] text-xs">
+              <Select 
+                value={numberFormat} 
+                onValueChange={(val) => { setNumberFormat(val as NumberFormat); refocusInput(); }}
+                onOpenChange={(open) => { if (!open) refocusInput(); }}
+              >
+                <SelectTrigger tabIndex={6} className="h-6 w-[100px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -960,6 +971,7 @@ export default function UnitConverter() {
                   value={inputValue}
                   onChange={(e) => handleInputChange(e.target.value)}
                   onKeyDown={handleInputKeyDown}
+                  tabIndex={1}
                   className="text-2xl font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left w-full min-w-0"
                   placeholder={getPlaceholder()}
                   data-testid="input-value"
@@ -968,10 +980,11 @@ export default function UnitConverter() {
                 {/* Prefix Dropdown */}
                 <Select 
                   value={fromPrefix} 
-                  onValueChange={setFromPrefix}
+                  onValueChange={(val) => { setFromPrefix(val); refocusInput(); }}
+                  onOpenChange={(open) => { if (!open) refocusInput(); }}
                   disabled={!fromUnitData?.allowPrefixes}
                 >
-                  <SelectTrigger className="h-16 w-[80px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                  <SelectTrigger tabIndex={2} className="h-16 w-[80px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                     <SelectValue placeholder="Prefix" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
@@ -983,8 +996,12 @@ export default function UnitConverter() {
                   </SelectContent>
                 </Select>
 
-                <Select value={fromUnit} onValueChange={(val) => { setFromUnit(val); setFromPrefix('none'); }}>
-                  <SelectTrigger className="h-16 w-[220px] bg-background/30 border-border font-medium shrink-0">
+                <Select 
+                  value={fromUnit} 
+                  onValueChange={(val) => { setFromUnit(val); setFromPrefix('none'); refocusInput(); }}
+                  onOpenChange={(open) => { if (!open) refocusInput(); }}
+                >
+                  <SelectTrigger tabIndex={3} className="h-16 w-[220px] bg-background/30 border-border font-medium shrink-0">
                     <SelectValue placeholder="Unit" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
@@ -1044,9 +1061,10 @@ export default function UnitConverter() {
                 <Label className="text-xs font-mono uppercase text-muted-foreground">To</Label>
                 <Select 
                   value={precision.toString()} 
-                  onValueChange={(val) => setPrecision(parseInt(val))}
+                  onValueChange={(val) => { setPrecision(parseInt(val)); refocusInput(); }}
+                  onOpenChange={(open) => { if (!open) refocusInput(); }}
                 >
-                  <SelectTrigger className="h-6 w-[100px] text-xs bg-transparent border-border/50">
+                  <SelectTrigger tabIndex={4} className="h-6 w-[100px] text-xs bg-transparent border-border/50">
                     <SelectValue placeholder="Digits" />
                   </SelectTrigger>
                   <SelectContent>
@@ -1150,7 +1168,9 @@ export default function UnitConverter() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  onClick={copyResult}
+                  onClick={() => { copyResult(); refocusInput(); }}
+                  onBlur={refocusInput}
+                  tabIndex={5}
                   className="text-xs hover:text-accent gap-2"
                 >
                   <Copy className="w-3 h-3" />
