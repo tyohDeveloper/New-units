@@ -1685,6 +1685,21 @@ export default function UnitConverter() {
     }
   }, [resultUnit]);
 
+  // Sync calculator result prefix with main converter's TO prefix when they're the same category
+  useEffect(() => {
+    if (resultUnit && resultCategory && calcValues[3]) {
+      // Check if the result category matches the active category in the main converter
+      if (resultCategory === activeCategory) {
+        const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+        const unit = cat?.units.find(u => u.id === resultUnit);
+        // If the unit allows prefixes, use the same prefix as the TO unit
+        if (unit?.allowPrefixes) {
+          setResultPrefix(toPrefix);
+        }
+      }
+    }
+  }, [toPrefix, resultCategory, activeCategory, resultUnit, calcValues[3]]);
+
   const clearCalculator = () => {
     setCalcValues([null, null, null, null]);
     setCalcOp1(null);
