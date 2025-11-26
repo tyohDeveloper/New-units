@@ -512,6 +512,16 @@ export default function UnitConverter() {
       es: 'Análisis Dimensional', fr: 'Analyse Dimensionnelle', it: 'Analisi Dimensionale',
       pt: 'Análise Dimensional', ru: 'Размерный Анализ', zh: '量纲分析', ja: '次元解析'
     },
+    'From': { 
+      en: 'From', ar: 'من', de: 'Von',
+      es: 'De', fr: 'De', it: 'Da',
+      pt: 'De', ru: 'Из', zh: '从', ja: 'から'
+    },
+    'To': { 
+      en: 'To', ar: 'إلى', de: 'Zu',
+      es: 'A', fr: 'À', it: 'A',
+      pt: 'Para', ru: 'В', zh: '到', ja: 'へ'
+    },
     // Common unit base names
     'meter': { en: 'meter', ar: 'متر' },
     'metre': { en: 'metre', ar: 'متر' },
@@ -1772,7 +1782,7 @@ export default function UnitConverter() {
             
             {/* Input Section */}
             <div className="grid gap-4">
-              <Label className="text-xs font-mono uppercase text-muted-foreground">From</Label>
+              <Label className="text-xs font-mono uppercase text-muted-foreground">{t('From')}</Label>
               <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2">
                 <Input 
                   ref={inputRef}
@@ -1868,7 +1878,7 @@ export default function UnitConverter() {
             {/* Output Section */}
             <div className="grid gap-4">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-mono uppercase text-muted-foreground">To</Label>
+                <Label className="text-xs font-mono uppercase text-muted-foreground">{t('To')}</Label>
                 <Select 
                   value={precision.toString()} 
                   onValueChange={(val) => { setPrecision(parseInt(val)); refocusInput(); }}
