@@ -662,9 +662,9 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "point (PostScript)",
     units: [
       { id: "pt", name: "Point (PostScript)", symbol: "pt", factor: 1 },
-      { id: "pt_am", name: "Point (American)", symbol: "pt", factor: 0.996264 },
+      { id: "pt_am", name: "Point (Traditional American)", symbol: "pt", factor: 0.996264 },
       { id: "pc", name: "Pica (PostScript)", symbol: "pc", factor: 12 },
-      { id: "pc_am", name: "Pica (American)", symbol: "pc", factor: 11.955168 },
+      { id: "pc_am", name: "Pica (Traditional American)", symbol: "pc", factor: 11.955168 },
       { id: "in", name: "Inch", symbol: "in", factor: 72 },
       { id: "mm", name: "Millimeter", symbol: "mm", factor: 2.83465 },
       { id: "px", name: "Pixel (96dpi)", symbol: "px", factor: 0.75 },
