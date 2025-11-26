@@ -257,6 +257,108 @@ export default function UnitConverter() {
     'newton/meter': { en: 'newton/meter', ar: 'نيوتن/متر' },
     'newton/metre': { en: 'newton/metre', ar: 'نيوتن/متر' },
     'pascal-second': { en: 'pascal-second', ar: 'باسكال ثانية' },
+    // US/Imperial unit names
+    'Inch': { en: 'Inch', ar: 'بوصة' },
+    'Foot': { en: 'Foot', ar: 'قدم' },
+    'Foot:Inch': { en: 'Foot:Inch', ar: 'قدم:بوصة' },
+    'Yard': { en: 'Yard', ar: 'ياردة' },
+    'Mile': { en: 'Mile', ar: 'ميل' },
+    'Nautical Mile': { en: 'Nautical Mile', ar: 'ميل بحري' },
+    'Ounce': { en: 'Ounce', ar: 'أونصة' },
+    'Pound': { en: 'Pound', ar: 'باوند' },
+    'Troy Ounce': { en: 'Troy Ounce', ar: 'أونصة ترويا' },
+    'Fahrenheit': { en: 'Fahrenheit', ar: 'فهرنهايت' },
+    'Pound-mole': { en: 'Pound-mole', ar: 'باوند مول' },
+    'Square Inch': { en: 'Square Inch', ar: 'بوصة مربعة' },
+    'Square Foot': { en: 'Square Foot', ar: 'قدم مربع' },
+    'Square Yard': { en: 'Square Yard', ar: 'ياردة مربعة' },
+    'Square Mile': { en: 'Square Mile', ar: 'ميل مربع' },
+    'Cubic Foot': { en: 'Cubic Foot', ar: 'قدم مكعب' },
+    'Cubic Yard': { en: 'Cubic Yard', ar: 'ياردة مكعبة' },
+    'Fluid Ounce (US)': { en: 'Fluid Ounce (US)', ar: 'أونصة سائلة (أمريكي)' },
+    'Fluid Ounce (Imp)': { en: 'Fluid Ounce (Imp)', ar: 'أونصة سائلة (إمبراطوري)' },
+    'Pint (US)': { en: 'Pint (US)', ar: 'باينت (أمريكي)' },
+    'Pint (Imp)': { en: 'Pint (Imp)', ar: 'باينت (إمبراطوري)' },
+    'Gallon (US)': { en: 'Gallon (US)', ar: 'جالون (أمريكي)' },
+    'Gallon (Imp)': { en: 'Gallon (Imp)', ar: 'جالون (إمبراطوري)' },
+    'Acre-foot': { en: 'Acre-foot', ar: 'فدان قدم' },
+    'Cubic Mile': { en: 'Cubic Mile', ar: 'ميل مكعب' },
+    'Mile/Hour': { en: 'Mile/Hour', ar: 'ميل/ساعة' },
+    'Foot/sq sec': { en: 'Foot/sq sec', ar: 'قدم/ثانية²' },
+    'Pound-force': { en: 'Pound-force', ar: 'باوند قوة' },
+    'Foot-pound': { en: 'Foot-pound', ar: 'قدم باوند' },
+    'Inch-pound': { en: 'Inch-pound', ar: 'بوصة باوند' },
+    // Other common units
+    'Angstrom': { en: 'Angstrom', ar: 'أنجستروم' },
+    'Micron': { en: 'Micron', ar: 'ميكرون' },
+    'Astronomical Unit': { en: 'Astronomical Unit', ar: 'وحدة فلكية' },
+    'Light-year': { en: 'Light-year', ar: 'سنة ضوئية' },
+    'Parsec': { en: 'Parsec', ar: 'فرسخ فلكي' },
+    'Gram': { en: 'Gram', ar: 'غرام' },
+    'Metric Ton': { en: 'Metric Ton', ar: 'طن متري' },
+    'Stone': { en: 'Stone', ar: 'ستون' },
+    'Ton (US)': { en: 'Ton (US)', ar: 'طن (أمريكي)' },
+    'Ton (UK)': { en: 'Ton (UK)', ar: 'طن (بريطاني)' },
+    'Minute': { en: 'Minute', ar: 'دقيقة' },
+    'Hour': { en: 'Hour', ar: 'ساعة' },
+    'Day': { en: 'Day', ar: 'يوم' },
+    'Week': { en: 'Week', ar: 'أسبوع' },
+    'Year': { en: 'Year', ar: 'سنة' },
+    'Hectare': { en: 'Hectare', ar: 'هكتار' },
+    'Acre': { en: 'Acre', ar: 'فدان' },
+    'Cubic Centimeter': { en: 'Cubic Centimeter', ar: 'سنتيمتر مكعب' },
+    'Cubic Centimetre': { en: 'Cubic Centimetre', ar: 'سنتيمتر مكعب' },
+    'Milliliter': { en: 'Milliliter', ar: 'مليلتر' },
+    'Millilitre': { en: 'Millilitre', ar: 'مليلتر' },
+    'Tablespoon': { en: 'Tablespoon', ar: 'ملعقة كبيرة' },
+    'Teaspoon': { en: 'Teaspoon', ar: 'ملعقة صغيرة' },
+    'Cup': { en: 'Cup', ar: 'كوب' },
+    'Quart (US)': { en: 'Quart (US)', ar: 'كوارت (أمريكي)' },
+    'Quart (Imp)': { en: 'Quart (Imp)', ar: 'كوارت (إمبراطوري)' },
+    'Barrel (Oil)': { en: 'Barrel (Oil)', ar: 'برميل (نفط)' },
+    'Barrel (Beer)': { en: 'Barrel (Beer)', ar: 'برميل (بيرة)' },
+    'Knot': { en: 'Knot', ar: 'عقدة' },
+    'Speed of Light': { en: 'Speed of Light', ar: 'سرعة الضوء' },
+    'Mach': { en: 'Mach', ar: 'ماخ' },
+    'Standard Gravity': { en: 'Standard Gravity', ar: 'الجاذبية القياسية' },
+    'Dyne': { en: 'Dyne', ar: 'داين' },
+    'Kilogram-force': { en: 'Kilogram-force', ar: 'كيلوغرام قوة' },
+    'Poundal': { en: 'Poundal', ar: 'باوندال' },
+    'Bar': { en: 'Bar', ar: 'بار' },
+    'Millibar': { en: 'Millibar', ar: 'ميليبار' },
+    'Atmosphere': { en: 'Atmosphere', ar: 'ضغط جوي' },
+    'PSI': { en: 'PSI', ar: 'باوند/بوصة²' },
+    'Torr': { en: 'Torr', ar: 'تور' },
+    'mmHg': { en: 'mmHg', ar: 'ملم زئبق' },
+    'Calorie': { en: 'Calorie', ar: 'سعرة' },
+    'Kilocalorie': { en: 'Kilocalorie', ar: 'كيلوسعرة' },
+    'BTU': { en: 'BTU', ar: 'وحدة حرارية بريطانية' },
+    'Erg': { en: 'Erg', ar: 'إرغ' },
+    'Electron Volt': { en: 'Electron Volt', ar: 'إلكترون فولت' },
+    'Horsepower': { en: 'Horsepower', ar: 'حصان' },
+    'HP (metric)': { en: 'HP (metric)', ar: 'حصان (متري)' },
+    'Ton Refrigeration': { en: 'Ton Refrigeration', ar: 'طن تبريد' },
+    'Arcminute': { en: 'Arcminute', ar: 'دقيقة قوسية' },
+    'Arcsecond': { en: 'Arcsecond', ar: 'ثانية قوسية' },
+    'Gradian': { en: 'Gradian', ar: 'غراديان' },
+    'Turn': { en: 'Turn', ar: 'دورة' },
+    'Revolution': { en: 'Revolution', ar: 'لفة' },
+    'Curie': { en: 'Curie', ar: 'كوري' },
+    'Rutherford': { en: 'Rutherford', ar: 'رذرفورد' },
+    'Rad': { en: 'Rad', ar: 'راد' },
+    'Rem': { en: 'Rem', ar: 'ريم' },
+    'Roentgen': { en: 'Roentgen', ar: 'رونتجن' },
+    'Kilobit': { en: 'Kilobit', ar: 'كيلوبت' },
+    'Megabit': { en: 'Megabit', ar: 'ميغابت' },
+    'Gigabit': { en: 'Gigabit', ar: 'غيغابت' },
+    'Terabit': { en: 'Terabit', ar: 'تيرابت' },
+    'Kilobyte': { en: 'Kilobyte', ar: 'كيلوبايت' },
+    'Megabyte': { en: 'Megabyte', ar: 'ميغابايت' },
+    'Gigabyte': { en: 'Gigabyte', ar: 'غيغابايت' },
+    'Terabyte': { en: 'Terabyte', ar: 'تيرابايت' },
+    'Pica': { en: 'Pica', ar: 'بيكا' },
+    'Point': { en: 'Point', ar: 'نقطة' },
+    'Twip': { en: 'Twip', ar: 'تويب' },
   };
 
   // Helper: Get translated text
@@ -265,6 +367,14 @@ export default function UnitConverter() {
       return TRANSLATIONS[key].ar;
     }
     return TRANSLATIONS[key]?.en || key;
+  };
+
+  // Helper: Translate unit names while keeping symbols in Latin
+  const translateUnitName = (unitName: string): string => {
+    if (numberFormat === 'arabic' || numberFormat === 'arabic-latin') {
+      return t(unitName);
+    }
+    return applyRegionalSpelling(unitName);
   };
 
   const CATEGORY_GROUPS = [
@@ -1250,7 +1360,7 @@ export default function UnitConverter() {
                         ) : (
                           <>
                             <span className="font-bold mr-2">{u.symbol}</span>
-                            <span className="opacity-70">{applyRegionalSpelling(u.name)}</span>
+                            <span className="opacity-70">{translateUnitName(u.name)}</span>
                           </>
                         )}
                       </SelectItem>
@@ -1357,7 +1467,7 @@ export default function UnitConverter() {
                         ) : (
                           <>
                             <span className="font-bold mr-2">{u.symbol}</span>
-                            <span className="opacity-70">{applyRegionalSpelling(u.name)}</span>
+                            <span className="opacity-70">{translateUnitName(u.name)}</span>
                           </>
                         )}
                       </SelectItem>
