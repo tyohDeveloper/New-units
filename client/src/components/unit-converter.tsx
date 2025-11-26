@@ -729,12 +729,12 @@ export default function UnitConverter() {
   const copyCalcResult = () => {
     if (calcValues[3]) {
       let valueToCopy = calcValues[3].value;
+      let unitSymbol = '';
       
       // If user has selected a specific unit, convert to that unit
       if (resultUnit && resultCategory) {
         const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
         const unit = cat?.units.find(u => u.id === resultUnit);
-        const prefix = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
         
         if (unit) {
           // Convert from SI base units to category base units
@@ -742,16 +742,24 @@ export default function UnitConverter() {
           if (resultCategory === 'volume') {
             categoryBaseValue = calcValues[3].value * 1000; // m³ to L
           }
-          valueToCopy = categoryBaseValue / (unit.factor * prefix.factor);
+          valueToCopy = categoryBaseValue / unit.factor;
+          unitSymbol = unit.symbol;
         }
+      } else {
+        // Use dimensional formula if no specific unit selected
+        const val = calcValues[3];
+        const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
+        valueToCopy = val.value / prefix.factor;
+        unitSymbol = `${prefix.symbol}${formatDimensions(val.dimensions)}`;
       }
       
       // Copy with only decimal separator, no thousands separator
       const format = NUMBER_FORMATS[numberFormat];
-      const valueStr = cleanNumber(valueToCopy, precision);
+      const valueStr = cleanNumber(valueToCopy, calculatorPrecision);
       // Replace period with format's decimal separator
       const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
-      navigator.clipboard.writeText(formattedStr);
+      const textToCopy = unitSymbol ? `${formattedStr} ${unitSymbol}` : formattedStr;
+      navigator.clipboard.writeText(textToCopy);
       
       // Trigger flash animation
       setFlashCopyCalc(true);
