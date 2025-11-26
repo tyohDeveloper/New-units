@@ -581,14 +581,51 @@ export default function UnitConverter() {
     'newton/metre': { en: 'newton/metre', ar: 'نيوتن/متر' },
     'pascal-second': { en: 'pascal-second', ar: 'باسكال ثانية' },
     // Unit names (all capitalized forms from conversion-data.ts)
-    'Meter': { en: 'Meter', ar: 'متر' },
-    'Metre': { en: 'Metre', ar: 'متر' },
-    'Inch': { en: 'Inch', ar: 'بوصة' },
-    'Foot': { en: 'Foot', ar: 'قدم' },
-    'Foot:Inch': { en: 'Foot:Inch', ar: 'قدم:بوصة' },
-    'Yard': { en: 'Yard', ar: 'ياردة' },
-    'Mile': { en: 'Mile', ar: 'ميل' },
-    'Nautical Mile': { en: 'Nautical Mile', ar: 'ميل بحري' },
+    'Meter': { 
+      en: 'Meter', ar: 'متر', de: 'Meter',
+      es: 'Metro', fr: 'Mètre', it: 'Metro',
+      pt: 'Metro', ru: 'Метр', zh: '米', ja: 'メートル'
+    },
+    'Metre': { 
+      en: 'Metre', ar: 'متر', de: 'Meter',
+      es: 'Metro', fr: 'Mètre', it: 'Metro',
+      pt: 'Metro', ru: 'Метр', zh: '米', ja: 'メートル'
+    },
+    'Millimeter': { 
+      en: 'Millimeter', ar: 'مليمتر', de: 'Millimeter',
+      es: 'Milímetro', fr: 'Millimètre', it: 'Millimetro',
+      pt: 'Milímetro', ru: 'Миллиметр', zh: '毫米', ja: 'ミリメートル'
+    },
+    'Inch': { 
+      en: 'Inch', ar: 'بوصة', de: 'Zoll',
+      es: 'Pulgada', fr: 'Pouce', it: 'Pollice',
+      pt: 'Polegada', ru: 'Дюйм', zh: '英寸', ja: 'インチ'
+    },
+    'Foot': { 
+      en: 'Foot', ar: 'قدم', de: 'Fuß',
+      es: 'Pie', fr: 'Pied', it: 'Piede',
+      pt: 'Pé', ru: 'Фут', zh: '英尺', ja: 'フィート'
+    },
+    'Foot:Inch': { 
+      en: 'Foot:Inch', ar: 'قدم:بوصة', de: 'Fuß:Zoll',
+      es: 'Pie:Pulgada', fr: 'Pied:Pouce', it: 'Piede:Pollice',
+      pt: 'Pé:Polegada', ru: 'Фут:Дюйм', zh: '英尺:英寸', ja: 'フィート:インチ'
+    },
+    'Yard': { 
+      en: 'Yard', ar: 'ياردة', de: 'Yard',
+      es: 'Yarda', fr: 'Yard', it: 'Iarda',
+      pt: 'Jarda', ru: 'Ярд', zh: '码', ja: 'ヤード'
+    },
+    'Mile': { 
+      en: 'Mile', ar: 'ميل', de: 'Meile',
+      es: 'Milla', fr: 'Mille', it: 'Miglio',
+      pt: 'Milha', ru: 'Миля', zh: '英里', ja: 'マイル'
+    },
+    'Nautical Mile': { 
+      en: 'Nautical Mile', ar: 'ميل بحري', de: 'Seemeile',
+      es: 'Milla Náutica', fr: 'Mille Marin', it: 'Miglio Nautico',
+      pt: 'Milha Náutica', ru: 'Морская Миля', zh: '海里', ja: '海里'
+    },
     'Link (Gunter)': { en: 'Link (Gunter)', ar: 'وصلة (غونتر)' },
     'Rod': { en: 'Rod', ar: 'قضيب' },
     'Chain': { en: 'Chain', ar: 'سلسلة' },
@@ -598,48 +635,155 @@ export default function UnitConverter() {
     'Astronomical Unit': { en: 'Astronomical Unit', ar: 'وحدة فلكية' },
     'Light Year': { en: 'Light Year', ar: 'سنة ضوئية' },
     'Angstrom': { en: 'Angstrom', ar: 'أنجستروم' },
-    'Millimeter': { en: 'Millimeter', ar: 'مليمتر' },
-    'Kilogram': { en: 'Kilogram', ar: 'كيلوغرام' },
-    'Gram': { en: 'Gram', ar: 'غرام' },
-    'Tonne': { en: 'Tonne', ar: 'طن متري' },
-    'Ounce': { en: 'Ounce', ar: 'أونصة' },
-    'Pound': { en: 'Pound', ar: 'باوند' },
-    'Stone': { en: 'Stone', ar: 'ستون' },
-    'Short Ton (US)': { en: 'Short Ton (US)', ar: 'طن قصير (أمريكي)' },
-    'Long Ton (UK)': { en: 'Long Ton (UK)', ar: 'طن طويل (بريطاني)' },
+    'Kilogram': { 
+      en: 'Kilogram', ar: 'كيلوغرام', de: 'Kilogramm',
+      es: 'Kilogramo', fr: 'Kilogramme', it: 'Chilogrammo',
+      pt: 'Quilograma', ru: 'Килограмм', zh: '千克', ja: 'キログラム'
+    },
+    'Gram': { 
+      en: 'Gram', ar: 'غرام', de: 'Gramm',
+      es: 'Gramo', fr: 'Gramme', it: 'Grammo',
+      pt: 'Grama', ru: 'Грамм', zh: '克', ja: 'グラム'
+    },
+    'Tonne': { 
+      en: 'Tonne', ar: 'طن متري', de: 'Tonne',
+      es: 'Tonelada', fr: 'Tonne', it: 'Tonnellata',
+      pt: 'Tonelada', ru: 'Тонна', zh: '吨', ja: 'トン'
+    },
+    'Ounce': { 
+      en: 'Ounce', ar: 'أونصة', de: 'Unze',
+      es: 'Onza', fr: 'Once', it: 'Oncia',
+      pt: 'Onça', ru: 'Унция', zh: '盎司', ja: 'オンス'
+    },
+    'Pound': { 
+      en: 'Pound', ar: 'باوند', de: 'Pfund',
+      es: 'Libra', fr: 'Livre', it: 'Libbra',
+      pt: 'Libra', ru: 'Фунт', zh: '磅', ja: 'ポンド'
+    },
+    'Stone': { 
+      en: 'Stone', ar: 'ستون', de: 'Stone',
+      es: 'Stone', fr: 'Stone', it: 'Stone',
+      pt: 'Stone', ru: 'Стоун', zh: '英石', ja: 'ストーン'
+    },
+    'Short Ton (US)': { 
+      en: 'Short Ton (US)', ar: 'طن قصير (أمريكي)', de: 'Short Ton (US)',
+      es: 'Tonelada Corta (EE.UU.)', fr: 'Tonne Courte (US)', it: 'Tonnellata Corta (US)',
+      pt: 'Tonelada Curta (EUA)', ru: 'Короткая Тонна (США)', zh: '短吨（美国）', ja: 'ショートトン（米国）'
+    },
+    'Long Ton (UK)': { 
+      en: 'Long Ton (UK)', ar: 'طن طويل (بريطاني)', de: 'Long Ton (UK)',
+      es: 'Tonelada Larga (UK)', fr: 'Tonne Longue (UK)', it: 'Tonnellata Lunga (UK)',
+      pt: 'Tonelada Longa (Reino Unido)', ru: 'Длинная Тонна (Великобритания)', zh: '长吨（英国）', ja: 'ロングトン（英国）'
+    },
     'Grain': { en: 'Grain', ar: 'حبة' },
     'Pennyweight': { en: 'Pennyweight', ar: 'بيني وايت' },
     'Troy Ounce': { en: 'Troy Ounce', ar: 'أونصة ترويا' },
     'Carat': { en: 'Carat', ar: 'قيراط' },
     'Slug': { en: 'Slug', ar: 'سلَغ' },
-    'Second': { en: 'Second', ar: 'ثانية' },
-    'Minute': { en: 'Minute', ar: 'دقيقة' },
-    'Hour': { en: 'Hour', ar: 'ساعة' },
-    'Day': { en: 'Day', ar: 'يوم' },
-    'Week': { en: 'Week', ar: 'أسبوع' },
-    'Month (Avg)': { en: 'Month (Avg)', ar: 'شهر (متوسط)' },
-    'Year': { en: 'Year', ar: 'سنة' },
+    'Second': { 
+      en: 'Second', ar: 'ثانية', de: 'Sekunde',
+      es: 'Segundo', fr: 'Seconde', it: 'Secondo',
+      pt: 'Segundo', ru: 'Секунда', zh: '秒', ja: '秒'
+    },
+    'Minute': { 
+      en: 'Minute', ar: 'دقيقة', de: 'Minute',
+      es: 'Minuto', fr: 'Minute', it: 'Minuto',
+      pt: 'Minuto', ru: 'Минута', zh: '分钟', ja: '分'
+    },
+    'Hour': { 
+      en: 'Hour', ar: 'ساعة', de: 'Stunde',
+      es: 'Hora', fr: 'Heure', it: 'Ora',
+      pt: 'Hora', ru: 'Час', zh: '小时', ja: '時間'
+    },
+    'Day': { 
+      en: 'Day', ar: 'يوم', de: 'Tag',
+      es: 'Día', fr: 'Jour', it: 'Giorno',
+      pt: 'Dia', ru: 'День', zh: '天', ja: '日'
+    },
+    'Week': { 
+      en: 'Week', ar: 'أسبوع', de: 'Woche',
+      es: 'Semana', fr: 'Semaine', it: 'Settimana',
+      pt: 'Semana', ru: 'Неделя', zh: '周', ja: '週'
+    },
+    'Month (Avg)': { 
+      en: 'Month (Avg)', ar: 'شهر (متوسط)', de: 'Monat (Durchschn.)',
+      es: 'Mes (Promedio)', fr: 'Mois (Moy.)', it: 'Mese (Media)',
+      pt: 'Mês (Média)', ru: 'Месяц (Средн.)', zh: '月（平均）', ja: '月（平均）'
+    },
+    'Year': { 
+      en: 'Year', ar: 'سنة', de: 'Jahr',
+      es: 'Año', fr: 'Année', it: 'Anno',
+      pt: 'Ano', ru: 'Год', zh: '年', ja: '年'
+    },
     'Shake': { en: 'Shake', ar: 'شيك' },
     'Ampere': { en: 'Ampere', ar: 'أمبير' },
     'Biot (abampere)': { en: 'Biot (abampere)', ar: 'بيوت (أمبير مطلق)' },
     'Statampere': { en: 'Statampere', ar: 'ستات أمبير' },
-    'Celsius': { en: 'Celsius', ar: 'سلزيوس' },
-    'Fahrenheit': { en: 'Fahrenheit', ar: 'فهرنهايت' },
-    'Kelvin': { en: 'Kelvin', ar: 'كلفن' },
-    'Rankine': { en: 'Rankine', ar: 'رانكين' },
+    'Celsius': { 
+      en: 'Celsius', ar: 'سلزيوس', de: 'Celsius',
+      es: 'Celsius', fr: 'Celsius', it: 'Celsius',
+      pt: 'Celsius', ru: 'Цельсий', zh: '摄氏度', ja: '摂氏'
+    },
+    'Fahrenheit': { 
+      en: 'Fahrenheit', ar: 'فهرنهايت', de: 'Fahrenheit',
+      es: 'Fahrenheit', fr: 'Fahrenheit', it: 'Fahrenheit',
+      pt: 'Fahrenheit', ru: 'Фаренгейт', zh: '华氏度', ja: '華氏'
+    },
+    'Kelvin': { 
+      en: 'Kelvin', ar: 'كلفن', de: 'Kelvin',
+      es: 'Kelvin', fr: 'Kelvin', it: 'Kelvin',
+      pt: 'Kelvin', ru: 'Кельвин', zh: '开尔文', ja: 'ケルビン'
+    },
+    'Rankine': { 
+      en: 'Rankine', ar: 'رانكين', de: 'Rankine',
+      es: 'Rankine', fr: 'Rankine', it: 'Rankine',
+      pt: 'Rankine', ru: 'Ранкин', zh: '兰氏度', ja: 'ランキン'
+    },
     'Mole': { en: 'Mole', ar: 'مول' },
     'Pound-mole': { en: 'Pound-mole', ar: 'باوند مول' },
     'Candela': { en: 'Candela', ar: 'شمعة' },
     'Candlepower': { en: 'Candlepower', ar: 'قوة شمعة' },
     'Hefnerkerze': { en: 'Hefnerkerze', ar: 'هيفنركيرزي' },
-    'Square Meter': { en: 'Square Meter', ar: 'متر مربع' },
-    'Square Metre': { en: 'Square Metre', ar: 'متر مربع' },
-    'Hectare': { en: 'Hectare', ar: 'هكتار' },
-    'Square Inch': { en: 'Square Inch', ar: 'بوصة مربعة' },
-    'Square Foot': { en: 'Square Foot', ar: 'قدم مربع' },
-    'Square Yard': { en: 'Square Yard', ar: 'ياردة مربعة' },
-    'Acre': { en: 'Acre', ar: 'فدان' },
-    'Square Mile': { en: 'Square Mile', ar: 'ميل مربع' },
+    'Square Meter': { 
+      en: 'Square Meter', ar: 'متر مربع', de: 'Quadratmeter',
+      es: 'Metro Cuadrado', fr: 'Mètre Carré', it: 'Metro Quadrato',
+      pt: 'Metro Quadrado', ru: 'Квадратный Метр', zh: '平方米', ja: '平方メートル'
+    },
+    'Square Metre': { 
+      en: 'Square Metre', ar: 'متر مربع', de: 'Quadratmeter',
+      es: 'Metro Cuadrado', fr: 'Mètre Carré', it: 'Metro Quadrato',
+      pt: 'Metro Quadrado', ru: 'Квадратный Метр', zh: '平方米', ja: '平方メートル'
+    },
+    'Hectare': { 
+      en: 'Hectare', ar: 'هكتار', de: 'Hektar',
+      es: 'Hectárea', fr: 'Hectare', it: 'Ettaro',
+      pt: 'Hectare', ru: 'Гектар', zh: '公顷', ja: 'ヘクタール'
+    },
+    'Square Inch': { 
+      en: 'Square Inch', ar: 'بوصة مربعة', de: 'Quadratzoll',
+      es: 'Pulgada Cuadrada', fr: 'Pouce Carré', it: 'Pollice Quadrato',
+      pt: 'Polegada Quadrada', ru: 'Квадратный Дюйм', zh: '平方英寸', ja: '平方インチ'
+    },
+    'Square Foot': { 
+      en: 'Square Foot', ar: 'قدم مربع', de: 'Quadratfuß',
+      es: 'Pie Cuadrado', fr: 'Pied Carré', it: 'Piede Quadrato',
+      pt: 'Pé Quadrado', ru: 'Квадратный Фут', zh: '平方英尺', ja: '平方フィート'
+    },
+    'Square Yard': { 
+      en: 'Square Yard', ar: 'ياردة مربعة', de: 'Quadratyard',
+      es: 'Yarda Cuadrada', fr: 'Yard Carré', it: 'Iarda Quadrata',
+      pt: 'Jarda Quadrada', ru: 'Квадратный Ярд', zh: '平方码', ja: '平方ヤード'
+    },
+    'Acre': { 
+      en: 'Acre', ar: 'فدان', de: 'Acre',
+      es: 'Acre', fr: 'Acre', it: 'Acro',
+      pt: 'Acre', ru: 'Акр', zh: '英亩', ja: 'エーカー'
+    },
+    'Square Mile': { 
+      en: 'Square Mile', ar: 'ميل مربع', de: 'Quadratmeile',
+      es: 'Milla Cuadrada', fr: 'Mille Carré', it: 'Miglio Quadrato',
+      pt: 'Milha Quadrada', ru: 'Квадратная Миля', zh: '平方英里', ja: '平方マイル'
+    },
     'Barn': { en: 'Barn', ar: 'بارن' },
     'Dunam': { en: 'Dunam', ar: 'دونم' },
     'Township (US)': { en: 'Township (US)', ar: 'بلدية (أمريكي)' },
@@ -647,10 +791,26 @@ export default function UnitConverter() {
     'Square Degree': { en: 'Square Degree', ar: 'درجة مربعة' },
     'Cubic Meter': { en: 'Cubic Meter', ar: 'متر مكعب' },
     'Cubic Metre': { en: 'Cubic Metre', ar: 'متر مكعب' },
-    'Liter': { en: 'Liter', ar: 'لتر' },
-    'Litre': { en: 'Litre', ar: 'لتر' },
-    'Milliliter': { en: 'Milliliter', ar: 'مليلتر' },
-    'Millilitre': { en: 'Millilitre', ar: 'مليلتر' },
+    'Liter': { 
+      en: 'Liter', ar: 'لتر', de: 'Liter',
+      es: 'Litro', fr: 'Litre', it: 'Litro',
+      pt: 'Litro', ru: 'Литр', zh: '升', ja: 'リットル'
+    },
+    'Litre': { 
+      en: 'Litre', ar: 'لتر', de: 'Liter',
+      es: 'Litro', fr: 'Litre', it: 'Litro',
+      pt: 'Litro', ru: 'Литр', zh: '升', ja: 'リットル'
+    },
+    'Milliliter': { 
+      en: 'Milliliter', ar: 'مليلتر', de: 'Milliliter',
+      es: 'Mililitro', fr: 'Millilitre', it: 'Millilitro',
+      pt: 'Mililitro', ru: 'Миллилитр', zh: '毫升', ja: 'ミリリットル'
+    },
+    'Millilitre': { 
+      en: 'Millilitre', ar: 'مليلتر', de: 'Milliliter',
+      es: 'Mililitro', fr: 'Millilitre', it: 'Millilitro',
+      pt: 'Mililitro', ru: 'Миллилитр', zh: '毫升', ja: 'ミリリットル'
+    },
     'Cubic Foot': { en: 'Cubic Foot', ar: 'قدم مكعب' },
     'Cubic Yard': { en: 'Cubic Yard', ar: 'ياردة مكعبة' },
     'Fluid Ounce (US)': { en: 'Fluid Ounce (US)', ar: 'أونصة سائلة (أمريكي)' },
@@ -664,8 +824,16 @@ export default function UnitConverter() {
     'Pint (Imp)': { en: 'Pint (Imp)', ar: 'باينت (إمبراطوري)' },
     'Quart (US)': { en: 'Quart (US)', ar: 'كوارت (أمريكي)' },
     'Quart (Imp)': { en: 'Quart (Imp)', ar: 'كوارت (إمبراطوري)' },
-    'Gallon (US)': { en: 'Gallon (US)', ar: 'جالون (أمريكي)' },
-    'Gallon (Imp)': { en: 'Gallon (Imp)', ar: 'جالون (إمبراطوري)' },
+    'Gallon (US)': { 
+      en: 'Gallon (US)', ar: 'جالون (أمريكي)', de: 'Gallone (US)',
+      es: 'Galón (EE.UU.)', fr: 'Gallon (US)', it: 'Gallone (US)',
+      pt: 'Galão (EUA)', ru: 'Галлон (США)', zh: '加仑（美国）', ja: 'ガロン（米国）'
+    },
+    'Gallon (Imp)': { 
+      en: 'Gallon (Imp)', ar: 'جالون (إمبراطوري)', de: 'Gallone (Imp)',
+      es: 'Galón (Imperial)', fr: 'Gallon (Imp)', it: 'Gallone (Imp)',
+      pt: 'Galão (Imperial)', ru: 'Галлон (Имперский)', zh: '加仑（英制）', ja: 'ガロン（英国）'
+    },
     'Barrel (Oil)': { en: 'Barrel (Oil)', ar: 'برميل (نفط)' },
     'Barrel (Beer)': { en: 'Barrel (Beer)', ar: 'برميل (بيرة)' },
     'Keg (Beer)': { en: 'Keg (Beer)', ar: 'برميل صغير (بيرة)' },
