@@ -83,6 +83,24 @@ export default function UnitConverter() {
     return str.split('').map(c => latinMap[c] || c).join('');
   };
 
+  // Helper: Apply regional spelling variations
+  const applyRegionalSpelling = (unitName: string): string => {
+    // US-style formats use "meter" and "liter"
+    const usFormats: NumberFormat[] = ['us-uk', 'arabic-latin', 'period'];
+    
+    if (usFormats.includes(numberFormat)) {
+      // Already using US spelling, no change needed
+      return unitName;
+    } else {
+      // European/International formats use "metre" and "litre"
+      return unitName
+        .replace(/Meter/g, 'Metre')
+        .replace(/meter/g, 'metre')
+        .replace(/Liter/g, 'Litre')
+        .replace(/liter/g, 'litre');
+    }
+  };
+
   const CATEGORY_GROUPS = [
     {
       name: "Base Quantities",
@@ -953,10 +971,10 @@ export default function UnitConverter() {
       {/* Main Converter */}
       <div className="space-y-4 -mt-1">
         <div className="mb-2">
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">{categoryData.name}</h1>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">{applyRegionalSpelling(categoryData.name)}</h1>
           <div className="flex items-center justify-between mt-1">
             <p className="text-muted-foreground text-sm font-mono">
-              Base unit: <span className="text-primary">{categoryData.baseUnit}</span>
+              Base unit: <span className="text-primary">{applyRegionalSpelling(categoryData.baseUnit)}</span>
             </p>
             <div className="flex items-center gap-3">
               {activeCategory === 'volume' && (
@@ -1052,7 +1070,7 @@ export default function UnitConverter() {
                         ) : (
                           <>
                             <span className="font-bold mr-2">{u.symbol}</span>
-                            <span className="opacity-70">{u.name}</span>
+                            <span className="opacity-70">{applyRegionalSpelling(u.name)}</span>
                           </>
                         )}
                       </SelectItem>
@@ -1159,7 +1177,7 @@ export default function UnitConverter() {
                         ) : (
                           <>
                             <span className="font-bold mr-2">{u.symbol}</span>
-                            <span className="opacity-70">{u.name}</span>
+                            <span className="opacity-70">{applyRegionalSpelling(u.name)}</span>
                           </>
                         )}
                       </SelectItem>
@@ -1458,7 +1476,7 @@ export default function UnitConverter() {
                           </SelectItem>
                           {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
                             <SelectItem key={unit.id} value={unit.id} className="text-xs">
-                              {unit.name}
+                              {applyRegionalSpelling(unit.name)}
                             </SelectItem>
                           ))}
                         </SelectContent>
