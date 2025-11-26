@@ -846,6 +846,28 @@ export default function UnitConverter() {
     setInputValue(filtered);
   };
 
+  // Helper to handle keyboard navigation for category switching
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      
+      // Get flat list of all categories in order
+      const allCategories = CATEGORY_GROUPS.flatMap(group => group.categories);
+      const currentIndex = allCategories.indexOf(activeCategory);
+      
+      if (currentIndex === -1) return;
+      
+      let newIndex: number;
+      if (e.key === 'ArrowUp') {
+        newIndex = currentIndex > 0 ? currentIndex - 1 : allCategories.length - 1;
+      } else {
+        newIndex = currentIndex < allCategories.length - 1 ? currentIndex + 1 : 0;
+      }
+      
+      setActiveCategory(allCategories[newIndex] as UnitCategory);
+    }
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:pb-8 md:pt-1 grid md:grid-cols-[260px_1fr] gap-8">
       
@@ -930,6 +952,7 @@ export default function UnitConverter() {
                   inputMode="decimal"
                   value={inputValue}
                   onChange={(e) => handleInputChange(e.target.value)}
+                  onKeyDown={handleInputKeyDown}
                   className="text-2xl font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left w-full min-w-0"
                   placeholder={getPlaceholder()}
                   data-testid="input-value"
