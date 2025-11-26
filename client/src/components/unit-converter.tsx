@@ -1352,24 +1352,6 @@ export default function UnitConverter() {
               <div className="flex gap-1 w-[220px]">
                 {calcValues[3] && (
                   <React.Fragment>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={copyCalcResult}
-                      disabled={!calcValues[3]}
-                      className="text-xs hover:text-accent gap-1 shrink-0"
-                    >
-                      <Copy className="w-3 h-3" />
-                      <motion.span
-                        animate={{
-                          opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
-                          scale: flashCopyCalc ? [1, 1.1, 1] : 1
-                        }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        Copy
-                      </motion.span>
-                    </Button>
                     {resultCategory ? (
                       <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
                         <SelectTrigger className="h-9 flex-1 text-xs">
@@ -1396,6 +1378,24 @@ export default function UnitConverter() {
                         </SelectContent>
                       </Select>
                     )}
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={copyCalcResult}
+                      disabled={!calcValues[3]}
+                      className="text-xs hover:text-accent gap-1 shrink-0"
+                    >
+                      <Copy className="w-3 h-3" />
+                      <motion.span
+                        animate={{
+                          opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                          scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        Copy
+                      </motion.span>
+                    </Button>
                   </React.Fragment>
                 )}
               </div>
