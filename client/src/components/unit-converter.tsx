@@ -49,19 +49,38 @@ export default function UnitConverter() {
   const [resultPrefix, setResultPrefix] = useState<string>('none');
 
   // Number format state
-  type NumberFormat = 'us-uk' | 'south-asian' | 'europe-latin' | 'swiss' | 'arabic' | 'east-asian' | 'period' | 'comma';
+  type NumberFormat = 'us-uk' | 'south-asian' | 'europe-latin' | 'swiss' | 'arabic' | 'arabic-latin' | 'east-asian' | 'period' | 'comma';
   const [numberFormat, setNumberFormat] = useState<NumberFormat>('us-uk');
   const [includeBeerWine, setIncludeBeerWine] = useState<boolean>(false);
 
-  const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string }> = {
+  const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string; useArabicNumerals?: boolean }> = {
     'us-uk': { name: 'US/UK & offshoots', thousands: ',', decimal: '.' },
     'south-asian': { name: 'South Asian (Indian)', thousands: ',', decimal: '.' },
     'europe-latin': { name: 'Europe/Latin', thousands: ' ', decimal: ',' },
     'swiss': { name: 'Swiss', thousands: "'", decimal: '.' },
-    'arabic': { name: 'Arabic', thousands: ',', decimal: '.' },
+    'arabic': { name: 'Arabic', thousands: ',', decimal: '.', useArabicNumerals: true },
+    'arabic-latin': { name: 'Arabic (Latin)', thousands: ',', decimal: '.' },
     'east-asian': { name: 'East Asian', thousands: ',', decimal: '.' },
     'period': { name: 'Period', thousands: '', decimal: '.' },
     'comma': { name: 'Comma', thousands: '', decimal: ',' },
+  };
+
+  // Helper: Convert Latin numerals to Arabic numerals
+  const toArabicNumerals = (str: string): string => {
+    const arabicMap: Record<string, string> = {
+      '0': '٠', '1': '١', '2': '٢', '3': '٣', '4': '٤',
+      '5': '٥', '6': '٦', '7': '٧', '8': '٨', '9': '٩'
+    };
+    return str.split('').map(c => arabicMap[c] || c).join('');
+  };
+
+  // Helper: Convert Arabic numerals to Latin numerals
+  const toLatinNumerals = (str: string): string => {
+    const latinMap: Record<string, string> = {
+      '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+      '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+    };
+    return str.split('').map(c => latinMap[c] || c).join('');
   };
 
   const CATEGORY_GROUPS = [
@@ -362,8 +381,9 @@ export default function UnitConverter() {
   // Helper to parse number from string with current format
   const parseNumberWithFormat = (str: string): number => {
     const format = NUMBER_FORMATS[numberFormat];
+    // Convert Arabic numerals to Latin if present
+    let cleaned = toLatinNumerals(str);
     // Remove thousands separator
-    let cleaned = str;
     if (format.thousands) {
       cleaned = cleaned.split(format.thousands).join('');
     }
@@ -818,7 +838,14 @@ export default function UnitConverter() {
     }
     
     // Use format's decimal separator
-    return decimal ? `${formattedInteger}${format.decimal}${decimal}` : formattedInteger;
+    let result = decimal ? `${formattedInteger}${format.decimal}${decimal}` : formattedInteger;
+    
+    // Convert to Arabic numerals if format requires it
+    if (format.useArabicNumerals) {
+      result = toArabicNumerals(result);
+    }
+    
+    return result;
   };
 
   const formatFactor = (f: number) => {
@@ -845,12 +872,16 @@ export default function UnitConverter() {
   // Helper to validate and filter input
   const handleInputChange = (value: string) => {
     const format = NUMBER_FORMATS[numberFormat];
-    const decimalSep = format.decimal === '.' ? '\\.' : format.decimal;
-    const thousandsSep = format.thousands ? (format.thousands === ' ' ? '\\s' : format.thousands) : '';
+    const decimalSep = format.decimal === '.' ? '\\.' : format.decimal === "'" ? "\\'" : format.decimal;
+    const thousandsSep = format.thousands ? (format.thousands === ' ' ? '\\s' : format.thousands === "'" ? "\\'" : format.thousands) : '';
+    
+    // For Arabic formats, allow both Latin and Arabic numerals
+    const isArabicFormat = numberFormat === 'arabic' || numberFormat === 'arabic-latin';
+    const digitPattern = isArabicFormat ? '0-9٠-٩' : '0-9';
     
     // For special formats (DMS/FtIn), allow: digits, colon, decimal separator, thousands separator, minus, quotes
     if (fromUnit === 'deg_dms' || fromUnit === 'ft_in') {
-      const pattern = new RegExp(`[^0-9:\\-${decimalSep}${thousandsSep}'"']`, 'g');
+      const pattern = new RegExp(`[^${digitPattern}:\\-${decimalSep}${thousandsSep}'"']`, 'g');
       const filtered = value.replace(pattern, '');
       setInputValue(filtered);
       return;
@@ -858,7 +889,7 @@ export default function UnitConverter() {
     
     // For regular numeric input, allow: digits, current decimal separator, current thousands separator, minus
     // Build regex pattern: digits, minus sign, decimal separator, thousands separator
-    const pattern = new RegExp(`[^0-9\\-${decimalSep}${thousandsSep}]`, 'g');
+    const pattern = new RegExp(`[^${digitPattern}\\-${decimalSep}${thousandsSep}]`, 'g');
     const filtered = value.replace(pattern, '');
     setInputValue(filtered);
   };
@@ -953,6 +984,7 @@ export default function UnitConverter() {
                   <SelectItem value="europe-latin" className="text-xs">Europe/Latin</SelectItem>
                   <SelectItem value="swiss" className="text-xs">Swiss</SelectItem>
                   <SelectItem value="arabic" className="text-xs">Arabic</SelectItem>
+                  <SelectItem value="arabic-latin" className="text-xs">Arabic (Latin)</SelectItem>
                   <SelectItem value="east-asian" className="text-xs">East Asian</SelectItem>
                   <SelectItem value="period" className="text-xs">Period</SelectItem>
                   <SelectItem value="comma" className="text-xs">Comma</SelectItem>
