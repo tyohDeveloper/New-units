@@ -703,14 +703,6 @@ export default function UnitConverter() {
     setCalcOp2(null);
   };
 
-  const clearField3 = () => {
-    setCalcValues(prev => {
-      const newValues = [...prev];
-      newValues[2] = null;
-      return newValues;
-    });
-  };
-
   const copyCalcResult = () => {
     if (calcValues[3]) {
       let valueToCopy = calcValues[3].value;
@@ -1244,18 +1236,6 @@ export default function UnitConverter() {
                     return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
                 </span>
-              </div>
-              <div className="flex gap-1 justify-start">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={clearField3}
-                  disabled={!calcValues[2]}
-                  className="text-xs"
-                  data-testid="button-clear-field3"
-                >
-                  Clear
-                </Button>
               </div>
             </div>
 
