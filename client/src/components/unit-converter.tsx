@@ -1147,7 +1147,7 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </div>
-              <div className="flex gap-1 justify-start">
+              <div className="flex gap-1 justify-start w-[220px]">
                 <Button 
                   variant="ghost" 
                   size="sm"
@@ -1197,7 +1197,7 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </div>
-              <div className="flex gap-1 justify-start">
+              <div className="flex gap-1 justify-start w-[220px]">
                 <Button 
                   variant="ghost" 
                   size="sm"
