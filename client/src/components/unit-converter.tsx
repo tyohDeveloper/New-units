@@ -282,56 +282,252 @@ export default function UnitConverter() {
       es: 'Potencia', fr: 'Puissance', it: 'Potenza',
       pt: 'Potência', ru: 'Мощность', zh: '功率', ja: '仕事率'
     },
-    'Torque': { en: 'Torque', ar: 'عزم الدوران', de: 'Drehmoment' },
-    'Flow Rate': { en: 'Flow Rate', ar: 'معدل التدفق', de: 'Durchflussrate' },
-    'Flow Rate (Volumetric)': { en: 'Flow Rate (Volumetric)', ar: 'معدل التدفق (الحجمي)', de: 'Durchflussrate (Volumetrisch)' },
-    'Density': { en: 'Density', ar: 'الكثافة', de: 'Dichte' },
-    'Dynamic Viscosity': { en: 'Dynamic Viscosity', ar: 'اللزوجة الديناميكية', de: 'Dynamische Viskosität' },
-    'Viscosity (Dynamic)': { en: 'Viscosity (Dynamic)', ar: 'اللزوجة (الديناميكية)', de: 'Viskosität (Dynamisch)' },
-    'Surface Tension': { en: 'Surface Tension', ar: 'التوتر السطحي', de: 'Oberflächenspannung' },
-    'Charge': { en: 'Charge', ar: 'الشحنة', de: 'Ladung' },
-    'Electric Charge': { en: 'Electric Charge', ar: 'الشحنة الكهربائية', de: 'Elektrische Ladung' },
-    'Potential': { en: 'Potential', ar: 'الجهد', de: 'Potential' },
-    'Electric Potential': { en: 'Electric Potential', ar: 'الجهد الكهربائي', de: 'Elektrisches Potential' },
-    'Capacitance': { en: 'Capacitance', ar: 'السعة', de: 'Kapazität' },
-    'Resistance': { en: 'Resistance', ar: 'المقاومة', de: 'Widerstand' },
-    'Conductance': { en: 'Conductance', ar: 'الموصلية', de: 'Leitwert' },
-    'Inductance': { en: 'Inductance', ar: 'الحث', de: 'Induktivität' },
-    'Magnetic Flux': { en: 'Magnetic Flux', ar: 'التدفق المغناطيسي', de: 'Magnetischer Fluss' },
-    'Magnetic Flux Density': { en: 'Magnetic Flux Density', ar: 'كثافة التدفق المغناطيسي', de: 'Magnetische Flussdichte' },
-    'Radioactivity': { en: 'Radioactivity', ar: 'النشاط الإشعاعي', de: 'Radioaktivität' },
-    'Radiation Dose': { en: 'Radiation Dose', ar: 'جرعة الإشعاع', de: 'Strahlendosis' },
-    'Absorbed Radiation Dose': { en: 'Absorbed Radiation Dose', ar: 'جرعة الإشعاع الممتص', de: 'Absorbierte Strahlendosis' },
-    'Equivalent Dose': { en: 'Equivalent Dose', ar: 'الجرعة المكافئة', de: 'Äquivalentdosis' },
-    'Equivalent Radiation Dose': { en: 'Equivalent Radiation Dose', ar: 'جرعة الإشعاع المكافئة', de: 'Äquivalente Strahlendosis' },
-    'Catalytic Activity': { en: 'Catalytic Activity', ar: 'النشاط التحفيزي', de: 'Katalytische Aktivität' },
-    'Angle': { en: 'Angle', ar: 'الزاوية', de: 'Winkel' },
-    'Plane Angle': { en: 'Plane Angle', ar: 'الزاوية المستوية', de: 'Ebener Winkel' },
-    'Solid Angle': { en: 'Solid Angle', ar: 'الزاوية المجسمة', de: 'Raumwinkel' },
-    'Frequency': { en: 'Frequency', ar: 'التردد', de: 'Frequenz' },
-    'Sound Pressure': { en: 'Sound Pressure', ar: 'ضغط الصوت', de: 'Schalldruck' },
-    'Luminous Flux': { en: 'Luminous Flux', ar: 'التدفق الضوئي', de: 'Lichtstrom' },
-    'Luminous Flux (Human)': { en: 'Luminous Flux (Human)', ar: 'التدفق الضوئي (البشري)', de: 'Lichtstrom (Menschlich)' },
-    'Illuminance': { en: 'Illuminance', ar: 'الإضاءة', de: 'Beleuchtungsstärke' },
-    'Luminous Exitance': { en: 'Luminous Exitance', ar: 'الإشعاع الضوئي', de: 'Spezifische Lichtausstrahlung' },
-    'Luminance': { en: 'Luminance', ar: 'اللمعان', de: 'Leuchtdichte' },
-    'Refractive Power': { en: 'Refractive Power', ar: 'قوة الانكسار', de: 'Brechkraft' },
-    'Refractive Power (Vision)': { en: 'Refractive Power (Vision)', ar: 'قوة الانكسار (البصر)', de: 'Brechkraft (Sehen)' },
-    'Digital Storage': { en: 'Digital Storage', ar: 'التخزين الرقمي', de: 'Digitaler Speicher' },
-    'Typographic Units': { en: 'Typographic Units', ar: 'وحدات الطباعة', de: 'Typografische Einheiten' },
+    'Torque': { 
+      en: 'Torque', ar: 'عزم الدوران', de: 'Drehmoment',
+      es: 'Par', fr: 'Couple', it: 'Coppia',
+      pt: 'Torque', ru: 'Крутящий Момент', zh: '扭矩', ja: 'トルク'
+    },
+    'Flow Rate': { 
+      en: 'Flow Rate', ar: 'معدل التدفق', de: 'Durchflussrate',
+      es: 'Caudal', fr: 'Débit', it: 'Portata',
+      pt: 'Taxa de Fluxo', ru: 'Расход', zh: '流量', ja: '流量'
+    },
+    'Flow Rate (Volumetric)': { 
+      en: 'Flow Rate (Volumetric)', ar: 'معدل التدفق (الحجمي)', de: 'Durchflussrate (Volumetrisch)',
+      es: 'Caudal (Volumétrico)', fr: 'Débit (Volumétrique)', it: 'Portata (Volumetrica)',
+      pt: 'Taxa de Fluxo (Volumétrica)', ru: 'Расход (Объёмный)', zh: '流量（体积）', ja: '流量（体積）'
+    },
+    'Density': { 
+      en: 'Density', ar: 'الكثافة', de: 'Dichte',
+      es: 'Densidad', fr: 'Densité', it: 'Densità',
+      pt: 'Densidade', ru: 'Плотность', zh: '密度', ja: '密度'
+    },
+    'Dynamic Viscosity': { 
+      en: 'Dynamic Viscosity', ar: 'اللزوجة الديناميكية', de: 'Dynamische Viskosität',
+      es: 'Viscosidad Dinámica', fr: 'Viscosité Dynamique', it: 'Viscosità Dinamica',
+      pt: 'Viscosidade Dinâmica', ru: 'Динамическая Вязкость', zh: '动态粘度', ja: '動粘度'
+    },
+    'Viscosity (Dynamic)': { 
+      en: 'Viscosity (Dynamic)', ar: 'اللزوجة (الديناميكية)', de: 'Viskosität (Dynamisch)',
+      es: 'Viscosidad (Dinámica)', fr: 'Viscosité (Dynamique)', it: 'Viscosità (Dinamica)',
+      pt: 'Viscosidade (Dinâmica)', ru: 'Вязкость (Динамическая)', zh: '粘度（动态）', ja: '粘度（動的）'
+    },
+    'Surface Tension': { 
+      en: 'Surface Tension', ar: 'التوتر السطحي', de: 'Oberflächenspannung',
+      es: 'Tensión Superficial', fr: 'Tension Superficielle', it: 'Tensione Superficiale',
+      pt: 'Tensão Superficial', ru: 'Поверхностное Натяжение', zh: '表面张力', ja: '表面張力'
+    },
+    'Charge': { 
+      en: 'Charge', ar: 'الشحنة', de: 'Ladung',
+      es: 'Carga', fr: 'Charge', it: 'Carica',
+      pt: 'Carga', ru: 'Заряд', zh: '电荷', ja: '電荷'
+    },
+    'Electric Charge': { 
+      en: 'Electric Charge', ar: 'الشحنة الكهربائية', de: 'Elektrische Ladung',
+      es: 'Carga Eléctrica', fr: 'Charge Électrique', it: 'Carica Elettrica',
+      pt: 'Carga Elétrica', ru: 'Электрический Заряд', zh: '电荷', ja: '電荷'
+    },
+    'Potential': { 
+      en: 'Potential', ar: 'الجهد', de: 'Potential',
+      es: 'Potencial', fr: 'Potentiel', it: 'Potenziale',
+      pt: 'Potencial', ru: 'Потенциал', zh: '电势', ja: '電位'
+    },
+    'Electric Potential': { 
+      en: 'Electric Potential', ar: 'الجهد الكهربائي', de: 'Elektrisches Potential',
+      es: 'Potencial Eléctrico', fr: 'Potentiel Électrique', it: 'Potenziale Elettrico',
+      pt: 'Potencial Elétrico', ru: 'Электрический Потенциал', zh: '电势', ja: '電位'
+    },
+    'Capacitance': { 
+      en: 'Capacitance', ar: 'السعة', de: 'Kapazität',
+      es: 'Capacitancia', fr: 'Capacité', it: 'Capacità',
+      pt: 'Capacitância', ru: 'Ёмкость', zh: '电容', ja: '静電容量'
+    },
+    'Resistance': { 
+      en: 'Resistance', ar: 'المقاومة', de: 'Widerstand',
+      es: 'Resistencia', fr: 'Résistance', it: 'Resistenza',
+      pt: 'Resistência', ru: 'Сопротивление', zh: '电阻', ja: '抵抗'
+    },
+    'Conductance': { 
+      en: 'Conductance', ar: 'الموصلية', de: 'Leitwert',
+      es: 'Conductancia', fr: 'Conductance', it: 'Conduttanza',
+      pt: 'Condutância', ru: 'Проводимость', zh: '电导', ja: 'コンダクタンス'
+    },
+    'Inductance': { 
+      en: 'Inductance', ar: 'الحث', de: 'Induktivität',
+      es: 'Inductancia', fr: 'Inductance', it: 'Induttanza',
+      pt: 'Indutância', ru: 'Индуктивность', zh: '电感', ja: 'インダクタンス'
+    },
+    'Magnetic Flux': { 
+      en: 'Magnetic Flux', ar: 'التدفق المغناطيسي', de: 'Magnetischer Fluss',
+      es: 'Flujo Magnético', fr: 'Flux Magnétique', it: 'Flusso Magnetico',
+      pt: 'Fluxo Magnético', ru: 'Магнитный Поток', zh: '磁通量', ja: '磁束'
+    },
+    'Magnetic Flux Density': { 
+      en: 'Magnetic Flux Density', ar: 'كثافة التدفق المغناطيسي', de: 'Magnetische Flussdichte',
+      es: 'Densidad de Flujo Magnético', fr: 'Densité de Flux Magnétique', it: 'Densità di Flusso Magnetico',
+      pt: 'Densidade de Fluxo Magnético', ru: 'Магнитная Индукция', zh: '磁通密度', ja: '磁束密度'
+    },
+    'Radioactivity': { 
+      en: 'Radioactivity', ar: 'النشاط الإشعاعي', de: 'Radioaktivität',
+      es: 'Radioactividad', fr: 'Radioactivité', it: 'Radioattività',
+      pt: 'Radioatividade', ru: 'Радиоактивность', zh: '放射性', ja: '放射能'
+    },
+    'Radiation Dose': { 
+      en: 'Radiation Dose', ar: 'جرعة الإشعاع', de: 'Strahlendosis',
+      es: 'Dosis de Radiación', fr: 'Dose de Radiation', it: 'Dose di Radiazione',
+      pt: 'Dose de Radiação', ru: 'Доза Излучения', zh: '辐射剂量', ja: '放射線量'
+    },
+    'Absorbed Radiation Dose': { 
+      en: 'Absorbed Radiation Dose', ar: 'جرعة الإشعاع الممتص', de: 'Absorbierte Strahlendosis',
+      es: 'Dosis de Radiación Absorbida', fr: 'Dose de Radiation Absorbée', it: 'Dose di Radiazione Assorbita',
+      pt: 'Dose de Radiação Absorvida', ru: 'Поглощённая Доза', zh: '吸收剂量', ja: '吸収線量'
+    },
+    'Equivalent Dose': { 
+      en: 'Equivalent Dose', ar: 'الجرعة المكافئة', de: 'Äquivalentdosis',
+      es: 'Dosis Equivalente', fr: 'Dose Équivalente', it: 'Dose Equivalente',
+      pt: 'Dose Equivalente', ru: 'Эквивалентная Доза', zh: '当量剂量', ja: '等価線量'
+    },
+    'Equivalent Radiation Dose': { 
+      en: 'Equivalent Radiation Dose', ar: 'جرعة الإشعاع المكافئة', de: 'Äquivalente Strahlendosis',
+      es: 'Dosis de Radiación Equivalente', fr: 'Dose de Radiation Équivalente', it: 'Dose di Radiazione Equivalente',
+      pt: 'Dose de Radiação Equivalente', ru: 'Эквивалентная Доза Излучения', zh: '等效剂量', ja: '等価線量'
+    },
+    'Catalytic Activity': { 
+      en: 'Catalytic Activity', ar: 'النشاط التحفيزي', de: 'Katalytische Aktivität',
+      es: 'Actividad Catalítica', fr: 'Activité Catalytique', it: 'Attività Catalitica',
+      pt: 'Atividade Catalítica', ru: 'Каталитическая Активность', zh: '催化活性', ja: '触媒活性'
+    },
+    'Angle': { 
+      en: 'Angle', ar: 'الزاوية', de: 'Winkel',
+      es: 'Ángulo', fr: 'Angle', it: 'Angolo',
+      pt: 'Ângulo', ru: 'Угол', zh: '角度', ja: '角度'
+    },
+    'Plane Angle': { 
+      en: 'Plane Angle', ar: 'الزاوية المستوية', de: 'Ebener Winkel',
+      es: 'Ángulo Plano', fr: 'Angle Plan', it: 'Angolo Piano',
+      pt: 'Ângulo Plano', ru: 'Плоский Угол', zh: '平面角', ja: '平面角'
+    },
+    'Solid Angle': { 
+      en: 'Solid Angle', ar: 'الزاوية المجسمة', de: 'Raumwinkel',
+      es: 'Ángulo Sólido', fr: 'Angle Solide', it: 'Angolo Solido',
+      pt: 'Ângulo Sólido', ru: 'Телесный Угол', zh: '立体角', ja: '立体角'
+    },
+    'Frequency': { 
+      en: 'Frequency', ar: 'التردد', de: 'Frequenz',
+      es: 'Frecuencia', fr: 'Fréquence', it: 'Frequenza',
+      pt: 'Frequência', ru: 'Частота', zh: '频率', ja: '周波数'
+    },
+    'Sound Pressure': { 
+      en: 'Sound Pressure', ar: 'ضغط الصوت', de: 'Schalldruck',
+      es: 'Presión Sonora', fr: 'Pression Sonore', it: 'Pressione Sonora',
+      pt: 'Pressão Sonora', ru: 'Звуковое Давление', zh: '声压', ja: '音圧'
+    },
+    'Luminous Flux': { 
+      en: 'Luminous Flux', ar: 'التدفق الضوئي', de: 'Lichtstrom',
+      es: 'Flujo Luminoso', fr: 'Flux Lumineux', it: 'Flusso Luminoso',
+      pt: 'Fluxo Luminoso', ru: 'Световой Поток', zh: '光通量', ja: '光束'
+    },
+    'Luminous Flux (Human)': { 
+      en: 'Luminous Flux (Human)', ar: 'التدفق الضوئي (البشري)', de: 'Lichtstrom (Menschlich)',
+      es: 'Flujo Luminoso (Humano)', fr: 'Flux Lumineux (Humain)', it: 'Flusso Luminoso (Umano)',
+      pt: 'Fluxo Luminoso (Humano)', ru: 'Световой Поток (Человеческий)', zh: '光通量（人眼）', ja: '光束（人間）'
+    },
+    'Illuminance': { 
+      en: 'Illuminance', ar: 'الإضاءة', de: 'Beleuchtungsstärke',
+      es: 'Iluminancia', fr: 'Éclairement', it: 'Illuminamento',
+      pt: 'Iluminância', ru: 'Освещённость', zh: '照度', ja: '照度'
+    },
+    'Luminous Exitance': { 
+      en: 'Luminous Exitance', ar: 'الإشعاع الضوئي', de: 'Spezifische Lichtausstrahlung',
+      es: 'Exitancia Luminosa', fr: 'Exitance Lumineuse', it: 'Emittanza Luminosa',
+      pt: 'Exitância Luminosa', ru: 'Светимость', zh: '光出射度', ja: '光出射度'
+    },
+    'Luminance': { 
+      en: 'Luminance', ar: 'اللمعان', de: 'Leuchtdichte',
+      es: 'Luminancia', fr: 'Luminance', it: 'Luminanza',
+      pt: 'Luminância', ru: 'Яркость', zh: '亮度', ja: '輝度'
+    },
+    'Refractive Power': { 
+      en: 'Refractive Power', ar: 'قوة الانكسار', de: 'Brechkraft',
+      es: 'Potencia Refractiva', fr: 'Puissance de Réfraction', it: 'Potere Rifrattivo',
+      pt: 'Poder Refrativo', ru: 'Оптическая Сила', zh: '屈光度', ja: '屈折力'
+    },
+    'Refractive Power (Vision)': { 
+      en: 'Refractive Power (Vision)', ar: 'قوة الانكسار (البصر)', de: 'Brechkraft (Sehen)',
+      es: 'Potencia Refractiva (Visión)', fr: 'Puissance de Réfraction (Vision)', it: 'Potere Rifrattivo (Vista)',
+      pt: 'Poder Refrativo (Visão)', ru: 'Оптическая Сила (Зрение)', zh: '屈光度（视力）', ja: '屈折力（視覚）'
+    },
+    'Digital Storage': { 
+      en: 'Digital Storage', ar: 'التخزين الرقمي', de: 'Digitaler Speicher',
+      es: 'Almacenamiento Digital', fr: 'Stockage Numérique', it: 'Archiviazione Digitale',
+      pt: 'Armazenamento Digital', ru: 'Цифровое Хранилище', zh: '数字存储', ja: 'デジタルストレージ'
+    },
+    'Typographic Units': { 
+      en: 'Typographic Units', ar: 'وحدات الطباعة', de: 'Typografische Einheiten',
+      es: 'Unidades Tipográficas', fr: 'Unités Typographiques', it: 'Unità Tipografiche',
+      pt: 'Unidades Tipográficas', ru: 'Типографские Единицы', zh: '排版单位', ja: 'タイポグラフィ単位'
+    },
     // UI Labels
-    'Base unit:': { en: 'Base unit:', ar: ':الوحدة الأساسية', de: 'Basiseinheit:' },
-    'Include Beer/Wine': { en: 'Include Beer/Wine', ar: 'تضمين البيرة/النبيذ', de: 'Bier/Wein einschließen' },
-    'Base Factor': { en: 'Base Factor', ar: 'العامل الأساسي', de: 'Basisfaktor' },
-    'SI Base Units': { en: 'SI Base Units', ar: 'وحدات SI الأساسية', de: 'SI-Basiseinheiten' },
-    'Decimals': { en: 'Decimals', ar: 'الكسور العشرية', de: 'Dezimalstellen' },
-    'Copy': { en: 'Copy', ar: 'نسخ', de: 'Kopieren' },
-    'Prefix': { en: 'Prefix', ar: 'بادئة', de: 'Präfix' },
-    'Unit': { en: 'Unit', ar: 'وحدة', de: 'Einheit' },
-    'Result': { en: 'Result', ar: 'النتيجة', de: 'Ergebnis' },
-    'Calculator': { en: 'Calculator', ar: 'الآلة الحاسبة', de: 'Rechner' },
-    'Clear': { en: 'Clear', ar: 'مسح', de: 'Löschen' },
-    'Dimensional Analysis': { en: 'Dimensional Analysis', ar: 'التحليل البعدي', de: 'Dimensionsanalyse' },
+    'Base unit:': { 
+      en: 'Base unit:', ar: ':الوحدة الأساسية', de: 'Basiseinheit:',
+      es: 'Unidad base:', fr: 'Unité de base:', it: 'Unità di base:',
+      pt: 'Unidade base:', ru: 'Базовая единица:', zh: '基本单位：', ja: '基本単位：'
+    },
+    'Include Beer/Wine': { 
+      en: 'Include Beer/Wine', ar: 'تضمين البيرة/النبيذ', de: 'Bier/Wein einschließen',
+      es: 'Incluir Cerveza/Vino', fr: 'Inclure Bière/Vin', it: 'Includi Birra/Vino',
+      pt: 'Incluir Cerveja/Vinho', ru: 'Включить Пиво/Вино', zh: '包括啤酒/葡萄酒', ja: 'ビール/ワインを含む'
+    },
+    'Base Factor': { 
+      en: 'Base Factor', ar: 'العامل الأساسي', de: 'Basisfaktor',
+      es: 'Factor Base', fr: 'Facteur de Base', it: 'Fattore di Base',
+      pt: 'Fator Base', ru: 'Базовый Множитель', zh: '基础因子', ja: '基本係数'
+    },
+    'SI Base Units': { 
+      en: 'SI Base Units', ar: 'وحدات SI الأساسية', de: 'SI-Basiseinheiten',
+      es: 'Unidades Base SI', fr: 'Unités de Base SI', it: 'Unità di Base SI',
+      pt: 'Unidades Base SI', ru: 'Базовые Единицы SI', zh: 'SI基本单位', ja: 'SI基本単位'
+    },
+    'Decimals': { 
+      en: 'Decimals', ar: 'الكسور العشرية', de: 'Dezimalstellen',
+      es: 'Decimales', fr: 'Décimales', it: 'Decimali',
+      pt: 'Decimais', ru: 'Десятичные', zh: '小数', ja: '小数'
+    },
+    'Copy': { 
+      en: 'Copy', ar: 'نسخ', de: 'Kopieren',
+      es: 'Copiar', fr: 'Copier', it: 'Copia',
+      pt: 'Copiar', ru: 'Копировать', zh: '复制', ja: 'コピー'
+    },
+    'Prefix': { 
+      en: 'Prefix', ar: 'بادئة', de: 'Präfix',
+      es: 'Prefijo', fr: 'Préfixe', it: 'Prefisso',
+      pt: 'Prefixo', ru: 'Префикс', zh: '前缀', ja: '接頭辞'
+    },
+    'Unit': { 
+      en: 'Unit', ar: 'وحدة', de: 'Einheit',
+      es: 'Unidad', fr: 'Unité', it: 'Unità',
+      pt: 'Unidade', ru: 'Единица', zh: '单位', ja: '単位'
+    },
+    'Result': { 
+      en: 'Result', ar: 'النتيجة', de: 'Ergebnis',
+      es: 'Resultado', fr: 'Résultat', it: 'Risultato',
+      pt: 'Resultado', ru: 'Результат', zh: '结果', ja: '結果'
+    },
+    'Calculator': { 
+      en: 'Calculator', ar: 'الآلة الحاسبة', de: 'Rechner',
+      es: 'Calculadora', fr: 'Calculatrice', it: 'Calcolatrice',
+      pt: 'Calculadora', ru: 'Калькулятор', zh: '计算器', ja: '計算機'
+    },
+    'Clear': { 
+      en: 'Clear', ar: 'مسح', de: 'Löschen',
+      es: 'Limpiar', fr: 'Effacer', it: 'Cancella',
+      pt: 'Limpar', ru: 'Очистить', zh: '清除', ja: 'クリア'
+    },
+    'Dimensional Analysis': { 
+      en: 'Dimensional Analysis', ar: 'التحليل البعدي', de: 'Dimensionsanalyse',
+      es: 'Análisis Dimensional', fr: 'Analyse Dimensionnelle', it: 'Analisi Dimensionale',
+      pt: 'Análise Dimensional', ru: 'Размерный Анализ', zh: '量纲分析', ja: '次元解析'
+    },
     // Common unit base names
     'meter': { en: 'meter', ar: 'متر' },
     'metre': { en: 'metre', ar: 'متر' },
