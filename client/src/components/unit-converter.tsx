@@ -1151,22 +1151,6 @@ export default function UnitConverter() {
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => setCalcOp1('*')}
-                  className={`text-sm ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
-                >
-                  ×
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setCalcOp1('/')}
-                  className={`text-sm ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
-                >
-                  /
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
                   onClick={clearField1}
                   disabled={!calcValues[0]}
                   className="text-xs"
@@ -1201,16 +1185,16 @@ export default function UnitConverter() {
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => setCalcOp2('*')}
-                  className={`text-sm ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
+                  onClick={() => setCalcOp1('*')}
+                  className={`text-sm ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
                 >
                   ×
                 </Button>
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => setCalcOp2('/')}
-                  className={`text-sm ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
+                  onClick={() => setCalcOp1('/')}
+                  className={`text-sm ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
                 >
                   /
                 </Button>
@@ -1247,7 +1231,24 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </div>
-              <div className="w-[220px]"></div>
+              <div className="flex gap-1 justify-end w-[220px]">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setCalcOp2('*')}
+                  className={`text-sm ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
+                >
+                  ×
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setCalcOp2('/')}
+                  className={`text-sm ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
+                >
+                  /
+                </Button>
+              </div>
             </div>
 
             {/* Result Field 4 */}
