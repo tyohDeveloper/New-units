@@ -1432,13 +1432,16 @@ export default function UnitConverter() {
       if (toUnit === 'deg_dms') formattedResult = formatDMS(result);
       if (toUnit === 'ft_in') formattedResult = formatFtIn(result);
 
-      navigator.clipboard.writeText(formattedResult);
+      const unitSymbol = toUnitData?.symbol || '';
+      const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
+      
+      // Include unit symbol with prefix in the copied text
+      const textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
+      navigator.clipboard.writeText(textToCopy);
       
       // Trigger flash animation
       setFlashCopyResult(true);
       setTimeout(() => setFlashCopyResult(false), 300);
-      const unitSymbol = toUnitData?.symbol || '';
-      const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
       
       // Add to calculator (first three fields only) - convert to SI base units
       const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
