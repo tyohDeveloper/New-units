@@ -1166,7 +1166,7 @@ export default function UnitConverter() {
                 onClick={clearCalculator}
                 className="text-xs"
               >
-                Clear
+                Clear calculator
               </Button>
             </div>
           </div>
