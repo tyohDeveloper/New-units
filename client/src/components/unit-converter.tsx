@@ -1127,8 +1127,8 @@ export default function UnitConverter() {
           <Label className="text-xs font-mono uppercase text-muted-foreground mb-4 block">Calculator</Label>
           <div className="space-y-2">
             {/* Field 1 */}
-            <div className="grid grid-cols-[1fr_auto] gap-2">
-              <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
+            <div className="flex gap-2">
+              <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1">
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[0] ? (() => {
                     const val = calcValues[0];
@@ -1177,8 +1177,8 @@ export default function UnitConverter() {
             </div>
 
             {/* Field 2 */}
-            <div className="grid grid-cols-[1fr_auto] gap-2">
-              <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
+            <div className="flex gap-2">
+              <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1">
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[1] ? (() => {
                     const val = calcValues[1];
@@ -1227,8 +1227,8 @@ export default function UnitConverter() {
             </div>
 
             {/* Field 3 */}
-            <div className="grid grid-cols-[1fr_auto] gap-2">
-              <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between min-w-0">
+            <div className="flex gap-2">
+              <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1">
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[2] ? (() => {
                     const val = calcValues[2];
@@ -1251,8 +1251,8 @@ export default function UnitConverter() {
             </div>
 
             {/* Result Field 4 */}
-            <div className="grid grid-cols-[1fr_auto] gap-2">
-              <div className="h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between min-w-0">
+            <div className="flex gap-2">
+              <div className="h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between flex-1">
                 <span className="text-sm font-mono text-primary font-bold truncate">
                   {calcValues[3] && resultUnit && resultCategory ? (() => {
                     const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
