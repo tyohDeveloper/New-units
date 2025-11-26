@@ -796,6 +796,26 @@ export default function UnitConverter() {
     return "0";
   };
 
+  // Helper to validate and filter input
+  const handleInputChange = (value: string) => {
+    // For special formats (DMS/FtIn), allow: digits, colon, period, comma, minus
+    if (fromUnit === 'deg_dms' || fromUnit === 'ft_in') {
+      const filtered = value.replace(/[^0-9:.,\-]/g, '');
+      setInputValue(filtered);
+      return;
+    }
+    
+    // For regular numeric input, allow: digits, current decimal separator, current thousands separator, minus
+    const format = NUMBER_FORMATS[numberFormat];
+    const decimalSep = format.decimal === '.' ? '\\.' : format.decimal;
+    const thousandsSep = format.thousands ? (format.thousands === ' ' ? '\\s' : format.thousands) : '';
+    
+    // Build regex pattern: digits, minus sign, decimal separator, thousands separator
+    const pattern = new RegExp(`[^0-9\\-${decimalSep}${thousandsSep}]`, 'g');
+    const filtered = value.replace(pattern, '');
+    setInputValue(filtered);
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:pb-8 md:pt-1 grid md:grid-cols-[260px_1fr] gap-8">
       
@@ -881,9 +901,10 @@ export default function UnitConverter() {
                   type="text" 
                   inputMode="decimal"
                   value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
+                  onChange={(e) => handleInputChange(e.target.value)}
                   className="text-2xl font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left w-full min-w-0"
                   placeholder={getPlaceholder()}
+                  data-testid="input-value"
                 />
                 
                 {/* Prefix Dropdown */}
