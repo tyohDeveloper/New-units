@@ -261,7 +261,7 @@ export default function UnitConverter() {
 
   // Helper: Get translated text
   const t = (key: string): string => {
-    if (numberFormat === 'arabic' && TRANSLATIONS[key]) {
+    if ((numberFormat === 'arabic' || numberFormat === 'arabic-latin') && TRANSLATIONS[key]) {
       return TRANSLATIONS[key].ar;
     }
     return TRANSLATIONS[key]?.en || key;
