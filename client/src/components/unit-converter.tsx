@@ -879,6 +879,7 @@ export default function UnitConverter() {
               <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2">
                 <Input 
                   type="text" 
+                  inputMode="decimal"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   className="text-2xl font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left w-full min-w-0"
