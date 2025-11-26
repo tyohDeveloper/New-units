@@ -1133,9 +1133,11 @@ export default function UnitConverter() {
 
         {/* Mini Calculator */}
         <Card className="p-6 bg-card border-border/50">
-          <div className="flex items-center justify-between mb-4">
-            <Label className="text-xs font-mono uppercase text-muted-foreground">Calculator</Label>
-            <div className="flex items-center gap-2">
+          <div className="flex gap-2 mb-4">
+            <div className="flex-1">
+              <Label className="text-xs font-mono uppercase text-muted-foreground">Calculator</Label>
+            </div>
+            <div className="flex items-center gap-2 justify-end w-[220px]">
               <Label className="text-xs text-muted-foreground">Decimals</Label>
               <Select 
                 value={calculatorPrecision.toString()} 
