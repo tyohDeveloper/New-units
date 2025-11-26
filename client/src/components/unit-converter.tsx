@@ -2067,7 +2067,7 @@ export default function UnitConverter() {
                   <SelectContent>
                     {[0,1,2,3,4,5,6,7,8].map(n => (
                       <SelectItem key={n} value={n.toString()} className="text-xs">
-                        {n} {t('Decimals')}
+                        {numberFormat === 'arabic' ? toArabicNumerals(n.toString()) : n} {t('Decimals')}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -2204,7 +2204,7 @@ export default function UnitConverter() {
                   <SelectContent align="end">
                     {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(p => (
                       <SelectItem key={p} value={p.toString()} className="text-xs">
-                        {p}
+                        {numberFormat === 'arabic' ? toArabicNumerals(p.toString()) : p}
                       </SelectItem>
                     ))}
                   </SelectContent>
