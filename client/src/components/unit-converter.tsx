@@ -1034,7 +1034,7 @@ export default function UnitConverter() {
     },
     {
       name: "Specialized",
-      categories: ['digital', 'printing']
+      categories: ['digital']
     }
   ];
 
