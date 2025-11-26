@@ -57,7 +57,7 @@ export default function UnitConverter() {
     'us': { name: 'US', thousands: ',', decimal: '.' },
     'uk': { name: 'UK & offshoots', thousands: ',', decimal: '.' },
     'south-asian': { name: 'South Asian (Indian)', thousands: ',', decimal: '.' },
-    'europe-latin': { name: 'Europe/Latin', thousands: ' ', decimal: ',' },
+    'europe-latin': { name: 'World', thousands: ' ', decimal: ',' },
     'swiss': { name: 'Swiss', thousands: "'", decimal: '.' },
     'arabic': { name: 'Arabic', thousands: ',', decimal: '.', useArabicNumerals: true },
     'arabic-latin': { name: 'Arabic (Latin)', thousands: ',', decimal: '.' },
@@ -1178,14 +1178,14 @@ export default function UnitConverter() {
                 <SelectContent>
                   <SelectItem value="us" className="text-xs">US</SelectItem>
                   <SelectItem value="uk" className="text-xs">UK & offshoots</SelectItem>
-                  <SelectItem value="south-asian" className="text-xs">South Asian (Indian)</SelectItem>
-                  <SelectItem value="europe-latin" className="text-xs">Europe/Latin</SelectItem>
-                  <SelectItem value="swiss" className="text-xs">Swiss</SelectItem>
+                  <SelectItem value="europe-latin" className="text-xs">World</SelectItem>
+                  <SelectItem value="period" className="text-xs">Period</SelectItem>
+                  <SelectItem value="comma" className="text-xs">Comma</SelectItem>
                   <SelectItem value="arabic" className="text-xs">العربية</SelectItem>
                   <SelectItem value="arabic-latin" className="text-xs">العربية (Latin)</SelectItem>
                   <SelectItem value="east-asian" className="text-xs">East Asian</SelectItem>
-                  <SelectItem value="period" className="text-xs">Period</SelectItem>
-                  <SelectItem value="comma" className="text-xs">Comma</SelectItem>
+                  <SelectItem value="south-asian" className="text-xs">South Asian (Indian)</SelectItem>
+                  <SelectItem value="swiss" className="text-xs">Swiss</SelectItem>
                 </SelectContent>
               </Select>
             </div>
