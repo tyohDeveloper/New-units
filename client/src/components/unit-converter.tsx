@@ -376,10 +376,8 @@ export default function UnitConverter() {
 
     const inNum = Number(inches.toFixed(precision));
     const inStr = inNum.toString();
-    const [inInt, inDec] = inStr.split('.');
-    const inDisplay = `${inInt.padStart(2, '0')}${inDec ? '.' + inDec : ''}`;
 
-    return `${sign}${ft}:${inDisplay}`;
+    return `${sign}${ft}:${inStr}`;
   };
 
   const parseFtIn = (ftIn: string): number => {
