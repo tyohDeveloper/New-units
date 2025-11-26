@@ -1159,7 +1159,16 @@ export default function UnitConverter() {
                 </Select>
               </div>
             </div>
-            <div className="w-[220px]"></div>
+            <div className="flex gap-1 justify-end w-[220px]">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={clearCalculator}
+                className="text-xs"
+              >
+                Clear
+              </Button>
+            </div>
           </div>
           <div className="space-y-2">
             {/* Field 1 */}
@@ -1386,14 +1395,6 @@ export default function UnitConverter() {
                       >
                         Copy
                       </motion.span>
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={clearCalculator}
-                      className="text-xs hover:text-destructive gap-1 shrink-0"
-                    >
-                      Clear
                     </Button>
                   </React.Fragment>
                 )}
