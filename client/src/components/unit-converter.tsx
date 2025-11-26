@@ -344,6 +344,21 @@ export default function UnitConverter() {
     return derivedUnits[dimsStr] || '';
   };
 
+  // Helper to parse number from string with current format
+  const parseNumberWithFormat = (str: string): number => {
+    const format = NUMBER_FORMATS[numberFormat];
+    // Remove thousands separator
+    let cleaned = str;
+    if (format.thousands) {
+      cleaned = cleaned.split(format.thousands).join('');
+    }
+    // Replace decimal separator with period for parsing
+    if (format.decimal !== '.') {
+      cleaned = cleaned.replace(format.decimal, '.');
+    }
+    return parseFloat(cleaned);
+  };
+
   const formatDMS = (decimal: number): string => {
     const d = Math.floor(Math.abs(decimal));
     const mFloat = (Math.abs(decimal) - d) * 60;
@@ -360,8 +375,8 @@ export default function UnitConverter() {
   };
 
   const parseDMS = (dms: string): number => {
-    if (!dms.includes(':')) return parseFloat(dms);
-    const parts = dms.split(':').map(p => parseFloat(p));
+    if (!dms.includes(':')) return parseNumberWithFormat(dms);
+    const parts = dms.split(':').map(p => parseNumberWithFormat(p));
     let val = 0;
     if (parts.length > 0) val += parts[0];
     if (parts.length > 1) val += (parts[0] >= 0 ? parts[1] : -parts[1]) / 60;
@@ -384,8 +399,8 @@ export default function UnitConverter() {
   const parseFtIn = (ftIn: string): number => {
     // Remove quotes and replace with colon for parsing
     const cleaned = ftIn.replace(/['"]/g, ':');
-    if (!cleaned.includes(':')) return parseFloat(cleaned);
-    const parts = cleaned.split(':').map(p => parseFloat(p));
+    if (!cleaned.includes(':')) return parseNumberWithFormat(cleaned);
+    const parts = cleaned.split(':').map(p => parseNumberWithFormat(p));
     let val = 0;
     if (parts.length > 0) val += parts[0];
     if (parts.length > 1) val += (parts[0] >= 0 ? parts[1] : -parts[1]) / 12;
@@ -791,21 +806,6 @@ export default function UnitConverter() {
     return decimal ? `${formattedInteger}${format.decimal}${decimal}` : formattedInteger;
   };
 
-  // Helper to parse number from string with current format
-  const parseNumberWithFormat = (str: string): number => {
-    const format = NUMBER_FORMATS[numberFormat];
-    // Remove thousands separator
-    let cleaned = str;
-    if (format.thousands) {
-      cleaned = cleaned.split(format.thousands).join('');
-    }
-    // Replace decimal separator with period for parsing
-    if (format.decimal !== '.') {
-      cleaned = cleaned.replace(format.decimal, '.');
-    }
-    return parseFloat(cleaned);
-  };
-
   const formatFactor = (f: number) => {
     if (f === 1) return "1";
     if (f >= 1e9 || f <= 1e-8) return `×${f.toExponential(7)}`;
@@ -829,18 +829,19 @@ export default function UnitConverter() {
 
   // Helper to validate and filter input
   const handleInputChange = (value: string) => {
-    // For special formats (DMS/FtIn), allow: digits, colon, period, comma, minus, quotes
+    const format = NUMBER_FORMATS[numberFormat];
+    const decimalSep = format.decimal === '.' ? '\\.' : format.decimal;
+    const thousandsSep = format.thousands ? (format.thousands === ' ' ? '\\s' : format.thousands) : '';
+    
+    // For special formats (DMS/FtIn), allow: digits, colon, decimal separator, thousands separator, minus, quotes
     if (fromUnit === 'deg_dms' || fromUnit === 'ft_in') {
-      const filtered = value.replace(/[^0-9:.,\-'"]/g, '');
+      const pattern = new RegExp(`[^0-9:\\-${decimalSep}${thousandsSep}'"']`, 'g');
+      const filtered = value.replace(pattern, '');
       setInputValue(filtered);
       return;
     }
     
     // For regular numeric input, allow: digits, current decimal separator, current thousands separator, minus
-    const format = NUMBER_FORMATS[numberFormat];
-    const decimalSep = format.decimal === '.' ? '\\.' : format.decimal;
-    const thousandsSep = format.thousands ? (format.thousands === ' ' ? '\\s' : format.thousands) : '';
-    
     // Build regex pattern: digits, minus sign, decimal separator, thousands separator
     const pattern = new RegExp(`[^0-9\\-${decimalSep}${thousandsSep}]`, 'g');
     const filtered = value.replace(pattern, '');
