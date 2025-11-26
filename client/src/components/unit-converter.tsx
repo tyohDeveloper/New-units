@@ -83,6 +83,28 @@ export default function UnitConverter() {
     return str.split('').map(c => latinMap[c] || c).join('');
   };
 
+  // Helper: Round to nearest even (banker's rounding)
+  const roundToNearestEven = (num: number, precision: number): number => {
+    const multiplier = Math.pow(10, precision);
+    const scaled = num * multiplier;
+    const floor = Math.floor(scaled);
+    const fraction = scaled - floor;
+    
+    if (fraction === 0.5) {
+      // Exactly halfway - round to nearest even number
+      return (floor % 2 === 0 ? floor : floor + 1) / multiplier;
+    } else {
+      // Not exactly halfway - use standard rounding
+      return Math.round(scaled) / multiplier;
+    }
+  };
+
+  // Helper: toFixed with banker's rounding
+  const toFixedBanker = (num: number, precision: number): string => {
+    const rounded = roundToNearestEven(num, precision);
+    return rounded.toFixed(precision);
+  };
+
   // Helper: Apply regional spelling variations
   const applyRegionalSpelling = (unitName: string): string => {
     // US-style formats use "meter" and "liter"
@@ -167,6 +189,64 @@ export default function UnitConverter() {
     'Calculator': { en: 'Calculator', ar: 'الآلة الحاسبة' },
     'Clear': { en: 'Clear', ar: 'مسح' },
     'Dimensional Analysis': { en: 'Dimensional Analysis', ar: 'التحليل البعدي' },
+    // Common unit base names
+    'meter': { en: 'meter', ar: 'متر' },
+    'metre': { en: 'metre', ar: 'متر' },
+    'kilogram': { en: 'kilogram', ar: 'كيلوغرام' },
+    'second': { en: 'second', ar: 'ثانية' },
+    'ampere': { en: 'ampere', ar: 'أمبير' },
+    'kelvin': { en: 'kelvin', ar: 'كلفن' },
+    'celsius': { en: 'celsius', ar: 'سلزيوس' },
+    'mole': { en: 'mole', ar: 'مول' },
+    'candela': { en: 'candela', ar: 'شمعة' },
+    'liter': { en: 'liter', ar: 'لتر' },
+    'litre': { en: 'litre', ar: 'لتر' },
+    'square meter': { en: 'square meter', ar: 'متر مربع' },
+    'square metre': { en: 'square metre', ar: 'متر مربع' },
+    'cubic meter': { en: 'cubic meter', ar: 'متر مكعب' },
+    'cubic metre': { en: 'cubic metre', ar: 'متر مكعب' },
+    'meter/second': { en: 'meter/second', ar: 'متر/ثانية' },
+    'metre/second': { en: 'metre/second', ar: 'متر/ثانية' },
+    'meter/sq second': { en: 'meter/sq second', ar: 'متر/ثانية²' },
+    'metre/sq second': { en: 'metre/sq second', ar: 'متر/ثانية²' },
+    'newton': { en: 'newton', ar: 'نيوتن' },
+    'pascal': { en: 'pascal', ar: 'باسكال' },
+    'joule': { en: 'joule', ar: 'جول' },
+    'watt': { en: 'watt', ar: 'واط' },
+    'newton meter': { en: 'newton meter', ar: 'نيوتن متر' },
+    'newton metre': { en: 'newton metre', ar: 'نيوتن متر' },
+    'liter/second': { en: 'liter/second', ar: 'لتر/ثانية' },
+    'litre/second': { en: 'litre/second', ar: 'لتر/ثانية' },
+    'coulomb': { en: 'coulomb', ar: 'كولوم' },
+    'volt': { en: 'volt', ar: 'فولت' },
+    'farad': { en: 'farad', ar: 'فاراد' },
+    'ohm': { en: 'ohm', ar: 'أوم' },
+    'siemens': { en: 'siemens', ar: 'سيمنز' },
+    'henry': { en: 'henry', ar: 'هنري' },
+    'weber': { en: 'weber', ar: 'ويبر' },
+    'tesla': { en: 'tesla', ar: 'تسلا' },
+    'becquerel': { en: 'becquerel', ar: 'بكريل' },
+    'gray': { en: 'gray', ar: 'غراي' },
+    'sievert': { en: 'sievert', ar: 'سيفرت' },
+    'katal': { en: 'katal', ar: 'كاتال' },
+    'radian': { en: 'radian', ar: 'راديان' },
+    'degree': { en: 'degree', ar: 'درجة' },
+    'steradian': { en: 'steradian', ar: 'ستراديان' },
+    'hertz': { en: 'hertz', ar: 'هرتز' },
+    'decibel': { en: 'decibel', ar: 'ديسيبل' },
+    'lumen': { en: 'lumen', ar: 'لومن' },
+    'lux': { en: 'lux', ar: 'لوكس' },
+    'lumen/square-meter': { en: 'lumen/square-meter', ar: 'لومن/متر²' },
+    'lumen/square-metre': { en: 'lumen/square-metre', ar: 'لومن/متر²' },
+    'candela/square-meter': { en: 'candela/square-meter', ar: 'شمعة/متر²' },
+    'candela/square-metre': { en: 'candela/square-metre', ar: 'شمعة/متر²' },
+    'reciprocal-meter': { en: 'reciprocal-meter', ar: 'متر⁻¹' },
+    'reciprocal-metre': { en: 'reciprocal-metre', ar: 'متر⁻¹' },
+    'byte': { en: 'byte', ar: 'بايت' },
+    'point': { en: 'point', ar: 'نقطة' },
+    'newton/meter': { en: 'newton/meter', ar: 'نيوتن/متر' },
+    'newton/metre': { en: 'newton/metre', ar: 'نيوتن/متر' },
+    'pascal-second': { en: 'pascal-second', ar: 'باسكال ثانية' },
   };
 
   // Helper: Get translated text
@@ -495,9 +575,8 @@ export default function UnitConverter() {
     const s = (mFloat - m) * 60;
     const sign = decimal < 0 ? "-" : "";
     
-    const sNum = Number(s.toFixed(precision));
-    const sStr = sNum.toString();
-    const [sInt, sDec] = sStr.split('.');
+    const sFixed = toFixedBanker(s, precision);
+    const [sInt, sDec] = sFixed.split('.');
     const sDisplay = `${sInt.padStart(2, '0')}${sDec ? '.' + sDec : ''}`;
 
     return `${sign}${d}:${m.toString().padStart(2, '0')}:${sDisplay}`;
@@ -519,10 +598,9 @@ export default function UnitConverter() {
     const ft = Math.floor(absVal);
     const inches = (absVal - ft) * 12;
 
-    const inNum = Number(inches.toFixed(precision));
-    const inStr = inNum.toString();
+    const inFixed = toFixedBanker(inches, precision);
 
-    return `${sign}${ft}'${inStr}"`;
+    return `${sign}${ft}'${inFixed}"`;
   };
 
   const parseFtIn = (ftIn: string): number => {
@@ -913,7 +991,7 @@ export default function UnitConverter() {
 
   // Helper to clean up trailing zeros from decimal numbers
   const cleanNumber = (num: number, precision: number): string => {
-    const fixed = num.toFixed(precision);
+    const fixed = toFixedBanker(num, precision);
     // Remove trailing zeros after decimal point
     const cleaned = fixed.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
     return cleaned;
@@ -1050,7 +1128,7 @@ export default function UnitConverter() {
           <h1 className="text-3xl font-bold text-foreground tracking-tight">{t(applyRegionalSpelling(categoryData.name))}</h1>
           <div className="flex items-center justify-between mt-1">
             <p className="text-muted-foreground text-sm font-mono">
-              {t('Base unit:')} <span className="text-primary">{applyRegionalSpelling(categoryData.baseUnit)}</span>
+              {t('Base unit:')} <span className="text-primary">{t(applyRegionalSpelling(categoryData.baseUnit))}</span>
             </p>
             <div className="flex items-center gap-3">
               {activeCategory === 'volume' && (
