@@ -1279,14 +1279,13 @@ export default function UnitConverter() {
                   {calcValues[3] && resultUnit && resultCategory ? (() => {
                     const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                     const unit = cat?.units.find(u => u.id === resultUnit);
-                    const prefix = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
                     if (unit) {
                       // Convert from SI base units to category base units
                       let categoryBaseValue = calcValues[3].value;
                       if (resultCategory === 'volume') {
                         categoryBaseValue = calcValues[3].value * 1000; // m³ to L
                       }
-                      const convertedValue = categoryBaseValue / (unit.factor * prefix.factor);
+                      const convertedValue = categoryBaseValue / unit.factor;
                       return formatNumberWithSeparators(convertedValue, precision);
                     }
                     return formatNumberWithSeparators(calcValues[3].value, precision);
@@ -1304,9 +1303,7 @@ export default function UnitConverter() {
                     if (!val) return '';
                     const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                     const unit = cat?.units.find(u => u.id === resultUnit);
-                    const prefix = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
-                    const prefixSymbol = unit?.allowPrefixes && prefix.id !== 'none' ? prefix.symbol : '';
-                    return prefixSymbol + (unit?.symbol || formatDimensions(val.dimensions));
+                    return unit?.symbol || formatDimensions(val.dimensions);
                   })() : calcValues[3] ? (() => {
                     const val = calcValues[3];
                     if (!val) return '';
@@ -1319,42 +1316,21 @@ export default function UnitConverter() {
                 {calcValues[3] && (
                   <React.Fragment>
                     {resultCategory ? (
-                      <>
-                        <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
-                          <SelectTrigger className="h-9 w-[100px] text-xs">
-                            <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="base" className="text-xs font-mono">
-                              {CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"}
+                      <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
+                        <SelectTrigger className="h-9 w-[100px] text-xs">
+                          <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="base" className="text-xs font-mono">
+                            {CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"}
+                          </SelectItem>
+                          {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
+                            <SelectItem key={unit.id} value={unit.id} className="text-xs">
+                              {unit.name}
                             </SelectItem>
-                            {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
-                              <SelectItem key={unit.id} value={unit.id} className="text-xs">
-                                {unit.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        {(() => {
-                          const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                          const unit = resultUnit ? cat?.units.find(u => u.id === resultUnit) : null;
-                          const allowsPrefixes = unit?.allowPrefixes || false;
-                          return allowsPrefixes && (
-                            <Select value={resultPrefix} onValueChange={setResultPrefix}>
-                              <SelectTrigger className="h-9 w-[70px] text-xs">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {PREFIXES.map(prefix => (
-                                  <SelectItem key={prefix.id} value={prefix.id} className="text-xs">
-                                    {prefix.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          );
-                        })()}
-                      </>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     ) : (
                       <Select value="unitless" disabled>
                         <SelectTrigger className="h-9 w-[100px] text-xs">
