@@ -125,16 +125,23 @@ export default function UnitConverter() {
     return rounded.toFixed(precision);
   };
 
-  // Helper: Apply regional spelling variations
+  // Helper: Apply regional spelling variations (ONLY for English language)
+  // This function should ONLY be called when the language is English
   const applyRegionalSpelling = (unitName: string): string => {
+    // Only apply regional spelling variations for English
+    // For all other languages, use their own translations directly
+    if (language !== 'en') {
+      return unitName;
+    }
+    
     // US-style formats use "meter" and "liter"
     const usFormats: NumberFormat[] = ['us', 'arabic-latin', 'period'];
     
     if (usFormats.includes(numberFormat)) {
-      // Already using US spelling, no change needed
+      // US English: use "meter" and "liter" spelling
       return unitName;
     } else {
-      // European/International formats (including UK) use "metre" and "litre"
+      // UK/International English: use "metre" and "litre" spelling
       return unitName
         .replace(/Meter/g, 'Metre')
         .replace(/meter/g, 'metre')
