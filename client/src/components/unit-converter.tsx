@@ -1147,7 +1147,7 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </div>
-              <div className="flex gap-1 justify-start w-[220px]">
+              <div className="flex gap-1 justify-end w-[220px]">
                 <Button 
                   variant="ghost" 
                   size="sm"
@@ -1197,7 +1197,7 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </div>
-              <div className="flex gap-1 justify-start w-[220px]">
+              <div className="flex gap-1 justify-end w-[220px]">
                 <Button 
                   variant="ghost" 
                   size="sm"
@@ -1293,7 +1293,7 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </div>
-              <div className="flex gap-1 justify-start w-[220px]">
+              <div className="flex gap-1 justify-end w-[220px]">
                 {calcValues[3] && (
                   <React.Fragment>
                     {resultCategory ? (
