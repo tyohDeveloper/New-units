@@ -1164,8 +1164,8 @@ export default function UnitConverter() {
                   <SelectItem value="south-asian" className="text-xs">South Asian (Indian)</SelectItem>
                   <SelectItem value="europe-latin" className="text-xs">Europe/Latin</SelectItem>
                   <SelectItem value="swiss" className="text-xs">Swiss</SelectItem>
-                  <SelectItem value="arabic" className="text-xs">Arabic</SelectItem>
-                  <SelectItem value="arabic-latin" className="text-xs">Arabic (Latin)</SelectItem>
+                  <SelectItem value="arabic" className="text-xs">العربية</SelectItem>
+                  <SelectItem value="arabic-latin" className="text-xs">العربية (Latin)</SelectItem>
                   <SelectItem value="east-asian" className="text-xs">East Asian</SelectItem>
                   <SelectItem value="period" className="text-xs">Period</SelectItem>
                   <SelectItem value="comma" className="text-xs">Comma</SelectItem>
