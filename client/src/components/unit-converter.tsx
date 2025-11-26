@@ -587,25 +587,29 @@ export default function UnitConverter() {
 
   // Calculate result field
   useEffect(() => {
-    if (calcValues[0] && calcValues[1] && calcOp1) {
+    if (calcValues[0]) {
       let resultValue = calcValues[0].value;
       let resultDimensions = { ...calcValues[0].dimensions };
       
-      if (calcOp1 === '*') {
-        resultValue = resultValue * calcValues[1].value;
-        resultDimensions = multiplyDimensions(resultDimensions, calcValues[1].dimensions);
-      } else {
-        resultValue = resultValue / calcValues[1].value;
-        resultDimensions = divideDimensions(resultDimensions, calcValues[1].dimensions);
-      }
-      
-      if (calcValues[2] && calcOp2) {
-        if (calcOp2 === '*') {
-          resultValue = resultValue * calcValues[2].value;
-          resultDimensions = multiplyDimensions(resultDimensions, calcValues[2].dimensions);
+      // If we have field 2 and an operator, calculate
+      if (calcValues[1] && calcOp1) {
+        if (calcOp1 === '*') {
+          resultValue = resultValue * calcValues[1].value;
+          resultDimensions = multiplyDimensions(resultDimensions, calcValues[1].dimensions);
         } else {
-          resultValue = resultValue / calcValues[2].value;
-          resultDimensions = divideDimensions(resultDimensions, calcValues[2].dimensions);
+          resultValue = resultValue / calcValues[1].value;
+          resultDimensions = divideDimensions(resultDimensions, calcValues[1].dimensions);
+        }
+        
+        // If we have field 3 and operator, continue calculation
+        if (calcValues[2] && calcOp2) {
+          if (calcOp2 === '*') {
+            resultValue = resultValue * calcValues[2].value;
+            resultDimensions = multiplyDimensions(resultDimensions, calcValues[2].dimensions);
+          } else {
+            resultValue = resultValue / calcValues[2].value;
+            resultDimensions = divideDimensions(resultDimensions, calcValues[2].dimensions);
+          }
         }
       }
       
