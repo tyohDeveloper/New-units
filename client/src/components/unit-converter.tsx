@@ -49,13 +49,17 @@ export default function UnitConverter() {
   const [resultPrefix, setResultPrefix] = useState<string>('none');
 
   // Number format state
-  type NumberFormat = 'us-uk' | 'europe' | 'period' | 'comma';
+  type NumberFormat = 'us-uk' | 'south-asian' | 'europe-latin' | 'swiss' | 'arabic' | 'east-asian' | 'period' | 'comma';
   const [numberFormat, setNumberFormat] = useState<NumberFormat>('us-uk');
   const [includeBeerWine, setIncludeBeerWine] = useState<boolean>(false);
 
   const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string }> = {
-    'us-uk': { name: 'US/UK', thousands: ',', decimal: '.' },
-    'europe': { name: 'Europe', thousands: ' ', decimal: ',' },
+    'us-uk': { name: 'US/UK & offshoots', thousands: ',', decimal: '.' },
+    'south-asian': { name: 'South Asian (Indian)', thousands: ',', decimal: '.' },
+    'europe-latin': { name: 'Europe/Latin', thousands: ' ', decimal: ',' },
+    'swiss': { name: 'Swiss', thousands: "'", decimal: '.' },
+    'arabic': { name: 'Arabic', thousands: ',', decimal: '.' },
+    'east-asian': { name: 'East Asian', thousands: ',', decimal: '.' },
     'period': { name: 'Period', thousands: '', decimal: '.' },
     'comma': { name: 'Comma', thousands: '', decimal: ',' },
   };
@@ -940,12 +944,16 @@ export default function UnitConverter() {
                 onValueChange={(val) => { setNumberFormat(val as NumberFormat); refocusInput(); }}
                 onOpenChange={(open) => { if (!open) refocusInput(); }}
               >
-                <SelectTrigger tabIndex={6} className="h-6 w-[100px] text-xs">
+                <SelectTrigger tabIndex={6} className="h-6 w-[180px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="us-uk" className="text-xs">US/UK</SelectItem>
-                  <SelectItem value="europe" className="text-xs">Europe</SelectItem>
+                  <SelectItem value="us-uk" className="text-xs">US/UK & offshoots</SelectItem>
+                  <SelectItem value="south-asian" className="text-xs">South Asian (Indian)</SelectItem>
+                  <SelectItem value="europe-latin" className="text-xs">Europe/Latin</SelectItem>
+                  <SelectItem value="swiss" className="text-xs">Swiss</SelectItem>
+                  <SelectItem value="arabic" className="text-xs">Arabic</SelectItem>
+                  <SelectItem value="east-asian" className="text-xs">East Asian</SelectItem>
                   <SelectItem value="period" className="text-xs">Period</SelectItem>
                   <SelectItem value="comma" className="text-xs">Comma</SelectItem>
                 </SelectContent>
