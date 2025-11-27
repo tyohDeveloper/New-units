@@ -2265,11 +2265,18 @@ export default function UnitConverter() {
         const prefixSymbol = resultPrefix !== 'none' ? prefixData.symbol : '';
         unitSymbol = `${prefixSymbol}${cat?.baseSISymbol || ''}`;
       } else {
-        // Use dimensional formula if no category
+        // Use selected alternative representation if available, otherwise dimensional formula
         const val = calcValues[3];
         const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
         valueToCopy = fixPrecision(val.value / prefix.factor);
-        unitSymbol = `${prefix.symbol}${formatDimensions(val.dimensions)}`;
+        
+        // Use the same alternative representation that's being displayed
+        const alternatives = generateAlternativeRepresentations(val.dimensions);
+        if (selectedAlternative < alternatives.length) {
+          unitSymbol = `${prefix.symbol}${alternatives[selectedAlternative].displaySymbol}`;
+        } else {
+          unitSymbol = `${prefix.symbol}${formatDimensions(val.dimensions)}`;
+        }
       }
       
       // Copy with only decimal separator, no thousands separator
