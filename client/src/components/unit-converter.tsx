@@ -700,6 +700,11 @@ export default function UnitConverter() {
       es: 'Luminancia', fr: 'Luminance', it: 'Luminanza',
       pt: 'Luminância', ru: 'Яркость', zh: '亮度', ja: '輝度'
     },
+    'Lightbulb Efficiency': { 
+      en: 'Lightbulb Efficiency', ar: 'كفاءة المصباح', de: 'Glühbirnen-Effizienz',
+      es: 'Eficiencia de Bombilla', fr: 'Efficacité d\'Ampoule', it: 'Efficienza Lampadina',
+      pt: 'Eficiência de Lâmpada', ru: 'Эффективность Лампочки', zh: '灯泡效率', ja: '電球効率'
+    },
     'Refractive Power': { 
       en: 'Refractive Power', ar: 'قوة الانكسار', de: 'Brechkraft',
       es: 'Potencia Refractiva', fr: 'Puissance de Réfraction', it: 'Potere Rifrattivo',
@@ -1237,6 +1242,11 @@ export default function UnitConverter() {
     'Newton/meter': { en: 'Newton/meter', ar: 'نيوتن/متر' },
     'Newton/metre': { en: 'Newton/metre', ar: 'نيوتن/متر' },
     'Dyne/centimeter': { en: 'Dyne/centimeter', ar: 'داين/سنتيمتر' },
+    'LED Bulb (watts)': { en: 'LED Bulb (watts)', ar: 'مصباح LED (واط)' },
+    'Fluorescent Bulb (watts)': { en: 'Fluorescent Bulb (watts)', ar: 'مصباح فلورسنت (واط)' },
+    'Incandescent Bulb (watts)': { en: 'Incandescent Bulb (watts)', ar: 'مصباح متوهج (واط)' },
+    'Halogen Bulb (watts)': { en: 'Halogen Bulb (watts)', ar: 'مصباح هالوجين (واط)' },
+    'Sodium Vapor Lamp (watts)': { en: 'Sodium Vapor Lamp (watts)', ar: 'مصباح بخار الصوديوم (واط)' },
   };
 
   // Helper: Get translated text - uses language dropdown
@@ -1303,7 +1313,7 @@ export default function UnitConverter() {
     },
     {
       name: "Human Response",
-      categories: ['luminous_flux', 'illuminance', 'luminous_exitance', 'luminance', 'refractive_power']
+      categories: ['luminous_flux', 'illuminance', 'luminous_exitance', 'luminance', 'refractive_power', 'lightbulb']
     },
     {
       name: "Specialized",
@@ -1476,7 +1486,8 @@ export default function UnitConverter() {
       viscosity: { mass: 1, length: -1, time: -1 },
       surface_tension: { mass: 1, time: -2 },
       refractive_power: { length: -1 },
-      sound_pressure: { mass: 1, length: -1, time: -2 }
+      sound_pressure: { mass: 1, length: -1, time: -2 },
+      lightbulb: { intensity: 1, solid_angle: 1 }
     };
     return dimensionMap[category] || {};
   };
