@@ -2410,7 +2410,10 @@ export default function UnitConverter() {
                       if (resultCategory === 'volume') {
                         categoryBaseValue = calcValues[3].value * 1000; // m³ to L
                       }
-                      const convertedValue = categoryBaseValue / unit.factor;
+                      // Apply the result prefix if the unit allows prefixes
+                      const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
+                      const prefixFactor = unit.allowPrefixes ? prefixData.factor : 1;
+                      const convertedValue = categoryBaseValue / (unit.factor * prefixFactor);
                       return formatNumberWithSeparators(convertedValue, calculatorPrecision);
                     }
                     return formatNumberWithSeparators(calcValues[3].value, calculatorPrecision);
@@ -2428,7 +2431,11 @@ export default function UnitConverter() {
                     if (!val) return '';
                     const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                     const unit = cat?.units.find(u => u.id === resultUnit);
-                    return unit?.symbol || formatDimensions(val.dimensions);
+                    if (!unit) return formatDimensions(val.dimensions);
+                    // Include prefix symbol if unit allows prefixes
+                    const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
+                    const prefixSymbol = unit.allowPrefixes && resultPrefix !== 'none' ? prefixData.symbol : '';
+                    return `${prefixSymbol}${unit.symbol}`;
                   })() : calcValues[3] ? (() => {
                     const val = calcValues[3];
                     if (!val) return '';
