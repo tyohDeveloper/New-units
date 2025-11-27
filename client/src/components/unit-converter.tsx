@@ -1224,6 +1224,32 @@ export default function UnitConverter() {
     return dimensionMap[category] || {};
   };
 
+  // Helper: Convert from SI base unit to category base unit
+  const siToCategoryBase = (value: number, category: UnitCategory): number => {
+    const cat = CONVERSION_DATA.find(c => c.id === category);
+    if (!cat) return value;
+    
+    // Find the SI base unit (unit with symbol matching baseSISymbol)
+    const siBaseUnit = cat.units.find(u => u.symbol === cat.baseSISymbol);
+    if (!siBaseUnit) return value;
+    
+    // Convert: value is in SI base, multiply by SI unit's factor to get category base
+    return value * siBaseUnit.factor;
+  };
+
+  // Helper: Convert from category base unit to SI base unit
+  const categoryToSIBase = (value: number, category: UnitCategory): number => {
+    const cat = CONVERSION_DATA.find(c => c.id === category);
+    if (!cat) return value;
+    
+    // Find the SI base unit (unit with symbol matching baseSISymbol)
+    const siBaseUnit = cat.units.find(u => u.symbol === cat.baseSISymbol);
+    if (!siBaseUnit) return value;
+    
+    // Convert: value is in category base, divide by SI unit's factor to get SI base
+    return value / siBaseUnit.factor;
+  };
+
   // Helper: Multiply dimensional formulas
   const multiplyDimensions = (d1: DimensionalFormula, d2: DimensionalFormula): DimensionalFormula => {
     const result: DimensionalFormula = { ...d1 };
@@ -1446,24 +1472,17 @@ export default function UnitConverter() {
       setFlashCopyResult(true);
       setTimeout(() => setFlashCopyResult(false), 300);
       
-      // Add to calculator (first three fields only) - convert to SI base units
+      // Add to calculator (first three fields only) - convert to category base units first, then to SI base
       const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
       if (firstEmptyIndex !== -1) {
-        // Convert result to SI base units
-        // First convert to category base, then to SI base
+        // Convert result to category base units
         const categoryBaseValue = result * toUnitData.factor * toPrefixData.factor;
         
-        // Find the SI base unit (the unit whose symbol matches baseSISymbol)
-        const cat = CONVERSION_DATA.find(c => c.id === activeCategory);
-        const siBaseUnit = cat?.units.find(u => u.symbol === cat.baseSISymbol);
+        // Convert from category base to SI base for storage in calculator
+        const siBaseValue = categoryToSIBase(categoryBaseValue, activeCategory);
         
-        // Convert from category base to SI base
-        const siBaseValue = siBaseUnit 
-          ? categoryBaseValue / siBaseUnit.factor 
-          : categoryBaseValue;
-        
-        // Auto-select best prefix for the calculator field
-        const bestPrefix = findBestPrefix(siBaseValue);
+        // Auto-select best prefix for display (based on category base value)
+        const bestPrefix = findBestPrefix(categoryBaseValue);
         
         const newCalcValues = [...calcValues];
         newCalcValues[firstEmptyIndex] = {
@@ -1649,20 +1668,13 @@ export default function UnitConverter() {
         const matchingCategory = findCategoryForDimensions(resultDimensions);
         setResultCategory(matchingCategory);
         if (matchingCategory) {
-          // For volume, default to Liter; for others, use SI base unit
-          if (matchingCategory === 'volume') {
-            setResultUnit('l');
-          } else {
-            setResultUnit(null);
-          }
+          // Find the default unit for this category (first unit matching baseSISymbol, or null for SI base)
+          const cat = CONVERSION_DATA.find(c => c.id === matchingCategory);
+          const defaultUnit = cat?.units.find(u => u.symbol === cat.baseSISymbol);
+          setResultUnit(defaultUnit ? defaultUnit.id : null);
           
-          // Convert result value to category's base unit
-          // For volume: 1 m³ = 1000 L, for area: 1 m² = 1 m² (no conversion needed)
-          let categoryBaseValue = resultValue;
-          if (matchingCategory === 'volume') {
-            // Volume category base is liter, calculator gives m³, so convert: 1 m³ = 1000 L
-            categoryBaseValue = resultValue * 1000;
-          }
+          // Convert result value from SI base to category base
+          const categoryBaseValue = siToCategoryBase(resultValue, matchingCategory);
           
           // Find best prefix to minimize the integer portion
           const bestPrefix = findBestPrefix(categoryBaseValue);
@@ -1694,10 +1706,7 @@ export default function UnitConverter() {
           setResultPrefix(toPrefix);
         } else {
           // Otherwise, use the best prefix based on the value
-          let categoryBaseValue = calcValues[3].value;
-          if (resultCategory === 'volume') {
-            categoryBaseValue = calcValues[3].value * 1000; // m³ to L
-          }
+          const categoryBaseValue = siToCategoryBase(calcValues[3].value, resultCategory);
           const bestPrefix = findBestPrefix(categoryBaseValue);
           setResultPrefix(bestPrefix);
         }
@@ -1710,10 +1719,7 @@ export default function UnitConverter() {
             setResultPrefix(toPrefix);
           } else {
             // Otherwise, use the best prefix based on the value
-            let categoryBaseValue = calcValues[3].value;
-            if (resultCategory === 'volume') {
-              categoryBaseValue = calcValues[3].value * 1000; // m³ to L
-            }
+            const categoryBaseValue = siToCategoryBase(calcValues[3].value, resultCategory);
             const bestPrefix = findBestPrefix(categoryBaseValue / unit.factor);
             setResultPrefix(bestPrefix);
           }
@@ -1771,10 +1777,7 @@ export default function UnitConverter() {
         
         if (unit) {
           // Convert from SI base units to category base units
-          let categoryBaseValue = calcValues[3].value;
-          if (resultCategory === 'volume') {
-            categoryBaseValue = calcValues[3].value * 1000; // m³ to L
-          }
+          const categoryBaseValue = siToCategoryBase(calcValues[3].value, resultCategory);
           valueToCopy = categoryBaseValue / unit.factor;
           unitSymbol = unit.symbol;
         }
@@ -2427,10 +2430,7 @@ export default function UnitConverter() {
                     const unit = cat?.units.find(u => u.id === resultUnit);
                     if (unit) {
                       // Convert from SI base units to category base units
-                      let categoryBaseValue = calcValues[3].value;
-                      if (resultCategory === 'volume') {
-                        categoryBaseValue = calcValues[3].value * 1000; // m³ to L
-                      }
+                      const categoryBaseValue = siToCategoryBase(calcValues[3].value, resultCategory);
                       // Apply the result prefix if the unit allows prefixes
                       const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
                       const prefixFactor = unit.allowPrefixes ? prefixData.factor : 1;
