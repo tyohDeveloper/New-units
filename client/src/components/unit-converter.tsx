@@ -2730,30 +2730,28 @@ export default function UnitConverter() {
             {/* Output Section */}
             <div className="grid gap-4">
               <Label className="text-xs font-mono uppercase text-muted-foreground">{t('To')}</Label>
-              <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2">
-                <div className="flex items-center justify-end gap-2 -mt-2 mb-1">
-                  <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
-                  <Select 
-                    value={precision.toString()} 
-                    onValueChange={(val) => { setPrecision(parseInt(val)); refocusInput(); }}
-                    onOpenChange={(open) => { if (!open) refocusInput(); }}
-                  >
-                    <SelectTrigger tabIndex={4} className="h-7 w-[70px] text-xs">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent align="end">
-                      {[0,1,2,3,4,5,6,7,8].map(n => (
-                        <SelectItem key={n} value={n.toString()} className="text-xs">
-                          {numberFormat === 'arabic' ? toArabicNumerals(n.toString()) : n}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="flex justify-end gap-2 -mt-2 mb-1">
+                <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
+                <Select 
+                  value={precision.toString()} 
+                  onValueChange={(val) => { setPrecision(parseInt(val)); refocusInput(); }}
+                  onOpenChange={(open) => { if (!open) refocusInput(); }}
+                >
+                  <SelectTrigger tabIndex={4} className="h-7 w-[70px] text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent align="end">
+                    {[0,1,2,3,4,5,6,7,8].map(n => (
+                      <SelectItem key={n} value={n.toString()} className="text-xs">
+                        {numberFormat === 'arabic' ? toArabicNumerals(n.toString()) : n}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2 -mt-2">
+              <div className="flex gap-2">
                 <motion.div 
-                  className={`h-16 px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start w-full select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
+                  className={`h-16 px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start flex-1 select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
                   style={{ minWidth: '220px', pointerEvents: 'auto' }}
                   onClick={() => result !== null && copyResult()}
                   animate={{
@@ -2789,7 +2787,7 @@ export default function UnitConverter() {
                   <SelectContent className="max-h-[70vh]">
                     {PREFIXES.map((p) => (
                       <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
-                        {p.symbol}
+                        {p.symbol || '-'}
                       </SelectItem>
                     ))}
                   </SelectContent>
