@@ -59,6 +59,7 @@ export const PREFIXES: Prefix[] = [
   { id: 'mega', name: 'Mega', symbol: 'M', factor: 1e6 },
   { id: 'kilo', name: 'Kilo', symbol: 'k', factor: 1e3 },
   { id: 'none', name: '', symbol: '', factor: 1 },
+  { id: 'centi', name: 'Centi', symbol: 'c', factor: 1e-2 },
   { id: 'milli', name: 'Milli', symbol: 'm', factor: 1e-3 },
   { id: 'micro', name: 'Micro', symbol: 'µ', factor: 1e-6 },
   { id: 'nano', name: 'Nano', symbol: 'n', factor: 1e-9 },
