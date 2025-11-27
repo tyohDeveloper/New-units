@@ -1670,38 +1670,29 @@ export default function UnitConverter() {
   }, [calcValues[0], calcValues[1], calcValues[2], calcOp1, calcOp2]);
 
   // Auto-select prefix when user manually changes result unit
+  // If the result category matches the active category, use the TO prefix instead of best prefix
   useEffect(() => {
     if (resultUnit && resultCategory && calcValues[3]) {
       const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
       const unit = cat?.units.find(u => u.id === resultUnit);
       if (unit?.allowPrefixes) {
-        // Convert result value to category's base unit
-        let categoryBaseValue = calcValues[3].value;
-        if (resultCategory === 'volume') {
-          categoryBaseValue = calcValues[3].value * 1000; // m³ to L
+        // If result category matches the active category, use the TO prefix
+        if (resultCategory === activeCategory) {
+          setResultPrefix(toPrefix);
+        } else {
+          // Otherwise, use the best prefix based on the value
+          let categoryBaseValue = calcValues[3].value;
+          if (resultCategory === 'volume') {
+            categoryBaseValue = calcValues[3].value * 1000; // m³ to L
+          }
+          const bestPrefix = findBestPrefix(categoryBaseValue / unit.factor);
+          setResultPrefix(bestPrefix);
         }
-        const bestPrefix = findBestPrefix(categoryBaseValue / unit.factor);
-        setResultPrefix(bestPrefix);
       } else {
         setResultPrefix('none');
       }
     }
-  }, [resultUnit]);
-
-  // Sync calculator result prefix with main converter's TO prefix when they're the same category
-  useEffect(() => {
-    if (resultUnit && resultCategory && calcValues[3]) {
-      // Check if the result category matches the active category in the main converter
-      if (resultCategory === activeCategory) {
-        const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-        const unit = cat?.units.find(u => u.id === resultUnit);
-        // If the unit allows prefixes, use the same prefix as the TO unit
-        if (unit?.allowPrefixes) {
-          setResultPrefix(toPrefix);
-        }
-      }
-    }
-  }, [toPrefix, resultCategory, activeCategory, resultUnit, calcValues[3]]);
+  }, [resultUnit, resultCategory, activeCategory, toPrefix, calcValues[3]]);
 
   const clearCalculator = () => {
     setCalcValues([null, null, null, null]);
