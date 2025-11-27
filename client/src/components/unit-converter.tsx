@@ -115,7 +115,7 @@ export default function UnitConverter() {
   const [selectedAlternative, setSelectedAlternative] = useState<number>(0); // Index of selected alternative representation
 
   // Number format state
-  type NumberFormat = 'us' | 'uk' | 'south-asian' | 'europe-latin' | 'swiss' | 'arabic' | 'arabic-latin' | 'east-asian' | 'period' | 'comma';
+  type NumberFormat = 'uk' | 'south-asian' | 'europe-latin' | 'swiss' | 'arabic' | 'arabic-latin' | 'east-asian' | 'period' | 'comma';
   const [numberFormat, setNumberFormat] = useState<NumberFormat>('uk');
   
   // Language state (ISO 639-1 codes)
@@ -139,7 +139,6 @@ export default function UnitConverter() {
   const [includeBeerWine, setIncludeBeerWine] = useState<boolean>(false);
 
   const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string; useArabicNumerals?: boolean; myriad?: boolean }> = {
-    'us': { name: 'US', thousands: ',', decimal: '.' },
     'uk': { name: 'English', thousands: ',', decimal: '.' },
     'south-asian': { name: 'South Asian (Indian)', thousands: ',', decimal: '.' },
     'europe-latin': { name: 'World', thousands: ' ', decimal: ',' },
@@ -227,7 +226,7 @@ export default function UnitConverter() {
     }
     
     // US-style formats use "meter" and "liter"
-    const usFormats: NumberFormat[] = ['us', 'arabic-latin', 'period'];
+    const usFormats: NumberFormat[] = ['arabic-latin', 'period'];
     
     if (usFormats.includes(numberFormat)) {
       // US English: use "meter" and "liter" spelling
@@ -2549,7 +2548,6 @@ export default function UnitConverter() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="us" className="text-xs">US</SelectItem>
                   <SelectItem value="uk" className="text-xs">English</SelectItem>
                   <SelectItem value="europe-latin" className="text-xs">World</SelectItem>
                   <SelectItem value="period" className="text-xs">Period</SelectItem>
