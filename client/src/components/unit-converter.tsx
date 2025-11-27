@@ -2154,7 +2154,16 @@ export default function UnitConverter() {
               )}
               <Select 
                 value={numberFormat} 
-                onValueChange={(val) => { setNumberFormat(val as NumberFormat); refocusInput(); }}
+                onValueChange={(val) => { 
+                  const newFormat = val as NumberFormat;
+                  // If switching away from Arabic formats, set language to English
+                  if ((numberFormat === 'arabic' || numberFormat === 'arabic-latin') && 
+                      newFormat !== 'arabic' && newFormat !== 'arabic-latin') {
+                    setLanguage('en');
+                  }
+                  setNumberFormat(newFormat); 
+                  refocusInput(); 
+                }}
                 onOpenChange={(open) => { if (!open) refocusInput(); }}
               >
                 <SelectTrigger tabIndex={6} className="h-6 w-[180px] text-xs">
