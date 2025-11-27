@@ -2266,9 +2266,13 @@ export default function UnitConverter() {
   // This rounds to 12 significant figures to remove errors like 999999999999.9998 -> 1000000000000
   const fixPrecision = (num: number): number => {
     if (num === 0) return 0;
-    const magnitude = Math.floor(Math.log10(Math.abs(num)));
-    const scale = Math.pow(10, 12 - magnitude - 1);
-    return Math.round(num * scale) / scale;
+    if (!isFinite(num)) return num;
+    
+    // Use toPrecision to round to 12 significant figures, then parse back
+    // This is more robust than manual multiplication which can overflow for large numbers
+    const precision = 12;
+    const result = parseFloat(num.toPrecision(precision));
+    return result;
   };
 
   const copyCalcResult = () => {
@@ -2329,9 +2333,18 @@ export default function UnitConverter() {
 
   // Helper to clean up trailing zeros from decimal numbers
   const cleanNumber = (num: number, precision: number): string => {
-    const fixed = toFixedBanker(num, precision);
+    // First apply fixPrecision to remove floating-point artifacts
+    const fixed = fixPrecision(num);
+    
+    // Limit precision based on magnitude to avoid floating-point overflow
+    // JavaScript has ~15-17 significant digits precision
+    // For large numbers, we can only show fewer decimal places
+    const magnitude = fixed === 0 ? 0 : Math.floor(Math.log10(Math.abs(fixed)));
+    const maxDecimals = Math.max(0, Math.min(precision, 14 - magnitude));
+    
+    const formatted = toFixedBanker(fixed, maxDecimals);
     // Remove trailing zeros after decimal point
-    const cleaned = fixed.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
+    const cleaned = formatted.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
     return cleaned;
   };
 
@@ -2367,7 +2380,8 @@ export default function UnitConverter() {
   // Helper to format number with separators based on selected format
   const formatNumberWithSeparators = (num: number, precision: number): string => {
     const format = NUMBER_FORMATS[numberFormat];
-    const cleaned = cleanNumber(fixPrecision(num), precision);
+    // cleanNumber already applies fixPrecision internally
+    const cleaned = cleanNumber(num, precision);
     const [integer, decimal] = cleaned.split('.');
     
     // Add thousands separator if format has one
