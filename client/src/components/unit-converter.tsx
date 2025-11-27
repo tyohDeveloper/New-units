@@ -2482,7 +2482,16 @@ export default function UnitConverter() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="base" className="text-xs font-mono">
-                              {CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"}
+                              {(() => {
+                                const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+                                if (!cat) return "SI Units";
+                                return (
+                                  <>
+                                    <span className="font-bold mr-2">{cat.baseSISymbol}</span>
+                                    <span className="opacity-70">{t(cat.baseUnit.charAt(0).toUpperCase() + cat.baseUnit.slice(1))}</span>
+                                  </>
+                                );
+                              })()}
                             </SelectItem>
                             {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
                               <SelectItem key={unit.id} value={unit.id} className="text-xs font-mono">
