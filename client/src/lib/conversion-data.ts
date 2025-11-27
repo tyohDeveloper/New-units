@@ -29,7 +29,6 @@ export type UnitCategory =
   | "catalytic"
   | "angle"
   | "solid_angle"
-  | "digital"
   | "luminous_flux"
   | "illuminance"
   | "luminous_exitance"
@@ -647,20 +646,6 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
   },
 
   // --- SPECIALIZED ---
-  {
-    id: "digital",
-    name: "Digital Storage",
-    baseUnit: "byte",
-    units: [
-      { id: "b", name: "Bit", symbol: "b", factor: 0.125 },
-      { id: "B", name: "Byte", symbol: "B", factor: 1 },
-      { id: "KB", name: "Kilobyte", symbol: "KB", factor: 1024 },
-      { id: "MB", name: "Megabyte", symbol: "MB", factor: 1048576 },
-      { id: "GB", name: "Gigabyte", symbol: "GB", factor: 1.074e9 },
-      { id: "TB", name: "Terabyte", symbol: "TB", factor: 1.1e12 },
-      { id: "PB", name: "Petabyte", symbol: "PB", factor: 1.126e15 },
-    ],
-  },
   {
     id: "luminance",
     name: "Luminance",
