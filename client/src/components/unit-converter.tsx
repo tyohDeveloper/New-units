@@ -1782,14 +1782,21 @@ export default function UnitConverter() {
   const copyResult = () => {
     if (result !== null && toUnitData) {
       let formattedResult = result.toString();
-      if (toUnit === 'deg_dms') formattedResult = formatDMS(result);
-      if (toUnit === 'ft_in') formattedResult = formatFtIn(result);
-
-      const unitSymbol = toUnitData?.symbol || '';
-      const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
+      let textToCopy: string;
       
-      // Include unit symbol with prefix in the copied text
-      const textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
+      // Special formats already include unit notation, don't append symbol
+      if (toUnit === 'deg_dms') {
+        formattedResult = formatDMS(result);
+        textToCopy = formattedResult;
+      } else if (toUnit === 'ft_in') {
+        formattedResult = formatFtIn(result);
+        textToCopy = formattedResult;
+      } else {
+        const unitSymbol = toUnitData?.symbol || '';
+        const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
+        textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
+      }
+      
       navigator.clipboard.writeText(textToCopy);
       
       // Trigger flash animation
