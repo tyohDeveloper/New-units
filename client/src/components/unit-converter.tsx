@@ -40,6 +40,8 @@ export default function UnitConverter() {
     temperature?: number;
     amount?: number;
     intensity?: number;
+    angle?: number;
+    solid_angle?: number;
   }
 
   interface CalcValue {
@@ -91,6 +93,10 @@ export default function UnitConverter() {
     { symbol: 'm²', category: 'area', unitId: 'm2', dimensions: { length: 2 }, allowPrefixes: true },
     // Volume (L)
     { symbol: 'L', category: 'volume', unitId: 'l', dimensions: { length: 3 }, allowPrefixes: true },
+    // Plane angle (rad)
+    { symbol: 'rad', category: 'angle', unitId: 'rad', dimensions: { angle: 1 }, allowPrefixes: true },
+    // Solid angle (sr)
+    { symbol: 'sr', category: 'solid_angle', unitId: 'sr', dimensions: { solid_angle: 1 }, allowPrefixes: true },
   ];
 
   // Alternative unit representation
@@ -1455,8 +1461,8 @@ export default function UnitConverter() {
       radiation_dose: { length: 2, time: -2 },
       equivalent_dose: { length: 2, time: -2 },
       catalytic: { amount: 1, time: -1 },
-      angle: {},
-      solid_angle: {},
+      angle: { angle: 1 },
+      solid_angle: { solid_angle: 1 },
       digital: {},
       luminous_flux: { intensity: 1 },
       illuminance: { intensity: 1, length: -2 },
@@ -1522,7 +1528,7 @@ export default function UnitConverter() {
   };
 
   // Helper: Format dimensional formula as unit string
-  // Order: time, length, mass, electric current, thermodynamic temperature, amount of substance, luminous intensity
+  // Order: time, length, mass, electric current, thermodynamic temperature, amount of substance, luminous intensity, angle, solid angle
   const formatDimensions = (dims: DimensionalFormula): string => {
     const dimSymbols: Record<keyof DimensionalFormula, string> = {
       time: 's',
@@ -1531,13 +1537,15 @@ export default function UnitConverter() {
       current: 'A',
       temperature: 'K',
       amount: 'mol',
-      intensity: 'cd'
+      intensity: 'cd',
+      angle: 'rad',
+      solid_angle: 'sr'
     };
 
     // Define the standard order for base units
-    // Order: kg → m → A → K → mol → cd → s
+    // Order: kg → m → A → K → mol → cd → s → rad → sr
     const dimensionOrder: (keyof DimensionalFormula)[] = [
-      'mass', 'length', 'current', 'temperature', 'amount', 'intensity', 'time'
+      'mass', 'length', 'current', 'temperature', 'amount', 'intensity', 'time', 'angle', 'solid_angle'
     ];
 
     const superscripts: Record<string, string> = {
@@ -1591,6 +1599,8 @@ export default function UnitConverter() {
       [JSON.stringify({ temperature: 1 })]: 'K',
       [JSON.stringify({ amount: 1 })]: 'mol',
       [JSON.stringify({ intensity: 1 })]: 'cd',
+      [JSON.stringify({ angle: 1 })]: 'rad',
+      [JSON.stringify({ solid_angle: 1 })]: 'sr',
       // Derived units
       [JSON.stringify({ length: 2 })]: 'm²',
       [JSON.stringify({ length: 3 })]: 'm³',
