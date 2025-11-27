@@ -377,7 +377,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "coulomb",
     baseSISymbol: "A⋅s",
     units: [
-      { id: "c", name: "Coulomb", symbol: "C", factor: 1 },
+      { id: "c", name: "Coulomb", symbol: "C", factor: 1, allowPrefixes: true },
       { id: "mah", name: "Milliamp-hour", symbol: "mAh", factor: 3.6 },
       { id: "ah", name: "Ampere-hour", symbol: "Ah", factor: 3600 },
       { id: "faraday", name: "Faraday", symbol: "F", factor: 96485 },
@@ -417,7 +417,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "siemens",
     baseSISymbol: "kg⁻¹⋅m⁻²⋅s³⋅A²",
     units: [
-      { id: "s", name: "Siemens", symbol: "S", factor: 1 },
+      { id: "s", name: "Siemens", symbol: "S", factor: 1, allowPrefixes: true },
       { id: "mho", name: "Mho", symbol: "℧", factor: 1 },
     ],
   },
@@ -427,7 +427,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "weber",
     baseSISymbol: "kg⋅m²⋅s⁻²⋅A⁻¹",
     units: [
-      { id: "wb", name: "Weber", symbol: "Wb", factor: 1 },
+      { id: "wb", name: "Weber", symbol: "Wb", factor: 1, allowPrefixes: true },
       { id: "mx", name: "Maxwell", symbol: "Mx", factor: 1e-8 },
     ],
   },
@@ -437,7 +437,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "tesla",
     baseSISymbol: "kg⋅s⁻²⋅A⁻¹",
     units: [
-      { id: "t", name: "Tesla", symbol: "T", factor: 1 },
+      { id: "t", name: "Tesla", symbol: "T", factor: 1, allowPrefixes: true },
       { id: "g", name: "Gauss", symbol: "G", factor: 1e-4 },
     ],
   },
@@ -458,7 +458,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "becquerel",
     baseSISymbol: "s⁻¹",
     units: [
-      { id: "bq", name: "Becquerel", symbol: "Bq", factor: 1 },
+      { id: "bq", name: "Becquerel", symbol: "Bq", factor: 1, allowPrefixes: true },
       { id: "ci", name: "Curie", symbol: "Ci", factor: 3.7e10 },
       { id: "rd", name: "Rutherford", symbol: "Rd", factor: 1e6 },
     ],
@@ -469,7 +469,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "gray",
     baseSISymbol: "m²⋅s⁻²",
     units: [
-      { id: "gy", name: "Gray", symbol: "Gy", factor: 1 },
+      { id: "gy", name: "Gray", symbol: "Gy", factor: 1, allowPrefixes: true },
       { id: "rad", name: "Rad", symbol: "rad", factor: 0.01 },
     ],
   },
@@ -479,7 +479,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "sievert",
     baseSISymbol: "m²⋅s⁻²",
     units: [
-      { id: "sv", name: "Sievert", symbol: "Sv", factor: 1 },
+      { id: "sv", name: "Sievert", symbol: "Sv", factor: 1, allowPrefixes: true },
       { id: "rem", name: "Rem", symbol: "rem", factor: 0.01 },
     ],
   },
@@ -489,7 +489,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "katal",
     baseSISymbol: "mol⋅s⁻¹",
     units: [
-      { id: "kat", name: "Katal", symbol: "kat", factor: 1 },
+      { id: "kat", name: "Katal", symbol: "kat", factor: 1, allowPrefixes: true },
       { id: "u", name: "Enzyme Unit", symbol: "U", factor: 1.667e-8 },
     ],
   },
@@ -515,7 +515,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "steradian",
     baseSISymbol: "m²⋅m⁻²",
     units: [
-      { id: "sr", name: "Steradian", symbol: "sr", factor: 1 },
+      { id: "sr", name: "Steradian", symbol: "sr", factor: 1, allowPrefixes: true },
       { id: "sp", name: "Spat", symbol: "sp", factor: 12.56637 },
       { id: "sqdeg", name: "Square Degree", symbol: "deg²", factor: 0.0003046 },
     ],
@@ -608,7 +608,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "lux",
     baseSISymbol: "cd⋅sr⋅m⁻²",
     units: [
-      { id: "lx", name: "Lux", symbol: "lx", factor: 1 },
+      { id: "lx", name: "Lux", symbol: "lx", factor: 1, allowPrefixes: true },
       { id: "fc", name: "Foot-candle", symbol: "fc", factor: 10.7639 },
       { id: "ph", name: "Phot", symbol: "ph", factor: 10000 },
       { id: "nox", name: "Nox", symbol: "nox", factor: 0.001 },
