@@ -1472,17 +1472,14 @@ export default function UnitConverter() {
       setFlashCopyResult(true);
       setTimeout(() => setFlashCopyResult(false), 300);
       
-      // Add to calculator (first three fields only) - convert to category base units first, then to SI base
+      // Add to calculator (first three fields only) - convert to SI base units
       const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
       if (firstEmptyIndex !== -1) {
-        // Convert result to category base units
-        const categoryBaseValue = result * toUnitData.factor * toPrefixData.factor;
+        // Convert result to SI base units (which equals category base for most categories)
+        const siBaseValue = result * toUnitData.factor * toPrefixData.factor;
         
-        // Convert from category base to SI base for storage in calculator
-        const siBaseValue = categoryToSIBase(categoryBaseValue, activeCategory);
-        
-        // Auto-select best prefix for display (based on category base value)
-        const bestPrefix = findBestPrefix(categoryBaseValue);
+        // Auto-select best prefix for display
+        const bestPrefix = findBestPrefix(siBaseValue);
         
         const newCalcValues = [...calcValues];
         newCalcValues[firstEmptyIndex] = {
@@ -1668,16 +1665,11 @@ export default function UnitConverter() {
         const matchingCategory = findCategoryForDimensions(resultDimensions);
         setResultCategory(matchingCategory);
         if (matchingCategory) {
-          // Find the default unit for this category (first unit matching baseSISymbol, or null for SI base)
-          const cat = CONVERSION_DATA.find(c => c.id === matchingCategory);
-          const defaultUnit = cat?.units.find(u => u.symbol === cat.baseSISymbol);
-          setResultUnit(defaultUnit ? defaultUnit.id : null);
+          // Use SI base unit (null means use baseSISymbol)
+          setResultUnit(null);
           
-          // Convert result value from SI base to category base
-          const categoryBaseValue = siToCategoryBase(resultValue, matchingCategory);
-          
-          // Find best prefix to minimize the integer portion
-          const bestPrefix = findBestPrefix(categoryBaseValue);
+          // Find best prefix based on SI base value
+          const bestPrefix = findBestPrefix(resultValue);
           setResultPrefix(bestPrefix);
         }
       }
@@ -1705,9 +1697,8 @@ export default function UnitConverter() {
         if (resultCategory === activeCategory) {
           setResultPrefix(toPrefix);
         } else {
-          // Otherwise, use the best prefix based on the value
-          const categoryBaseValue = siToCategoryBase(calcValues[3].value, resultCategory);
-          const bestPrefix = findBestPrefix(categoryBaseValue);
+          // Otherwise, use the best prefix based on the SI base value
+          const bestPrefix = findBestPrefix(calcValues[3].value);
           setResultPrefix(bestPrefix);
         }
       } else if (resultUnit) {
@@ -1719,8 +1710,7 @@ export default function UnitConverter() {
             setResultPrefix(toPrefix);
           } else {
             // Otherwise, use the best prefix based on the value
-            const categoryBaseValue = siToCategoryBase(calcValues[3].value, resultCategory);
-            const bestPrefix = findBestPrefix(categoryBaseValue / unit.factor);
+            const bestPrefix = findBestPrefix(calcValues[3].value / unit.factor);
             setResultPrefix(bestPrefix);
           }
         } else {
@@ -1770,19 +1760,14 @@ export default function UnitConverter() {
       let valueToCopy = calcValues[3].value;
       let unitSymbol = '';
       
-      // If user has selected a specific unit, convert to that unit
-      if (resultUnit && resultCategory) {
+      // If result has a category, use SI base unit
+      if (resultCategory) {
         const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-        const unit = cat?.units.find(u => u.id === resultUnit);
-        
-        if (unit) {
-          // Convert from SI base units to category base units
-          const categoryBaseValue = siToCategoryBase(calcValues[3].value, resultCategory);
-          valueToCopy = categoryBaseValue / unit.factor;
-          unitSymbol = unit.symbol;
-        }
+        const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
+        valueToCopy = calcValues[3].value / prefixData.factor;
+        unitSymbol = `${prefixData.symbol}${cat?.baseSISymbol || ''}`;
       } else {
-        // Use dimensional formula if no specific unit selected
+        // Use dimensional formula if no category
         const val = calcValues[3];
         const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
         valueToCopy = val.value / prefix.factor;
@@ -2425,19 +2410,13 @@ export default function UnitConverter() {
             <div className="flex gap-2">
               <div className="h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between flex-1">
                 <span className="text-sm font-mono text-primary font-bold truncate">
-                  {calcValues[3] && resultUnit && resultCategory ? (() => {
-                    const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                    const unit = cat?.units.find(u => u.id === resultUnit);
-                    if (unit) {
-                      // Convert from SI base units to category base units
-                      const categoryBaseValue = siToCategoryBase(calcValues[3].value, resultCategory);
-                      // Apply the result prefix if the unit allows prefixes
-                      const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
-                      const prefixFactor = unit.allowPrefixes ? prefixData.factor : 1;
-                      const convertedValue = categoryBaseValue / (unit.factor * prefixFactor);
-                      return formatNumberWithSeparators(convertedValue, calculatorPrecision);
-                    }
-                    return formatNumberWithSeparators(calcValues[3].value, calculatorPrecision);
+                  {calcValues[3] && resultCategory ? (() => {
+                    const val = calcValues[3];
+                    if (!val) return '';
+                    // Display using SI base unit with selected prefix
+                    const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
+                    const displayValue = val.value / prefixData.factor;
+                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : calcValues[3] ? (() => {
                     const val = calcValues[3];
                     if (!val) return '';
@@ -2447,16 +2426,15 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[3] && resultUnit && resultCategory ? (() => {
+                  {calcValues[3] && resultCategory ? (() => {
                     const val = calcValues[3];
                     if (!val) return '';
                     const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                    const unit = cat?.units.find(u => u.id === resultUnit);
-                    if (!unit) return formatDimensions(val.dimensions);
-                    // Include prefix symbol if unit allows prefixes
+                    if (!cat) return formatDimensions(val.dimensions);
+                    // Display SI base unit symbol with prefix
                     const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
-                    const prefixSymbol = unit.allowPrefixes && resultPrefix !== 'none' ? prefixData.symbol : '';
-                    return `${prefixSymbol}${unit.symbol}`;
+                    const prefixSymbol = resultPrefix !== 'none' ? prefixData.symbol : '';
+                    return `${prefixSymbol}${cat.baseSISymbol}`;
                   })() : calcValues[3] ? (() => {
                     const val = calcValues[3];
                     if (!val) return '';
@@ -2473,13 +2451,8 @@ export default function UnitConverter() {
                         <Select 
                           value={resultPrefix} 
                           onValueChange={setResultPrefix}
-                          disabled={(() => {
-                            const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                            const unit = cat?.units.find(u => u.id === resultUnit);
-                            return !unit?.allowPrefixes;
-                          })()}
                         >
-                          <SelectTrigger className="h-9 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                          <SelectTrigger className="h-9 w-[50px] text-xs shrink-0">
                             <SelectValue placeholder={t('Prefix')} />
                           </SelectTrigger>
                           <SelectContent className="max-h-[300px]">
@@ -2490,48 +2463,14 @@ export default function UnitConverter() {
                             ))}
                           </SelectContent>
                         </Select>
-                        <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
-                          <SelectTrigger className="h-9 flex-1 text-xs">
-                            <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
-                          </SelectTrigger>
-                          <SelectContent>
+                        <div className="h-9 px-3 bg-muted/30 border border-border rounded-md flex items-center flex-1">
+                          <span className="text-xs font-mono text-muted-foreground">
                             {(() => {
                               const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                              if (!cat) return null;
-                              
-                              // Filter based on beer/wine checkbox
-                              let units = resultCategory === 'volume' && !includeBeerWine 
-                                ? cat.units.filter(u => !u.beerWine)
-                                : cat.units;
-                              
-                              // Check if base SI unit exists in units array with same symbol
-                              const baseUnitExists = units.some(u => u.symbol === cat.baseSISymbol);
-                              
-                              return (
-                                <>
-                                  {!baseUnitExists && (
-                                    <SelectItem value="base" className="text-xs font-mono">
-                                      <span className="font-bold mr-2">{cat.baseSISymbol}</span>
-                                      <span className="opacity-70">{t(cat.baseUnit.charAt(0).toUpperCase() + cat.baseUnit.slice(1))}</span>
-                                    </SelectItem>
-                                  )}
-                                  {units.map(unit => (
-                                    <SelectItem key={unit.id} value={unit.id} className="text-xs font-mono">
-                                      {unit.symbol === unit.name ? (
-                                        <span className="font-bold">{unit.symbol}</span>
-                                      ) : (
-                                        <>
-                                          <span className="font-bold mr-2">{unit.symbol}</span>
-                                          <span className="opacity-70">{translateUnitName(unit.name)}</span>
-                                        </>
-                                      )}
-                                    </SelectItem>
-                                  ))}
-                                </>
-                              );
+                              return cat?.baseSISymbol || 'SI';
                             })()}
-                          </SelectContent>
-                        </Select>
+                          </span>
+                        </div>
                       </>
                     ) : (
                       <Select value="unitless" disabled>
