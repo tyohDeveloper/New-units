@@ -285,7 +285,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "m⋅s⁻¹",
     units: [
       { id: "mps", name: "Meter/Second", symbol: "m⋅s⁻¹", factor: 1 },
-      { id: "kmh", name: "Kilometer/Hour", symbol: "km/h", factor: 0.277778 },
+      { id: "kmh", name: "Kilometer/Hour", symbol: "km⋅h⁻¹", factor: 0.277778 },
       { id: "mph", name: "Mile/Hour", symbol: "mph", factor: 0.44704 },
       { id: "kn", name: "Knot", symbol: "kn", factor: 0.514444 },
       { id: "mach", name: "Mach", symbol: "Ma", factor: 343 },
@@ -300,7 +300,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     units: [
       { id: "mps2", name: "Meter/sq sec", symbol: "m⋅s⁻²", factor: 1 },
       { id: "g", name: "g-force", symbol: "g", factor: 9.80665 },
-      { id: "ftps2", name: "Foot/sq sec", symbol: "ft/s²", factor: 0.3048 },
+      { id: "ftps2", name: "Foot/sq sec", symbol: "ft⋅s⁻²", factor: 0.3048 },
       { id: "gal", name: "Gal", symbol: "Gal", factor: 0.01 },
     ],
   },
@@ -527,9 +527,9 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "kg/m³",
     baseSISymbol: "kg⋅m⁻³",
     units: [
-      { id: "kgm3", name: "kg/m³", symbol: "kg/m³", factor: 1 },
-      { id: "gcm3", name: "g/cm³", symbol: "g/cm³", factor: 1000 },
-      { id: "lbft3", name: "lb/ft³", symbol: "lb/ft³", factor: 16.0185 },
+      { id: "kgm3", name: "kg/m³", symbol: "kg⋅m⁻³", factor: 1 },
+      { id: "gcm3", name: "g/cm³", symbol: "g⋅cm⁻³", factor: 1000 },
+      { id: "lbft3", name: "lb/ft³", symbol: "lb⋅ft⁻³", factor: 16.0185 },
     ],
   },
   {
@@ -549,11 +549,11 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "newton/meter",
     baseSISymbol: "kg⋅s⁻²",
     units: [
-      { id: "nm", name: "Newton/meter", symbol: "N/m", factor: 1 },
+      { id: "nm", name: "Newton/meter", symbol: "N⋅m⁻¹", factor: 1 },
       {
         id: "dynecm",
         name: "Dyne/centimeter",
-        symbol: "dyn/cm",
+        symbol: "dyn⋅cm⁻¹",
         factor: 0.001,
       },
     ],
@@ -577,8 +577,8 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "L⋅s⁻¹",
     units: [
       { id: "ls", name: "Liter/second", symbol: "L⋅s⁻¹", factor: 0.001 },
-      { id: "lmin", name: "Liter/minute", symbol: "L/min", factor: 1.6667e-5 },
-      { id: "m3s", name: "m³/s", symbol: "m³/s", factor: 1 },
+      { id: "lmin", name: "Liter/minute", symbol: "L⋅min⁻¹", factor: 1.6667e-5 },
+      { id: "m3s", name: "m³/s", symbol: "m³⋅s⁻¹", factor: 1 },
       {
         id: "cfm",
         name: "Cubic ft/minute",
@@ -619,7 +619,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "lumen/square-meter",
     baseSISymbol: "cd⋅sr⋅m⁻²",
     units: [
-      { id: "lmm2", name: "Lumen/m²", symbol: "lm/m²", factor: 1 },
+      { id: "lmm2", name: "Lumen/m²", symbol: "lm⋅m⁻²", factor: 1 },
     ],
   },
   {
@@ -640,7 +640,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     units: [
       { id: "pa", name: "Pascal", symbol: "Pa", factor: 1 },
       { id: "bar", name: "Microbar", symbol: "µbar", factor: 0.1 },
-      { id: "dyncm2", name: "Dyne/cm²", symbol: "dyn/cm²", factor: 0.1 },
+      { id: "dyncm2", name: "Dyne/cm²", symbol: "dyn⋅cm⁻²", factor: 0.1 },
     ],
   },
 
@@ -665,7 +665,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "candela/square-meter",
     baseSISymbol: "cd⋅m⁻²",
     units: [
-      { id: "cdm2", name: "Candela/m²", symbol: "cd/m²", factor: 1 },
+      { id: "cdm2", name: "Candela/m²", symbol: "cd⋅m⁻²", factor: 1 },
       { id: "nit", name: "Nit", symbol: "nt", factor: 1 },
       { id: "stilb", name: "Stilb", symbol: "sb", factor: 10000 },
       { id: "lambert", name: "Lambert", symbol: "L", factor: 3183.1 },
