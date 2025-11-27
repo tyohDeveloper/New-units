@@ -2937,7 +2937,16 @@ export default function UnitConverter() {
                           disabled={(() => {
                             const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                             const unit = cat?.units.find(u => u.id === resultUnit);
-                            return resultUnit === null ? false : !unit?.allowPrefixes;
+                            // For base SI unit (resultUnit === null), check if the category's first SI unit allows prefixes
+                            // For mass, kg is the base but doesn't allow prefixes (use g instead)
+                            if (resultUnit === null) {
+                              // Find the primary SI unit for this category (the one with factor=1 and allowPrefixes)
+                              const primarySI = cat?.units.find(u => u.factor === 1 && u.allowPrefixes);
+                              // If there's a primary SI unit with allowPrefixes, enable prefixes
+                              // Otherwise, disable (e.g., mass base is kg which doesn't have allowPrefixes)
+                              return primarySI ? false : true;
+                            }
+                            return !unit?.allowPrefixes;
                           })()}
                         >
                           <SelectTrigger className="h-9 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
