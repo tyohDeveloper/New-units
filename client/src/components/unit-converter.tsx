@@ -2291,16 +2291,19 @@ export default function UnitConverter() {
       } else {
         // Use selected alternative representation if available, otherwise dimensional formula
         const val = calcValues[3];
-        const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-        valueToCopy = fixPrecision(val.value / prefix.factor);
-        
-        // Use the same alternative representation that's being displayed
         const alternatives = generateAlternativeRepresentations(val.dimensions);
-        if (selectedAlternative < alternatives.length) {
-          unitSymbol = `${prefix.symbol}${alternatives[selectedAlternative].displaySymbol}`;
-        } else {
-          unitSymbol = `${prefix.symbol}${formatDimensions(val.dimensions)}`;
-        }
+        const currentAltSymbol = selectedAlternative < alternatives.length 
+          ? alternatives[selectedAlternative].displaySymbol 
+          : formatDimensions(val.dimensions);
+        const containsKg = currentAltSymbol.includes('kg');
+        
+        // Only apply prefix if display doesn't contain kg
+        const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
+        const prefixFactor = containsKg ? 1 : prefixData.factor;
+        valueToCopy = fixPrecision(val.value / prefixFactor);
+        
+        const prefixSymbol = (!containsKg && resultPrefix !== 'none') ? prefixData.symbol : '';
+        unitSymbol = `${prefixSymbol}${currentAltSymbol}`;
       }
       
       // Copy with only decimal separator, no thousands separator
@@ -3101,8 +3104,17 @@ export default function UnitConverter() {
                   })() : calcValues[3] ? (() => {
                     const val = calcValues[3];
                     if (!val) return '';
-                    const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    const displayValue = val.value / prefix.factor;
+                    // For complex dimensions, check if display contains kg to determine prefix usage
+                    const alternatives = generateAlternativeRepresentations(val.dimensions);
+                    const currentAltSymbol = selectedAlternative < alternatives.length 
+                      ? alternatives[selectedAlternative].displaySymbol 
+                      : formatDimensions(val.dimensions);
+                    const containsKg = currentAltSymbol.includes('kg');
+                    
+                    // Only apply prefix if display doesn't contain kg
+                    const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
+                    const prefixFactor = containsKg ? 1 : prefixData.factor;
+                    const displayValue = val.value / prefixFactor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : ''}
                 </span>
@@ -3131,13 +3143,17 @@ export default function UnitConverter() {
                   })() : calcValues[3] ? (() => {
                     const val = calcValues[3];
                     if (!val) return '';
-                    // For complex dimensions, use selected alternative representation
+                    // For complex dimensions, use selected alternative representation with prefix
                     const alternatives = generateAlternativeRepresentations(val.dimensions);
-                    if (selectedAlternative < alternatives.length) {
-                      return alternatives[selectedAlternative].displaySymbol;
-                    }
-                    // Fallback to raw dimensions
-                    return formatDimensions(val.dimensions);
+                    const currentAltSymbol = selectedAlternative < alternatives.length 
+                      ? alternatives[selectedAlternative].displaySymbol 
+                      : formatDimensions(val.dimensions);
+                    const containsKg = currentAltSymbol.includes('kg');
+                    
+                    // Only show prefix if display doesn't contain kg
+                    const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
+                    const prefixSymbol = (!containsKg && resultPrefix !== 'none') ? prefixData.symbol : '';
+                    return `${prefixSymbol}${currentAltSymbol}`;
                   })() : ''}
                 </span>
               </motion.div>
@@ -3239,22 +3255,46 @@ export default function UnitConverter() {
                         // Generate alternative representations
                         const alternatives = generateAlternativeRepresentations(val.dimensions);
                         
+                        // Check if current alternative display contains "kg" - if so, disable prefix
+                        const currentAltSymbol = selectedAlternative < alternatives.length 
+                          ? alternatives[selectedAlternative].displaySymbol 
+                          : formatDimensions(val.dimensions);
+                        const containsKg = currentAltSymbol.includes('kg');
+                        
                         return (
-                          <Select 
-                            value={selectedAlternative.toString()} 
-                            onValueChange={(val) => setSelectedAlternative(parseInt(val))}
-                          >
-                            <SelectTrigger className="h-9 flex-1 text-xs">
-                              <SelectValue placeholder="Select representation" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {alternatives.map((alt, index) => (
-                                <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
-                                  <span className="font-bold">{alt.displaySymbol}</span>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <>
+                            <Select 
+                              value={resultPrefix} 
+                              onValueChange={setResultPrefix}
+                              disabled={containsKg}
+                            >
+                              <SelectTrigger className="h-9 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                                <SelectValue placeholder={t('Prefix')} />
+                              </SelectTrigger>
+                              <SelectContent className="max-h-[300px]">
+                                {PREFIXES.map((p) => (
+                                  <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
+                                    {p.symbol || ''}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Select 
+                              value={selectedAlternative.toString()} 
+                              onValueChange={(val) => setSelectedAlternative(parseInt(val))}
+                            >
+                              <SelectTrigger className="h-9 flex-1 text-xs">
+                                <SelectValue placeholder="Select representation" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {alternatives.map((alt, index) => (
+                                  <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
+                                    <span className="font-bold">{alt.displaySymbol}</span>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </>
                         );
                       })()
                     )}
