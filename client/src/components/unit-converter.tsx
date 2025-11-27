@@ -2565,7 +2565,7 @@ export default function UnitConverter() {
                 onOpenChange={(open) => { if (!open) refocusInput(); }}
                 disabled={numberFormat === 'arabic' || numberFormat === 'arabic-latin'}
               >
-                <SelectTrigger tabIndex={7} className="h-6 w-[60px] text-xs">
+                <SelectTrigger tabIndex={7} className="h-6 w-[75px] text-xs">
                   <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent className="max-h-[300px]">
