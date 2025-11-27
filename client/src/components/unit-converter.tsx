@@ -2471,7 +2471,7 @@ export default function UnitConverter() {
                           <SelectContent className="max-h-[300px]">
                             {PREFIXES.map((p) => (
                               <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
-                                {p.symbol || t('None')}
+                                {p.symbol || ''}
                               </SelectItem>
                             ))}
                           </SelectContent>
