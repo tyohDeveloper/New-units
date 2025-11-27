@@ -22,6 +22,9 @@ export default function UnitConverter() {
   const [calculatorPrecision, setCalculatorPrecision] = useState<number>(8);
   const [flashCopyResult, setFlashCopyResult] = useState<boolean>(false);
   const [flashCopyCalc, setFlashCopyCalc] = useState<boolean>(false);
+  const [flashCalcField1, setFlashCalcField1] = useState<boolean>(false);
+  const [flashCalcField2, setFlashCalcField2] = useState<boolean>(false);
+  const [flashCalcField3, setFlashCalcField3] = useState<boolean>(false);
 
   // Dimensional formula tracking for calculator
   interface DimensionalFormula {
@@ -2180,6 +2183,35 @@ export default function UnitConverter() {
     });
   };
 
+  // Copy calculator field to clipboard and flash
+  const copyCalcField = (fieldIndex: number) => {
+    const val = calcValues[fieldIndex];
+    if (!val) return;
+    
+    const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
+    const displayValue = val.value / prefix.factor;
+    const unitSymbol = `${prefix.symbol}${formatDimensions(val.dimensions)}`;
+    
+    // Copy with only decimal separator, no thousands separator
+    const format = NUMBER_FORMATS[numberFormat];
+    const valueStr = cleanNumber(displayValue, calculatorPrecision);
+    const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
+    const textToCopy = unitSymbol ? `${formattedStr} ${unitSymbol}` : formattedStr;
+    navigator.clipboard.writeText(textToCopy);
+    
+    // Trigger flash animation for the specific field
+    if (fieldIndex === 0) {
+      setFlashCalcField1(true);
+      setTimeout(() => setFlashCalcField1(false), 300);
+    } else if (fieldIndex === 1) {
+      setFlashCalcField2(true);
+      setTimeout(() => setFlashCalcField2(false), 300);
+    } else if (fieldIndex === 2) {
+      setFlashCalcField3(true);
+      setTimeout(() => setFlashCalcField3(false), 300);
+    }
+  };
+
   const copyCalcResult = () => {
     if (calcValues[3]) {
       let valueToCopy = calcValues[3].value;
@@ -2733,7 +2765,15 @@ export default function UnitConverter() {
           <div className="space-y-2">
             {/* Field 1 */}
             <div className="flex gap-2">
-              <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1">
+              <motion.div 
+                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 ${calcValues[0] ? 'cursor-pointer hover:bg-muted/50' : ''}`}
+                onClick={() => copyCalcField(0)}
+                animate={{
+                  opacity: flashCalcField1 ? [1, 0.3, 1] : 1,
+                  scale: flashCalcField1 ? [1, 1.02, 1] : 1
+                }}
+                transition={{ duration: 0.3 }}
+              >
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[0] ? (() => {
                     const val = calcValues[0];
@@ -2751,7 +2791,7 @@ export default function UnitConverter() {
                     return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
                 </span>
-              </div>
+              </motion.div>
               <div className="flex gap-1 justify-end w-[220px]">
                 <Button 
                   variant="ghost" 
@@ -2767,7 +2807,15 @@ export default function UnitConverter() {
 
             {/* Field 2 */}
             <div className="flex gap-2">
-              <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1">
+              <motion.div 
+                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50' : ''}`}
+                onClick={() => copyCalcField(1)}
+                animate={{
+                  opacity: flashCalcField2 ? [1, 0.3, 1] : 1,
+                  scale: flashCalcField2 ? [1, 1.02, 1] : 1
+                }}
+                transition={{ duration: 0.3 }}
+              >
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[1] ? (() => {
                     const val = calcValues[1];
@@ -2785,7 +2833,7 @@ export default function UnitConverter() {
                     return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
                 </span>
-              </div>
+              </motion.div>
               <div className="flex gap-1 justify-between w-[220px]">
                 <div className="flex gap-1">
                   <Button 
@@ -2819,7 +2867,15 @@ export default function UnitConverter() {
 
             {/* Field 3 */}
             <div className="flex gap-2">
-              <div className="h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1">
+              <motion.div 
+                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50' : ''}`}
+                onClick={() => copyCalcField(2)}
+                animate={{
+                  opacity: flashCalcField3 ? [1, 0.3, 1] : 1,
+                  scale: flashCalcField3 ? [1, 1.02, 1] : 1
+                }}
+                transition={{ duration: 0.3 }}
+              >
                 <span className="text-sm font-mono text-foreground truncate">
                   {calcValues[2] ? (() => {
                     const val = calcValues[2];
@@ -2837,7 +2893,7 @@ export default function UnitConverter() {
                     return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
                 </span>
-              </div>
+              </motion.div>
               <div className="flex gap-1 justify-between w-[220px]">
                 <div className="flex gap-1">
                   <Button 
