@@ -2397,7 +2397,7 @@ export default function UnitConverter() {
                 </Select>
               </div>
               <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2">
-                <div className="h-16 px-4 bg-muted/30 border border-border/50 rounded-md flex items-center overflow-x-auto text-left justify-start w-full min-w-0">
+                <div className="h-16 px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start w-full min-w-0">
                   <span className="text-2xl font-mono text-primary break-all whitespace-nowrap">
                     {result !== null 
                       ? (toUnit === 'deg_dms' 
