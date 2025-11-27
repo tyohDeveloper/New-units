@@ -178,7 +178,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
         factor: 0.5555555555555556,
         offset: -32,
       },
-      { id: "k", name: "Kelvin", symbol: "K", factor: 1, offset: -273.15 },
+      { id: "k", name: "Kelvin", symbol: "K", factor: 1, offset: -273.15, allowPrefixes: true },
       {
         id: "r",
         name: "Rankine",
