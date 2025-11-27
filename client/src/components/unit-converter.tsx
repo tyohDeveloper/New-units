@@ -2729,27 +2729,31 @@ export default function UnitConverter() {
 
             {/* Output Section */}
             <div className="grid gap-4">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-mono uppercase text-muted-foreground">{t('To')}</Label>
-                <div className="flex items-center gap-2">
-                  <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
-                  <Select 
-                    value={precision.toString()} 
-                    onValueChange={(val) => { setPrecision(parseInt(val)); refocusInput(); }}
-                    onOpenChange={(open) => { if (!open) refocusInput(); }}
-                  >
-                    <SelectTrigger tabIndex={4} className="h-7 w-[70px] text-xs">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent align="end">
-                      {[0,1,2,3,4,5,6,7,8].map(n => (
-                        <SelectItem key={n} value={n.toString()} className="text-xs">
-                          {numberFormat === 'arabic' ? toArabicNumerals(n.toString()) : n}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between flex-1" style={{ minWidth: '220px' }}>
+                  <Label className="text-xs font-mono uppercase text-muted-foreground">{t('To')}</Label>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
+                    <Select 
+                      value={precision.toString()} 
+                      onValueChange={(val) => { setPrecision(parseInt(val)); refocusInput(); }}
+                      onOpenChange={(open) => { if (!open) refocusInput(); }}
+                    >
+                      <SelectTrigger tabIndex={4} className="h-7 w-[70px] text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent align="end">
+                        {[0,1,2,3,4,5,6,7,8].map(n => (
+                          <SelectItem key={n} value={n.toString()} className="text-xs">
+                            {numberFormat === 'arabic' ? toArabicNumerals(n.toString()) : n}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
+                <div className="w-[50px] shrink-0"></div>
+                <div className="w-[220px] shrink-0"></div>
               </div>
               <div className="flex gap-2">
                 <motion.div 
