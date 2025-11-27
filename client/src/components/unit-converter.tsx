@@ -1789,8 +1789,7 @@ export default function UnitConverter() {
         // Convert result to SI base units (which equals category base for most categories)
         const siBaseValue = result * toUnitData.factor * toPrefixData.factor;
         
-        // Auto-select best prefix for display (but not for mass - always use kg without prefix)
-        const bestPrefix = activeCategory === 'mass' ? 'none' : findBestPrefix(siBaseValue);
+        const bestPrefix = 'none';
         
         const newCalcValues = [...calcValues];
         newCalcValues[firstEmptyIndex] = {
@@ -2106,15 +2105,12 @@ export default function UnitConverter() {
       // Check if result is dimensionless (unitless)
       const isDimensionless = Object.keys(resultDimensions).length === 0;
       
-      // Auto-select best prefix for result field (only if not dimensionless)
-      const resultBestPrefix = isDimensionless ? 'none' : findBestPrefix(resultValue);
-      
       setCalcValues(prev => {
         const newValues = [...prev];
         newValues[3] = {
           value: resultValue,
           dimensions: resultDimensions,
-          prefix: resultBestPrefix
+          prefix: 'none'
         };
         return newValues;
       });
@@ -2138,14 +2134,10 @@ export default function UnitConverter() {
           const primaryUnit = cat?.units.find(u => u.allowPrefixes);
           if (primaryUnit) {
             setResultUnit(primaryUnit.id);
-            // Find best prefix for the primary unit
-            const unitValue = resultValue / primaryUnit.factor;
-            const bestPrefix = findBestPrefix(unitValue);
-            setResultPrefix(bestPrefix);
+            setResultPrefix('none');
           } else {
             setResultUnit(null);
-            const bestPrefix = findBestPrefix(resultValue);
-            setResultPrefix(bestPrefix);
+            setResultPrefix('none');
           }
           setSelectedAlternative(0); // Reset for category-matched results
         } else {
@@ -2167,7 +2159,7 @@ export default function UnitConverter() {
   }, [calcValues[0], calcValues[1], calcValues[2], calcOp1, calcOp2]);
 
   // Auto-select prefix when user manually changes result unit
-  // If the result category matches the active category, use the TO prefix instead of best prefix
+  // If the result category matches the active category, use the TO prefix instead of 'none'
   useEffect(() => {
     if (resultCategory && calcValues[3]) {
       const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
@@ -2179,9 +2171,7 @@ export default function UnitConverter() {
         if (resultCategory === activeCategory) {
           setResultPrefix(toPrefix);
         } else {
-          // Otherwise, use the best prefix based on the SI base value
-          const bestPrefix = findBestPrefix(calcValues[3].value);
-          setResultPrefix(bestPrefix);
+          setResultPrefix('none');
         }
       } else if (resultUnit) {
         // User selected a specific unit
@@ -2191,9 +2181,7 @@ export default function UnitConverter() {
           if (resultCategory === activeCategory) {
             setResultPrefix(toPrefix);
           } else {
-            // Otherwise, use the best prefix based on the value
-            const bestPrefix = findBestPrefix(calcValues[3].value / unit.factor);
-            setResultPrefix(bestPrefix);
+            setResultPrefix('none');
           }
         } else {
           setResultPrefix('none');
