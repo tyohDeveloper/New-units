@@ -244,13 +244,15 @@ export default function UnitConverter() {
   };
 
   // Helper: Normalize mass units (kg should display as gram with appropriate prefix)
-  // When kg with a prefix is selected, convert to gram with combined prefix
+  // When kg with a prefix OTHER than 'none' or 'kilo' is selected, convert to gram with combined prefix
   // When g with prefix "k" is selected, convert to kg with no prefix
+  // 'none' and 'kilo' for kg are the base representation (kilo-gram)
   const normalizeMassUnit = (unit: string, prefix: string): { unit: string; prefix: string } => {
     if (activeCategory !== 'mass') return { unit, prefix };
     
-    // If unit is kg and a prefix other than 'none' is selected
-    if (unit === 'kg' && prefix !== 'none') {
+    // If unit is kg and a prefix other than 'none' or 'kilo' is selected
+    // 'none' and 'kilo' are the base representations for kg
+    if (unit === 'kg' && prefix !== 'none' && prefix !== 'kilo') {
       const prefixExp = PREFIX_EXPONENTS[prefix] || 0;
       const combinedExp = prefixExp + 3; // kg = 10^3 g
       
@@ -273,13 +275,15 @@ export default function UnitConverter() {
 
   // Helper: Normalize mass display for calculator results
   // Given a value in kg and a prefix, returns normalized { value, unit, prefix, symbol }
-  // E.g., 10000000 kg -> 10 Gg (10 gigagrams)
+  // E.g., 10000000 kg with mega prefix -> 10 Gg (10 gigagrams)
+  // But with 'none' or 'kilo' prefix, stays as kg (no normalization)
   const normalizeMassDisplay = (valueInKg: number, currentPrefix: string, unitId: string | null): { 
     value: number; 
     unitSymbol: string; 
     prefixSymbol: string;
     normalizedPrefix: string;
     normalizedUnit: string;
+    shouldNormalize: boolean;
   } => {
     // Only apply to mass category with kg or base SI unit (null means kg)
     const isKgUnit = unitId === 'kg' || unitId === null;
@@ -294,12 +298,14 @@ export default function UnitConverter() {
         unitSymbol: unit?.symbol || 'kg',
         prefixSymbol: unit?.allowPrefixes ? prefixData.symbol : '',
         normalizedPrefix: currentPrefix,
-        normalizedUnit: unitId || 'kg'
+        normalizedUnit: unitId || 'kg',
+        shouldNormalize: false
       };
     }
     
-    // For kg with prefix, normalize to gram with combined prefix
-    if (currentPrefix !== 'none') {
+    // For kg: only normalize when prefix is NOT 'none' and NOT 'kilo'
+    // 'none' and 'kilo' represent the base kg unit (kilo-gram)
+    if (currentPrefix !== 'none' && currentPrefix !== 'kilo') {
       const prefixExp = PREFIX_EXPONENTS[currentPrefix] || 0;
       const combinedExp = prefixExp + 3; // kg = 10^3 g
       
@@ -314,18 +320,22 @@ export default function UnitConverter() {
           unitSymbol: 'g',
           prefixSymbol: newPrefixData.symbol,
           normalizedPrefix: newPrefix,
-          normalizedUnit: 'g'
+          normalizedUnit: 'g',
+          shouldNormalize: true
         };
       }
     }
     
-    // No prefix or no matching combined prefix, return kg as-is
+    // No normalization needed - show as kg
+    // For 'kilo' prefix, treat as no prefix since kg = kilo-gram
+    const prefixData = PREFIXES.find(p => p.id === currentPrefix) || PREFIXES.find(p => p.id === 'none')!;
     return {
-      value: valueInKg,
+      value: currentPrefix === 'kilo' ? valueInKg : valueInKg / prefixData.factor,
       unitSymbol: 'kg',
-      prefixSymbol: '',
-      normalizedPrefix: 'none',
-      normalizedUnit: 'kg'
+      prefixSymbol: currentPrefix === 'kilo' ? '' : prefixData.symbol,
+      normalizedPrefix: currentPrefix === 'kilo' ? 'none' : currentPrefix,
+      normalizedUnit: 'kg',
+      shouldNormalize: false
     };
   };
 
@@ -2118,8 +2128,8 @@ export default function UnitConverter() {
         const unit = cat?.units.find(u => u.id === resultUnit);
         
         if (unit) {
-          // For mass category with kg, apply normalization
-          if (resultCategory === 'mass' && (resultUnit === 'kg' || resultUnit === null) && resultPrefix !== 'none') {
+          // For mass category with kg, apply normalization (only for prefixes other than 'none' and 'kilo')
+          if (resultCategory === 'mass' && (resultUnit === 'kg' || resultUnit === null) && resultPrefix !== 'none' && resultPrefix !== 'kilo') {
             const normalized = normalizeMassDisplay(calcValues[3].value, resultPrefix, resultUnit);
             valueToCopy = normalized.value;
             unitSymbol = `${normalized.prefixSymbol}${normalized.unitSymbol}`;
@@ -2133,8 +2143,8 @@ export default function UnitConverter() {
         }
       } else if (resultCategory) {
         // If result has a category but no specific unit, use SI base unit
-        // For mass category, apply normalization
-        if (resultCategory === 'mass' && resultPrefix !== 'none') {
+        // For mass category, apply normalization (only for prefixes other than 'none' and 'kilo')
+        if (resultCategory === 'mass' && resultPrefix !== 'none' && resultPrefix !== 'kilo') {
           const normalized = normalizeMassDisplay(calcValues[3].value, resultPrefix, null);
           valueToCopy = normalized.value;
           unitSymbol = `${normalized.prefixSymbol}${normalized.unitSymbol}`;
@@ -2823,8 +2833,8 @@ export default function UnitConverter() {
                       const prefixFactor = unit.allowPrefixes ? prefixData.factor : 1;
                       let convertedValue = calcValues[3].value / (unit.factor * prefixFactor);
                       
-                      // For mass category with kg, apply normalization
-                      if (resultCategory === 'mass' && (resultUnit === 'kg' || resultUnit === null) && resultPrefix !== 'none') {
+                      // For mass category with kg, apply normalization (only for prefixes other than 'none' and 'kilo')
+                      if (resultCategory === 'mass' && (resultUnit === 'kg' || resultUnit === null) && resultPrefix !== 'none' && resultPrefix !== 'kilo') {
                         const normalized = normalizeMassDisplay(calcValues[3].value, resultPrefix, resultUnit);
                         convertedValue = normalized.value;
                       }
@@ -2836,8 +2846,8 @@ export default function UnitConverter() {
                     const val = calcValues[3];
                     if (!val) return '';
                     
-                    // For mass category with base SI unit (kg), apply normalization
-                    if (resultCategory === 'mass' && resultPrefix !== 'none') {
+                    // For mass category with base SI unit (kg), apply normalization (only for prefixes other than 'none' and 'kilo')
+                    if (resultCategory === 'mass' && resultPrefix !== 'none' && resultPrefix !== 'kilo') {
                       const normalized = normalizeMassDisplay(val.value, resultPrefix, null);
                       return formatNumberWithSeparators(normalized.value, calculatorPrecision);
                     }
@@ -2862,8 +2872,8 @@ export default function UnitConverter() {
                     const unit = cat?.units.find(u => u.id === resultUnit);
                     if (!unit) return formatDimensions(val.dimensions);
                     
-                    // For mass category with kg, apply normalization
-                    if (resultCategory === 'mass' && (resultUnit === 'kg' || resultUnit === null) && resultPrefix !== 'none') {
+                    // For mass category with kg, apply normalization (only for prefixes other than 'none' and 'kilo')
+                    if (resultCategory === 'mass' && (resultUnit === 'kg' || resultUnit === null) && resultPrefix !== 'none' && resultPrefix !== 'kilo') {
                       const normalized = normalizeMassDisplay(val.value, resultPrefix, resultUnit);
                       return `${normalized.prefixSymbol}${normalized.unitSymbol}`;
                     }
@@ -2878,8 +2888,8 @@ export default function UnitConverter() {
                     const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                     if (!cat) return formatDimensions(val.dimensions);
                     
-                    // For mass category with base SI unit (kg), apply normalization
-                    if (resultCategory === 'mass' && resultPrefix !== 'none') {
+                    // For mass category with base SI unit (kg), apply normalization (only for prefixes other than 'none' and 'kilo')
+                    if (resultCategory === 'mass' && resultPrefix !== 'none' && resultPrefix !== 'kilo') {
                       const normalized = normalizeMassDisplay(val.value, resultPrefix, null);
                       return `${normalized.prefixSymbol}${normalized.unitSymbol}`;
                     }
