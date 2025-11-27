@@ -2183,35 +2183,6 @@ export default function UnitConverter() {
     });
   };
 
-  // Copy calculator field to clipboard and flash
-  const copyCalcField = (fieldIndex: number) => {
-    const val = calcValues[fieldIndex];
-    if (!val) return;
-    
-    const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-    const displayValue = val.value / prefix.factor;
-    const unitSymbol = `${prefix.symbol}${formatDimensions(val.dimensions)}`;
-    
-    // Copy with only decimal separator, no thousands separator
-    const format = NUMBER_FORMATS[numberFormat];
-    const valueStr = cleanNumber(displayValue, calculatorPrecision);
-    const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
-    const textToCopy = unitSymbol ? `${formattedStr} ${unitSymbol}` : formattedStr;
-    navigator.clipboard.writeText(textToCopy);
-    
-    // Trigger flash animation for the specific field
-    if (fieldIndex === 0) {
-      setFlashCalcField1(true);
-      setTimeout(() => setFlashCalcField1(false), 300);
-    } else if (fieldIndex === 1) {
-      setFlashCalcField2(true);
-      setTimeout(() => setFlashCalcField2(false), 300);
-    } else if (fieldIndex === 2) {
-      setFlashCalcField3(true);
-      setTimeout(() => setFlashCalcField3(false), 300);
-    }
-  };
-
   const copyCalcResult = () => {
     if (calcValues[3]) {
       let valueToCopy = calcValues[3].value;
@@ -2264,6 +2235,35 @@ export default function UnitConverter() {
     // Remove trailing zeros after decimal point
     const cleaned = fixed.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
     return cleaned;
+  };
+
+  // Copy calculator field to clipboard and flash
+  const copyCalcField = (fieldIndex: number) => {
+    const val = calcValues[fieldIndex];
+    if (!val) return;
+    
+    const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
+    const displayValue = val.value / prefix.factor;
+    const unitSymbol = `${prefix.symbol}${formatDimensions(val.dimensions)}`;
+    
+    // Copy with only decimal separator, no thousands separator
+    const format = NUMBER_FORMATS[numberFormat];
+    const valueStr = cleanNumber(displayValue, calculatorPrecision);
+    const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
+    const textToCopy = unitSymbol ? `${formattedStr} ${unitSymbol}` : formattedStr;
+    navigator.clipboard.writeText(textToCopy);
+    
+    // Trigger flash animation for the specific field
+    if (fieldIndex === 0) {
+      setFlashCalcField1(true);
+      setTimeout(() => setFlashCalcField1(false), 300);
+    } else if (fieldIndex === 1) {
+      setFlashCalcField2(true);
+      setTimeout(() => setFlashCalcField2(false), 300);
+    } else if (fieldIndex === 2) {
+      setFlashCalcField3(true);
+      setTimeout(() => setFlashCalcField3(false), 300);
+    }
   };
 
   // Helper to format number with separators based on selected format
@@ -2766,8 +2766,9 @@ export default function UnitConverter() {
             {/* Field 1 */}
             <div className="flex gap-2">
               <motion.div 
-                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 ${calcValues[0] ? 'cursor-pointer hover:bg-muted/50' : ''}`}
-                onClick={() => copyCalcField(0)}
+                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                onClick={() => calcValues[0] && copyCalcField(0)}
+                style={{ pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashCalcField1 ? [1, 0.3, 1] : 1,
                   scale: flashCalcField1 ? [1, 1.02, 1] : 1
@@ -2808,8 +2809,9 @@ export default function UnitConverter() {
             {/* Field 2 */}
             <div className="flex gap-2">
               <motion.div 
-                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50' : ''}`}
-                onClick={() => copyCalcField(1)}
+                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                onClick={() => calcValues[1] && copyCalcField(1)}
+                style={{ pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashCalcField2 ? [1, 0.3, 1] : 1,
                   scale: flashCalcField2 ? [1, 1.02, 1] : 1
@@ -2868,8 +2870,9 @@ export default function UnitConverter() {
             {/* Field 3 */}
             <div className="flex gap-2">
               <motion.div 
-                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50' : ''}`}
-                onClick={() => copyCalcField(2)}
+                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                onClick={() => calcValues[2] && copyCalcField(2)}
+                style={{ pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashCalcField3 ? [1, 0.3, 1] : 1,
                   scale: flashCalcField3 ? [1, 1.02, 1] : 1
