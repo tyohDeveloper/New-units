@@ -227,6 +227,50 @@ export default function UnitConverter() {
     }
   };
 
+  // Helper: Normalize mass units (kg should display as gram with appropriate prefix)
+  // When kg with a prefix is selected, convert to gram with combined prefix
+  // When g with prefix "k" is selected, convert to kg with no prefix
+  const normalizeMassUnit = (unit: string, prefix: string): { unit: string; prefix: string } => {
+    if (activeCategory !== 'mass') return { unit, prefix };
+    
+    // Map of prefix exponents
+    const prefixExponents: Record<string, number> = {
+      'yotta': 24, 'zetta': 21, 'exa': 18, 'peta': 15, 'tera': 12,
+      'giga': 9, 'mega': 6, 'kilo': 3, 'none': 0, 'centi': -2,
+      'milli': -3, 'micro': -6, 'nano': -9, 'pico': -12,
+      'femto': -15, 'atto': -18, 'zepto': -21, 'yocto': -24
+    };
+    
+    // Reverse map: exponent to prefix id
+    const exponentToPrefix: Record<number, string> = {
+      24: 'yotta', 21: 'zetta', 18: 'exa', 15: 'peta', 12: 'tera',
+      9: 'giga', 6: 'mega', 3: 'kilo', 0: 'none', '-2': 'centi',
+      '-3': 'milli', '-6': 'micro', '-9': 'nano', '-12': 'pico',
+      '-15': 'femto', '-18': 'atto', '-21': 'zepto', '-24': 'yocto'
+    };
+    
+    // If unit is kg and a prefix other than 'none' is selected
+    if (unit === 'kg' && prefix !== 'none') {
+      const prefixExp = prefixExponents[prefix] || 0;
+      const combinedExp = prefixExp + 3; // kg = 10^3 g
+      
+      // Find the matching prefix for the combined exponent
+      const newPrefix = exponentToPrefix[combinedExp];
+      if (newPrefix) {
+        return { unit: 'g', prefix: newPrefix };
+      }
+      // If no matching prefix exists, keep as is
+      return { unit, prefix };
+    }
+    
+    // If unit is g and prefix is 'kilo', convert to kg with no prefix
+    if (unit === 'g' && prefix === 'kilo') {
+      return { unit: 'kg', prefix: 'none' };
+    }
+    
+    return { unit, prefix };
+  };
+
   // Translations for multiple languages
   // Supported languages: en (English), ar (Arabic), de (German), es (Spanish), fr (French), 
   // it (Italian), pt (Portuguese), ru (Russian), zh (Chinese), ja (Japanese)
@@ -2301,7 +2345,12 @@ export default function UnitConverter() {
                 {/* Prefix Dropdown */}
                 <Select 
                   value={fromPrefix} 
-                  onValueChange={(val) => { setFromPrefix(val); refocusInput(); }}
+                  onValueChange={(val) => { 
+                    const normalized = normalizeMassUnit(fromUnit, val);
+                    setFromUnit(normalized.unit);
+                    setFromPrefix(normalized.prefix);
+                    refocusInput(); 
+                  }}
                   onOpenChange={(open) => { if (!open) refocusInput(); }}
                   disabled={!fromUnitData?.allowPrefixes}
                 >
@@ -2413,7 +2462,11 @@ export default function UnitConverter() {
                 {/* Prefix Dropdown */}
                 <Select 
                   value={toPrefix} 
-                  onValueChange={setToPrefix}
+                  onValueChange={(val) => {
+                    const normalized = normalizeMassUnit(toUnit, val);
+                    setToUnit(normalized.unit);
+                    setToPrefix(normalized.prefix);
+                  }}
                   disabled={!toUnitData?.allowPrefixes}
                 >
                   <SelectTrigger className="h-16 w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
