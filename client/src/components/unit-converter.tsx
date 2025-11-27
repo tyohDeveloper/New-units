@@ -108,7 +108,7 @@ export default function UnitConverter() {
 
   // Number format state
   type NumberFormat = 'us' | 'uk' | 'south-asian' | 'europe-latin' | 'swiss' | 'arabic' | 'arabic-latin' | 'east-asian' | 'period' | 'comma';
-  const [numberFormat, setNumberFormat] = useState<NumberFormat>('us');
+  const [numberFormat, setNumberFormat] = useState<NumberFormat>('europe-latin');
   
   // Language state (ISO 639-1 codes)
   const [language, setLanguage] = useState<string>('en');
