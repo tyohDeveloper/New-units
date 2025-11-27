@@ -2729,9 +2729,9 @@ export default function UnitConverter() {
 
             {/* Output Section */}
             <div className="grid gap-4">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-mono uppercase text-muted-foreground">{t('To')}</Label>
-                <div className="flex items-center gap-2">
+              <Label className="text-xs font-mono uppercase text-muted-foreground">{t('To')}</Label>
+              <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2">
+                <div className="flex items-center justify-end gap-2 -mt-2 mb-1">
                   <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
                   <Select 
                     value={precision.toString()} 
@@ -2751,7 +2751,7 @@ export default function UnitConverter() {
                   </Select>
                 </div>
               </div>
-              <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2">
+              <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2 -mt-2">
                 <motion.div 
                   className={`h-16 px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start w-full select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
                   style={{ minWidth: '220px', pointerEvents: 'auto' }}
