@@ -1823,9 +1823,16 @@ export default function UnitConverter() {
     if (result !== null && toUnitData) {
       let formattedResult = result.toString();
       let textToCopy: string;
+      let valueToCopy = result;
       
+      // For lightbulb category, convert to lumen (base unit) value
+      if (activeCategory === 'lightbulb') {
+        valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
+        formattedResult = valueToCopy.toString();
+        textToCopy = `${formattedResult} lm`;
+      }
       // Special formats already include unit notation, don't append symbol
-      if (toUnit === 'deg_dms') {
+      else if (toUnit === 'deg_dms') {
         formattedResult = formatDMS(result);
         textToCopy = formattedResult;
       } else if (toUnit === 'ft_in') {
@@ -1847,7 +1854,7 @@ export default function UnitConverter() {
       const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
       if (firstEmptyIndex !== -1) {
         // Convert result to SI base units (which equals category base for most categories)
-        const siBaseValue = result * toUnitData.factor * toPrefixData.factor;
+        const siBaseValue = valueToCopy;
         
         const bestPrefix = 'none';
         
