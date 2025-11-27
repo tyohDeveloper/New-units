@@ -121,7 +121,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "kilogram",
     baseSISymbol: "kg",
     units: [
-      { id: "kg", name: "Kilogram", symbol: "kg", factor: 1, allowPrefixes: true },
+      { id: "kg", name: "Kilogram", symbol: "kg", factor: 1 },
       { id: "g", name: "Gram", symbol: "g", factor: 0.001, allowPrefixes: true },
       { id: "t", name: "Tonne", symbol: "t", factor: 1000 },
       { id: "oz", name: "Ounce", symbol: "oz", factor: 0.0283495 },
