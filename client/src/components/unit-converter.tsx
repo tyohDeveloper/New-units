@@ -140,7 +140,7 @@ export default function UnitConverter() {
 
   const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string; useArabicNumerals?: boolean; myriad?: boolean }> = {
     'us': { name: 'US', thousands: ',', decimal: '.' },
-    'uk': { name: 'UK & offshoots', thousands: ',', decimal: '.' },
+    'uk': { name: 'UK Commonwealth', thousands: ',', decimal: '.' },
     'south-asian': { name: 'South Asian (Indian)', thousands: ',', decimal: '.' },
     'europe-latin': { name: 'World', thousands: ' ', decimal: ',' },
     'swiss': { name: 'Swiss', thousands: "'", decimal: '.' },
@@ -2539,7 +2539,7 @@ export default function UnitConverter() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="us" className="text-xs">US</SelectItem>
-                  <SelectItem value="uk" className="text-xs">UK & offshoots</SelectItem>
+                  <SelectItem value="uk" className="text-xs">UK Commonwealth</SelectItem>
                   <SelectItem value="europe-latin" className="text-xs">World</SelectItem>
                   <SelectItem value="period" className="text-xs">Period</SelectItem>
                   <SelectItem value="comma" className="text-xs">Comma</SelectItem>
