@@ -2855,7 +2855,11 @@ export default function UnitConverter() {
                         </span>
                         <span>=</span>
                         <span className="text-foreground font-bold">
-                          {formatNumberWithSeparators(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor), precision)} {toPrefixData.id !== 'none' ? toPrefixData.symbol : ''}{toUnitData.symbol}
+                          {toUnit === 'deg_dms'
+                            ? formatDMS(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor))
+                            : toUnit === 'ft_in'
+                              ? formatFtIn(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor))
+                              : `${formatNumberWithSeparators(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor), precision)} ${toPrefixData.id !== 'none' ? toPrefixData.symbol : ''}${toUnitData.symbol}`}
                         </span>
                       </div>
                     </motion.div>
