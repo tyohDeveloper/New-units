@@ -629,7 +629,8 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "kg⋅m⁻¹⋅s⁻²",
     units: [
       { id: "pa", name: "Pascal", symbol: "Pa", factor: 1 },
-      { id: "bar", name: "Microbar", symbol: "µbar", factor: 0.1 },
+      { id: "bar", name: "Bar", symbol: "bar", factor: 100000 },
+      { id: "ubar", name: "Microbar", symbol: "µbar", factor: 0.1 },
       { id: "dyncm2", name: "Dyne/cm²", symbol: "dyn⋅cm⁻²", factor: 0.1 },
     ],
   },
