@@ -130,7 +130,7 @@ export default function UnitConverter() {
   
   const [includeBeerWine, setIncludeBeerWine] = useState<boolean>(false);
 
-  const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string; useArabicNumerals?: boolean }> = {
+  const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string; useArabicNumerals?: boolean; myriad?: boolean }> = {
     'us': { name: 'US', thousands: ',', decimal: '.' },
     'uk': { name: 'UK & offshoots', thousands: ',', decimal: '.' },
     'south-asian': { name: 'South Asian (Indian)', thousands: ',', decimal: '.' },
@@ -138,7 +138,7 @@ export default function UnitConverter() {
     'swiss': { name: 'Swiss', thousands: "'", decimal: '.' },
     'arabic': { name: 'Arabic', thousands: ',', decimal: '.', useArabicNumerals: true },
     'arabic-latin': { name: 'Arabic (Latin)', thousands: ',', decimal: '.' },
-    'east-asian': { name: 'East Asian', thousands: ',', decimal: '.' },
+    'east-asian': { name: 'East Asian', thousands: ',', decimal: '.', myriad: true },
     'period': { name: 'Period', thousands: '', decimal: '.' },
     'comma': { name: 'Comma', thousands: '', decimal: ',' },
   };
@@ -1449,7 +1449,24 @@ export default function UnitConverter() {
     // Add thousands separator if format has one
     let formattedInteger = integer;
     if (format.thousands) {
-      formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, format.thousands);
+      if (formatKey === 'south-asian') {
+        // Indian numbering system: 3-2-2 grouping (e.g., 12,34,56,789)
+        const reversed = integer.split('').reverse().join('');
+        let result = '';
+        for (let i = 0; i < reversed.length; i++) {
+          if (i === 3 || (i > 3 && (i - 3) % 2 === 0)) {
+            result += format.thousands;
+          }
+          result += reversed[i];
+        }
+        formattedInteger = result.split('').reverse().join('');
+      } else if (format.myriad) {
+        // Myriad grouping: 4-4-4 grouping (e.g., 1,2345,6789)
+        formattedInteger = integer.replace(/\B(?=(\d{4})+(?!\d))/g, format.thousands);
+      } else {
+        // Standard 3-3-3 grouping
+        formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, format.thousands);
+      }
     }
     
     // Combine with decimal part
@@ -2063,6 +2080,9 @@ export default function UnitConverter() {
           result += reversed[i];
         }
         formattedInteger = result.split('').reverse().join('');
+      } else if (format.myriad) {
+        // Myriad grouping: 4-4-4 grouping (e.g., 1,2345,6789)
+        formattedInteger = integer.replace(/\B(?=(\d{4})+(?!\d))/g, format.thousands);
       } else {
         // Standard 3-3-3 grouping for other formats
         formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, format.thousands);
