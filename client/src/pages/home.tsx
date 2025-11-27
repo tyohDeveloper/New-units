@@ -12,7 +12,7 @@ export default function Home() {
             <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center text-primary-foreground font-bold font-mono text-lg">
               Ω
             </div>
-            <span className="font-bold text-xl tracking-tight">Omni<span className="text-primary">Unit</span> & Calculator</span>
+            <span className="font-bold text-xl tracking-tight">Omni<span className="text-primary">Converter</span> & Calculator</span>
           </div>
           <div className="text-xs font-mono text-muted-foreground hidden sm:block">
             v{packageJson.version}
