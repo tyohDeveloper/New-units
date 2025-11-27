@@ -2047,8 +2047,32 @@ export default function UnitConverter() {
         
         // Only create hybrid if there's something remaining
         if (Object.keys(remaining).length > 0) {
-          const remainingSymbol = dimensionsToSymbol(remaining);
-          const hybridSymbol = `${remainingSymbol}⋅${derivedUnit.symbol}`;
+          // Separate remaining dimensions into positive and negative exponents
+          const positiveRemaining: DimensionalFormula = {};
+          const negativeRemaining: DimensionalFormula = {};
+          
+          for (const [dim, exp] of Object.entries(remaining)) {
+            if (exp > 0) {
+              positiveRemaining[dim as keyof DimensionalFormula] = exp;
+            } else if (exp < 0) {
+              negativeRemaining[dim as keyof DimensionalFormula] = exp;
+            }
+          }
+          
+          // Build hybrid symbol: positive_remaining, derived_unit, negative_remaining
+          const parts: string[] = [];
+          
+          if (Object.keys(positiveRemaining).length > 0) {
+            parts.push(dimensionsToSymbol(positiveRemaining));
+          }
+          
+          parts.push(derivedUnit.symbol);
+          
+          if (Object.keys(negativeRemaining).length > 0) {
+            parts.push(dimensionsToSymbol(negativeRemaining));
+          }
+          
+          const hybridSymbol = parts.join('⋅');
           
           alternatives.push({
             displaySymbol: hybridSymbol,
