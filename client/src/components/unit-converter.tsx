@@ -2613,7 +2613,7 @@ export default function UnitConverter() {
             {/* Input Section */}
             <div className="grid gap-4">
               <Label className="text-xs font-mono uppercase text-muted-foreground">{t('From')}</Label>
-              <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2">
+              <div className="flex gap-2">
                 <Input 
                   ref={inputRef}
                   type="text" 
@@ -2622,7 +2622,7 @@ export default function UnitConverter() {
                   onChange={(e) => handleInputChange(e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   tabIndex={1}
-                  className="font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left w-full"
+                  className="font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left flex-1"
                   style={{ fontSize: '0.875rem', minWidth: '220px' }}
                   placeholder={getPlaceholder()}
                   data-testid="input-value"
@@ -2646,7 +2646,7 @@ export default function UnitConverter() {
                   <SelectContent className="max-h-[70vh]">
                     {PREFIXES.map((p) => (
                       <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
-                        {p.symbol}
+                        {p.symbol || '-'}
                       </SelectItem>
                     ))}
                   </SelectContent>
