@@ -2225,6 +2225,15 @@ export default function UnitConverter() {
     });
   };
 
+  // Helper to fix floating-point precision artifacts
+  // This rounds to 12 significant figures to remove errors like 999999999999.9998 -> 1000000000000
+  const fixPrecision = (num: number): number => {
+    if (num === 0) return 0;
+    const magnitude = Math.floor(Math.log10(Math.abs(num)));
+    const scale = Math.pow(10, 12 - magnitude - 1);
+    return Math.round(num * scale) / scale;
+  };
+
   const copyCalcResult = () => {
     if (calcValues[3]) {
       let valueToCopy = calcValues[3].value;
@@ -2238,7 +2247,7 @@ export default function UnitConverter() {
         if (unit) {
           const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
           const prefixFactor = unit.allowPrefixes ? prefixData.factor : 1;
-          valueToCopy = calcValues[3].value / (unit.factor * prefixFactor);
+          valueToCopy = fixPrecision(calcValues[3].value / (unit.factor * prefixFactor));
           const prefixSymbol = unit.allowPrefixes && resultPrefix !== 'none' ? prefixData.symbol : '';
           unitSymbol = `${prefixSymbol}${unit.symbol}`;
         }
@@ -2246,14 +2255,14 @@ export default function UnitConverter() {
         // If result has a category but no specific unit, use SI base unit
         const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
         const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
-        valueToCopy = calcValues[3].value / prefixData.factor;
+        valueToCopy = fixPrecision(calcValues[3].value / prefixData.factor);
         const prefixSymbol = resultPrefix !== 'none' ? prefixData.symbol : '';
         unitSymbol = `${prefixSymbol}${cat?.baseSISymbol || ''}`;
       } else {
         // Use dimensional formula if no category
         const val = calcValues[3];
         const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-        valueToCopy = val.value / prefix.factor;
+        valueToCopy = fixPrecision(val.value / prefix.factor);
         unitSymbol = `${prefix.symbol}${formatDimensions(val.dimensions)}`;
       }
       
@@ -2285,7 +2294,7 @@ export default function UnitConverter() {
     if (!val) return;
     
     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-    const displayValue = val.value / prefix.factor;
+    const displayValue = fixPrecision(val.value / prefix.factor);
     const unitSymbol = `${prefix.symbol}${formatDimensions(val.dimensions)}`;
     
     // Copy with only decimal separator, no thousands separator
@@ -2311,7 +2320,7 @@ export default function UnitConverter() {
   // Helper to format number with separators based on selected format
   const formatNumberWithSeparators = (num: number, precision: number): string => {
     const format = NUMBER_FORMATS[numberFormat];
-    const cleaned = cleanNumber(num, precision);
+    const cleaned = cleanNumber(fixPrecision(num), precision);
     const [integer, decimal] = cleaned.split('.');
     
     // Add thousands separator if format has one
