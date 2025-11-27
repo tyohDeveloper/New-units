@@ -1414,9 +1414,9 @@ export default function UnitConverter() {
     return derivedUnits[dimsStr] || '';
   };
 
-  // Helper to parse number from string with current format
-  const parseNumberWithFormat = (str: string): number => {
-    const format = NUMBER_FORMATS[numberFormat];
+  // Helper to parse number from string with a specific format
+  const parseNumberWithSpecificFormat = (str: string, formatKey: NumberFormat): number => {
+    const format = NUMBER_FORMATS[formatKey];
     // Convert Arabic numerals to Latin if present
     let cleaned = toLatinNumerals(str);
     // Remove thousands separator
@@ -1428,6 +1428,56 @@ export default function UnitConverter() {
       cleaned = cleaned.replace(format.decimal, '.');
     }
     return parseFloat(cleaned);
+  };
+
+  // Helper to parse number from string with current format
+  const parseNumberWithFormat = (str: string): number => {
+    return parseNumberWithSpecificFormat(str, numberFormat);
+  };
+
+  // Helper to format number with a specific format (for reformatting when locale changes)
+  const formatNumberWithSpecificFormat = (num: number, formatKey: NumberFormat): string => {
+    const format = NUMBER_FORMATS[formatKey];
+    
+    // Handle special cases
+    if (isNaN(num) || !isFinite(num)) return '';
+    
+    // Get the string representation
+    const numStr = num.toString();
+    const [integer, decimal] = numStr.split('.');
+    
+    // Add thousands separator if format has one
+    let formattedInteger = integer;
+    if (format.thousands) {
+      formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, format.thousands);
+    }
+    
+    // Combine with decimal part
+    let result = decimal ? `${formattedInteger}${format.decimal}${decimal}` : formattedInteger;
+    
+    // Convert to Arabic numerals if needed
+    if (format.useArabicNumerals) {
+      result = toArabicNumerals(result);
+    }
+    
+    return result;
+  };
+
+  // Reformat input value when number format changes
+  const reformatInputValue = (oldFormat: NumberFormat, newFormat: NumberFormat): void => {
+    if (!inputValue || inputValue === '') return;
+    
+    // Skip reformatting for special formats (DMS, ft'in")
+    if (fromUnit === 'deg_dms' || fromUnit === 'ft_in') return;
+    
+    // Parse with old format
+    const numericValue = parseNumberWithSpecificFormat(inputValue, oldFormat);
+    
+    if (!isNaN(numericValue) && isFinite(numericValue)) {
+      // Format with new format
+      const reformatted = formatNumberWithSpecificFormat(numericValue, newFormat);
+      setInputValue(reformatted);
+    }
   };
 
   const formatDMS = (decimal: number): string => {
@@ -2156,11 +2206,14 @@ export default function UnitConverter() {
                 value={numberFormat} 
                 onValueChange={(val) => { 
                   const newFormat = val as NumberFormat;
+                  const oldFormat = numberFormat;
                   // If switching away from Arabic formats, set language to English
-                  if ((numberFormat === 'arabic' || numberFormat === 'arabic-latin') && 
+                  if ((oldFormat === 'arabic' || oldFormat === 'arabic-latin') && 
                       newFormat !== 'arabic' && newFormat !== 'arabic-latin') {
                     setLanguage('en');
                   }
+                  // Reformat input value with new format
+                  reformatInputValue(oldFormat, newFormat);
                   setNumberFormat(newFormat); 
                   refocusInput(); 
                 }}
