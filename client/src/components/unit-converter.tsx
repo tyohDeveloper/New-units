@@ -2292,8 +2292,8 @@ export default function UnitConverter() {
                   onChange={(e) => handleInputChange(e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   tabIndex={1}
-                  className="font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left w-full min-w-0"
-                  style={{ fontSize: '0.875rem' }}
+                  className="font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left w-full"
+                  style={{ fontSize: '0.875rem', minWidth: '220px' }}
                   placeholder={getPlaceholder()}
                   data-testid="input-value"
                 />
@@ -2398,8 +2398,8 @@ export default function UnitConverter() {
                 </Select>
               </div>
               <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2">
-                <div className="h-16 px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start w-full min-w-0">
-                  <span className="font-mono text-primary break-all whitespace-nowrap" style={{ fontSize: '0.875rem' }}>
+                <div className="h-16 px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start w-full" style={{ minWidth: '220px' }}>
+                  <span className="font-mono text-primary whitespace-nowrap" style={{ fontSize: '0.875rem' }}>
                     {result !== null 
                       ? (toUnit === 'deg_dms' 
                           ? formatDMS(result) 
