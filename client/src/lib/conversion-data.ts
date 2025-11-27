@@ -270,7 +270,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "mi3", name: "Cubic Mile", symbol: "mi³", factor: 4.16818e9 },
       { id: "bottle_wine", name: "Bottle (Wine)", symbol: "btl", factor: 0.00075, beerWine: true },
       { id: "magnum_wine", name: "Magnum (Wine)", symbol: "mag", factor: 0.0015, beerWine: true },
-      { id: "bottle_beer_small", name: "Bottle (Beer, small)", symbol: "btl", factor: 0.0003, beerWine: true },
+      { id: "bottle_beer_small", name: "Bottle (Beer, small)", symbol: "btl", factor: 0.00035, beerWine: true },
       { id: "bottle_beer_longneck", name: "Bottle (Beer, longneck)", symbol: "btl", factor: 0.000354882, beerWine: true },
       { id: "bottle_beer_large", name: "Bottle (Beer, large)", symbol: "btl", factor: 0.0005, beerWine: true },
       { id: "mini_keg", name: "Mini Keg (Beer)", symbol: "mini keg", factor: 0.005, beerWine: true },
