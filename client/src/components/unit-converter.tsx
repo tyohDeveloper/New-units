@@ -1382,6 +1382,11 @@ export default function UnitConverter() {
     let units = category === 'volume' && !includeBeer 
       ? catData.units.filter(u => !u.beerWine)
       : catData.units;
+    
+    // For lightbulb category, preserve original order from data
+    if (category === 'lightbulb') {
+      return units;
+    }
       
     // Sort: SI units first, then non-SI, then astronomy units (for length)
     return [...units].sort((a, b) => {
