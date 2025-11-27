@@ -1410,6 +1410,10 @@ export default function UnitConverter() {
       if (activeCategory === 'temperature') {
         setFromUnit('k');
         setToUnit('k');
+      } else if (activeCategory === 'capacitance') {
+        // Capacitance defaults to Farad
+        setFromUnit('f');
+        setToUnit('f');
       } else {
         // Default to first unit in sorted list (SI units are sorted first)
         setFromUnit(sorted[0].id);
