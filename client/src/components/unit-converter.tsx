@@ -1881,6 +1881,26 @@ export default function UnitConverter() {
         const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
         textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
       }
+      // For capacitance category, convert to Farad (base unit) value from input
+      else if (activeCategory === 'capacitance') {
+        // Parse input value
+        let inputVal: number;
+        if (fromUnit === 'deg_dms') {
+          inputVal = parseDMS(inputValue);
+        } else if (fromUnit === 'ft_in') {
+          inputVal = parseFtIn(inputValue);
+        } else {
+          inputVal = parseNumberWithFormat(inputValue);
+        }
+        // Convert from input unit to base unit (Farad)
+        const isSpecialFrom = fromUnit === 'deg_dms' || fromUnit === 'ft_in';
+        const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData && !isSpecialFrom) ? fromPrefixData.factor : 1;
+        valueToCopy = inputVal * fromUnitData.factor * fromFactor;
+        formattedResult = result.toString();
+        const unitSymbol = toUnitData?.symbol || '';
+        const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
+        textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
+      }
       // Special formats already include unit notation, don't append symbol
       else if (toUnit === 'deg_dms') {
         formattedResult = formatDMS(result);
