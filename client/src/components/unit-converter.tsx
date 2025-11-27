@@ -2485,37 +2485,40 @@ export default function UnitConverter() {
                             <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="base" className="text-xs font-mono">
-                              {(() => {
-                                const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                                if (!cat) return "SI Units";
-                                return (
-                                  <>
-                                    <span className="font-bold mr-2">{cat.baseSISymbol}</span>
-                                    <span className="opacity-70">{t(cat.baseUnit.charAt(0).toUpperCase() + cat.baseUnit.slice(1))}</span>
-                                  </>
-                                );
-                              })()}
-                            </SelectItem>
                             {(() => {
                               const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                               if (!cat) return null;
+                              
                               // Filter based on beer/wine checkbox
                               let units = resultCategory === 'volume' && !includeBeerWine 
                                 ? cat.units.filter(u => !u.beerWine)
                                 : cat.units;
-                              return units.map(unit => (
-                                <SelectItem key={unit.id} value={unit.id} className="text-xs font-mono">
-                                  {unit.symbol === unit.name ? (
-                                    <span className="font-bold">{unit.symbol}</span>
-                                  ) : (
-                                    <>
-                                      <span className="font-bold mr-2">{unit.symbol}</span>
-                                      <span className="opacity-70">{translateUnitName(unit.name)}</span>
-                                    </>
+                              
+                              // Check if base SI unit exists in units array with same symbol
+                              const baseUnitExists = units.some(u => u.symbol === cat.baseSISymbol);
+                              
+                              return (
+                                <>
+                                  {!baseUnitExists && (
+                                    <SelectItem value="base" className="text-xs font-mono">
+                                      <span className="font-bold mr-2">{cat.baseSISymbol}</span>
+                                      <span className="opacity-70">{t(cat.baseUnit.charAt(0).toUpperCase() + cat.baseUnit.slice(1))}</span>
+                                    </SelectItem>
                                   )}
-                                </SelectItem>
-                              ));
+                                  {units.map(unit => (
+                                    <SelectItem key={unit.id} value={unit.id} className="text-xs font-mono">
+                                      {unit.symbol === unit.name ? (
+                                        <span className="font-bold">{unit.symbol}</span>
+                                      ) : (
+                                        <>
+                                          <span className="font-bold mr-2">{unit.symbol}</span>
+                                          <span className="opacity-70">{translateUnitName(unit.name)}</span>
+                                        </>
+                                      )}
+                                    </SelectItem>
+                                  ))}
+                                </>
+                              );
                             })()}
                           </SelectContent>
                         </Select>
