@@ -2008,7 +2008,7 @@ export default function UnitConverter() {
                   onOpenChange={(open) => { if (!open) refocusInput(); }}
                   disabled={!fromUnitData?.allowPrefixes}
                 >
-                  <SelectTrigger tabIndex={2} className="h-16 w-[80px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                  <SelectTrigger tabIndex={2} className="h-16 w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                     <SelectValue placeholder={t('Prefix')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
@@ -2119,7 +2119,7 @@ export default function UnitConverter() {
                   onValueChange={setToPrefix}
                   disabled={!toUnitData?.allowPrefixes}
                 >
-                  <SelectTrigger className="h-16 w-[80px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                  <SelectTrigger className="h-16 w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                     <SelectValue placeholder={t('Prefix')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
