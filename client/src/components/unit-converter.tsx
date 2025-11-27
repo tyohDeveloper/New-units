@@ -2610,7 +2610,16 @@ export default function UnitConverter() {
                 </Select>
               </div>
               <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2">
-                <div className="h-16 px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start w-full" style={{ minWidth: '220px' }}>
+                <motion.div 
+                  className={`h-16 px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start w-full select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
+                  style={{ minWidth: '220px', pointerEvents: 'auto' }}
+                  onClick={() => result !== null && copyResult()}
+                  animate={{
+                    opacity: flashCopyResult ? [1, 0.3, 1] : 1,
+                    scale: flashCopyResult ? [1, 1.02, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
                   <span className="font-mono text-primary whitespace-nowrap" style={{ fontSize: '0.875rem' }}>
                     {result !== null 
                       ? (toUnit === 'deg_dms' 
@@ -2620,7 +2629,7 @@ export default function UnitConverter() {
                             : formatNumberWithSeparators(result, precision)) 
                       : '...'}
                   </span>
-                </div>
+                </motion.div>
 
                 {/* Prefix Dropdown */}
                 <Select 
@@ -2930,7 +2939,16 @@ export default function UnitConverter() {
 
             {/* Result Field 4 */}
             <div className="flex gap-2">
-              <div className="h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between flex-1">
+              <motion.div 
+                className={`h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                style={{ pointerEvents: 'auto' }}
+                onClick={() => calcValues[3] && copyCalcResult()}
+                animate={{
+                  opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                  scale: flashCopyCalc ? [1, 1.02, 1] : 1
+                }}
+                transition={{ duration: 0.3 }}
+              >
                 <span className="text-sm font-mono text-primary font-bold truncate">
                   {calcValues[3] && resultUnit && resultCategory ? (() => {
                     const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
@@ -2994,7 +3012,7 @@ export default function UnitConverter() {
                     return formatDimensions(val.dimensions);
                   })() : ''}
                 </span>
-              </div>
+              </motion.div>
               <div className="flex gap-1 w-[220px]">
                 {calcValues[3] && (
                   <React.Fragment>
