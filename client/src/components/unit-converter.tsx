@@ -1450,14 +1450,24 @@ export default function UnitConverter() {
       const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
       if (firstEmptyIndex !== -1) {
         // Convert result to SI base units
-        const baseUnitValue = result * toUnitData.factor * toPrefixData.factor;
+        // First convert to category base, then to SI base
+        const categoryBaseValue = result * toUnitData.factor * toPrefixData.factor;
+        
+        // Find the SI base unit (the unit whose symbol matches baseSISymbol)
+        const cat = CONVERSION_DATA.find(c => c.id === activeCategory);
+        const siBaseUnit = cat?.units.find(u => u.symbol === cat.baseSISymbol);
+        
+        // Convert from category base to SI base
+        const siBaseValue = siBaseUnit 
+          ? categoryBaseValue / siBaseUnit.factor 
+          : categoryBaseValue;
         
         // Auto-select best prefix for the calculator field
-        const bestPrefix = findBestPrefix(baseUnitValue);
+        const bestPrefix = findBestPrefix(siBaseValue);
         
         const newCalcValues = [...calcValues];
         newCalcValues[firstEmptyIndex] = {
-          value: baseUnitValue,
+          value: siBaseValue,
           dimensions: getCategoryDimensions(activeCategory),
           prefix: bestPrefix
         };
