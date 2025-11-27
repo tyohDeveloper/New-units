@@ -1626,7 +1626,7 @@ export default function UnitConverter() {
         return newValues;
       });
 
-      // Find matching category and auto-select best unit (only if not dimensionless)
+      // Find matching category and auto-select SI base unit with best prefix
       if (isDimensionless) {
         // For dimensionless results, clear unit selection
         setResultCategory(null);
@@ -1636,6 +1636,9 @@ export default function UnitConverter() {
         const matchingCategory = findCategoryForDimensions(resultDimensions);
         setResultCategory(matchingCategory);
         if (matchingCategory) {
+          // Always default to SI base unit
+          setResultUnit(null);
+          
           // Convert result value to category's base unit
           // For volume: 1 m³ = 1000 L, for area: 1 m² = 1 m² (no conversion needed)
           let categoryBaseValue = resultValue;
@@ -1644,18 +1647,9 @@ export default function UnitConverter() {
             categoryBaseValue = resultValue * 1000;
           }
           
-          const bestUnit = findBestUnit(categoryBaseValue, matchingCategory);
-          setResultUnit(bestUnit);
-          
-          // Find best prefix if unit allows prefixes
-          const cat = CONVERSION_DATA.find(c => c.id === matchingCategory);
-          const unit = cat?.units.find(u => u.id === bestUnit);
-          if (unit?.allowPrefixes) {
-            const bestPrefix = findBestPrefix(categoryBaseValue / unit.factor);
-            setResultPrefix(bestPrefix);
-          } else {
-            setResultPrefix('none');
-          }
+          // Find best prefix to minimize the integer portion
+          const bestPrefix = findBestPrefix(categoryBaseValue);
+          setResultPrefix(bestPrefix);
         }
       }
     } else if (calcValues[3] !== null) {
@@ -1672,10 +1666,12 @@ export default function UnitConverter() {
   // Auto-select prefix when user manually changes result unit
   // If the result category matches the active category, use the TO prefix instead of best prefix
   useEffect(() => {
-    if (resultUnit && resultCategory && calcValues[3]) {
+    if (resultCategory && calcValues[3]) {
       const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-      const unit = cat?.units.find(u => u.id === resultUnit);
-      if (unit?.allowPrefixes) {
+      
+      // If resultUnit is null, we're using the base SI unit
+      if (resultUnit === null) {
+        // Base SI unit always allows prefixes
         // If result category matches the active category, use the TO prefix
         if (resultCategory === activeCategory) {
           setResultPrefix(toPrefix);
@@ -1685,11 +1681,28 @@ export default function UnitConverter() {
           if (resultCategory === 'volume') {
             categoryBaseValue = calcValues[3].value * 1000; // m³ to L
           }
-          const bestPrefix = findBestPrefix(categoryBaseValue / unit.factor);
+          const bestPrefix = findBestPrefix(categoryBaseValue);
           setResultPrefix(bestPrefix);
         }
-      } else {
-        setResultPrefix('none');
+      } else if (resultUnit) {
+        // User selected a specific unit
+        const unit = cat?.units.find(u => u.id === resultUnit);
+        if (unit?.allowPrefixes) {
+          // If result category matches the active category, use the TO prefix
+          if (resultCategory === activeCategory) {
+            setResultPrefix(toPrefix);
+          } else {
+            // Otherwise, use the best prefix based on the value
+            let categoryBaseValue = calcValues[3].value;
+            if (resultCategory === 'volume') {
+              categoryBaseValue = calcValues[3].value * 1000; // m³ to L
+            }
+            const bestPrefix = findBestPrefix(categoryBaseValue / unit.factor);
+            setResultPrefix(bestPrefix);
+          }
+        } else {
+          setResultPrefix('none');
+        }
       }
     }
   }, [resultUnit, resultCategory, activeCategory, toPrefix, calcValues[3]]);
