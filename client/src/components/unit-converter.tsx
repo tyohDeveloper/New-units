@@ -1771,8 +1771,8 @@ export default function UnitConverter() {
         // Convert result to SI base units (which equals category base for most categories)
         const siBaseValue = result * toUnitData.factor * toPrefixData.factor;
         
-        // Auto-select best prefix for display
-        const bestPrefix = findBestPrefix(siBaseValue);
+        // Auto-select best prefix for display (but not for mass - always use kg without prefix)
+        const bestPrefix = activeCategory === 'mass' ? 'none' : findBestPrefix(siBaseValue);
         
         const newCalcValues = [...calcValues];
         newCalcValues[firstEmptyIndex] = {
