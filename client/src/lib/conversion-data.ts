@@ -8,7 +8,6 @@ export type UnitCategory =
   | "intensity" // SI Base
   | "area"
   | "volume"
-  | "frequency"
   | "speed"
   | "acceleration"
   | "force"
@@ -357,16 +356,6 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "w", name: "Watt", symbol: "W", factor: 1, allowPrefixes: true },
       { id: "hp", name: "Horsepower", symbol: "hp", factor: 745.7 },
       { id: "hp_m", name: "Metric HP", symbol: "hp", factor: 735.499 },
-    ],
-  },
-  {
-    id: "frequency",
-    name: "Frequency",
-    baseUnit: "hertz",
-    baseSISymbol: "s⁻¹",
-    units: [
-      { id: "hz", name: "Hertz", symbol: "Hz", factor: 1, allowPrefixes: true },
-      { id: "rpm", name: "RPM", symbol: "rpm", factor: 0.0166667 },
     ],
   },
 

@@ -61,8 +61,6 @@ export default function UnitConverter() {
 
   // Catalog of all known derived units with their dimensional formulas
   const DERIVED_UNITS_CATALOG: DerivedUnitInfo[] = [
-    // Frequency
-    { symbol: 'Hz', category: 'frequency', unitId: 'hz', dimensions: { time: -1 }, allowPrefixes: true },
     // Force
     { symbol: 'N', category: 'force', unitId: 'n', dimensions: { mass: 1, length: 1, time: -2 }, allowPrefixes: true },
     // Pressure
@@ -1309,7 +1307,7 @@ export default function UnitConverter() {
     },
     {
       name: "Radiation & Physics",
-      categories: ['radioactivity', 'radiation_dose', 'equivalent_dose', 'catalytic', 'angle', 'solid_angle', 'frequency', 'sound_pressure']
+      categories: ['radioactivity', 'radiation_dose', 'equivalent_dose', 'catalytic', 'angle', 'solid_angle', 'sound_pressure']
     },
     {
       name: "Human Response",
@@ -1338,7 +1336,6 @@ export default function UnitConverter() {
       'pressure': ['pa', 'bar'],
       'energy': ['j', 'kwh', 'wh'],
       'power': ['w'],
-      'frequency': ['hz'],
       'torque': ['nm'],
       'viscosity': ['pas'],
       'surface_tension': ['nm'],
@@ -1454,7 +1451,6 @@ export default function UnitConverter() {
       intensity: { intensity: 1 },
       area: { length: 2 },
       volume: { length: 3 },
-      frequency: { time: -1 },
       speed: { length: 1, time: -1 },
       acceleration: { length: 1, time: -2 },
       force: { mass: 1, length: 1, time: -2 },
