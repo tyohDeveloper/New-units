@@ -1772,7 +1772,14 @@ export default function UnitConverter() {
         const siBaseValue = result * toUnitData.factor * toPrefixData.factor;
         
         // Auto-select best prefix for display
-        const bestPrefix = findBestPrefix(siBaseValue);
+        // For mass, use special normalization to avoid prefix stacking
+        let bestPrefix: string;
+        if (activeCategory === 'mass') {
+          const normalized = normalizeMassValue(siBaseValue);
+          bestPrefix = normalized.prefixId;
+        } else {
+          bestPrefix = findBestPrefix(siBaseValue);
+        }
         
         const newCalcValues = [...calcValues];
         newCalcValues[firstEmptyIndex] = {
@@ -2756,6 +2763,12 @@ export default function UnitConverter() {
                   {calcValues[0] ? (() => {
                     const val = calcValues[0];
                     if (!val) return '';
+                    // For mass dimensions, use normalized display
+                    const isMass = val.dimensions.mass === 1 && Object.keys(val.dimensions).length === 1;
+                    if (isMass) {
+                      const normalized = normalizeMassValue(val.value);
+                      return formatNumberWithSeparators(normalized.value, calculatorPrecision);
+                    }
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     const displayValue = val.value / prefix.factor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
@@ -2765,6 +2778,12 @@ export default function UnitConverter() {
                   {calcValues[0] ? (() => {
                     const val = calcValues[0];
                     if (!val) return '';
+                    // For mass dimensions, use normalized display
+                    const isMass = val.dimensions.mass === 1 && Object.keys(val.dimensions).length === 1;
+                    if (isMass) {
+                      const normalized = normalizeMassValue(val.value);
+                      return `${normalized.prefixSymbol}${normalized.unitSymbol}`;
+                    }
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
@@ -2790,6 +2809,12 @@ export default function UnitConverter() {
                   {calcValues[1] ? (() => {
                     const val = calcValues[1];
                     if (!val) return '';
+                    // For mass dimensions, use normalized display
+                    const isMass = val.dimensions.mass === 1 && Object.keys(val.dimensions).length === 1;
+                    if (isMass) {
+                      const normalized = normalizeMassValue(val.value);
+                      return formatNumberWithSeparators(normalized.value, calculatorPrecision);
+                    }
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     const displayValue = val.value / prefix.factor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
@@ -2799,6 +2824,12 @@ export default function UnitConverter() {
                   {calcValues[1] ? (() => {
                     const val = calcValues[1];
                     if (!val) return '';
+                    // For mass dimensions, use normalized display
+                    const isMass = val.dimensions.mass === 1 && Object.keys(val.dimensions).length === 1;
+                    if (isMass) {
+                      const normalized = normalizeMassValue(val.value);
+                      return `${normalized.prefixSymbol}${normalized.unitSymbol}`;
+                    }
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
@@ -2842,6 +2873,12 @@ export default function UnitConverter() {
                   {calcValues[2] ? (() => {
                     const val = calcValues[2];
                     if (!val) return '';
+                    // For mass dimensions, use normalized display
+                    const isMass = val.dimensions.mass === 1 && Object.keys(val.dimensions).length === 1;
+                    if (isMass) {
+                      const normalized = normalizeMassValue(val.value);
+                      return formatNumberWithSeparators(normalized.value, calculatorPrecision);
+                    }
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     const displayValue = val.value / prefix.factor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
@@ -2851,6 +2888,12 @@ export default function UnitConverter() {
                   {calcValues[2] ? (() => {
                     const val = calcValues[2];
                     if (!val) return '';
+                    // For mass dimensions, use normalized display
+                    const isMass = val.dimensions.mass === 1 && Object.keys(val.dimensions).length === 1;
+                    if (isMass) {
+                      const normalized = normalizeMassValue(val.value);
+                      return `${normalized.prefixSymbol}${normalized.unitSymbol}`;
+                    }
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
