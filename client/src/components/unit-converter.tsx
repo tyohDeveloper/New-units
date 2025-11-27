@@ -1833,6 +1833,14 @@ export default function UnitConverter() {
         const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
         textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
       }
+      // For solid angle category, convert to steradians (base unit) value
+      else if (activeCategory === 'solid_angle') {
+        valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
+        formattedResult = result.toString();
+        const unitSymbol = toUnitData?.symbol || '';
+        const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
+        textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
+      }
       // Special formats already include unit notation, don't append symbol
       else if (toUnit === 'deg_dms') {
         formattedResult = formatDMS(result);
