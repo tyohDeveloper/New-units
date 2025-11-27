@@ -2589,7 +2589,7 @@ export default function UnitConverter() {
                 <SelectTrigger tabIndex={7} className="h-6 w-[75px] text-xs">
                   <SelectValue placeholder="" />
                 </SelectTrigger>
-                <SelectContent className="max-h-[300px]">
+                <SelectContent className="max-h-[70vh]">
                   {ISO_LANGUAGES.map((lang) => (
                     <SelectItem key={lang} value={lang} className="text-xs">{lang}</SelectItem>
                   ))}
@@ -2638,7 +2638,7 @@ export default function UnitConverter() {
                   <SelectTrigger tabIndex={2} className="h-16 w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                     <SelectValue placeholder={t('Prefix')} />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
+                  <SelectContent className="max-h-[70vh]">
                     {PREFIXES.map((p) => (
                       <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
                         {p.symbol}
@@ -2655,7 +2655,7 @@ export default function UnitConverter() {
                   <SelectTrigger tabIndex={3} className="h-16 w-[220px] bg-background/30 border-border font-medium shrink-0">
                     <SelectValue placeholder={t('Unit')} />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
+                  <SelectContent className="max-h-[70vh]">
                     {filteredUnits.map((u) => (
                       <SelectItem key={u.id} value={u.id} className="font-mono text-sm">
                         {u.symbol === u.name ? (
@@ -2778,7 +2778,7 @@ export default function UnitConverter() {
                   <SelectTrigger className="h-16 w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                     <SelectValue placeholder={t('Prefix')} />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
+                  <SelectContent className="max-h-[70vh]">
                     {PREFIXES.map((p) => (
                       <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
                         {p.symbol}
@@ -2791,7 +2791,7 @@ export default function UnitConverter() {
                   <SelectTrigger className="h-16 w-[220px] bg-background/30 border-border font-medium shrink-0">
                     <SelectValue placeholder={t('Unit')} />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
+                  <SelectContent className="max-h-[70vh]">
                     {filteredUnits.map((u) => (
                       <SelectItem key={u.id} value={u.id} className="font-mono text-sm">
                         {u.symbol === u.name ? (
@@ -3224,7 +3224,7 @@ export default function UnitConverter() {
                           <SelectTrigger className="h-9 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                             <SelectValue placeholder={t('Prefix')} />
                           </SelectTrigger>
-                          <SelectContent className="max-h-[300px]">
+                          <SelectContent className="max-h-[70vh]">
                             {PREFIXES.map((p) => (
                               <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
                                 {p.symbol || ''}
@@ -3312,7 +3312,7 @@ export default function UnitConverter() {
                               <SelectTrigger className="h-9 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                                 <SelectValue placeholder={t('Prefix')} />
                               </SelectTrigger>
-                              <SelectContent className="max-h-[300px]">
+                              <SelectContent className="max-h-[70vh]">
                                 {PREFIXES.map((p) => (
                                   <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
                                     {p.symbol || ''}
