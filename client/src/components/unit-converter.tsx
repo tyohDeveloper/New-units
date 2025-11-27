@@ -1905,10 +1905,16 @@ export default function UnitConverter() {
       else if (toUnit === 'deg_dms') {
         formattedResult = formatDMS(result);
         textToCopy = formattedResult;
+        // For special format, still need to convert result to SI base units for calculator
+        valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
       } else if (toUnit === 'ft_in') {
         formattedResult = formatFtIn(result);
         textToCopy = formattedResult;
+        // For special format, still need to convert result to SI base units for calculator
+        valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
       } else {
+        // For all other categories, convert result to SI base units
+        valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
         const unitSymbol = toUnitData?.symbol || '';
         const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
         textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
