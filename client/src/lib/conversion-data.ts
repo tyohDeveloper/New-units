@@ -40,8 +40,7 @@ export type UnitCategory =
   | "viscosity"
   | "surface_tension"
   | "refractive_power"
-  | "sound_pressure"
-  | "lightbulb";
+  | "sound_pressure";
 
 export interface Prefix {
   id: string;
@@ -672,20 +671,6 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "stilb", name: "Stilb", symbol: "sb", factor: 10000 },
       { id: "lambert", name: "Lambert", symbol: "L", factor: 3183.1 },
       { id: "ftl", name: "Foot-lambert", symbol: "fL", factor: 3.42626 },
-    ],
-  },
-  {
-    id: "lightbulb",
-    name: "Lightbulb Efficiency",
-    baseUnit: "lumen",
-    baseSISymbol: "lm",
-    units: [
-      { id: "lm", name: "Lumen", symbol: "lm", factor: 1, allowPrefixes: true },
-      { id: "incandescent_w", name: "Incandescent Bulb (watts)", symbol: "W (inc)", factor: 15 },
-      { id: "halogen_w", name: "Halogen Bulb (watts)", symbol: "W (hal)", factor: 20 },
-      { id: "fluorescent_w", name: "Fluorescent Bulb (watts)", symbol: "W (CFL)", factor: 70 },
-      { id: "led_w", name: "LED Bulb (watts)", symbol: "W (LED)", factor: 95 },
-      { id: "sodium_w", name: "Sodium Vapor Lamp (watts)", symbol: "W (Na)", factor: 100 },
     ],
   },
 ];
