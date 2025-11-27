@@ -1393,9 +1393,15 @@ export default function UnitConverter() {
   useEffect(() => {
     const sorted = getFilteredSortedUnits(activeCategory, includeBeerWine);
     if (sorted.length > 0) {
-      // Default to first unit in sorted list (SI units are sorted first)
-      setFromUnit(sorted[0].id);
-      setToUnit(sorted[0].id);
+      // Special case: temperature defaults to Celsius
+      if (activeCategory === 'temperature') {
+        setFromUnit('c');
+        setToUnit('c');
+      } else {
+        // Default to first unit in sorted list (SI units are sorted first)
+        setFromUnit(sorted[0].id);
+        setToUnit(sorted[0].id);
+      }
       setFromPrefix('none');
       setToPrefix('none');
     }
