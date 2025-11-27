@@ -1941,14 +1941,14 @@ export default function UnitConverter() {
             </p>
             <div className="flex items-center gap-3">
               {activeCategory === 'volume' && (
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer hover:text-foreground transition-colors">
                   <input
                     type="checkbox"
                     checked={includeBeerWine}
                     onChange={(e) => setIncludeBeerWine(e.target.checked)}
-                    className="w-3 h-3 cursor-pointer accent-accent"
+                    className="w-4 h-4 cursor-pointer accent-accent rounded border-border"
                   />
-                  <span className="text-xs text-muted-foreground">{t('Include Beer/Wine')}</span>
+                  <span className="text-xs text-foreground">{t('Include Beer/Wine')}</span>
                 </label>
               )}
               <Select 
