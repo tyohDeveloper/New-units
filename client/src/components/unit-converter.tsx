@@ -1532,23 +1532,29 @@ export default function UnitConverter() {
       return num.toString().split('').map(c => superscripts[c] || c).join('');
     };
 
-    const parts: string[] = [];
+    const positiveParts: string[] = [];
+    const negativeParts: string[] = [];
 
-    // Iterate in the specified order
+    // Iterate in the specified order, separating positive and negative exponents
     for (const dim of dimensionOrder) {
       const exp = dims[dim];
       if (exp === undefined || exp === 0) continue;
       
       const symbol = dimSymbols[dim];
 
-      if (exp === 1) {
-        parts.push(symbol);
+      if (exp > 0) {
+        if (exp === 1) {
+          positiveParts.push(symbol);
+        } else {
+          positiveParts.push(symbol + toSuperscript(exp));
+        }
       } else {
-        parts.push(symbol + toSuperscript(exp));
+        negativeParts.push(symbol + toSuperscript(exp));
       }
     }
 
-    return parts.join('⋅');
+    // Combine: positive exponents first, then negative exponents
+    return [...positiveParts, ...negativeParts].join('⋅');
   };
 
   // Alias for backward compatibility with factorization code
