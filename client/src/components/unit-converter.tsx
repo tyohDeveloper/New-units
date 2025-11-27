@@ -1314,10 +1314,6 @@ export default function UnitConverter() {
     {
       name: "Human Response",
       categories: ['luminous_flux', 'illuminance', 'luminous_exitance', 'luminance', 'refractive_power', 'lightbulb']
-    },
-    {
-      name: "Specialized",
-      categories: ['digital']
     }
   ];
 
@@ -1353,7 +1349,6 @@ export default function UnitConverter() {
       'solid_angle': ['sr'],
       'sound_pressure': ['pa'],
       'refractive_power': ['m-1'],
-      'digital': ['B'],
       'printing': ['pt'],
       'luminous_flux': ['lm'],
       'illuminance': ['lx'],
