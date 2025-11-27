@@ -2512,7 +2512,7 @@ export default function UnitConverter() {
                     onClick={() => setActiveCategory(cat.id as UnitCategory)}
                     className={`w-full text-left px-3 py-[1px] rounded-sm text-xs font-medium transition-all duration-200 border-l-2 flex items-center justify-between group ${
                       activeCategory === cat.id 
-                        ? 'bg-accent/20 border-accent text-accent font-semibold' 
+                        ? 'border-accent text-accent' 
                         : 'hover:bg-muted/50 border-transparent text-muted-foreground hover:text-foreground'
                     }`}
                   >
