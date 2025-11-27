@@ -41,9 +41,7 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     allowedHosts: true,
-    hmr: {                    // <-- Add this
-      overlay: false,         // <-- Add this
-    },                        // <-- Add this
+    hmr: false, // <-- Add this
     fs: {
       strict: true,
       deny: ["**/.*"],
