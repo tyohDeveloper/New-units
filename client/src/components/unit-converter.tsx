@@ -1496,16 +1496,22 @@ export default function UnitConverter() {
   };
 
   // Helper: Format dimensional formula as unit string
+  // Order: time, length, mass, electric current, thermodynamic temperature, amount of substance, luminous intensity
   const formatDimensions = (dims: DimensionalFormula): string => {
     const dimSymbols: Record<keyof DimensionalFormula, string> = {
+      time: 's',
       length: 'm',
       mass: 'kg',
-      time: 's',
       current: 'A',
       temperature: 'K',
       amount: 'mol',
       intensity: 'cd'
     };
+
+    // Define the standard order for base units
+    const dimensionOrder: (keyof DimensionalFormula)[] = [
+      'time', 'length', 'mass', 'current', 'temperature', 'amount', 'intensity'
+    ];
 
     const superscripts: Record<string, string> = {
       '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
@@ -1519,9 +1525,12 @@ export default function UnitConverter() {
 
     const parts: string[] = [];
 
-    for (const [dim, exp] of Object.entries(dims)) {
-      const symbol = dimSymbols[dim as keyof DimensionalFormula];
-      if (!symbol) continue;
+    // Iterate in the specified order
+    for (const dim of dimensionOrder) {
+      const exp = dims[dim];
+      if (exp === undefined || exp === 0) continue;
+      
+      const symbol = dimSymbols[dim];
 
       if (exp === 1) {
         parts.push(symbol);
