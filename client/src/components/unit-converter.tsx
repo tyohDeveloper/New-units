@@ -1813,27 +1813,37 @@ export default function UnitConverter() {
 
   const copyResult = () => {
     if (result !== null && toUnitData && fromUnitData) {
-      let formattedResult = result.toString();
       let textToCopy: string;
       // Always convert result to SI base units for calculator (this works for all categories)
       const valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
       
+      // Helper to format number with precision for copying (no thousands separator)
+      const formatForCopy = (num: number): string => {
+        const format = NUMBER_FORMATS[numberFormat];
+        // Apply precision limiting based on magnitude
+        const fixed = Math.abs(num) < 1e-15 ? 0 : num;
+        const magnitude = fixed === 0 ? 0 : Math.floor(Math.log10(Math.abs(fixed)));
+        const maxDecimals = Math.max(0, Math.min(precision, 14 - magnitude));
+        const formatted = toFixedBanker(fixed, maxDecimals);
+        // Remove trailing zeros after decimal point
+        const cleaned = formatted.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
+        // Replace period with format's decimal separator
+        return format.decimal !== '.' ? cleaned.replace('.', format.decimal) : cleaned;
+      };
+      
       // Special formatting for specific output types
       if (toUnit === 'deg_dms') {
-        formattedResult = formatDMS(result);
-        textToCopy = formattedResult;
+        textToCopy = formatDMS(result);
       } else if (toUnit === 'ft_in') {
-        formattedResult = formatFtIn(result);
-        textToCopy = formattedResult;
+        textToCopy = formatFtIn(result);
       } else if (activeCategory === 'lightbulb') {
-        // Lightbulb displays the base unit value
-        formattedResult = valueToCopy.toString();
-        textToCopy = `${formattedResult} lm`;
+        // Lightbulb displays the base unit value with precision
+        textToCopy = `${formatForCopy(valueToCopy)} lm`;
       } else {
-        // All other categories: display result with unit symbol
+        // All other categories: display result with unit symbol and precision
         const unitSymbol = toUnitData?.symbol || '';
         const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
-        textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
+        textToCopy = `${formatForCopy(result)} ${prefixSymbol}${unitSymbol}`;
       }
       
       navigator.clipboard.writeText(textToCopy);
@@ -1903,7 +1913,15 @@ export default function UnitConverter() {
         fromUnitData.allowPrefixes ? fromPrefixData.factor : 1,
         toUnitData.allowPrefixes ? toPrefixData.factor : 1
       );
-      const ratioText = `1 ${fromPrefixSymbol}${fromUnitData.symbol} = ${ratio} ${toPrefixSymbol}${toUnitData.symbol}`;
+      // Format ratio with precision
+      const format = NUMBER_FORMATS[numberFormat];
+      const magnitude = ratio === 0 ? 0 : Math.floor(Math.log10(Math.abs(ratio)));
+      const maxDecimals = Math.max(0, Math.min(precision, 14 - magnitude));
+      const formatted = toFixedBanker(ratio, maxDecimals);
+      const cleaned = formatted.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
+      const formattedRatio = format.decimal !== '.' ? cleaned.replace('.', format.decimal) : cleaned;
+      
+      const ratioText = `1 ${fromPrefixSymbol}${fromUnitData.symbol} = ${formattedRatio} ${toPrefixSymbol}${toUnitData.symbol}`;
       navigator.clipboard.writeText(ratioText);
       setFlashConversionRatio(true);
       setTimeout(() => setFlashConversionRatio(false), 300);
