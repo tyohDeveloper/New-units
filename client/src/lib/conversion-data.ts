@@ -499,7 +499,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "angle",
     name: "Plane Angle",
     baseUnit: "radian",
-    baseSISymbol: "m⋅m⁻¹",
+    baseSISymbol: "rad",
     units: [
       { id: "rad", name: "Radian", symbol: "rad", factor: 1, allowPrefixes: true },
       { id: "deg", name: "Degree", symbol: "°", factor: 0.0174533 },
@@ -513,7 +513,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     id: "solid_angle",
     name: "Solid Angle",
     baseUnit: "steradian",
-    baseSISymbol: "m²⋅m⁻²",
+    baseSISymbol: "sr",
     units: [
       { id: "sr", name: "Steradian", symbol: "sr", factor: 1, allowPrefixes: true },
       { id: "sp", name: "Spat", symbol: "sp", factor: 12.56637 },
