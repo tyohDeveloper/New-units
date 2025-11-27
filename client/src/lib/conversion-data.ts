@@ -605,15 +605,6 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     ],
   },
   {
-    id: "luminous_exitance",
-    name: "Luminous Exitance",
-    baseUnit: "lumen/square-meter",
-    baseSISymbol: "cd⋅sr⋅m⁻²",
-    units: [
-      { id: "lmm2", name: "Lumen/m²", symbol: "lm⋅m⁻²", factor: 1 },
-    ],
-  },
-  {
     id: "refractive_power",
     name: "Refractive Power (Vision)",
     baseUnit: "reciprocal-meter",
