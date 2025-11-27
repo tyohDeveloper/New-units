@@ -1814,7 +1814,7 @@ export default function UnitConverter() {
   };
 
   const copyResult = () => {
-    if (result !== null && toUnitData) {
+    if (result !== null && toUnitData && fromUnitData) {
       let formattedResult = result.toString();
       let textToCopy: string;
       let valueToCopy = result;
@@ -1825,17 +1825,41 @@ export default function UnitConverter() {
         formattedResult = valueToCopy.toString();
         textToCopy = `${formattedResult} lm`;
       }
-      // For plane angle category, convert to radians (base unit) value
+      // For plane angle category, convert to radians (base unit) value from input
       else if (activeCategory === 'angle') {
-        valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
+        // Parse input value
+        let inputVal: number;
+        if (fromUnit === 'deg_dms') {
+          inputVal = parseDMS(inputValue);
+        } else if (fromUnit === 'ft_in') {
+          inputVal = parseFtIn(inputValue);
+        } else {
+          inputVal = parseNumberWithFormat(inputValue);
+        }
+        // Convert from input unit to base unit (radians)
+        const isSpecialFrom = fromUnit === 'deg_dms' || fromUnit === 'ft_in';
+        const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData && !isSpecialFrom) ? fromPrefixData.factor : 1;
+        valueToCopy = inputVal * fromUnitData.factor * fromFactor;
         formattedResult = result.toString();
         const unitSymbol = toUnitData?.symbol || '';
         const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
         textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
       }
-      // For solid angle category, convert to steradians (base unit) value
+      // For solid angle category, convert to steradians (base unit) value from input
       else if (activeCategory === 'solid_angle') {
-        valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
+        // Parse input value
+        let inputVal: number;
+        if (fromUnit === 'deg_dms') {
+          inputVal = parseDMS(inputValue);
+        } else if (fromUnit === 'ft_in') {
+          inputVal = parseFtIn(inputValue);
+        } else {
+          inputVal = parseNumberWithFormat(inputValue);
+        }
+        // Convert from input unit to base unit (steradians)
+        const isSpecialFrom = fromUnit === 'deg_dms' || fromUnit === 'ft_in';
+        const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData && !isSpecialFrom) ? fromPrefixData.factor : 1;
+        valueToCopy = inputVal * fromUnitData.factor * fromFactor;
         formattedResult = result.toString();
         const unitSymbol = toUnitData?.symbol || '';
         const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
