@@ -104,6 +104,7 @@ export default function UnitConverter() {
   const [resultUnit, setResultUnit] = useState<string | null>(null);
   const [resultCategory, setResultCategory] = useState<UnitCategory | null>(null);
   const [resultPrefix, setResultPrefix] = useState<string>('none');
+  const [selectedAlternative, setSelectedAlternative] = useState<number>(0); // Index of selected alternative representation
 
   // Number format state
   type NumberFormat = 'us' | 'uk' | 'south-asian' | 'europe-latin' | 'swiss' | 'arabic' | 'arabic-latin' | 'east-asian' | 'period' | 'comma';
@@ -1809,6 +1810,7 @@ export default function UnitConverter() {
         setResultCategory(null);
         setResultUnit(null);
         setResultPrefix('none');
+        setSelectedAlternative(0);
       } else {
         const matchingCategory = findCategoryForDimensions(resultDimensions);
         setResultCategory(matchingCategory);
@@ -1830,6 +1832,12 @@ export default function UnitConverter() {
             const bestPrefix = findBestPrefix(resultValue);
             setResultPrefix(bestPrefix);
           }
+          setSelectedAlternative(0); // Reset for category-matched results
+        } else {
+          // For complex dimensions with no matching category, generate alternatives
+          const alternatives = generateAlternativeRepresentations(resultDimensions);
+          // Default to derived unit representation (index 1) if exact match exists, else raw SI (index 0)
+          setSelectedAlternative(alternatives.length > 1 && !alternatives[1].isHybrid ? 1 : 0);
         }
       }
     } else if (calcValues[3] !== null) {
@@ -2631,8 +2639,13 @@ export default function UnitConverter() {
                   })() : calcValues[3] ? (() => {
                     const val = calcValues[3];
                     if (!val) return '';
-                    const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
+                    // For complex dimensions, use selected alternative representation
+                    const alternatives = generateAlternativeRepresentations(val.dimensions);
+                    if (selectedAlternative < alternatives.length) {
+                      return alternatives[selectedAlternative].displaySymbol;
+                    }
+                    // Fallback to raw dimensions
+                    return formatDimensions(val.dimensions);
                   })() : ''}
                 </span>
               </div>
@@ -2705,14 +2718,44 @@ export default function UnitConverter() {
                         </Select>
                       </>
                     ) : (
-                      <Select value="unitless" disabled>
-                        <SelectTrigger className="h-9 flex-1 text-xs">
-                          <SelectValue placeholder="" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="unitless" className="text-xs"></SelectItem>
-                        </SelectContent>
-                      </Select>
+                      (() => {
+                        // For complex dimensions that don't match a category, show alternative representations
+                        const val = calcValues[3];
+                        if (!val || Object.keys(val.dimensions).length === 0) {
+                          // Dimensionless
+                          return (
+                            <Select value="unitless" disabled>
+                              <SelectTrigger className="h-9 flex-1 text-xs">
+                                <SelectValue placeholder="" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="unitless" className="text-xs"></SelectItem>
+                              </SelectContent>
+                            </Select>
+                          );
+                        }
+                        
+                        // Generate alternative representations
+                        const alternatives = generateAlternativeRepresentations(val.dimensions);
+                        
+                        return (
+                          <Select 
+                            value={selectedAlternative.toString()} 
+                            onValueChange={(val) => setSelectedAlternative(parseInt(val))}
+                          >
+                            <SelectTrigger className="h-9 flex-1 text-xs">
+                              <SelectValue placeholder="Select representation" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {alternatives.map((alt, index) => (
+                                <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
+                                  <span className="font-bold">{alt.displaySymbol}</span>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        );
+                      })()
                     )}
                     <Button 
                       variant="ghost" 
