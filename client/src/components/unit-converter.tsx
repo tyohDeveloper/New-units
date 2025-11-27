@@ -2732,7 +2732,7 @@ export default function UnitConverter() {
               <div className="flex items-center justify-between">
                 <Label className="text-xs font-mono uppercase text-muted-foreground">{t('To')}</Label>
                 <div className="flex items-center gap-2">
-                  <Label className="text-xs text-muted-foreground">{t('Decimals')}</Label>
+                  <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
                   <Select 
                     value={precision.toString()} 
                     onValueChange={(val) => { setPrecision(parseInt(val)); refocusInput(); }}
