@@ -3025,9 +3025,9 @@ export default function UnitConverter() {
             </div>
 
             {/* Field 2 */}
-            <div className="flex gap-2">
+            <div className="flex gap-1">
               <motion.div 
-                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                className={`h-8 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[1] && copyCalcField(1)}
                 style={{ pointerEvents: 'auto' }}
                 animate={{
@@ -3086,9 +3086,9 @@ export default function UnitConverter() {
             </div>
 
             {/* Field 3 */}
-            <div className="flex gap-2">
+            <div className="flex gap-1">
               <motion.div 
-                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                className={`h-8 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[2] && copyCalcField(2)}
                 style={{ pointerEvents: 'auto' }}
                 animate={{
@@ -3147,9 +3147,9 @@ export default function UnitConverter() {
             </div>
 
             {/* Result Field 4 */}
-            <div className="flex gap-2">
+            <div className="flex gap-1">
               <motion.div 
-                className={`h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                className={`h-8 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
                 style={{ pointerEvents: 'auto' }}
                 onClick={() => calcValues[3] && copyCalcResult()}
                 animate={{
