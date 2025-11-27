@@ -1629,7 +1629,7 @@ export default function UnitConverter() {
         return newValues;
       });
 
-      // Find matching category and auto-select SI base unit with best prefix
+      // Find matching category and auto-select default unit with best prefix
       if (isDimensionless) {
         // For dimensionless results, clear unit selection
         setResultCategory(null);
@@ -1639,8 +1639,12 @@ export default function UnitConverter() {
         const matchingCategory = findCategoryForDimensions(resultDimensions);
         setResultCategory(matchingCategory);
         if (matchingCategory) {
-          // Always default to SI base unit
-          setResultUnit(null);
+          // For volume, default to Liter; for others, use SI base unit
+          if (matchingCategory === 'volume') {
+            setResultUnit('l');
+          } else {
+            setResultUnit(null);
+          }
           
           // Convert result value to category's base unit
           // For volume: 1 m³ = 1000 L, for area: 1 m² = 1 m² (no conversion needed)
