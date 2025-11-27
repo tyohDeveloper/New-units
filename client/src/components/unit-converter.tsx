@@ -1313,7 +1313,7 @@ export default function UnitConverter() {
     },
     {
       name: "Human Response",
-      categories: ['luminous_flux', 'illuminance', 'luminous_exitance', 'luminance', 'refractive_power']
+      categories: ['luminous_flux', 'illuminance', 'luminous_exitance', 'luminance', 'refractive_power', 'lightbulb']
     },
     {
       name: "Specialized",
@@ -1486,7 +1486,8 @@ export default function UnitConverter() {
       viscosity: { mass: 1, length: -1, time: -1 },
       surface_tension: { mass: 1, time: -2 },
       refractive_power: { length: -1 },
-      sound_pressure: { mass: 1, length: -1, time: -2 }
+      sound_pressure: { mass: 1, length: -1, time: -2 },
+      lightbulb: { intensity: 1, solid_angle: 1 }
     };
     return dimensionMap[category] || {};
   };
