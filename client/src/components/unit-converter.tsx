@@ -2485,8 +2485,15 @@ export default function UnitConverter() {
                               {CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"}
                             </SelectItem>
                             {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
-                              <SelectItem key={unit.id} value={unit.id} className="text-xs">
-                                {translateUnitName(unit.name)}
+                              <SelectItem key={unit.id} value={unit.id} className="text-xs font-mono">
+                                {unit.symbol === unit.name ? (
+                                  <span className="font-bold">{unit.symbol}</span>
+                                ) : (
+                                  <>
+                                    <span className="font-bold mr-2">{unit.symbol}</span>
+                                    <span className="opacity-70">{translateUnitName(unit.name)}</span>
+                                  </>
+                                )}
                               </SelectItem>
                             ))}
                           </SelectContent>
