@@ -2496,6 +2496,7 @@ export default function UnitConverter() {
       }
       
       setActiveCategory(allCategories[newIndex] as UnitCategory);
+      setInputValue('1');
     }
   };
 
@@ -2514,7 +2515,7 @@ export default function UnitConverter() {
                 return (
                   <button
                     key={cat.id}
-                    onClick={() => setActiveCategory(cat.id as UnitCategory)}
+                    onClick={() => { setActiveCategory(cat.id as UnitCategory); setInputValue('1'); }}
                     className={`w-full text-left px-3 py-[1px] rounded-sm text-xs font-medium transition-all duration-200 border-l-2 flex items-center justify-between group ${
                       activeCategory === cat.id 
                         ? 'border-accent text-accent' 
