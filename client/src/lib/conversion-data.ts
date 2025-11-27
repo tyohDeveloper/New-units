@@ -237,7 +237,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "m³",
     units: [
       { id: "l", name: "Liter", symbol: "L", factor: 0.001, allowPrefixes: true },
-      { id: "m3", name: "Cubic Meter", symbol: "m³", factor: 1, allowPrefixes: true },
+      { id: "m3", name: "Cubic Meter", symbol: "m³", factor: 1, allowPrefixes: false },
       { id: "ft3", name: "Cubic Foot", symbol: "ft³", factor: 0.0283168 },
       { id: "yd3", name: "Cubic Yard", symbol: "yd³", factor: 0.764555 },
       { id: "tsp", name: "Teaspoon (US)", symbol: "tsp", factor: 0.00000492892 },
