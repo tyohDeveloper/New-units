@@ -1772,14 +1772,7 @@ export default function UnitConverter() {
         const siBaseValue = result * toUnitData.factor * toPrefixData.factor;
         
         // Auto-select best prefix for display
-        // For mass, use special normalization to avoid prefix stacking
-        let bestPrefix: string;
-        if (activeCategory === 'mass') {
-          const normalized = normalizeMassValue(siBaseValue);
-          bestPrefix = normalized.prefixId;
-        } else {
-          bestPrefix = findBestPrefix(siBaseValue);
-        }
+        const bestPrefix = findBestPrefix(siBaseValue);
         
         const newCalcValues = [...calcValues];
         newCalcValues[firstEmptyIndex] = {
@@ -2073,35 +2066,21 @@ export default function UnitConverter() {
           // Find the category data
           const cat = CONVERSION_DATA.find(c => c.id === matchingCategory);
           
-          // Special handling for mass: use automatic gram-based normalization
-          if (matchingCategory === 'mass') {
-            const normalized = normalizeMassValue(resultValue);
-            // Set appropriate unit based on normalization result
-            if (normalized.unitSymbol === 'kg') {
-              setResultUnit('kg');
-              setResultPrefix('none');
-            } else {
-              setResultUnit('g');
-              setResultPrefix(normalized.prefixId);
-            }
-            setSelectedAlternative(0);
+          // Default to the first unit with allowPrefixes=true (the primary SI derived unit)
+          // Otherwise use base SI unit (null)
+          const primaryUnit = cat?.units.find(u => u.allowPrefixes);
+          if (primaryUnit) {
+            setResultUnit(primaryUnit.id);
+            // Find best prefix for the primary unit
+            const unitValue = resultValue / primaryUnit.factor;
+            const bestPrefix = findBestPrefix(unitValue);
+            setResultPrefix(bestPrefix);
           } else {
-            // Default to the first unit with allowPrefixes=true (the primary SI derived unit)
-            // Otherwise use base SI unit (null)
-            const primaryUnit = cat?.units.find(u => u.allowPrefixes);
-            if (primaryUnit) {
-              setResultUnit(primaryUnit.id);
-              // Find best prefix for the primary unit
-              const unitValue = resultValue / primaryUnit.factor;
-              const bestPrefix = findBestPrefix(unitValue);
-              setResultPrefix(bestPrefix);
-            } else {
-              setResultUnit(null);
-              const bestPrefix = findBestPrefix(resultValue);
-              setResultPrefix(bestPrefix);
-            }
-            setSelectedAlternative(0); // Reset for category-matched results
+            setResultUnit(null);
+            const bestPrefix = findBestPrefix(resultValue);
+            setResultPrefix(bestPrefix);
           }
+          setSelectedAlternative(0); // Reset for category-matched results
         } else {
           // For complex dimensions with no matching category, generate alternatives
           const alternatives = generateAlternativeRepresentations(resultDimensions);
@@ -2202,33 +2181,19 @@ export default function UnitConverter() {
         const unit = cat?.units.find(u => u.id === resultUnit);
         
         if (unit) {
-          // For mass category with kg, apply normalization (only for prefixes other than 'none' and 'kilo')
-          if (resultCategory === 'mass' && (resultUnit === 'kg' || resultUnit === null) && resultPrefix !== 'none' && resultPrefix !== 'kilo') {
-            const normalized = normalizeMassDisplay(calcValues[3].value, resultPrefix, resultUnit);
-            valueToCopy = normalized.value;
-            unitSymbol = `${normalized.prefixSymbol}${normalized.unitSymbol}`;
-          } else {
-            const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
-            const prefixFactor = unit.allowPrefixes ? prefixData.factor : 1;
-            valueToCopy = calcValues[3].value / (unit.factor * prefixFactor);
-            const prefixSymbol = unit.allowPrefixes && resultPrefix !== 'none' ? prefixData.symbol : '';
-            unitSymbol = `${prefixSymbol}${unit.symbol}`;
-          }
+          const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
+          const prefixFactor = unit.allowPrefixes ? prefixData.factor : 1;
+          valueToCopy = calcValues[3].value / (unit.factor * prefixFactor);
+          const prefixSymbol = unit.allowPrefixes && resultPrefix !== 'none' ? prefixData.symbol : '';
+          unitSymbol = `${prefixSymbol}${unit.symbol}`;
         }
       } else if (resultCategory) {
         // If result has a category but no specific unit, use SI base unit
-        // For mass category, apply normalization (only for prefixes other than 'none' and 'kilo')
-        if (resultCategory === 'mass' && resultPrefix !== 'none' && resultPrefix !== 'kilo') {
-          const normalized = normalizeMassDisplay(calcValues[3].value, resultPrefix, null);
-          valueToCopy = normalized.value;
-          unitSymbol = `${normalized.prefixSymbol}${normalized.unitSymbol}`;
-        } else {
-          const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-          const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
-          valueToCopy = calcValues[3].value / prefixData.factor;
-          const prefixSymbol = resultPrefix !== 'none' ? prefixData.symbol : '';
-          unitSymbol = `${prefixSymbol}${cat?.baseSISymbol || ''}`;
-        }
+        const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+        const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
+        valueToCopy = calcValues[3].value / prefixData.factor;
+        const prefixSymbol = resultPrefix !== 'none' ? prefixData.symbol : '';
+        unitSymbol = `${prefixSymbol}${cat?.baseSISymbol || ''}`;
       } else {
         // Use dimensional formula if no category
         const val = calcValues[3];
@@ -2763,12 +2728,6 @@ export default function UnitConverter() {
                   {calcValues[0] ? (() => {
                     const val = calcValues[0];
                     if (!val) return '';
-                    // For mass dimensions, use normalized display
-                    const isMass = val.dimensions.mass === 1 && Object.keys(val.dimensions).length === 1;
-                    if (isMass) {
-                      const normalized = normalizeMassValue(val.value);
-                      return formatNumberWithSeparators(normalized.value, calculatorPrecision);
-                    }
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     const displayValue = val.value / prefix.factor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
@@ -2778,12 +2737,6 @@ export default function UnitConverter() {
                   {calcValues[0] ? (() => {
                     const val = calcValues[0];
                     if (!val) return '';
-                    // For mass dimensions, use normalized display
-                    const isMass = val.dimensions.mass === 1 && Object.keys(val.dimensions).length === 1;
-                    if (isMass) {
-                      const normalized = normalizeMassValue(val.value);
-                      return `${normalized.prefixSymbol}${normalized.unitSymbol}`;
-                    }
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
@@ -2809,12 +2762,6 @@ export default function UnitConverter() {
                   {calcValues[1] ? (() => {
                     const val = calcValues[1];
                     if (!val) return '';
-                    // For mass dimensions, use normalized display
-                    const isMass = val.dimensions.mass === 1 && Object.keys(val.dimensions).length === 1;
-                    if (isMass) {
-                      const normalized = normalizeMassValue(val.value);
-                      return formatNumberWithSeparators(normalized.value, calculatorPrecision);
-                    }
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     const displayValue = val.value / prefix.factor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
@@ -2824,12 +2771,6 @@ export default function UnitConverter() {
                   {calcValues[1] ? (() => {
                     const val = calcValues[1];
                     if (!val) return '';
-                    // For mass dimensions, use normalized display
-                    const isMass = val.dimensions.mass === 1 && Object.keys(val.dimensions).length === 1;
-                    if (isMass) {
-                      const normalized = normalizeMassValue(val.value);
-                      return `${normalized.prefixSymbol}${normalized.unitSymbol}`;
-                    }
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
@@ -2873,12 +2814,6 @@ export default function UnitConverter() {
                   {calcValues[2] ? (() => {
                     const val = calcValues[2];
                     if (!val) return '';
-                    // For mass dimensions, use normalized display
-                    const isMass = val.dimensions.mass === 1 && Object.keys(val.dimensions).length === 1;
-                    if (isMass) {
-                      const normalized = normalizeMassValue(val.value);
-                      return formatNumberWithSeparators(normalized.value, calculatorPrecision);
-                    }
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     const displayValue = val.value / prefix.factor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
@@ -2888,12 +2823,6 @@ export default function UnitConverter() {
                   {calcValues[2] ? (() => {
                     const val = calcValues[2];
                     if (!val) return '';
-                    // For mass dimensions, use normalized display
-                    const isMass = val.dimensions.mass === 1 && Object.keys(val.dimensions).length === 1;
-                    if (isMass) {
-                      const normalized = normalizeMassValue(val.value);
-                      return `${normalized.prefixSymbol}${normalized.unitSymbol}`;
-                    }
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
                     return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
                   })() : ''}
@@ -2943,24 +2872,12 @@ export default function UnitConverter() {
                       const prefixFactor = unit.allowPrefixes ? prefixData.factor : 1;
                       let convertedValue = calcValues[3].value / (unit.factor * prefixFactor);
                       
-                      // For mass category with kg, apply normalization (only for prefixes other than 'none' and 'kilo')
-                      if (resultCategory === 'mass' && (resultUnit === 'kg' || resultUnit === null) && resultPrefix !== 'none' && resultPrefix !== 'kilo') {
-                        const normalized = normalizeMassDisplay(calcValues[3].value, resultPrefix, resultUnit);
-                        convertedValue = normalized.value;
-                      }
-                      
                       return formatNumberWithSeparators(convertedValue, calculatorPrecision);
                     }
                     return formatNumberWithSeparators(calcValues[3].value, calculatorPrecision);
                   })() : calcValues[3] && resultCategory ? (() => {
                     const val = calcValues[3];
                     if (!val) return '';
-                    
-                    // For mass category with base SI unit (kg), apply normalization (only for prefixes other than 'none' and 'kilo')
-                    if (resultCategory === 'mass' && resultPrefix !== 'none' && resultPrefix !== 'kilo') {
-                      const normalized = normalizeMassDisplay(val.value, resultPrefix, null);
-                      return formatNumberWithSeparators(normalized.value, calculatorPrecision);
-                    }
                     
                     // Display using SI base unit with selected prefix
                     const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
@@ -2982,12 +2899,6 @@ export default function UnitConverter() {
                     const unit = cat?.units.find(u => u.id === resultUnit);
                     if (!unit) return formatDimensions(val.dimensions);
                     
-                    // For mass category with kg, apply normalization (only for prefixes other than 'none' and 'kilo')
-                    if (resultCategory === 'mass' && (resultUnit === 'kg' || resultUnit === null) && resultPrefix !== 'none' && resultPrefix !== 'kilo') {
-                      const normalized = normalizeMassDisplay(val.value, resultPrefix, resultUnit);
-                      return `${normalized.prefixSymbol}${normalized.unitSymbol}`;
-                    }
-                    
                     // Include prefix symbol if unit allows prefixes
                     const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
                     const prefixSymbol = unit.allowPrefixes && resultPrefix !== 'none' ? prefixData.symbol : '';
@@ -2997,12 +2908,6 @@ export default function UnitConverter() {
                     if (!val) return '';
                     const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                     if (!cat) return formatDimensions(val.dimensions);
-                    
-                    // For mass category with base SI unit (kg), apply normalization (only for prefixes other than 'none' and 'kilo')
-                    if (resultCategory === 'mass' && resultPrefix !== 'none' && resultPrefix !== 'kilo') {
-                      const normalized = normalizeMassDisplay(val.value, resultPrefix, null);
-                      return `${normalized.prefixSymbol}${normalized.unitSymbol}`;
-                    }
                     
                     // Display SI base unit symbol with prefix
                     const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
