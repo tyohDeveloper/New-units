@@ -1393,10 +1393,10 @@ export default function UnitConverter() {
   useEffect(() => {
     const sorted = getFilteredSortedUnits(activeCategory, includeBeerWine);
     if (sorted.length > 0) {
-      // Special case: temperature defaults to Celsius
+      // Special case: temperature defaults to Kelvin
       if (activeCategory === 'temperature') {
-        setFromUnit('c');
-        setToUnit('c');
+        setFromUnit('k');
+        setToUnit('k');
       } else {
         // Default to first unit in sorted list (SI units are sorted first)
         setFromUnit(sorted[0].id);
