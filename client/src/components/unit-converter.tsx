@@ -124,7 +124,8 @@ export default function UnitConverter() {
   // Languages with complete translations available
   // Only showing languages that have full translations for all labels to ensure consistent user experience
   const ISO_LANGUAGES = [
-    'en', // English (380M native speakers)
+    'en', // English (380M native speakers) - UK spelling (metre, litre)
+    'en-us', // English US - US spelling (meter, liter)
     'ar', // Arabic (274M)
     'de', // German (76M)
     'es', // Spanish (486M)
@@ -219,26 +220,23 @@ export default function UnitConverter() {
   // Helper: Apply regional spelling variations (ONLY for English language)
   // This function should ONLY be called when the language is English
   const applyRegionalSpelling = (unitName: string): string => {
-    // Only apply regional spelling variations for English
+    // Only apply regional spelling variations for English variants
     // For all other languages, use their own translations directly
-    if (language !== 'en') {
+    if (language !== 'en' && language !== 'en-us') {
       return unitName;
     }
     
-    // US-style formats use "meter" and "liter"
-    const usFormats: NumberFormat[] = ['arabic-latin', 'period'];
-    
-    if (usFormats.includes(numberFormat)) {
-      // US English: use "meter" and "liter" spelling
+    // en-us uses US spelling (meter, liter)
+    if (language === 'en-us') {
       return unitName;
-    } else {
-      // UK/International English: use "metre" and "litre" spelling
-      return unitName
-        .replace(/Meter/g, 'Metre')
-        .replace(/meter/g, 'metre')
-        .replace(/Liter/g, 'Litre')
-        .replace(/liter/g, 'litre');
     }
+    
+    // en (British English) uses UK spelling (metre, litre)
+    return unitName
+      .replace(/Meter/g, 'Metre')
+      .replace(/meter/g, 'metre')
+      .replace(/Liter/g, 'Litre')
+      .replace(/liter/g, 'litre');
   };
 
   // Map of prefix exponents (shared across normalization functions)
@@ -1236,6 +1234,8 @@ export default function UnitConverter() {
     if (TRANSLATIONS[key]) {
       const trans = TRANSLATIONS[key];
       // Check for translation in selected language
+      // en-us uses English translations (spelling handled separately by applyRegionalSpelling)
+      if ((language === 'en' || language === 'en-us') && trans.en) return trans.en;
       if (language === 'de' && trans.de) return trans.de;
       if (language === 'es' && trans.es) return trans.es;
       if (language === 'fr' && trans.fr) return trans.fr;
