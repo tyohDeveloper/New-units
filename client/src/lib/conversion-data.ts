@@ -644,8 +644,6 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "dyncm2", name: "Dyne/cm²", symbol: "dyn⋅cm⁻²", factor: 0.1 },
     ],
   },
-
-  // --- SPECIALIZED ---
   {
     id: "luminance",
     name: "Luminance",

@@ -1480,7 +1480,6 @@ export default function UnitConverter() {
       catalytic: { amount: 1, time: -1 },
       angle: { angle: 1 },
       solid_angle: { solid_angle: 1 },
-      digital: {},
       luminous_flux: { intensity: 1, solid_angle: 1 },
       illuminance: { intensity: 1, solid_angle: 1, length: -2 },
       luminous_exitance: { intensity: 1, solid_angle: 1, length: -2 },
