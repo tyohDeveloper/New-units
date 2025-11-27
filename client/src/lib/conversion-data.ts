@@ -389,6 +389,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "kg⁻¹⋅m⁻²⋅s⁴⋅A²",
     units: [
       { id: "f", name: "Farad", symbol: "F", factor: 1, allowPrefixes: true },
+      { id: "abf", name: "Abfarad", symbol: "abF", factor: 1e-9 },
     ],
   },
   {
