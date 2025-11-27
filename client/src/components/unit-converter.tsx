@@ -97,6 +97,8 @@ export default function UnitConverter() {
     { symbol: 'rad', category: 'angle', unitId: 'rad', dimensions: { angle: 1 }, allowPrefixes: true },
     // Solid angle (sr)
     { symbol: 'sr', category: 'solid_angle', unitId: 'sr', dimensions: { solid_angle: 1 }, allowPrefixes: true },
+    // Luminous flux (lm = cd⋅sr)
+    { symbol: 'lm', category: 'luminous_flux', unitId: 'lm', dimensions: { intensity: 1, solid_angle: 1 }, allowPrefixes: true },
   ];
 
   // Alternative unit representation
@@ -1464,9 +1466,9 @@ export default function UnitConverter() {
       angle: { angle: 1 },
       solid_angle: { solid_angle: 1 },
       digital: {},
-      luminous_flux: { intensity: 1 },
-      illuminance: { intensity: 1, length: -2 },
-      luminous_exitance: { intensity: 1, length: -2 },
+      luminous_flux: { intensity: 1, solid_angle: 1 },
+      illuminance: { intensity: 1, solid_angle: 1, length: -2 },
+      luminous_exitance: { intensity: 1, solid_angle: 1, length: -2 },
       luminance: { intensity: 1, length: -2 },
       torque: { mass: 1, length: 2, time: -2 },
       density: { mass: 1, length: -3 },
@@ -1619,13 +1621,14 @@ export default function UnitConverter() {
       [JSON.stringify({ mass: 1, length: 2, time: -2, current: -2 })]: 'H',
       [JSON.stringify({ mass: 1, length: 2, time: -2, current: -1 })]: 'Wb',
       [JSON.stringify({ mass: 1, time: -2, current: -1 })]: 'T',
-      [JSON.stringify({ intensity: 1, length: -2 })]: 'lx',
+      [JSON.stringify({ intensity: 1, solid_angle: 1, length: -2 })]: 'lx',
       [JSON.stringify({ mass: 1, length: -3 })]: 'kg/m³',
       [JSON.stringify({ length: 3, time: -1 })]: 'm³/s',
       [JSON.stringify({ mass: 1, length: -1, time: -1 })]: 'Pa⋅s',
       [JSON.stringify({ mass: 1, time: -2 })]: 'N/m',
       [JSON.stringify({ length: -1 })]: 'm⁻¹',
-      [JSON.stringify({ amount: 1, time: -1 })]: 'kat'
+      [JSON.stringify({ amount: 1, time: -1 })]: 'kat',
+      [JSON.stringify({ intensity: 1, solid_angle: 1 })]: 'lm'
     };
 
     return derivedUnits[dimsStr] || '';
