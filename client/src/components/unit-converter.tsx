@@ -242,11 +242,11 @@ export default function UnitConverter() {
     };
     
     // Reverse map: exponent to prefix id
-    const exponentToPrefix: Record<number, string> = {
+    const exponentToPrefix: { [key: number]: string } = {
       24: 'yotta', 21: 'zetta', 18: 'exa', 15: 'peta', 12: 'tera',
-      9: 'giga', 6: 'mega', 3: 'kilo', 0: 'none', '-2': 'centi',
-      '-3': 'milli', '-6': 'micro', '-9': 'nano', '-12': 'pico',
-      '-15': 'femto', '-18': 'atto', '-21': 'zepto', '-24': 'yocto'
+      9: 'giga', 6: 'mega', 3: 'kilo', 0: 'none', 
+      [-2]: 'centi', [-3]: 'milli', [-6]: 'micro', [-9]: 'nano', [-12]: 'pico',
+      [-15]: 'femto', [-18]: 'atto', [-21]: 'zepto', [-24]: 'yocto'
     };
     
     // If unit is kg and a prefix other than 'none' is selected
