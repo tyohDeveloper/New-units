@@ -2439,21 +2439,43 @@ export default function UnitConverter() {
                 {calcValues[3] && (
                   <React.Fragment>
                     {resultCategory ? (
-                      <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
-                        <SelectTrigger className="h-9 flex-1 text-xs">
-                          <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="base" className="text-xs font-mono">
-                            {CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"}
-                          </SelectItem>
-                          {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
-                            <SelectItem key={unit.id} value={unit.id} className="text-xs">
-                              {translateUnitName(unit.name)}
+                      <>
+                        <Select 
+                          value={resultPrefix} 
+                          onValueChange={setResultPrefix}
+                          disabled={(() => {
+                            const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+                            const unit = cat?.units.find(u => u.id === resultUnit);
+                            return !unit?.allowPrefixes;
+                          })()}
+                        >
+                          <SelectTrigger className="h-9 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                            <SelectValue placeholder={t('Prefix')} />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[300px]">
+                            {PREFIXES.map((p) => (
+                              <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
+                                {p.symbol || t('None')}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
+                          <SelectTrigger className="h-9 flex-1 text-xs">
+                            <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="base" className="text-xs font-mono">
+                              {CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"}
                             </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                            {CONVERSION_DATA.find(c => c.id === resultCategory)?.units.map(unit => (
+                              <SelectItem key={unit.id} value={unit.id} className="text-xs">
+                                {translateUnitName(unit.name)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </>
                     ) : (
                       <Select value="unitless" disabled>
                         <SelectTrigger className="h-9 flex-1 text-xs">
