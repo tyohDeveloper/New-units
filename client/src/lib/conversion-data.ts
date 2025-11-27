@@ -390,6 +390,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     units: [
       { id: "f", name: "Farad", symbol: "F", factor: 1, allowPrefixes: true },
       { id: "abf", name: "Abfarad", symbol: "abF", factor: 1e-9 },
+      { id: "statf", name: "Statfarad", symbol: "statF", factor: 1.11265e-12 },
     ],
   },
   {
