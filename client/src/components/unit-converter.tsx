@@ -1665,12 +1665,23 @@ export default function UnitConverter() {
         const matchingCategory = findCategoryForDimensions(resultDimensions);
         setResultCategory(matchingCategory);
         if (matchingCategory) {
-          // Default to SI base unit (null means use baseSISymbol)
-          setResultUnit(null);
+          // Find the category data
+          const cat = CONVERSION_DATA.find(c => c.id === matchingCategory);
           
-          // Find best prefix based on SI base value
-          const bestPrefix = findBestPrefix(resultValue);
-          setResultPrefix(bestPrefix);
+          // Default to the first unit with allowPrefixes=true (the primary SI derived unit)
+          // Otherwise use base SI unit (null)
+          const primaryUnit = cat?.units.find(u => u.allowPrefixes);
+          if (primaryUnit) {
+            setResultUnit(primaryUnit.id);
+            // Find best prefix for the primary unit
+            const unitValue = resultValue / primaryUnit.factor;
+            const bestPrefix = findBestPrefix(unitValue);
+            setResultPrefix(bestPrefix);
+          } else {
+            setResultUnit(null);
+            const bestPrefix = findBestPrefix(resultValue);
+            setResultPrefix(bestPrefix);
+          }
         }
       }
     } else if (calcValues[3] !== null) {
