@@ -273,10 +273,63 @@ export default function UnitConverter() {
     return { unit, prefix };
   };
 
-  // Helper: Normalize mass display for calculator results
-  // Given a value in kg and a prefix, returns normalized { value, unit, prefix, symbol }
-  // E.g., 10000000 kg with mega prefix -> 10 Gg (10 gigagrams)
-  // But with 'none' or 'kilo' prefix, stays as kg (no normalization)
+  // Helper: Automatically normalize mass values to the best gram-based representation
+  // Given a value in kg, finds the best prefix for grams and returns normalized display
+  // E.g., 1000 kg -> 1 Mg, 1 kg -> 1 kg, 0.001 kg -> 1 g
+  // Prefixes don't stack: we convert to grams first, then find best prefix
+  const normalizeMassValue = (valueInKg: number): { 
+    value: number; 
+    unitSymbol: string; 
+    prefixSymbol: string;
+    prefixId: string;
+  } => {
+    // Convert kg to grams
+    const valueInGrams = valueInKg * 1000;
+    const absGrams = Math.abs(valueInGrams);
+    
+    // Find the best prefix for the gram value
+    // We want to find the largest prefix that gives us a value >= 1
+    const prefixOrder = [
+      { id: 'yotta', exp: 24 }, { id: 'zetta', exp: 21 }, { id: 'exa', exp: 18 },
+      { id: 'peta', exp: 15 }, { id: 'tera', exp: 12 }, { id: 'giga', exp: 9 },
+      { id: 'mega', exp: 6 }, { id: 'kilo', exp: 3 }, { id: 'none', exp: 0 },
+      { id: 'milli', exp: -3 }, { id: 'micro', exp: -6 }, { id: 'nano', exp: -9 },
+      { id: 'pico', exp: -12 }, { id: 'femto', exp: -15 }, { id: 'atto', exp: -18 },
+      { id: 'zepto', exp: -21 }, { id: 'yocto', exp: -24 }
+    ];
+    
+    let bestPrefix = { id: 'none', exp: 0 };
+    for (const p of prefixOrder) {
+      const factor = Math.pow(10, p.exp);
+      if (absGrams >= factor) {
+        bestPrefix = p;
+        break;
+      }
+    }
+    
+    // Special case: if the best prefix is 'kilo', show as kg instead of kg
+    if (bestPrefix.id === 'kilo') {
+      return {
+        value: valueInKg,
+        unitSymbol: 'kg',
+        prefixSymbol: '',
+        prefixId: 'none'
+      };
+    }
+    
+    const prefixData = PREFIXES.find(p => p.id === bestPrefix.id) || PREFIXES.find(p => p.id === 'none')!;
+    const displayValue = valueInGrams / prefixData.factor;
+    
+    return {
+      value: displayValue,
+      unitSymbol: 'g',
+      prefixSymbol: prefixData.symbol,
+      prefixId: bestPrefix.id
+    };
+  };
+
+  // Helper: Normalize mass display for calculator results with user-selected prefix
+  // When user manually selects a prefix for kg, normalize appropriately
   const normalizeMassDisplay = (valueInKg: number, currentPrefix: string, unitId: string | null): { 
     value: number; 
     unitSymbol: string; 
@@ -2013,21 +2066,35 @@ export default function UnitConverter() {
           // Find the category data
           const cat = CONVERSION_DATA.find(c => c.id === matchingCategory);
           
-          // Default to the first unit with allowPrefixes=true (the primary SI derived unit)
-          // Otherwise use base SI unit (null)
-          const primaryUnit = cat?.units.find(u => u.allowPrefixes);
-          if (primaryUnit) {
-            setResultUnit(primaryUnit.id);
-            // Find best prefix for the primary unit
-            const unitValue = resultValue / primaryUnit.factor;
-            const bestPrefix = findBestPrefix(unitValue);
-            setResultPrefix(bestPrefix);
+          // Special handling for mass: use automatic gram-based normalization
+          if (matchingCategory === 'mass') {
+            const normalized = normalizeMassValue(resultValue);
+            // Set appropriate unit based on normalization result
+            if (normalized.unitSymbol === 'kg') {
+              setResultUnit('kg');
+              setResultPrefix('none');
+            } else {
+              setResultUnit('g');
+              setResultPrefix(normalized.prefixId);
+            }
+            setSelectedAlternative(0);
           } else {
-            setResultUnit(null);
-            const bestPrefix = findBestPrefix(resultValue);
-            setResultPrefix(bestPrefix);
+            // Default to the first unit with allowPrefixes=true (the primary SI derived unit)
+            // Otherwise use base SI unit (null)
+            const primaryUnit = cat?.units.find(u => u.allowPrefixes);
+            if (primaryUnit) {
+              setResultUnit(primaryUnit.id);
+              // Find best prefix for the primary unit
+              const unitValue = resultValue / primaryUnit.factor;
+              const bestPrefix = findBestPrefix(unitValue);
+              setResultPrefix(bestPrefix);
+            } else {
+              setResultUnit(null);
+              const bestPrefix = findBestPrefix(resultValue);
+              setResultPrefix(bestPrefix);
+            }
+            setSelectedAlternative(0); // Reset for category-matched results
           }
-          setSelectedAlternative(0); // Reset for category-matched results
         } else {
           // For complex dimensions with no matching category, generate alternatives
           const alternatives = generateAlternativeRepresentations(resultDimensions);
