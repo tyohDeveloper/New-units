@@ -15,7 +15,7 @@ export default function Home() {
             <span className="font-bold text-xl tracking-tight">Omni<span className="text-primary">Unit</span></span>
           </div>
           <div className="text-xs font-mono text-muted-foreground hidden sm:block">
-            v{packageJson.version} // ARCHIVAL_EDITION
+            v{packageJson.version}
           </div>
         </div>
       </header>
