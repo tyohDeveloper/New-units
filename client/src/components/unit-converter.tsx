@@ -210,6 +210,13 @@ export default function UnitConverter() {
     return rounded.toFixed(precision);
   };
 
+  // Helper: Title case a string (capitalize first letter of each word)
+  const toTitleCase = (str: string): string => {
+    return str.split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ).join(' ');
+  };
+
   // Helper: Apply regional spelling variations (ONLY for English language)
   // This function should ONLY be called when the language is English
   const applyRegionalSpelling = (unitName: string): string => {
@@ -2506,7 +2513,7 @@ export default function UnitConverter() {
           <h1 className="text-3xl font-bold text-foreground tracking-tight">{t(applyRegionalSpelling(categoryData.name))}</h1>
           <div className="flex items-center justify-between mt-1">
             <p className="text-muted-foreground text-sm font-mono">
-              {t('Base unit:')} <span className="text-primary">{t(applyRegionalSpelling(categoryData.baseUnit))}</span>
+              {t('Base unit:')} <span className="text-primary">{t(applyRegionalSpelling(toTitleCase(categoryData.baseUnit)))}</span>
             </p>
             <div className="flex items-center gap-3">
               {activeCategory === 'volume' && (
@@ -3223,7 +3230,7 @@ export default function UnitConverter() {
                                   {!baseUnitExists && (
                                     <SelectItem value="base" className="text-xs font-mono">
                                       <span className="font-bold mr-2">{cat.baseSISymbol}</span>
-                                      <span className="opacity-70">{t(cat.baseUnit.charAt(0).toUpperCase() + cat.baseUnit.slice(1))}</span>
+                                      <span className="opacity-70">{t(applyRegionalSpelling(toTitleCase(cat.baseUnit)))}</span>
                                     </SelectItem>
                                   )}
                                   {units.map(unit => (
