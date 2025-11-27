@@ -1451,6 +1451,8 @@ export default function UnitConverter() {
       temperature: { temperature: 1 },
       amount: { amount: 1 },
       intensity: { intensity: 1 },
+      luminous_exitance: { intensity: 1 },
+      luminance: { intensity: 1 },
       area: { length: 2 },
       volume: { length: 3 },
       speed: { length: 1, time: -1 },
