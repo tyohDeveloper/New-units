@@ -1825,6 +1825,14 @@ export default function UnitConverter() {
         formattedResult = valueToCopy.toString();
         textToCopy = `${formattedResult} lm`;
       }
+      // For plane angle category, convert to radians (base unit) value
+      else if (activeCategory === 'angle') {
+        valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
+        formattedResult = result.toString();
+        const unitSymbol = toUnitData?.symbol || '';
+        const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
+        textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
+      }
       // Special formats already include unit notation, don't append symbol
       else if (toUnit === 'deg_dms') {
         formattedResult = formatDMS(result);
