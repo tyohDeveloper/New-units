@@ -586,6 +586,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "lumen",
     baseSISymbol: "cd⋅sr",
     units: [
+      { id: "cdsr", name: "Candela-Steradian", symbol: "cd⋅sr", factor: 1 },
       { id: "lm", name: "Lumen", symbol: "lm", factor: 1, allowPrefixes: true },
       { id: "candlepower", name: "Candlepower (spherical)", symbol: "cp", factor: 12.566371 },
       { id: "talbot", name: "Talbot", symbol: "T", factor: 1, description: "Lumen-second (photographic)" },
