@@ -1509,8 +1509,9 @@ export default function UnitConverter() {
     };
 
     // Define the standard order for base units
+    // Order: length, mass, time, electric current, thermodynamic temperature, amount of substance, luminous intensity
     const dimensionOrder: (keyof DimensionalFormula)[] = [
-      'time', 'length', 'mass', 'current', 'temperature', 'amount', 'intensity'
+      'length', 'mass', 'time', 'current', 'temperature', 'amount', 'intensity'
     ];
 
     const superscripts: Record<string, string> = {
