@@ -738,6 +738,11 @@ export default function UnitConverter() {
       es: 'Decimales', fr: 'Décimales', it: 'Decimali',
       pt: 'Decimais', ru: 'Десятичные', zh: '小数', ja: '小数'
     },
+    'Precision': { 
+      en: 'Precision', ar: 'الدقة', de: 'Genauigkeit',
+      es: 'Precisión', fr: 'Précision', it: 'Precisione',
+      pt: 'Precisão', ru: 'Точность', zh: '精度', ja: '精度'
+    },
     'Copy': { 
       en: 'Copy', ar: 'نسخ', de: 'Kopieren',
       es: 'Copiar', fr: 'Copier', it: 'Copia',
@@ -2907,7 +2912,7 @@ export default function UnitConverter() {
             <div className="flex-1 flex items-center justify-between">
               <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Calculator')}</Label>
               <div className="flex items-center gap-2">
-                <Label className="text-xs text-muted-foreground">{t('Decimals')}</Label>
+                <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
                 <Select 
                   value={calculatorPrecision.toString()} 
                   onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
