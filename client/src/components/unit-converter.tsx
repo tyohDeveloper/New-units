@@ -1813,108 +1813,22 @@ export default function UnitConverter() {
     if (result !== null && toUnitData && fromUnitData) {
       let formattedResult = result.toString();
       let textToCopy: string;
-      let valueToCopy = result;
+      // Always convert result to SI base units for calculator (this works for all categories)
+      const valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
       
-      // For lightbulb category, convert to lumen (base unit) value
-      if (activeCategory === 'lightbulb') {
-        valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
-        formattedResult = valueToCopy.toString();
-        textToCopy = `${formattedResult} lm`;
-      }
-      // For plane angle category, convert to radians (base unit) value from input
-      else if (activeCategory === 'angle') {
-        // Parse input value
-        let inputVal: number;
-        if (fromUnit === 'deg_dms') {
-          inputVal = parseDMS(inputValue);
-        } else if (fromUnit === 'ft_in') {
-          inputVal = parseFtIn(inputValue);
-        } else {
-          inputVal = parseNumberWithFormat(inputValue);
-        }
-        // Convert from input unit to base unit (radians)
-        const isSpecialFrom = fromUnit === 'deg_dms' || fromUnit === 'ft_in';
-        const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData && !isSpecialFrom) ? fromPrefixData.factor : 1;
-        valueToCopy = inputVal * fromUnitData.factor * fromFactor;
-        formattedResult = result.toString();
-        const unitSymbol = toUnitData?.symbol || '';
-        const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
-        textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
-      }
-      // For solid angle category, convert to steradians (base unit) value from input
-      else if (activeCategory === 'solid_angle') {
-        // Parse input value
-        let inputVal: number;
-        if (fromUnit === 'deg_dms') {
-          inputVal = parseDMS(inputValue);
-        } else if (fromUnit === 'ft_in') {
-          inputVal = parseFtIn(inputValue);
-        } else {
-          inputVal = parseNumberWithFormat(inputValue);
-        }
-        // Convert from input unit to base unit (steradians)
-        const isSpecialFrom = fromUnit === 'deg_dms' || fromUnit === 'ft_in';
-        const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData && !isSpecialFrom) ? fromPrefixData.factor : 1;
-        valueToCopy = inputVal * fromUnitData.factor * fromFactor;
-        formattedResult = result.toString();
-        const unitSymbol = toUnitData?.symbol || '';
-        const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
-        textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
-      }
-      // For illuminance category, convert to cd⋅sr⋅m⁻² (base unit) value from input
-      else if (activeCategory === 'illuminance') {
-        // Parse input value
-        let inputVal: number;
-        if (fromUnit === 'deg_dms') {
-          inputVal = parseDMS(inputValue);
-        } else if (fromUnit === 'ft_in') {
-          inputVal = parseFtIn(inputValue);
-        } else {
-          inputVal = parseNumberWithFormat(inputValue);
-        }
-        // Convert from input unit to base unit (cd⋅sr⋅m⁻²)
-        const isSpecialFrom = fromUnit === 'deg_dms' || fromUnit === 'ft_in';
-        const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData && !isSpecialFrom) ? fromPrefixData.factor : 1;
-        valueToCopy = inputVal * fromUnitData.factor * fromFactor;
-        formattedResult = result.toString();
-        const unitSymbol = toUnitData?.symbol || '';
-        const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
-        textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
-      }
-      // For capacitance category, convert to Farad (base unit) value from input
-      else if (activeCategory === 'capacitance') {
-        // Parse input value
-        let inputVal: number;
-        if (fromUnit === 'deg_dms') {
-          inputVal = parseDMS(inputValue);
-        } else if (fromUnit === 'ft_in') {
-          inputVal = parseFtIn(inputValue);
-        } else {
-          inputVal = parseNumberWithFormat(inputValue);
-        }
-        // Convert from input unit to base unit (Farad)
-        const isSpecialFrom = fromUnit === 'deg_dms' || fromUnit === 'ft_in';
-        const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData && !isSpecialFrom) ? fromPrefixData.factor : 1;
-        valueToCopy = inputVal * fromUnitData.factor * fromFactor;
-        formattedResult = result.toString();
-        const unitSymbol = toUnitData?.symbol || '';
-        const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
-        textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
-      }
-      // Special formats already include unit notation, don't append symbol
-      else if (toUnit === 'deg_dms') {
+      // Special formatting for specific output types
+      if (toUnit === 'deg_dms') {
         formattedResult = formatDMS(result);
         textToCopy = formattedResult;
-        // For special format, still need to convert result to SI base units for calculator
-        valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
       } else if (toUnit === 'ft_in') {
         formattedResult = formatFtIn(result);
         textToCopy = formattedResult;
-        // For special format, still need to convert result to SI base units for calculator
-        valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
+      } else if (activeCategory === 'lightbulb') {
+        // Lightbulb displays the base unit value
+        formattedResult = valueToCopy.toString();
+        textToCopy = `${formattedResult} lm`;
       } else {
-        // For all other categories, convert result to SI base units
-        valueToCopy = result * toUnitData.factor * (toPrefixData?.factor || 1);
+        // All other categories: display result with unit symbol
         const unitSymbol = toUnitData?.symbol || '';
         const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
         textToCopy = `${formattedResult} ${prefixSymbol}${unitSymbol}`;
