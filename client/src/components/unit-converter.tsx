@@ -1311,7 +1311,7 @@ export default function UnitConverter() {
     },
     {
       name: "Human Response",
-      categories: ['luminous_flux', 'illuminance', 'luminous_exitance', 'luminance', 'refractive_power', 'lightbulb']
+      categories: ['luminous_flux', 'illuminance', 'luminous_exitance', 'refractive_power', 'lightbulb']
     }
   ];
 
@@ -1350,7 +1350,6 @@ export default function UnitConverter() {
       'luminous_flux': ['lm'],
       'illuminance': ['lx'],
       'luminous_exitance': ['lmm2'],
-      'luminance': ['nit'],
     };
     
     // Define astronomy units (for length category)
@@ -1474,7 +1473,6 @@ export default function UnitConverter() {
       luminous_flux: { intensity: 1, solid_angle: 1 },
       illuminance: { intensity: 1, solid_angle: 1, length: -2 },
       luminous_exitance: { intensity: 1, solid_angle: 1, length: -2 },
-      luminance: { intensity: 1, length: -2 },
       torque: { mass: 1, length: 2, time: -2 },
       density: { mass: 1, length: -3 },
       flow: { length: 3, time: -1 },
