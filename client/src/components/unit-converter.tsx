@@ -1524,9 +1524,10 @@ export default function UnitConverter() {
     };
 
     // Define the standard order for base units
-    // Order: mass, length, time, electric current, thermodynamic temperature, amount of substance, luminous intensity
+    // Order: mass, length, current, time, thermodynamic temperature, amount of substance, luminous intensity
+    // (current before time so Coulomb displays as A⋅s not s⋅A)
     const dimensionOrder: (keyof DimensionalFormula)[] = [
-      'mass', 'length', 'time', 'current', 'temperature', 'amount', 'intensity'
+      'mass', 'length', 'current', 'time', 'temperature', 'amount', 'intensity'
     ];
 
     const superscripts: Record<string, string> = {
