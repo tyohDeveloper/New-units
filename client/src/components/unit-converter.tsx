@@ -1693,6 +1693,17 @@ export default function UnitConverter() {
     return true;
   };
 
+  // Helper: Check if remaining dimensions introduce new dimensional types
+  const hasOnlyOriginalDimensions = (original: DimensionalFormula, remaining: DimensionalFormula): boolean => {
+    for (const key of Object.keys(remaining) as (keyof DimensionalFormula)[]) {
+      // If the remaining has a dimension that the original doesn't have, reject
+      if (remaining[key] !== 0 && original[key] === undefined) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   // Helper: Generate alternative representations for complex dimensions
   const generateAlternativeRepresentations = (dimensions: DimensionalFormula): AlternativeRepresentation[] => {
     const alternatives: AlternativeRepresentation[] = [];
@@ -1724,6 +1735,11 @@ export default function UnitConverter() {
     for (const derivedUnit of DERIVED_UNITS_CATALOG) {
       if (canFactorOut(dimensions, derivedUnit)) {
         const remaining = subtractDimensions(dimensions, derivedUnit.dimensions);
+        
+        // Verify remaining dimensions don't introduce new dimensional types
+        if (!hasOnlyOriginalDimensions(dimensions, remaining)) {
+          continue; // Skip this factorization
+        }
         
         // Only create hybrid if there's something remaining
         if (Object.keys(remaining).length > 0) {
