@@ -2399,7 +2399,7 @@ export default function UnitConverter() {
               </div>
               <div className="grid sm:grid-cols-[1fr_80px_220px] gap-2">
                 <div className="h-16 px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start w-full min-w-0">
-                  <span className="font-mono text-primary break-all whitespace-nowrap" style={{ fontSize: '9px' }}>
+                  <span className="font-mono text-primary break-all whitespace-nowrap" style={{ fontSize: '0.875rem' }}>
                     {result !== null 
                       ? (toUnit === 'deg_dms' 
                           ? formatDMS(result) 
