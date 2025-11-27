@@ -40,6 +40,63 @@ export default function UnitConverter() {
     prefix: string; // The prefix to display with (e.g., 'k', 'M', 'none')
   }
 
+  // Derived unit catalog for alternative representations
+  interface DerivedUnitInfo {
+    symbol: string;
+    category: UnitCategory;
+    unitId: string;
+    dimensions: DimensionalFormula;
+    allowPrefixes: boolean;
+  }
+
+  // Catalog of all known derived units with their dimensional formulas
+  const DERIVED_UNITS_CATALOG: DerivedUnitInfo[] = [
+    // Frequency
+    { symbol: 'Hz', category: 'frequency', unitId: 'hz', dimensions: { time: -1 }, allowPrefixes: true },
+    // Force
+    { symbol: 'N', category: 'force', unitId: 'n', dimensions: { mass: 1, length: 1, time: -2 }, allowPrefixes: true },
+    // Pressure
+    { symbol: 'Pa', category: 'pressure', unitId: 'pa', dimensions: { mass: 1, length: -1, time: -2 }, allowPrefixes: true },
+    // Energy / Work
+    { symbol: 'J', category: 'energy', unitId: 'j', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
+    // Power
+    { symbol: 'W', category: 'power', unitId: 'w', dimensions: { mass: 1, length: 2, time: -3 }, allowPrefixes: true },
+    // Electric charge
+    { symbol: 'C', category: 'charge', unitId: 'c', dimensions: { current: 1, time: 1 }, allowPrefixes: false },
+    // Voltage
+    { symbol: 'V', category: 'potential', unitId: 'v', dimensions: { mass: 1, length: 2, time: -3, current: -1 }, allowPrefixes: true },
+    // Capacitance
+    { symbol: 'F', category: 'capacitance', unitId: 'f', dimensions: { mass: -1, length: -2, time: 4, current: 2 }, allowPrefixes: true },
+    // Resistance
+    { symbol: 'Ω', category: 'resistance', unitId: 'ohm', dimensions: { mass: 1, length: 2, time: -3, current: -2 }, allowPrefixes: true },
+    // Conductance
+    { symbol: 'S', category: 'conductance', unitId: 's', dimensions: { mass: -1, length: -2, time: 3, current: 2 }, allowPrefixes: false },
+    // Magnetic flux
+    { symbol: 'Wb', category: 'magnetic_flux', unitId: 'wb', dimensions: { mass: 1, length: 2, time: -2, current: -1 }, allowPrefixes: false },
+    // Magnetic flux density
+    { symbol: 'T', category: 'magnetic_density', unitId: 't', dimensions: { mass: 1, time: -2, current: -1 }, allowPrefixes: false },
+    // Inductance
+    { symbol: 'H', category: 'inductance', unitId: 'h', dimensions: { mass: 1, length: 2, time: -2, current: -2 }, allowPrefixes: true },
+    // Catalytic activity
+    { symbol: 'kat', category: 'catalytic', unitId: 'kat', dimensions: { amount: 1, time: -1 }, allowPrefixes: false },
+    // Area (m²)
+    { symbol: 'm²', category: 'area', unitId: 'm2', dimensions: { length: 2 }, allowPrefixes: true },
+    // Volume (L)
+    { symbol: 'L', category: 'volume', unitId: 'l', dimensions: { length: 3 }, allowPrefixes: true },
+  ];
+
+  // Alternative unit representation
+  interface AlternativeRepresentation {
+    displaySymbol: string;         // How to display, e.g., "m⋅J" or "kg⋅m³⋅s⁻²"
+    category: UnitCategory | null; // Category if single unit, null if hybrid
+    unitId: string | null;         // Unit ID if single unit, null if hybrid
+    isHybrid: boolean;             // True if combination of derived+base units
+    components: {                  // For hybrid representations
+      derivedUnit?: DerivedUnitInfo;
+      remainingDimensions?: DimensionalFormula;
+    };
+  }
+
   // Calculator state
   const [calcValues, setCalcValues] = useState<Array<CalcValue | null>>([null, null, null, null]);
   const [calcOp1, setCalcOp1] = useState<'*' | '/' | null>(null);
@@ -1310,6 +1367,9 @@ export default function UnitConverter() {
     return parts.join('⋅');
   };
 
+  // Alias for backward compatibility with factorization code
+  const dimensionsToSymbol = formatDimensions;
+
   // Helper: Get derived unit symbol from dimensions
   const getDerivedUnit = (dims: DimensionalFormula): string => {
     const dimsStr = JSON.stringify(dims);
@@ -1596,6 +1656,94 @@ export default function UnitConverter() {
     }
 
     return bestPrefix;
+  };
+
+  // Helper: Subtract dimensions (for factorization)
+  const subtractDimensions = (d1: DimensionalFormula, d2: DimensionalFormula): DimensionalFormula => {
+    const result: DimensionalFormula = { ...d1 };
+    
+    for (const key of Object.keys(d2) as (keyof DimensionalFormula)[]) {
+      if (result[key] === undefined) {
+        result[key] = -(d2[key] || 0);
+      } else {
+        const newVal = (result[key] || 0) - (d2[key] || 0);
+        if (newVal === 0) {
+          delete result[key];
+        } else {
+          result[key] = newVal;
+        }
+      }
+    }
+    
+    return result;
+  };
+
+  // Helper: Check if derived unit can be factored out of dimensions
+  const canFactorOut = (dimensions: DimensionalFormula, derivedUnit: DerivedUnitInfo): boolean => {
+    for (const key of Object.keys(derivedUnit.dimensions) as (keyof DimensionalFormula)[]) {
+      const dimValue = dimensions[key] || 0;
+      const derivedValue = derivedUnit.dimensions[key] || 0;
+      
+      // Check if the derived unit dimension has the same sign and magnitude <= target dimension
+      if (derivedValue > 0 && dimValue < derivedValue) return false;
+      if (derivedValue < 0 && dimValue > derivedValue) return false;
+      if (derivedValue !== 0 && dimValue === 0) return false;
+    }
+    return true;
+  };
+
+  // Helper: Generate alternative representations for complex dimensions
+  const generateAlternativeRepresentations = (dimensions: DimensionalFormula): AlternativeRepresentation[] => {
+    const alternatives: AlternativeRepresentation[] = [];
+    
+    // First, add the raw SI base units representation
+    const rawSymbol = dimensionsToSymbol(dimensions);
+    alternatives.push({
+      displaySymbol: rawSymbol,
+      category: null,
+      unitId: null,
+      isHybrid: false,
+      components: {}
+    });
+    
+    // Check if dimensions exactly match any single derived unit
+    const exactMatch = DERIVED_UNITS_CATALOG.find(du => dimensionsEqual(du.dimensions, dimensions));
+    if (exactMatch) {
+      alternatives.push({
+        displaySymbol: exactMatch.symbol,
+        category: exactMatch.category,
+        unitId: exactMatch.unitId,
+        isHybrid: false,
+        components: { derivedUnit: exactMatch }
+      });
+      return alternatives; // If exact match, return only base and derived
+    }
+    
+    // Try to factor out each derived unit and generate hybrid representations
+    for (const derivedUnit of DERIVED_UNITS_CATALOG) {
+      if (canFactorOut(dimensions, derivedUnit)) {
+        const remaining = subtractDimensions(dimensions, derivedUnit.dimensions);
+        
+        // Only create hybrid if there's something remaining
+        if (Object.keys(remaining).length > 0) {
+          const remainingSymbol = dimensionsToSymbol(remaining);
+          const hybridSymbol = `${remainingSymbol}⋅${derivedUnit.symbol}`;
+          
+          alternatives.push({
+            displaySymbol: hybridSymbol,
+            category: null,
+            unitId: null,
+            isHybrid: true,
+            components: {
+              derivedUnit,
+              remainingDimensions: remaining
+            }
+          });
+        }
+      }
+    }
+    
+    return alternatives;
   };
 
   // Auto-select multiplication operator when values are entered
