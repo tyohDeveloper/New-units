@@ -25,6 +25,11 @@ export default function UnitConverter() {
   const [flashCalcField1, setFlashCalcField1] = useState<boolean>(false);
   const [flashCalcField2, setFlashCalcField2] = useState<boolean>(false);
   const [flashCalcField3, setFlashCalcField3] = useState<boolean>(false);
+  const [flashFromBaseFactor, setFlashFromBaseFactor] = useState<boolean>(false);
+  const [flashFromSIBase, setFlashFromSIBase] = useState<boolean>(false);
+  const [flashToBaseFactor, setFlashToBaseFactor] = useState<boolean>(false);
+  const [flashToSIBase, setFlashToSIBase] = useState<boolean>(false);
+  const [flashConversionRatio, setFlashConversionRatio] = useState<boolean>(false);
 
   // Dimensional formula tracking for calculator
   interface DimensionalFormula {
@@ -1798,6 +1803,55 @@ export default function UnitConverter() {
     }
   };
 
+  const copyFromBaseFactor = () => {
+    if (fromUnitData) {
+      const factor = fromUnitData.factor * fromPrefixData.factor;
+      navigator.clipboard.writeText(factor.toString());
+      setFlashFromBaseFactor(true);
+      setTimeout(() => setFlashFromBaseFactor(false), 300);
+    }
+  };
+
+  const copyFromSIBase = () => {
+    if (categoryData?.baseSISymbol) {
+      navigator.clipboard.writeText(categoryData.baseSISymbol);
+      setFlashFromSIBase(true);
+      setTimeout(() => setFlashFromSIBase(false), 300);
+    }
+  };
+
+  const copyToBaseFactor = () => {
+    if (toUnitData) {
+      const factor = toUnitData.factor * toPrefixData.factor;
+      navigator.clipboard.writeText(factor.toString());
+      setFlashToBaseFactor(true);
+      setTimeout(() => setFlashToBaseFactor(false), 300);
+    }
+  };
+
+  const copyToSIBase = () => {
+    if (categoryData?.baseSISymbol) {
+      navigator.clipboard.writeText(categoryData.baseSISymbol);
+      setFlashToSIBase(true);
+      setTimeout(() => setFlashToSIBase(false), 300);
+    }
+  };
+
+  const copyConversionRatio = () => {
+    if (result !== null && fromUnitData && toUnitData) {
+      const fromPrefixSymbol = (fromUnitData.allowPrefixes && fromPrefixData?.id !== 'none') ? fromPrefixData.symbol : '';
+      const toPrefixSymbol = (toUnitData.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
+      const ratio = convert(1, fromUnit, toUnit, activeCategory,
+        fromUnitData.allowPrefixes ? fromPrefixData.factor : 1,
+        toUnitData.allowPrefixes ? toPrefixData.factor : 1
+      );
+      const ratioText = `1 ${fromPrefixSymbol}${fromUnitData.symbol} = ${ratio} ${toPrefixSymbol}${toUnitData.symbol}`;
+      navigator.clipboard.writeText(ratioText);
+      setFlashConversionRatio(true);
+      setTimeout(() => setFlashConversionRatio(false), 300);
+    }
+  };
+
   // Helper: Compare two dimensional formulas
   const dimensionsEqual = (d1: DimensionalFormula, d2: DimensionalFormula): boolean => {
     const keys1 = Object.keys(d1) as (keyof DimensionalFormula)[];
@@ -2555,18 +2609,34 @@ export default function UnitConverter() {
               </div>
               
               <div className="grid sm:grid-cols-[1fr_220px] gap-2">
-                <div className="p-2 rounded bg-muted/20 border border-border/50">
+                <motion.div 
+                  className={`p-2 rounded bg-muted/20 border border-border/50 select-none ${fromUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                  onClick={copyFromBaseFactor}
+                  animate={{
+                    opacity: flashFromBaseFactor ? [1, 0.3, 1] : 1,
+                    scale: flashFromBaseFactor ? [1, 1.02, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">{t('Base Factor')}</div>
                   <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''}>
                     {fromUnitData ? formatFactor(fromUnitData.factor * fromPrefixData.factor) : '-'}
                   </div>
-                </div>
-                <div className="p-2 rounded bg-muted/20 border border-border/50">
+                </motion.div>
+                <motion.div 
+                  className={`p-2 rounded bg-muted/20 border border-border/50 select-none ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                  onClick={copyFromSIBase}
+                  animate={{
+                    opacity: flashFromSIBase ? [1, 0.3, 1] : 1,
+                    scale: flashFromSIBase ? [1, 1.02, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">{t('SI Base Units')}</div>
                   <div className="font-mono text-sm text-foreground/80 truncate">
                     {categoryData.baseSISymbol || '-'}
                   </div>
-                </div>
+                </motion.div>
               </div>
 
               {fromUnitData?.description && (
@@ -2675,18 +2745,34 @@ export default function UnitConverter() {
               </div>
 
               <div className="grid sm:grid-cols-[1fr_220px] gap-2">
-                <div className="p-2 rounded bg-muted/20 border border-border/50">
+                <motion.div 
+                  className={`p-2 rounded bg-muted/20 border border-border/50 select-none ${toUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                  onClick={copyToBaseFactor}
+                  animate={{
+                    opacity: flashToBaseFactor ? [1, 0.3, 1] : 1,
+                    scale: flashToBaseFactor ? [1, 1.02, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">{t('Base Factor')}</div>
                   <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''}>
                     {toUnitData ? formatFactor(toUnitData.factor * toPrefixData.factor) : '-'}
                   </div>
-                </div>
-                <div className="p-2 rounded bg-muted/20 border border-border/50">
+                </motion.div>
+                <motion.div 
+                  className={`p-2 rounded bg-muted/20 border border-border/50 select-none ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                  onClick={copyToSIBase}
+                  animate={{
+                    opacity: flashToSIBase ? [1, 0.3, 1] : 1,
+                    scale: flashToSIBase ? [1, 1.02, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">{t('SI Base Units')}</div>
                   <div className="font-mono text-sm text-foreground/80 truncate">
                     {categoryData.baseSISymbol || '-'}
                   </div>
-                </div>
+                </motion.div>
               </div>
 
               <div className="grid sm:grid-cols-[1fr_auto] gap-2 items-start">
@@ -2697,7 +2783,15 @@ export default function UnitConverter() {
                     </p>
                   )}
                   {result !== null && fromUnitData && toUnitData && (
-                    <div className="p-2 rounded bg-muted/20 border border-border/50">
+                    <motion.div 
+                      className="p-2 rounded bg-muted/20 border border-border/50 cursor-pointer hover:bg-muted/40 active:bg-muted/60 select-none"
+                      onClick={copyConversionRatio}
+                      animate={{
+                        opacity: flashConversionRatio ? [1, 0.3, 1] : 1,
+                        scale: flashConversionRatio ? [1, 1.02, 1] : 1
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
                       <div className="text-xs font-mono text-muted-foreground flex gap-2 items-center">
                         <span className="text-foreground font-bold">
                           1 {fromPrefixData.id !== 'none' ? fromPrefixData.symbol : ''}{fromUnitData.symbol}
@@ -2707,7 +2801,7 @@ export default function UnitConverter() {
                           {formatNumberWithSeparators(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor), precision)} {toPrefixData.id !== 'none' ? toPrefixData.symbol : ''}{toUnitData.symbol}
                         </span>
                       </div>
-                    </div>
+                    </motion.div>
                   )}
                 </div>
                 
