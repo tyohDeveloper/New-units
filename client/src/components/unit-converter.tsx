@@ -3227,7 +3227,7 @@ export default function UnitConverter() {
                           <SelectContent className="max-h-[70vh]">
                             {PREFIXES.map((p) => (
                               <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
-                                {p.symbol || ''}
+                                {p.symbol || '-'}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -3315,7 +3315,7 @@ export default function UnitConverter() {
                               <SelectContent className="max-h-[70vh]">
                                 {PREFIXES.map((p) => (
                                   <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
-                                    {p.symbol || ''}
+                                    {p.symbol || '-'}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
