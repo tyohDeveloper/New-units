@@ -67,6 +67,20 @@ OmniUnit is a comprehensive unit conversion web application that enables convers
 - `npm run build` - Build single-file production bundle
 - `npm run preview` - Preview production build locally
 - `npm run check` - TypeScript type checking
+- `npm run test` - Run unit tests with Vitest
+- `npm run test:e2e` - Run end-to-end tests with Playwright
+
+### Testing
+
+**Unit Testing (Vitest)**
+- Configuration in `vitest.config.ts` with jsdom environment
+- Test setup file at `tests/setup.ts` for React Testing Library matchers
+- Sample tests in `tests/conversion.test.ts` verify conversion data and logic
+- Run with `npm run test` or `npm run test -- --watch` for watch mode
+
+**End-to-End Testing (Playwright)**
+- Configured for browser-based testing
+- Run with `npm run test:e2e`
 
 ### Project Structure
 
