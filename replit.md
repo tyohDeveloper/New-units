@@ -133,7 +133,9 @@ client/
 ## Recent Changes
 
 - v2.7.0: Added Rack Geometry category for computing facility planning (U, 2U, 4U, physical dimensions, standard rack sizes 42U/24U/12U)
+- v2.7.0: Added Shipping Containers category with TEU/DEU dimensions (length, width, height for 20ft and 40ft containers)
 - v2.7.0: Added Unitless Number category for dimensionless calculations
+- v2.7.0: Renamed "Computing" group to "Computing, Shipping, Other"
 - v2.7.0: Binary prefixes (Ki, Mi, Gi, Ti, Pi, Ei) now exclusive to Data/Information category
 - v2.7.0: Reduced CommonFieldWidth from 380px to 285px (25% reduction)
 - v2.6.0: Added 9 new quantity categories (Frequency, Angular Velocity, Momentum, Thermal Conductivity, Specific Heat, Entropy, Concentration, Data, Fuel Economy)
