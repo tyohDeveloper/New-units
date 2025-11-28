@@ -10,7 +10,7 @@ import { ArrowRightLeft, Copy, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const FIELD_HEIGHT = '2.5rem'; // 40px - change this to adjust all field heights
-const CommonFieldWidth = '220px'; // change this to adjust width of main value fields
+const CommonFieldWidth = '380px'; // change this to adjust width of main value fields
 
 export default function UnitConverter() {
   const inputRef = useRef<HTMLInputElement>(null);
