@@ -1324,7 +1324,7 @@ export default function UnitConverter() {
       categories: ['luminous_flux', 'illuminance', 'refractive_power', 'lightbulb', 'fuel_economy']
     },
     {
-      name: "Computing, Shipping, Other",
+      name: "Other",
       categories: ['data', 'rack_geometry', 'shipping', 'unitless']
     }
   ];
