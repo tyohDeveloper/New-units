@@ -47,7 +47,7 @@ export type UnitCategory =
   | "data"
   | "rack_geometry"
   | "shipping"
-  | "unitless"
+  | "math"
   | "refractive_power"
   | "sound_pressure"
   | "fuel_economy"
@@ -829,12 +829,12 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     ],
   },
   {
-    id: "unitless",
-    name: "Unitless Number",
+    id: "math",
+    name: "Math",
     baseUnit: "number",
     baseSISymbol: "1",
     units: [
-      { id: "num", name: "Number", symbol: "×", factor: 1 },
+      { id: "num", name: "Number", symbol: "1", factor: 1 },
     ],
   },
 ];

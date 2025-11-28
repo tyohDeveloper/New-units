@@ -12,7 +12,7 @@ import { testId } from '@/lib/test-utils';
 
 const FIELD_HEIGHT = '2.5rem'; // 40px - change this to adjust all field heights
 const CommonFieldWidth = '285px'; // change this to adjust width of main value fields
-const OperatorBtnWidth = '36px'; // width of × and / operator buttons in calculator
+const OperatorBtnWidth = '32px'; // width of +, -, × and / operator buttons in calculator
 const ClearBtnWidth = '100px'; // width of Clear buttons in calculator
 
 export default function UnitConverter() {
@@ -119,8 +119,8 @@ export default function UnitConverter() {
 
   // Calculator state
   const [calcValues, setCalcValues] = useState<Array<CalcValue | null>>([null, null, null, null]);
-  const [calcOp1, setCalcOp1] = useState<'*' | '/' | null>(null);
-  const [calcOp2, setCalcOp2] = useState<'*' | '/' | null>(null);
+  const [calcOp1, setCalcOp1] = useState<'+' | '-' | '*' | '/' | null>(null);
+  const [calcOp2, setCalcOp2] = useState<'+' | '-' | '*' | '/' | null>(null);
   const [resultUnit, setResultUnit] = useState<string | null>(null);
   const [resultCategory, setResultCategory] = useState<UnitCategory | null>(null);
   const [resultPrefix, setResultPrefix] = useState<string>('none');
@@ -1325,7 +1325,7 @@ export default function UnitConverter() {
     },
     {
       name: "Other",
-      categories: ['data', 'rack_geometry', 'shipping', 'unitless']
+      categories: ['data', 'rack_geometry', 'shipping', 'math']
     }
   ];
 
@@ -1506,7 +1506,7 @@ export default function UnitConverter() {
       data: {},
       rack_geometry: { length: 1 },
       shipping: { length: 1 },
-      unitless: {},
+      math: {},
       refractive_power: { length: -1 },
       sound_pressure: { mass: 1, length: -1, time: -2 },
       fuel_economy: { length: -2 },
@@ -1965,6 +1965,20 @@ export default function UnitConverter() {
     return true;
   };
 
+  // Helper: Check if dimensions are dimensionless (empty)
+  const isDimensionless = (d: DimensionalFormula): boolean => {
+    return Object.keys(d).length === 0;
+  };
+
+  // Helper: Check if addition/subtraction is valid between two values
+  const canAddSubtract = (v1: CalcValue | null, v2: CalcValue | null): boolean => {
+    if (!v1 || !v2) return false;
+    // Can add/subtract if: same dimensions, or either is dimensionless (math)
+    return dimensionsEqual(v1.dimensions, v2.dimensions) || 
+           isDimensionless(v1.dimensions) || 
+           isDimensionless(v2.dimensions);
+  };
+
   // Helper: Find category that matches dimensions
   const findCategoryForDimensions = (dims: DimensionalFormula): UnitCategory | null => {
     for (const cat of CONVERSION_DATA) {
@@ -2198,6 +2212,19 @@ export default function UnitConverter() {
     }
   }, [calcValues[1], calcValues[2], calcOp2]);
 
+  // Reset additive operators if dimensions become incompatible (only when both operands exist)
+  useEffect(() => {
+    if (calcValues[0] && calcValues[1] && (calcOp1 === '+' || calcOp1 === '-') && !canAddSubtract(calcValues[0], calcValues[1])) {
+      setCalcOp1(null); // Clear operator so user must re-select
+    }
+  }, [calcValues[0], calcValues[1], calcOp1]);
+
+  useEffect(() => {
+    if (calcValues[1] && calcValues[2] && (calcOp2 === '+' || calcOp2 === '-') && !canAddSubtract(calcValues[1], calcValues[2])) {
+      setCalcOp2(null); // Clear operator so user must re-select
+    }
+  }, [calcValues[1], calcValues[2], calcOp2]);
+
   // Calculate result field
   useEffect(() => {
     if (calcValues[0]) {
@@ -2209,9 +2236,21 @@ export default function UnitConverter() {
         if (calcOp1 === '*') {
           resultValue = resultValue * calcValues[1].value;
           resultDimensions = multiplyDimensions(resultDimensions, calcValues[1].dimensions);
-        } else {
+        } else if (calcOp1 === '/') {
           resultValue = resultValue / calcValues[1].value;
           resultDimensions = divideDimensions(resultDimensions, calcValues[1].dimensions);
+        } else if (calcOp1 === '+' && canAddSubtract(calcValues[0], calcValues[1])) {
+          resultValue = resultValue + calcValues[1].value;
+          // Keep dimensions from non-dimensionless operand
+          if (isDimensionless(resultDimensions) && !isDimensionless(calcValues[1].dimensions)) {
+            resultDimensions = { ...calcValues[1].dimensions };
+          }
+        } else if (calcOp1 === '-' && canAddSubtract(calcValues[0], calcValues[1])) {
+          resultValue = resultValue - calcValues[1].value;
+          // Keep dimensions from non-dimensionless operand
+          if (isDimensionless(resultDimensions) && !isDimensionless(calcValues[1].dimensions)) {
+            resultDimensions = { ...calcValues[1].dimensions };
+          }
         }
         
         // If we have field 3 and operator, continue calculation
@@ -2219,15 +2258,27 @@ export default function UnitConverter() {
           if (calcOp2 === '*') {
             resultValue = resultValue * calcValues[2].value;
             resultDimensions = multiplyDimensions(resultDimensions, calcValues[2].dimensions);
-          } else {
+          } else if (calcOp2 === '/') {
             resultValue = resultValue / calcValues[2].value;
             resultDimensions = divideDimensions(resultDimensions, calcValues[2].dimensions);
+          } else if (calcOp2 === '+' && canAddSubtract(calcValues[1], calcValues[2])) {
+            resultValue = resultValue + calcValues[2].value;
+            // Keep dimensions from non-dimensionless operand
+            if (isDimensionless(resultDimensions) && !isDimensionless(calcValues[2].dimensions)) {
+              resultDimensions = { ...calcValues[2].dimensions };
+            }
+          } else if (calcOp2 === '-' && canAddSubtract(calcValues[1], calcValues[2])) {
+            resultValue = resultValue - calcValues[2].value;
+            // Keep dimensions from non-dimensionless operand
+            if (isDimensionless(resultDimensions) && !isDimensionless(calcValues[2].dimensions)) {
+              resultDimensions = { ...calcValues[2].dimensions };
+            }
           }
         }
       }
       
       // Check if result is dimensionless (unitless)
-      const isDimensionless = Object.keys(resultDimensions).length === 0;
+      const resultIsDimensionless = Object.keys(resultDimensions).length === 0;
       
       setCalcValues(prev => {
         const newValues = [...prev];
@@ -2240,7 +2291,7 @@ export default function UnitConverter() {
       });
 
       // Find matching category and auto-select default unit with best prefix
-      if (isDimensionless) {
+      if (resultIsDimensionless) {
         // For dimensionless results, clear unit selection
         setResultCategory(null);
         setResultUnit(null);
@@ -3000,7 +3051,7 @@ export default function UnitConverter() {
         <Card className="p-6 bg-card border-border/50">
           <div 
             className="grid gap-2 mb-4 items-center"
-            style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
+            style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
           >
             <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
               <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Calculator')}</Label>
@@ -3023,6 +3074,8 @@ export default function UnitConverter() {
                 </Select>
               </div>
             </div>
+            <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for + column */}
+            <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for - column */}
             <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for × column */}
             <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for / column */}
             <Button 
@@ -3038,7 +3091,7 @@ export default function UnitConverter() {
             {/* Field 1 */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
+              style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
             >
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
@@ -3068,6 +3121,8 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
+              <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for + column */}
+              <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for - column */}
               <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for × column */}
               <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for / column */}
               <Button 
@@ -3084,7 +3139,7 @@ export default function UnitConverter() {
             {/* Field 2 */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
+              style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
             >
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
@@ -3117,6 +3172,24 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm"
+                onClick={() => setCalcOp1('+')}
+                disabled={!canAddSubtract(calcValues[0], calcValues[1])}
+                className={`text-sm w-full ${calcOp1 === '+' ? 'text-accent font-bold' : ''}`}
+              >
+                +
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setCalcOp1('-')}
+                disabled={!canAddSubtract(calcValues[0], calcValues[1])}
+                className={`text-sm w-full ${calcOp1 === '-' ? 'text-accent font-bold' : ''}`}
+              >
+                −
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
                 onClick={() => setCalcOp1('*')}
                 className={`text-sm w-full ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
               >
@@ -3144,7 +3217,7 @@ export default function UnitConverter() {
             {/* Field 3 */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
+              style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
             >
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
@@ -3174,6 +3247,24 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setCalcOp2('+')}
+                disabled={!canAddSubtract(calcValues[1], calcValues[2])}
+                className={`text-sm w-full ${calcOp2 === '+' ? 'text-accent font-bold' : ''}`}
+              >
+                +
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setCalcOp2('-')}
+                disabled={!canAddSubtract(calcValues[1], calcValues[2])}
+                className={`text-sm w-full ${calcOp2 === '-' ? 'text-accent font-bold' : ''}`}
+              >
+                −
+              </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
