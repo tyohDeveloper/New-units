@@ -43,12 +43,14 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 5000,
     hmr: false,
+    allowedHosts: [".replit.dev", ".replit.app", ".repl.co"],
     fs: {
       strict: true,
       deny: ["**/.*"],
     },
   },
   preview: {
+    allowedHosts: [".replit.dev", ".replit.app", ".repl.co"],
     host: "0.0.0.0",
     port: 5000,
   },
