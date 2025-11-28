@@ -1320,10 +1320,6 @@ export default function UnitConverter() {
       categories: ['radioactivity', 'radiation_dose', 'equivalent_dose', 'catalytic', 'angle', 'solid_angle', 'sound_pressure']
     },
     {
-      name: "Computing",
-      categories: ['data']
-    },
-    {
       name: "Human Response",
       categories: ['luminous_flux', 'illuminance', 'refractive_power', 'lightbulb', 'fuel_economy']
     }

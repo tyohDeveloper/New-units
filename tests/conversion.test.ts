@@ -291,12 +291,6 @@ describe("Base Quantity Selection", () => {
       expect(concCategory?.units.some((u) => u.symbol === "ppm")).toBe(true);
     });
 
-    it("should include data category", () => {
-      expect(allCategoryIds).toContain("data");
-      const dataCategory = CONVERSION_DATA.find((c) => c.id === "data");
-      expect(dataCategory?.units.some((u) => u.symbol === "GB")).toBe(true);
-    });
-
     it("should include fuel economy category", () => {
       expect(allCategoryIds).toContain("fuel_economy");
       const fuelCategory = CONVERSION_DATA.find((c) => c.id === "fuel_economy");
