@@ -2966,7 +2966,7 @@ export default function UnitConverter() {
                     }}
                     transition={{ duration: 0.3 }}
                   >
-                    {t('Copy')} {t('Result')}
+                    {t('Copy')}
                   </motion.span>
                 </Button>
               </div>
