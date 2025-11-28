@@ -3431,32 +3431,26 @@ export default function UnitConverter() {
                   )}
                 </React.Fragment>
               )}
-            </div>
-            
-            {/* Copy button on its own row */}
-            {calcValues[3] && (
-              <div className="flex justify-end mt-2">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={copyCalcResult}
-                  disabled={!calcValues[3]}
-                  className="text-xs hover:text-accent gap-1"
-                  style={{ width: ClearBtnWidth }}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={copyCalcResult}
+                disabled={!calcValues[3]}
+                className="text-xs hover:text-accent gap-1 shrink-0"
+                style={{ width: ClearBtnWidth }}
+              >
+                <Copy className="w-3 h-3" />
+                <motion.span
+                  animate={{
+                    opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                    scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <Copy className="w-3 h-3" />
-                  <motion.span
-                    animate={{
-                      opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
-                      scale: flashCopyCalc ? [1, 1.1, 1] : 1
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {t('Copy')}
-                  </motion.span>
-                </Button>
-              </div>
-            )}
+                  {t('Copy')}
+                </motion.span>
+              </Button>
+            </div>
           </div>
         </Card>
       </div>
