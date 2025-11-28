@@ -11,6 +11,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 
 const FIELD_HEIGHT = '2.5rem'; // 40px - change this to adjust all field heights
 const CommonFieldWidth = '380px'; // change this to adjust width of main value fields
+const OperatorBtnWidth = '36px'; // width of × and / operator buttons in calculator
+const ClearBtnWidth = '100px'; // width of Clear buttons in calculator
 
 export default function UnitConverter() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -2975,7 +2977,10 @@ export default function UnitConverter() {
 
         {/* Mini Calculator */}
         <Card className="p-6 bg-card border-border/50">
-          <div className="flex gap-2 mb-4 items-center">
+          <div 
+            className="grid gap-2 mb-4 items-center"
+            style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
+          >
             <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
               <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Calculator')}</Label>
               <div className="flex items-center gap-2">
@@ -2997,23 +3002,27 @@ export default function UnitConverter() {
                 </Select>
               </div>
             </div>
-            <div className="flex-1" />
+            <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for × column */}
+            <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for / column */}
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={clearCalculator}
-              className="text-xs w-[100px]"
+              className="text-xs w-full"
             >
               {t('Clear')} {t('Calculator')}
             </Button>
           </div>
           <div className="space-y-2">
             {/* Field 1 */}
-            <div className="flex gap-2 items-center">
+            <div 
+              className="grid gap-2 items-center"
+              style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
+            >
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[0] && copyCalcField(0)}
-                style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
+                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashCalcField1 ? [1, 0.3, 1] : 1,
                   scale: flashCalcField1 ? [1, 1.02, 1] : 1
@@ -3038,24 +3047,28 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              <div className="flex-1" />
+              <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for × column */}
+              <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for / column */}
               <Button 
                 variant="ghost" 
                 size="sm"
                 onClick={clearField1}
                 disabled={!calcValues[0]}
-                className="text-xs w-[100px]"
+                className="text-xs w-full"
               >
                 {t('Clear')}
               </Button>
             </div>
 
             {/* Field 2 */}
-            <div className="flex gap-2 items-center">
+            <div 
+              className="grid gap-2 items-center"
+              style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
+            >
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[1] && copyCalcField(1)}
-                style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
+                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashCalcField2 ? [1, 0.3, 1] : 1,
                   scale: flashCalcField2 ? [1, 1.02, 1] : 1
@@ -3080,42 +3093,42 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              <div className="flex gap-1">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setCalcOp1('*')}
-                  className={`text-sm ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
-                >
-                  ×
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setCalcOp1('/')}
-                  className={`text-sm ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
-                >
-                  /
-                </Button>
-              </div>
-              <div className="flex-1" />
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setCalcOp1('*')}
+                className={`text-sm w-full ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
+              >
+                ×
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setCalcOp1('/')}
+                className={`text-sm w-full ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
+              >
+                /
+              </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
                 onClick={clearField2}
                 disabled={!calcValues[1]}
-                className="text-xs w-[100px]"
+                className="text-xs w-full"
               >
                 {t('Clear')}
               </Button>
             </div>
 
             {/* Field 3 */}
-            <div className="flex gap-2 items-center">
+            <div 
+              className="grid gap-2 items-center"
+              style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
+            >
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[2] && copyCalcField(2)}
-                style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
+                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashCalcField3 ? [1, 0.3, 1] : 1,
                   scale: flashCalcField3 ? [1, 1.02, 1] : 1
@@ -3140,31 +3153,28 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              <div className="flex gap-1">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setCalcOp2('*')}
-                  className={`text-sm ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
-                >
-                  ×
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setCalcOp2('/')}
-                  className={`text-sm ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
-                >
-                  /
-                </Button>
-              </div>
-              <div className="flex-1" />
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setCalcOp2('*')}
+                className={`text-sm w-full ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
+              >
+                ×
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setCalcOp2('/')}
+                className={`text-sm w-full ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
+              >
+                /
+              </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
                 onClick={clearField3}
                 disabled={!calcValues[2]}
-                className="text-xs w-[100px]"
+                className="text-xs w-full"
               >
                 {t('Clear')}
               </Button>
@@ -3414,7 +3424,8 @@ export default function UnitConverter() {
                     size="sm" 
                     onClick={copyCalcResult}
                     disabled={!calcValues[3]}
-                    className="text-xs hover:text-accent gap-1 w-[100px]"
+                    className="text-xs hover:text-accent gap-1 ml-auto shrink-0"
+                    style={{ width: ClearBtnWidth }}
                   >
                     <Copy className="w-3 h-3" />
                     <motion.span
