@@ -4,7 +4,7 @@
 
 OmniUnit is a comprehensive unit conversion web application that enables conversions across a wide range of measurement systems including SI units, Imperial, US Customary, Archaic, and specialized industrial units. The application is built as a frontend-only TypeScript project with React, designed with a "scientific archival" aesthetic theme. Production builds create a single standalone HTML file for easy distribution.
 
-**Current Version:** v2.6.0
+**Current Version:** v2.7.0
 
 ## User Preferences
 
@@ -44,7 +44,7 @@ OmniUnit is a comprehensive unit conversion web application that enables convers
 - CSS Grid with four-column layout for perfect vertical alignment
 - Clear buttons left-aligned using `justify-self: start`
 - Copy button on separate row below result using flex justify-end
-- CSS constants: CommonFieldWidth 380px, FIELD_HEIGHT 2.5rem/40px, OperatorBtnWidth 36px, ClearBtnWidth 100px
+- CSS constants: CommonFieldWidth 285px, FIELD_HEIGHT 2.5rem/40px, OperatorBtnWidth 36px, ClearBtnWidth 100px
 
 **Clipboard Copying**
 - Respects precision settings when copying values
@@ -132,6 +132,10 @@ client/
 
 ## Recent Changes
 
+- v2.7.0: Added Rack Geometry category for computing facility planning (U, 2U, 4U, physical dimensions, standard rack sizes 42U/24U/12U)
+- v2.7.0: Added Unitless Number category for dimensionless calculations
+- v2.7.0: Binary prefixes (Ki, Mi, Gi, Ti, Pi, Ei) now exclusive to Data/Information category
+- v2.7.0: Reduced CommonFieldWidth from 380px to 285px (25% reduction)
 - v2.6.0: Added 9 new quantity categories (Frequency, Angular Velocity, Momentum, Thermal Conductivity, Specific Heat, Entropy, Concentration, Data, Fuel Economy)
 - v2.6.0: Changed default precision from 8 to 4 decimal places
 - v2.6.0: Added comprehensive tests for SI base units, base factors, and arrow key navigation (132 tests total)
