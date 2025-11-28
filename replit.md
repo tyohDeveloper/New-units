@@ -4,7 +4,7 @@
 
 OmniUnit is a comprehensive unit conversion web application that enables conversions across a wide range of measurement systems including SI units, Imperial, US Customary, Archaic, and specialized industrial units. The application is built as a frontend-only TypeScript project with React, designed with a "scientific archival" aesthetic theme. Production builds create a single standalone HTML file for easy distribution.
 
-**Current Version:** v2.7.0
+**Current Version:** v2.8.0
 
 ## User Preferences
 
@@ -41,10 +41,12 @@ OmniUnit is a comprehensive unit conversion web application that enables convers
 ### Key Design Decisions
 
 **Calculator Layout**
-- CSS Grid with four-column layout for perfect vertical alignment
+- CSS Grid with six-column layout for perfect vertical alignment (value field + 4 operators + clear button)
+- All four arithmetic operators: × (multiplication), / (division), + (addition), − (subtraction)
+- Addition and subtraction enabled only when operands share the same physical dimension or one is dimensionless
 - Clear buttons left-aligned using `justify-self: start`
 - Copy button on separate row below result using flex justify-end
-- CSS constants: CommonFieldWidth 285px, FIELD_HEIGHT 2.5rem/40px, OperatorBtnWidth 36px, ClearBtnWidth 100px
+- CSS constants: CommonFieldWidth 285px, FIELD_HEIGHT 2.5rem/40px, OperatorBtnWidth 32px, ClearBtnWidth 100px
 
 **Clipboard Copying**
 - Respects precision settings when copying values
@@ -132,6 +134,10 @@ client/
 
 ## Recent Changes
 
+- v2.8.0: Added addition (+) and subtraction (−) operators to calculator
+- v2.8.0: Dimensional compatibility checking for additive operations (enabled only for same-dimension operands or dimensionless values)
+- v2.8.0: Renamed "Unitless Number" category to "Math" for dimensionless calculations
+- v2.8.0: OperatorBtnWidth reduced from 36px to 32px to fit 4 operators
 - v2.7.0: Added Rack Geometry category for computing facility planning (U, 2U, 4U, physical dimensions, standard rack sizes 42U/24U/12U)
 - v2.7.0: Added Shipping Containers category with TEU/DEU dimensions (length, width, height for 20ft and 40ft containers)
 - v2.7.0: Added Unitless Number category for dimensionless calculations
