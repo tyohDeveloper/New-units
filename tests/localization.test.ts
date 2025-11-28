@@ -8,7 +8,7 @@ import {
   translate,
   type SupportedLanguage,
 } from '../client/src/lib/localization';
-import { PREFIXES, CONVERSION_DATA } from '../client/src/lib/conversion-data';
+import { PREFIXES, BINARY_PREFIXES, ALL_PREFIXES, CONVERSION_DATA } from '../client/src/lib/conversion-data';
 
 describe('Language Localization', () => {
   describe('UI Element Translations', () => {
@@ -164,7 +164,7 @@ describe('Language Localization', () => {
     });
 
     it('should verify prefix symbols in PREFIXES data are Latin/SI', () => {
-      for (const prefix of PREFIXES) {
+      for (const prefix of ALL_PREFIXES) {
         if (prefix.symbol) {
           expect(/^[A-Za-zµ]{1,2}$/.test(prefix.symbol)).toBe(true);
         }
@@ -172,7 +172,7 @@ describe('Language Localization', () => {
     });
 
     it('should not translate prefix symbols regardless of language', () => {
-      const prefixSymbols = PREFIXES.map(p => p.symbol).filter(s => s);
+      const prefixSymbols = ALL_PREFIXES.map(p => p.symbol).filter(s => s);
       for (const symbol of prefixSymbols) {
         expect(symbol).toMatch(/^[A-Za-zµ]{1,2}$/);
       }

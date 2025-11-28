@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CONVERSION_DATA, UnitCategory, convert, PREFIXES } from '@/lib/conversion-data';
+import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES } from '@/lib/conversion-data';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -2719,7 +2719,7 @@ export default function UnitConverter() {
                       <SelectValue placeholder={t('Prefix')} />
                     </SelectTrigger>
                     <SelectContent className="max-h-[70vh]">
-                      {PREFIXES.map((p) => (
+                      {(activeCategory === 'data' ? ALL_PREFIXES : PREFIXES).map((p) => (
                         <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
                           {p.symbol || '-'}
                         </SelectItem>
@@ -2869,7 +2869,7 @@ export default function UnitConverter() {
                       <SelectValue placeholder={t('Prefix')} />
                     </SelectTrigger>
                     <SelectContent className="max-h-[70vh]">
-                      {PREFIXES.map((p) => (
+                      {(activeCategory === 'data' ? ALL_PREFIXES : PREFIXES).map((p) => (
                         <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
                           {p.symbol || '-'}
                         </SelectItem>

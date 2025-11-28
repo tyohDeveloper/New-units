@@ -76,6 +76,9 @@ export const PREFIXES: Prefix[] = [
   { id: 'atto', name: 'Atto', symbol: 'a', factor: 1e-18 },
   { id: 'zepto', name: 'Zepto', symbol: 'z', factor: 1e-21 },
   { id: 'yocto', name: 'Yocto', symbol: 'y', factor: 1e-24 },
+];
+
+export const BINARY_PREFIXES: Prefix[] = [
   { id: 'exbi', name: 'Exbi', symbol: 'Ei', factor: 1152921504606846976 },
   { id: 'pebi', name: 'Pebi', symbol: 'Pi', factor: 1125899906842624 },
   { id: 'tebi', name: 'Tebi', symbol: 'Ti', factor: 1099511627776 },
@@ -83,6 +86,8 @@ export const PREFIXES: Prefix[] = [
   { id: 'mebi', name: 'Mebi', symbol: 'Mi', factor: 1048576 },
   { id: 'kibi', name: 'Kibi', symbol: 'Ki', factor: 1024 },
 ];
+
+export const ALL_PREFIXES: Prefix[] = [...PREFIXES, ...BINARY_PREFIXES].sort((a, b) => b.factor - a.factor);
 
 export interface UnitDefinition {
   id: string;
