@@ -2666,52 +2666,53 @@ export default function UnitConverter() {
             {/* Input Section */}
             <div className="grid gap-4">
               <Label className="text-xs font-mono uppercase text-muted-foreground">{t('From')}</Label>
-              <div className="flex gap-2">
-                <Input 
-                  ref={inputRef}
-                  type="text" 
-                  inputMode="decimal"
-                  value={inputValue}
-                  onChange={(e) => handleInputChange(e.target.value)}
-                  onKeyDown={handleInputKeyDown}
-                  tabIndex={1}
-                  className="font-mono px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left"
-                  style={{ height: FIELD_HEIGHT, fontSize: '0.875rem', width: CommonFieldWidth }}
-                  placeholder={getPlaceholder()}
-                  data-testid="input-value"
-                />
-                
-                {/* Prefix Dropdown */}
-                <Select 
-                  value={fromPrefix} 
-                  onValueChange={(val) => { 
-                    const normalized = normalizeMassUnit(fromUnit, val);
-                    setFromUnit(normalized.unit);
-                    setFromPrefix(normalized.prefix);
-                    refocusInput(); 
-                  }}
-                  onOpenChange={(open) => { if (!open) refocusInput(); }}
-                  disabled={!fromUnitData?.allowPrefixes}
-                >
-                  <SelectTrigger tabIndex={2} className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
-                    <SelectValue placeholder={t('Prefix')} />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[70vh]">
-                    {PREFIXES.map((p) => (
-                      <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
-                        {p.symbol || '-'}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="flex flex-col gap-2">
+                {/* Row 1: Input, Prefix, Unit Selector */}
+                <div className="flex gap-2">
+                  <Input 
+                    ref={inputRef}
+                    type="text" 
+                    inputMode="decimal"
+                    value={inputValue}
+                    onChange={(e) => handleInputChange(e.target.value)}
+                    onKeyDown={handleInputKeyDown}
+                    tabIndex={1}
+                    className="font-mono px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left"
+                    style={{ height: FIELD_HEIGHT, fontSize: '0.875rem', width: CommonFieldWidth }}
+                    placeholder={getPlaceholder()}
+                    data-testid="input-value"
+                  />
+                  
+                  {/* Prefix Dropdown */}
+                  <Select 
+                    value={fromPrefix} 
+                    onValueChange={(val) => { 
+                      const normalized = normalizeMassUnit(fromUnit, val);
+                      setFromUnit(normalized.unit);
+                      setFromPrefix(normalized.prefix);
+                      refocusInput(); 
+                    }}
+                    onOpenChange={(open) => { if (!open) refocusInput(); }}
+                    disabled={!fromUnitData?.allowPrefixes}
+                  >
+                    <SelectTrigger tabIndex={2} className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
+                      <SelectValue placeholder={t('Prefix')} />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[70vh]">
+                      {PREFIXES.map((p) => (
+                        <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
+                          {p.symbol || '-'}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                <div className="flex flex-col gap-2 flex-1 min-w-0">
                   <Select 
                     value={fromUnit} 
                     onValueChange={(val) => { setFromUnit(val); setFromPrefix('none'); refocusInput(); }}
                     onOpenChange={(open) => { if (!open) refocusInput(); }}
                   >
-                    <SelectTrigger tabIndex={3} className="w-full bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
+                    <SelectTrigger tabIndex={3} className="flex-1 min-w-0 bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
                       <SelectValue placeholder={t('Unit')} />
                     </SelectTrigger>
                     <SelectContent className="max-h-[70vh]">
@@ -2729,38 +2730,41 @@ export default function UnitConverter() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <div className="flex gap-2">
-                    <motion.div 
-                      className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${fromUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                      style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
-                      onClick={copyFromBaseFactor}
-                      animate={{
-                        opacity: flashFromBaseFactor ? [1, 0.3, 1] : 1,
-                        scale: flashFromBaseFactor ? [1, 1.02, 1] : 1
-                      }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('Base Factor')}</div>
-                      <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''}>
-                        {fromUnitData ? formatFactor(fromUnitData.factor * fromPrefixData.factor) : '-'}
-                      </div>
-                    </motion.div>
-                    <motion.div 
-                      className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center flex-1 min-w-0 ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                      style={{ height: FIELD_HEIGHT }}
-                      onClick={copyFromSIBase}
-                      animate={{
-                        opacity: flashFromSIBase ? [1, 0.3, 1] : 1,
-                        scale: flashFromSIBase ? [1, 1.02, 1] : 1
-                      }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('SI Base Units')}</div>
-                      <div className="font-mono text-sm text-foreground/80 truncate">
-                        {categoryData.baseSISymbol || '-'}
-                      </div>
-                    </motion.div>
-                  </div>
+                </div>
+                
+                {/* Row 2: Base Factor, Spacer, SI Base Units */}
+                <div className="flex gap-2">
+                  <motion.div 
+                    className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${fromUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                    style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
+                    onClick={copyFromBaseFactor}
+                    animate={{
+                      opacity: flashFromBaseFactor ? [1, 0.3, 1] : 1,
+                      scale: flashFromBaseFactor ? [1, 1.02, 1] : 1
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('Base Factor')}</div>
+                    <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''}>
+                      {fromUnitData ? formatFactor(fromUnitData.factor * fromPrefixData.factor) : '-'}
+                    </div>
+                  </motion.div>
+                  <div className="w-[50px] shrink-0" />
+                  <motion.div 
+                    className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center flex-1 min-w-0 ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                    style={{ height: FIELD_HEIGHT }}
+                    onClick={copyFromSIBase}
+                    animate={{
+                      opacity: flashFromSIBase ? [1, 0.3, 1] : 1,
+                      scale: flashFromSIBase ? [1, 1.02, 1] : 1
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('SI Base Units')}</div>
+                    <div className="font-mono text-sm text-foreground/80 truncate">
+                      {categoryData.baseSISymbol || '-'}
+                    </div>
+                  </motion.div>
                 </div>
               </div>
 
@@ -2807,53 +2811,54 @@ export default function UnitConverter() {
                   </Select>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <motion.div 
-                  className={`px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
-                  style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
-                  onClick={() => result !== null && copyResult()}
-                  animate={{
-                    opacity: flashCopyResult ? [1, 0.3, 1] : 1,
-                    scale: flashCopyResult ? [1, 1.02, 1] : 1
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <span className="font-mono text-primary whitespace-nowrap" style={{ fontSize: '0.875rem' }}>
-                    {result !== null 
-                      ? (toUnit === 'deg_dms' 
-                          ? formatDMS(result) 
-                          : toUnit === 'ft_in'
-                            ? formatFtIn(result)
-                            : formatNumberWithSeparators(result, precision)) 
-                      : '...'}
-                  </span>
-                </motion.div>
+              <div className="flex flex-col gap-2">
+                {/* Row 1: Result, Prefix, Unit Selector */}
+                <div className="flex gap-2">
+                  <motion.div 
+                    className={`px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
+                    style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
+                    onClick={() => result !== null && copyResult()}
+                    animate={{
+                      opacity: flashCopyResult ? [1, 0.3, 1] : 1,
+                      scale: flashCopyResult ? [1, 1.02, 1] : 1
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <span className="font-mono text-primary whitespace-nowrap" style={{ fontSize: '0.875rem' }}>
+                      {result !== null 
+                        ? (toUnit === 'deg_dms' 
+                            ? formatDMS(result) 
+                            : toUnit === 'ft_in'
+                              ? formatFtIn(result)
+                              : formatNumberWithSeparators(result, precision)) 
+                        : '...'}
+                    </span>
+                  </motion.div>
 
-                {/* Prefix Dropdown */}
-                <Select 
-                  value={toPrefix} 
-                  onValueChange={(val) => {
-                    const normalized = normalizeMassUnit(toUnit, val);
-                    setToUnit(normalized.unit);
-                    setToPrefix(normalized.prefix);
-                  }}
-                  disabled={!toUnitData?.allowPrefixes}
-                >
-                  <SelectTrigger className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
-                    <SelectValue placeholder={t('Prefix')} />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[70vh]">
-                    {PREFIXES.map((p) => (
-                      <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
-                        {p.symbol || '-'}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  {/* Prefix Dropdown */}
+                  <Select 
+                    value={toPrefix} 
+                    onValueChange={(val) => {
+                      const normalized = normalizeMassUnit(toUnit, val);
+                      setToUnit(normalized.unit);
+                      setToPrefix(normalized.prefix);
+                    }}
+                    disabled={!toUnitData?.allowPrefixes}
+                  >
+                    <SelectTrigger className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
+                      <SelectValue placeholder={t('Prefix')} />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[70vh]">
+                      {PREFIXES.map((p) => (
+                        <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
+                          {p.symbol || '-'}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                <div className="flex flex-col gap-2 flex-1 min-w-0">
                   <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); }}>
-                    <SelectTrigger className="w-full bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
+                    <SelectTrigger className="flex-1 min-w-0 bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
                       <SelectValue placeholder={t('Unit')} />
                     </SelectTrigger>
                     <SelectContent className="max-h-[70vh]">
@@ -2871,38 +2876,41 @@ export default function UnitConverter() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <div className="flex gap-2">
-                    <motion.div 
-                      className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${toUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                      style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
-                      onClick={copyToBaseFactor}
-                      animate={{
-                        opacity: flashToBaseFactor ? [1, 0.3, 1] : 1,
-                        scale: flashToBaseFactor ? [1, 1.02, 1] : 1
-                      }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('Base Factor')}</div>
-                      <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''}>
-                        {toUnitData ? formatFactor(toUnitData.factor * toPrefixData.factor) : '-'}
-                      </div>
-                    </motion.div>
-                    <motion.div 
-                      className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center flex-1 min-w-0 ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                      style={{ height: FIELD_HEIGHT }}
-                      onClick={copyToSIBase}
-                      animate={{
-                        opacity: flashToSIBase ? [1, 0.3, 1] : 1,
-                        scale: flashToSIBase ? [1, 1.02, 1] : 1
-                      }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('SI Base Units')}</div>
-                      <div className="font-mono text-sm text-foreground/80 truncate">
-                        {categoryData.baseSISymbol || '-'}
-                      </div>
-                    </motion.div>
-                  </div>
+                </div>
+                
+                {/* Row 2: Base Factor, Spacer, SI Base Units */}
+                <div className="flex gap-2">
+                  <motion.div 
+                    className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${toUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                    style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
+                    onClick={copyToBaseFactor}
+                    animate={{
+                      opacity: flashToBaseFactor ? [1, 0.3, 1] : 1,
+                      scale: flashToBaseFactor ? [1, 1.02, 1] : 1
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('Base Factor')}</div>
+                    <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''}>
+                      {toUnitData ? formatFactor(toUnitData.factor * toPrefixData.factor) : '-'}
+                    </div>
+                  </motion.div>
+                  <div className="w-[50px] shrink-0" />
+                  <motion.div 
+                    className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center flex-1 min-w-0 ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                    style={{ height: FIELD_HEIGHT }}
+                    onClick={copyToSIBase}
+                    animate={{
+                      opacity: flashToSIBase ? [1, 0.3, 1] : 1,
+                      scale: flashToSIBase ? [1, 1.02, 1] : 1
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('SI Base Units')}</div>
+                    <div className="font-mono text-sm text-foreground/80 truncate">
+                      {categoryData.baseSISymbol || '-'}
+                    </div>
+                  </motion.div>
                 </div>
               </div>
 
