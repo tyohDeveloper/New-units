@@ -300,7 +300,8 @@ describe("Base Quantity Selection", () => {
     it("should include data category", () => {
       expect(allCategoryIds).toContain("data");
       const dataCategory = CONVERSION_DATA.find((c) => c.id === "data");
-      expect(dataCategory?.units.some((u) => u.symbol === "GB")).toBe(true);
+      expect(dataCategory?.units.some((u) => u.symbol === "B" && u.allowPrefixes)).toBe(true);
+      expect(dataCategory?.units.some((u) => u.symbol === "GiB")).toBe(true);
     });
   });
 });
