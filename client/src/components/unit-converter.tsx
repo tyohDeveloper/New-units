@@ -2675,7 +2675,7 @@ export default function UnitConverter() {
                   onChange={(e) => handleInputChange(e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   tabIndex={1}
-                  className="font-mono px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left flex-1"
+                  className="font-mono px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left"
                   style={{ height: FIELD_HEIGHT, fontSize: '0.875rem', width: CommonFieldWidth }}
                   placeholder={getPlaceholder()}
                   data-testid="input-value"
@@ -2730,7 +2730,7 @@ export default function UnitConverter() {
                 </Select>
               </div>
               
-              <div className="grid sm:grid-cols-[1fr_220px] gap-2">
+              <div className="flex flex-wrap gap-2">
                 <motion.div 
                   className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${fromUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
                   style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
@@ -2875,7 +2875,7 @@ export default function UnitConverter() {
                 </Select>
               </div>
 
-              <div className="grid sm:grid-cols-[1fr_220px] gap-2">
+              <div className="flex flex-wrap gap-2">
                 <motion.div 
                   className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${toUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
                   style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
