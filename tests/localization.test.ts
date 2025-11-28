@@ -166,7 +166,7 @@ describe('Language Localization', () => {
     it('should verify prefix symbols in PREFIXES data are Latin/SI', () => {
       for (const prefix of PREFIXES) {
         if (prefix.symbol) {
-          expect(/^[A-Za-zµ]?$/.test(prefix.symbol)).toBe(true);
+          expect(/^[A-Za-zµ]{1,2}$/.test(prefix.symbol)).toBe(true);
         }
       }
     });
@@ -174,7 +174,7 @@ describe('Language Localization', () => {
     it('should not translate prefix symbols regardless of language', () => {
       const prefixSymbols = PREFIXES.map(p => p.symbol).filter(s => s);
       for (const symbol of prefixSymbols) {
-        expect(symbol).toMatch(/^[A-Za-zµ]$/);
+        expect(symbol).toMatch(/^[A-Za-zµ]{1,2}$/);
       }
     });
   });

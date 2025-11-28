@@ -76,6 +76,12 @@ export const PREFIXES: Prefix[] = [
   { id: 'atto', name: 'Atto', symbol: 'a', factor: 1e-18 },
   { id: 'zepto', name: 'Zepto', symbol: 'z', factor: 1e-21 },
   { id: 'yocto', name: 'Yocto', symbol: 'y', factor: 1e-24 },
+  { id: 'exbi', name: 'Exbi', symbol: 'Ei', factor: 1152921504606846976 },
+  { id: 'pebi', name: 'Pebi', symbol: 'Pi', factor: 1125899906842624 },
+  { id: 'tebi', name: 'Tebi', symbol: 'Ti', factor: 1099511627776 },
+  { id: 'gibi', name: 'Gibi', symbol: 'Gi', factor: 1073741824 },
+  { id: 'mebi', name: 'Mebi', symbol: 'Mi', factor: 1048576 },
+  { id: 'kibi', name: 'Kibi', symbol: 'Ki', factor: 1024 },
 ];
 
 export interface UnitDefinition {
@@ -779,11 +785,6 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     units: [
       { id: "bit", name: "Bit", symbol: "bit", factor: 0.125, allowPrefixes: true },
       { id: "b", name: "Byte", symbol: "B", factor: 1, allowPrefixes: true },
-      { id: "kib", name: "Kibibyte", symbol: "KiB", factor: 1024 },
-      { id: "mib", name: "Mebibyte", symbol: "MiB", factor: 1048576 },
-      { id: "gib", name: "Gibibyte", symbol: "GiB", factor: 1073741824 },
-      { id: "tib", name: "Tebibyte", symbol: "TiB", factor: 1099511627776 },
-      { id: "pib", name: "Pebibyte", symbol: "PiB", factor: 1125899906842624 },
     ],
   },
 ];

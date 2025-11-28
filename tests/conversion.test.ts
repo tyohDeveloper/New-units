@@ -297,11 +297,11 @@ describe("Base Quantity Selection", () => {
       expect(fuelCategory?.units.some((u) => u.symbol === "mpg (US)")).toBe(true);
     });
 
-    it("should include data category", () => {
+    it("should include data category with prefix support", () => {
       expect(allCategoryIds).toContain("data");
       const dataCategory = CONVERSION_DATA.find((c) => c.id === "data");
       expect(dataCategory?.units.some((u) => u.symbol === "B" && u.allowPrefixes)).toBe(true);
-      expect(dataCategory?.units.some((u) => u.symbol === "GiB")).toBe(true);
+      expect(dataCategory?.units.some((u) => u.symbol === "bit" && u.allowPrefixes)).toBe(true);
     });
   });
 });
