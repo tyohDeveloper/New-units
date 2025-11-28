@@ -14,6 +14,7 @@ export type UnitCategory =
   | "pressure"
   | "energy"
   | "power"
+  | "frequency"
   | "charge"
   | "potential"
   | "capacitance"
@@ -28,6 +29,8 @@ export type UnitCategory =
   | "catalytic"
   | "angle"
   | "solid_angle"
+  | "angular_velocity"
+  | "momentum"
   | "luminous_flux"
   | "illuminance"
   | "luminous_exitance"
@@ -37,8 +40,14 @@ export type UnitCategory =
   | "flow"
   | "viscosity"
   | "surface_tension"
+  | "thermal_conductivity"
+  | "specific_heat"
+  | "entropy"
+  | "concentration"
+  | "data"
   | "refractive_power"
   | "sound_pressure"
+  | "fuel_economy"
   | "lightbulb";
 
 export interface Prefix {
@@ -358,6 +367,19 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "hp_m", name: "Metric HP", symbol: "hp", factor: 735.499 },
     ],
   },
+  {
+    id: "frequency",
+    name: "Frequency",
+    baseUnit: "hertz",
+    baseSISymbol: "s⁻¹",
+    units: [
+      { id: "hz", name: "Hertz", symbol: "Hz", factor: 1, allowPrefixes: true },
+      { id: "rpm", name: "Revolutions/Minute", symbol: "rpm", factor: 0.0166667 },
+      { id: "rps", name: "Revolutions/Second", symbol: "rps", factor: 1 },
+      { id: "bpm", name: "Beats/Minute", symbol: "BPM", factor: 0.0166667 },
+      { id: "rad_s", name: "Radians/Second", symbol: "rad/s", factor: 0.159155 },
+    ],
+  },
 
   // --- ELECTRICAL ---
   {
@@ -511,6 +533,30 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "sqdeg", name: "Square Degree", symbol: "deg²", factor: 0.0003046 },
     ],
   },
+  {
+    id: "angular_velocity",
+    name: "Angular Velocity",
+    baseUnit: "radian/second",
+    baseSISymbol: "rad⋅s⁻¹",
+    units: [
+      { id: "rad_s", name: "Radian/Second", symbol: "rad⋅s⁻¹", factor: 1 },
+      { id: "deg_s", name: "Degree/Second", symbol: "°/s", factor: 0.0174533 },
+      { id: "rpm", name: "Revolutions/Minute", symbol: "rpm", factor: 0.10472 },
+      { id: "rps", name: "Revolutions/Second", symbol: "rps", factor: 6.28319 },
+    ],
+  },
+  {
+    id: "momentum",
+    name: "Momentum",
+    baseUnit: "kilogram meter/second",
+    baseSISymbol: "kg⋅m⋅s⁻¹",
+    units: [
+      { id: "kgms", name: "kg⋅m/s", symbol: "kg⋅m⋅s⁻¹", factor: 1 },
+      { id: "ns", name: "Newton-second", symbol: "N⋅s", factor: 1 },
+      { id: "lbfts", name: "lb⋅ft/s", symbol: "lb⋅ft⋅s⁻¹", factor: 0.138255 },
+      { id: "slugfts", name: "slug⋅ft/s", symbol: "slug⋅ft⋅s⁻¹", factor: 4.44822 },
+    ],
+  },
 
   // --- OTHER PHYSICAL PROPERTIES ---
   {
@@ -548,6 +594,41 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
         symbol: "dyn⋅cm⁻¹",
         factor: 0.001,
       },
+    ],
+  },
+  {
+    id: "thermal_conductivity",
+    name: "Thermal Conductivity",
+    baseUnit: "watt/meter-kelvin",
+    baseSISymbol: "W⋅m⁻¹⋅K⁻¹",
+    units: [
+      { id: "wmk", name: "W/(m⋅K)", symbol: "W⋅m⁻¹⋅K⁻¹", factor: 1 },
+      { id: "btu_hftf", name: "BTU/(h⋅ft⋅°F)", symbol: "BTU/(h⋅ft⋅°F)", factor: 1.73073 },
+      { id: "cal_scmC", name: "cal/(s⋅cm⋅°C)", symbol: "cal/(s⋅cm⋅°C)", factor: 418.4 },
+    ],
+  },
+  {
+    id: "specific_heat",
+    name: "Specific Heat Capacity",
+    baseUnit: "joule/kilogram-kelvin",
+    baseSISymbol: "J⋅kg⁻¹⋅K⁻¹",
+    units: [
+      { id: "jkgk", name: "J/(kg⋅K)", symbol: "J⋅kg⁻¹⋅K⁻¹", factor: 1 },
+      { id: "cal_gC", name: "cal/(g⋅°C)", symbol: "cal/(g⋅°C)", factor: 4184 },
+      { id: "btu_lbF", name: "BTU/(lb⋅°F)", symbol: "BTU/(lb⋅°F)", factor: 4186.8 },
+      { id: "kjkgk", name: "kJ/(kg⋅K)", symbol: "kJ⋅kg⁻¹⋅K⁻¹", factor: 1000 },
+    ],
+  },
+  {
+    id: "entropy",
+    name: "Entropy",
+    baseUnit: "joule/kelvin",
+    baseSISymbol: "J⋅K⁻¹",
+    units: [
+      { id: "jk", name: "Joule/Kelvin", symbol: "J⋅K⁻¹", factor: 1 },
+      { id: "kjk", name: "Kilojoule/Kelvin", symbol: "kJ⋅K⁻¹", factor: 1000 },
+      { id: "calk", name: "Calorie/Kelvin", symbol: "cal⋅K⁻¹", factor: 4.184 },
+      { id: "kcalk", name: "Kilocalorie/Kelvin", symbol: "kcal⋅K⁻¹", factor: 4184 },
     ],
   },
   {
@@ -640,6 +721,63 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "bar", name: "Bar", symbol: "bar", factor: 100000 },
       { id: "ubar", name: "Microbar", symbol: "µbar", factor: 0.1 },
       { id: "dyncm2", name: "Dyne/cm²", symbol: "dyn⋅cm⁻²", factor: 0.1 },
+    ],
+  },
+
+  // --- CHEMISTRY ---
+  {
+    id: "concentration",
+    name: "Concentration",
+    baseUnit: "mole/liter",
+    baseSISymbol: "mol⋅L⁻¹",
+    units: [
+      { id: "mol_l", name: "Mole/Liter", symbol: "mol⋅L⁻¹", factor: 1, allowPrefixes: true },
+      { id: "mol_m3", name: "Mole/m³", symbol: "mol⋅m⁻³", factor: 0.001 },
+      { id: "ppm", name: "Parts per Million", symbol: "ppm", factor: 1e-6 },
+      { id: "ppb", name: "Parts per Billion", symbol: "ppb", factor: 1e-9 },
+      { id: "ppt", name: "Parts per Trillion", symbol: "ppt", factor: 1e-12 },
+      { id: "percent", name: "Percent", symbol: "%", factor: 0.01 },
+      { id: "permille", name: "Per Mille", symbol: "‰", factor: 0.001 },
+    ],
+  },
+
+  // --- COMPUTING ---
+  {
+    id: "data",
+    name: "Data/Information",
+    baseUnit: "byte",
+    baseSISymbol: "B",
+    units: [
+      { id: "bit", name: "Bit", symbol: "bit", factor: 0.125 },
+      { id: "b", name: "Byte", symbol: "B", factor: 1 },
+      { id: "kb", name: "Kilobyte", symbol: "KB", factor: 1024 },
+      { id: "mb", name: "Megabyte", symbol: "MB", factor: 1048576 },
+      { id: "gb", name: "Gigabyte", symbol: "GB", factor: 1073741824 },
+      { id: "tb", name: "Terabyte", symbol: "TB", factor: 1099511627776 },
+      { id: "pb", name: "Petabyte", symbol: "PB", factor: 1125899906842624 },
+      { id: "kib", name: "Kibibyte", symbol: "KiB", factor: 1024 },
+      { id: "mib", name: "Mebibyte", symbol: "MiB", factor: 1048576 },
+      { id: "gib", name: "Gibibyte", symbol: "GiB", factor: 1073741824 },
+      { id: "tib", name: "Tebibyte", symbol: "TiB", factor: 1099511627776 },
+      { id: "kb_si", name: "Kilobyte (SI)", symbol: "kB", factor: 1000 },
+      { id: "mb_si", name: "Megabyte (SI)", symbol: "MB", factor: 1000000 },
+      { id: "gb_si", name: "Gigabyte (SI)", symbol: "GB", factor: 1000000000 },
+      { id: "tb_si", name: "Terabyte (SI)", symbol: "TB", factor: 1000000000000 },
+    ],
+  },
+
+  // --- HUMAN/PRACTICAL ---
+  {
+    id: "fuel_economy",
+    name: "Fuel Economy",
+    baseUnit: "kilometer/liter",
+    baseSISymbol: "km⋅L⁻¹",
+    units: [
+      { id: "km_l", name: "Kilometers/Liter", symbol: "km/L", factor: 1 },
+      { id: "mpg_us", name: "Miles/Gallon (US)", symbol: "mpg (US)", factor: 0.425144 },
+      { id: "mpg_imp", name: "Miles/Gallon (Imp)", symbol: "mpg (Imp)", factor: 0.354006 },
+      { id: "mi_l", name: "Miles/Liter", symbol: "mi/L", factor: 1.60934 },
+      { id: "km_gal_us", name: "Kilometers/Gallon (US)", symbol: "km/gal", factor: 0.264172 },
     ],
   },
   {

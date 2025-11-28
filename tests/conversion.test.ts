@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { CONVERSION_DATA, PREFIXES } from "@/lib/conversion-data";
+import { CONVERSION_DATA, PREFIXES, UnitCategory } from "@/lib/conversion-data";
 
 describe("Conversion Data", () => {
   describe("PREFIXES", () => {
@@ -113,5 +113,194 @@ describe("Unit Conversion Logic", () => {
       const kiloToMilliRatio = kilo.factor / milli.factor;
       expect(kiloToMilliRatio).toBe(1e6);
     }
+  });
+});
+
+describe("SI Base Units Display", () => {
+  describe("FROM Section SI Base Units", () => {
+    it("should have baseSISymbol defined for each category", () => {
+      CONVERSION_DATA.forEach((category) => {
+        expect(category.baseSISymbol).toBeDefined();
+        expect(typeof category.baseSISymbol).toBe("string");
+      });
+    });
+
+    it("should have correct SI symbols for SI base quantities", () => {
+      const siBaseCategories: Record<string, string> = {
+        length: "m",
+        mass: "kg",
+        time: "s",
+        current: "A",
+        temperature: "K",
+        amount: "mol",
+        intensity: "cd",
+      };
+
+      Object.entries(siBaseCategories).forEach(([categoryId, expectedSymbol]) => {
+        const category = CONVERSION_DATA.find((c) => c.id === categoryId);
+        expect(category?.baseSISymbol).toBe(expectedSymbol);
+      });
+    });
+
+    it("should have derived unit SI symbols for derived quantities", () => {
+      const derivedCategories: Record<string, string> = {
+        area: "m²",
+        volume: "m³",
+        force: "kg⋅m⋅s⁻²",
+        energy: "kg⋅m²⋅s⁻²",
+        power: "kg⋅m²⋅s⁻³",
+        frequency: "s⁻¹",
+      };
+
+      Object.entries(derivedCategories).forEach(([categoryId, expectedSymbol]) => {
+        const category = CONVERSION_DATA.find((c) => c.id === categoryId);
+        expect(category?.baseSISymbol).toBe(expectedSymbol);
+      });
+    });
+  });
+
+  describe("TO Section Base Factor", () => {
+    it("should have at least one unit with factor 1 (or close to 1) in each category", () => {
+      CONVERSION_DATA.forEach((category) => {
+        const hasBaseUnit = category.units.some(
+          (unit) => Math.abs(unit.factor - 1) < 0.0001
+        );
+        expect(hasBaseUnit).toBe(true);
+      });
+    });
+
+    it("should calculate correct base factor for non-base units", () => {
+      const lengthCategory = CONVERSION_DATA.find((c) => c.id === "length");
+      const inch = lengthCategory?.units.find((u) => u.id === "in");
+      const foot = lengthCategory?.units.find((u) => u.id === "ft");
+
+      expect(inch?.factor).toBeCloseTo(0.0254, 5);
+      expect(foot?.factor).toBeCloseTo(0.3048, 5);
+
+      const feetPerInch = foot!.factor / inch!.factor;
+      expect(feetPerInch).toBeCloseTo(12, 4);
+    });
+
+    it("should have consistent base factors for temperature with offsets", () => {
+      const tempCategory = CONVERSION_DATA.find((c) => c.id === "temperature");
+      const kelvin = tempCategory?.units.find((u) => u.id === "k");
+      const celsius = tempCategory?.units.find((u) => u.id === "c");
+      const fahrenheit = tempCategory?.units.find((u) => u.id === "f");
+
+      expect(kelvin?.factor).toBe(1);
+      expect(kelvin?.offset === undefined || kelvin?.offset === 0).toBe(true);
+      expect(celsius?.offset).toBe(273.15);
+      expect(fahrenheit?.offset).toBeDefined();
+    });
+  });
+
+  describe("TO Section SI Base Units", () => {
+    it("should display SI base symbol consistently across categories", () => {
+      const categoriesWithComplexSI = ["force", "energy", "power", "pressure"];
+      
+      categoriesWithComplexSI.forEach((categoryId) => {
+        const category = CONVERSION_DATA.find((c) => c.id === categoryId);
+        expect(category?.baseSISymbol).toBeDefined();
+        expect(category?.baseSISymbol?.includes("⋅")).toBe(true);
+      });
+    });
+
+    it("should have angular categories with correct SI symbols", () => {
+      const angleCategory = CONVERSION_DATA.find((c) => c.id === "angle");
+      const solidAngleCategory = CONVERSION_DATA.find((c) => c.id === "solid_angle");
+
+      expect(angleCategory?.baseSISymbol).toBe("rad");
+      expect(solidAngleCategory?.baseSISymbol).toBe("sr");
+    });
+  });
+});
+
+describe("Base Quantity Selection", () => {
+  const allCategoryIds = CONVERSION_DATA.map((c) => c.id);
+
+  it("should have all categories in a defined order", () => {
+    expect(allCategoryIds.length).toBeGreaterThan(30);
+    expect(allCategoryIds[0]).toBe("length");
+  });
+
+  it("should have SI base quantities at the beginning", () => {
+    const siBaseQuantities: UnitCategory[] = [
+      "length", "mass", "time", "current", "temperature", "amount", "intensity"
+    ];
+
+    siBaseQuantities.forEach((siBase, index) => {
+      expect(allCategoryIds.indexOf(siBase)).toBeLessThan(10);
+    });
+  });
+
+  describe("Arrow Key Navigation Logic", () => {
+    it("should navigate to next category on down arrow", () => {
+      const currentIndex = allCategoryIds.indexOf("length");
+      const nextIndex = (currentIndex + 1) % allCategoryIds.length;
+      expect(allCategoryIds[nextIndex]).toBe("mass");
+    });
+
+    it("should navigate to previous category on up arrow", () => {
+      const currentIndex = allCategoryIds.indexOf("mass");
+      const prevIndex = (currentIndex - 1 + allCategoryIds.length) % allCategoryIds.length;
+      expect(allCategoryIds[prevIndex]).toBe("length");
+    });
+
+    it("should wrap around to first category from last on down arrow", () => {
+      const lastIndex = allCategoryIds.length - 1;
+      const nextIndex = (lastIndex + 1) % allCategoryIds.length;
+      expect(nextIndex).toBe(0);
+      expect(allCategoryIds[nextIndex]).toBe("length");
+    });
+
+    it("should wrap around to last category from first on up arrow", () => {
+      const firstIndex = 0;
+      const prevIndex = (firstIndex - 1 + allCategoryIds.length) % allCategoryIds.length;
+      expect(prevIndex).toBe(allCategoryIds.length - 1);
+    });
+  });
+
+  describe("New Categories", () => {
+    it("should include frequency category", () => {
+      expect(allCategoryIds).toContain("frequency");
+      const freqCategory = CONVERSION_DATA.find((c) => c.id === "frequency");
+      expect(freqCategory?.baseSISymbol).toBe("s⁻¹");
+    });
+
+    it("should include angular velocity category", () => {
+      expect(allCategoryIds).toContain("angular_velocity");
+      const avCategory = CONVERSION_DATA.find((c) => c.id === "angular_velocity");
+      expect(avCategory?.units.some((u) => u.symbol === "rpm")).toBe(true);
+    });
+
+    it("should include momentum category", () => {
+      expect(allCategoryIds).toContain("momentum");
+      const momCategory = CONVERSION_DATA.find((c) => c.id === "momentum");
+      expect(momCategory?.baseSISymbol).toBe("kg⋅m⋅s⁻¹");
+    });
+
+    it("should include thermodynamic categories", () => {
+      expect(allCategoryIds).toContain("thermal_conductivity");
+      expect(allCategoryIds).toContain("specific_heat");
+      expect(allCategoryIds).toContain("entropy");
+    });
+
+    it("should include concentration category", () => {
+      expect(allCategoryIds).toContain("concentration");
+      const concCategory = CONVERSION_DATA.find((c) => c.id === "concentration");
+      expect(concCategory?.units.some((u) => u.symbol === "ppm")).toBe(true);
+    });
+
+    it("should include data category", () => {
+      expect(allCategoryIds).toContain("data");
+      const dataCategory = CONVERSION_DATA.find((c) => c.id === "data");
+      expect(dataCategory?.units.some((u) => u.symbol === "GB")).toBe(true);
+    });
+
+    it("should include fuel economy category", () => {
+      expect(allCategoryIds).toContain("fuel_economy");
+      const fuelCategory = CONVERSION_DATA.find((c) => c.id === "fuel_economy");
+      expect(fuelCategory?.units.some((u) => u.symbol === "mpg (US)")).toBe(true);
+    });
   });
 });

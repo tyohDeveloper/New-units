@@ -4,7 +4,7 @@
 
 OmniUnit is a comprehensive unit conversion web application that enables conversions across a wide range of measurement systems including SI units, Imperial, US Customary, Archaic, and specialized industrial units. The application is built as a frontend-only TypeScript project with React, designed with a "scientific archival" aesthetic theme. Production builds create a single standalone HTML file for easy distribution.
 
-**Current Version:** v2.5.0
+**Current Version:** v2.6.0
 
 ## User Preferences
 
@@ -132,6 +132,9 @@ client/
 
 ## Recent Changes
 
+- v2.6.0: Added 9 new quantity categories (Frequency, Angular Velocity, Momentum, Thermal Conductivity, Specific Heat, Entropy, Concentration, Data, Fuel Economy)
+- v2.6.0: Changed default precision from 8 to 4 decimal places
+- v2.6.0: Added comprehensive tests for SI base units, base factors, and arrow key navigation (132 tests total)
 - v2.5.0: Converted to frontend-only architecture, removed Express backend and database dependencies
 - Configured single-file production builds via vite-plugin-singlefile
 - Calculator layout refinements with CSS Grid

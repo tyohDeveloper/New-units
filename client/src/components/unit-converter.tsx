@@ -24,8 +24,8 @@ export default function UnitConverter() {
   const [toPrefix, setToPrefix] = useState<string>('none');
   const [inputValue, setInputValue] = useState<string>('1');
   const [result, setResult] = useState<number | null>(null);
-  const [precision, setPrecision] = useState<number>(8);
-  const [calculatorPrecision, setCalculatorPrecision] = useState<number>(8);
+  const [precision, setPrecision] = useState<number>(4);
+  const [calculatorPrecision, setCalculatorPrecision] = useState<number>(4);
   const [flashCopyResult, setFlashCopyResult] = useState<boolean>(false);
   const [flashCopyCalc, setFlashCopyCalc] = useState<boolean>(false);
   const [flashCalcField1, setFlashCalcField1] = useState<boolean>(false);
@@ -1465,6 +1465,7 @@ export default function UnitConverter() {
       pressure: { mass: 1, length: -1, time: -2 },
       energy: { mass: 1, length: 2, time: -2 },
       power: { mass: 1, length: 2, time: -3 },
+      frequency: { time: -1 },
       charge: { current: 1, time: 1 },
       potential: { mass: 1, length: 2, time: -3, current: -1 },
       capacitance: { mass: -1, length: -2, time: 4, current: 2 },
@@ -1479,6 +1480,8 @@ export default function UnitConverter() {
       catalytic: { amount: 1, time: -1 },
       angle: { angle: 1 },
       solid_angle: { solid_angle: 1 },
+      angular_velocity: { angle: 1, time: -1 },
+      momentum: { mass: 1, length: 1, time: -1 },
       luminous_flux: { intensity: 1, solid_angle: 1 },
       illuminance: { intensity: 1, solid_angle: 1, length: -2 },
       luminous_exitance: { intensity: 1, solid_angle: 1, length: -2 },
@@ -1488,8 +1491,14 @@ export default function UnitConverter() {
       flow: { length: 3, time: -1 },
       viscosity: { mass: 1, length: -1, time: -1 },
       surface_tension: { mass: 1, time: -2 },
+      thermal_conductivity: { mass: 1, length: 1, time: -3, temperature: -1 },
+      specific_heat: { length: 2, time: -2, temperature: -1 },
+      entropy: { mass: 1, length: 2, time: -2, temperature: -1 },
+      concentration: { amount: 1, length: -3 },
+      data: {},
       refractive_power: { length: -1 },
       sound_pressure: { mass: 1, length: -1, time: -2 },
+      fuel_economy: { length: -2 },
       lightbulb: { intensity: 1, solid_angle: 1 }
     };
     return dimensionMap[category] || {};
