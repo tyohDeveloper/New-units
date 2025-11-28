@@ -2,21 +2,25 @@
 
 ## Overview
 
-OmniUnit is a comprehensive unit conversion web application that enables conversions across a wide range of measurement systems including SI units, Imperial, US Customary, Archaic, and specialized industrial units. The application is built as a full-stack TypeScript project with a React frontend and Express backend, designed with a "scientific archival" aesthetic theme.
+OmniUnit is a comprehensive unit conversion web application that enables conversions across a wide range of measurement systems including SI units, Imperial, US Customary, Archaic, and specialized industrial units. The application is built as a frontend-only TypeScript project with React, designed with a "scientific archival" aesthetic theme. Production builds create a single standalone HTML file for easy distribution.
+
+**Current Version:** v2.5.0
 
 ## User Preferences
 
-Preferred communication style: Simple, everyday language.
+- Preferred communication style: Simple, everyday language
+- Platform context: iPad using Replit iOS app or Chrome browser
+- iOS limitation: WebKit causes unreliable WebSockets, HMR is disabled
 
 ## System Architecture
 
-### Frontend Architecture
+### Frontend-Only Architecture
 
 **Framework & Build System**
-- **React 18** with TypeScript for the UI layer
-- **Vite** as the build tool and development server, configured for hot module replacement and optimized production builds
+- **React 19** with TypeScript for the UI layer
+- **Vite** as the build tool and development server
 - **Wouter** for client-side routing (lightweight alternative to React Router)
-- **TanStack Query** for server state management and data fetching
+- **vite-plugin-singlefile** creates single HTML file for production distribution
 
 **UI Component System**
 - **shadcn/ui** component library (New York variant) built on Radix UI primitives
@@ -25,7 +29,6 @@ Preferred communication style: Simple, everyday language.
 - Design system uses a neutral base color with scientific/archival aesthetic
 
 **State Management Pattern**
-- React Query for asynchronous state and server communication
 - Local React state (useState, useRef) for UI interactions
 - Custom hooks pattern for reusable logic (e.g., `use-mobile`, `use-toast`)
 
@@ -35,94 +38,87 @@ Preferred communication style: Simple, everyday language.
 - Support for metric prefixes (kilo, mega, milli, etc.)
 - Multiple unit categories: length, mass, time, temperature, area, volume, energy, pressure, and many specialized units
 
-### Backend Architecture
+### Key Design Decisions
 
-**Server Framework**
-- **Express.js** as the HTTP server framework
-- Dual-mode server setup:
-  - Development mode (`index-dev.ts`): Vite middleware integration for HMR
-  - Production mode (`index-prod.ts`): Serves pre-built static assets
-- Custom logging middleware for request/response tracking
+**Calculator Layout**
+- CSS Grid with four-column layout for perfect vertical alignment
+- Clear buttons left-aligned using `justify-self: start`
+- Copy button on separate row below result using flex justify-end
+- CSS constants: CommonFieldWidth 380px, FIELD_HEIGHT 2.5rem/40px, OperatorBtnWidth 36px, ClearBtnWidth 100px
 
-**API Structure**
-- RESTful API design pattern (routes prefixed with `/api`)
-- Modular route registration system via `registerRoutes`
-- Storage abstraction layer for data persistence
-
-**Data Persistence**
-- **Drizzle ORM** configured for PostgreSQL dialect
-- Schema-first approach with TypeScript type inference
-- Zod integration for runtime validation via `drizzle-zod`
-- Currently implements in-memory storage (`MemStorage`) with interface for database implementation
-- User schema example included (username/password fields with UUID primary key)
-
-**Session Management**
-- `connect-pg-simple` for PostgreSQL-backed session storage
-- Prepared for authentication implementation
+**Clipboard Copying**
+- Respects precision settings when copying values
 
 ### Build & Deployment
 
 **TypeScript Configuration**
 - Strict mode enabled for type safety
-- Path aliases configured: `@/` for client code, `@shared/` for shared types
+- Path alias configured: `@/` for client code
 - ESNext module system with bundler resolution
 - Incremental compilation for faster rebuilds
 
 **Build Process**
-1. Client build: Vite compiles React app to `dist/public`
-2. Server build: esbuild bundles Express server to `dist/index.js`
-3. Production mode serves static files and falls back to index.html for client-side routing
+- Development: Vite serves files separately for fast iteration
+- Production: `npm run build` creates single standalone HTML file (~688KB)
+- Output: `dist/public/index.html` contains all CSS/JS inlined
 
-**Development Workflow**
-- Separate dev scripts for client (`dev:client`) and full-stack (`dev`)
-- Database schema changes via `db:push` command
-- Type checking via `check` script
+**Scripts**
+- `npm run dev` - Start development server on port 5000
+- `npm run build` - Build single-file production bundle
+- `npm run preview` - Preview production build locally
+- `npm run check` - TypeScript type checking
+
+### Project Structure
+
+```
+client/
+├── src/
+│   ├── components/     # UI components including unit-converter.tsx
+│   ├── lib/            # Utilities and conversion-data.ts
+│   ├── pages/          # Page components
+│   └── hooks/          # Custom React hooks
+├── index.html          # Entry point
+└── main.tsx            # React root
+```
 
 ### Design Patterns
 
-**Separation of Concerns**
-- Shared schema definitions in `/shared` for type consistency
-- Client/server boundary clearly defined
-- UI components separated from business logic
-
 **Type Safety**
 - End-to-end TypeScript coverage
-- Schema validation with Zod
-- Drizzle ORM type inference for database queries
+- Schema validation with Zod where needed
 
 **Modularity**
 - Component-based UI architecture
-- Storage interface abstraction for swappable implementations
+- All conversion logic in client-side modules
 - Plugin-based Vite configuration
 
 ## External Dependencies
-
-### Database
-- **PostgreSQL** via Neon serverless driver (`@neondatabase/serverless`)
-- Connection configured through `DATABASE_URL` environment variable
-- Drizzle Kit for schema migrations
 
 ### UI Libraries
 - **Radix UI** primitives for accessible component foundations (accordion, dialog, dropdown, popover, select, tooltip, etc.)
 - **Lucide React** for iconography
 - **cmdk** for command palette functionality
-- **embla-carousel-react** for carousel components
-- **vaul** for drawer components
-- **date-fns** for date manipulation
 - **class-variance-authority** and **clsx** for conditional styling
 
 ### Development Tools
 - **@replit/vite-plugin-runtime-error-modal** for error overlay in development
 - **@replit/vite-plugin-cartographer** and **@replit/vite-plugin-dev-banner** for Replit integration
-- **esbuild** for server bundling
-- **tsx** for TypeScript execution in development
+- **vite-plugin-singlefile** for single HTML file production builds
 
 ### Form Handling
 - **react-hook-form** for form state management
 - **@hookform/resolvers** for validation integration
+- **zod** for schema validation
 
 ### Styling
 - **@tailwindcss/vite** for Tailwind CSS v4 integration
 - **autoprefixer** for CSS vendor prefixing
 - **tailwindcss-animate** for animation utilities
 - Custom fonts: Space Grotesk, IBM Plex Mono, Inter
+
+## Recent Changes
+
+- v2.5.0: Converted to frontend-only architecture, removed Express backend and database dependencies
+- Configured single-file production builds via vite-plugin-singlefile
+- Calculator layout refinements with CSS Grid
+- Copy button text simplified to "Copy" in converter section
