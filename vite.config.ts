@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import { viteSingleFile } from "vite-plugin-singlefile";
 
 export default defineConfig({
   plugins: [
@@ -20,6 +21,7 @@ export default defineConfig({
           ),
         ]
       : []),
+    ...(process.env.NODE_ENV === "production" ? [viteSingleFile()] : []),
   ],
   resolve: {
     alias: {
@@ -41,7 +43,7 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     allowedHosts: true,
-    hmr: false, // <-- Add this
+    hmr: false,
     fs: {
       strict: true,
       deny: ["**/.*"],
