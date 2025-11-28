@@ -2729,40 +2729,39 @@ export default function UnitConverter() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <motion.div 
-                    className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                    style={{ height: FIELD_HEIGHT, width: '100%' }}
-                    onClick={copyFromSIBase}
-                    animate={{
-                      opacity: flashFromSIBase ? [1, 0.3, 1] : 1,
-                      scale: flashFromSIBase ? [1, 1.02, 1] : 1
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('SI Base Units')}</div>
-                    <div className="font-mono text-sm text-foreground/80 truncate">
-                      {categoryData.baseSISymbol || '-'}
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
-              
-              <div className="flex flex-wrap gap-2">
-                <motion.div 
-                  className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${fromUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                  style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
-                  onClick={copyFromBaseFactor}
-                  animate={{
-                    opacity: flashFromBaseFactor ? [1, 0.3, 1] : 1,
-                    scale: flashFromBaseFactor ? [1, 1.02, 1] : 1
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('Base Factor')}</div>
-                  <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''}>
-                    {fromUnitData ? formatFactor(fromUnitData.factor * fromPrefixData.factor) : '-'}
+                  <div className="flex gap-2">
+                    <motion.div 
+                      className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${fromUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                      style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
+                      onClick={copyFromBaseFactor}
+                      animate={{
+                        opacity: flashFromBaseFactor ? [1, 0.3, 1] : 1,
+                        scale: flashFromBaseFactor ? [1, 1.02, 1] : 1
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('Base Factor')}</div>
+                      <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''}>
+                        {fromUnitData ? formatFactor(fromUnitData.factor * fromPrefixData.factor) : '-'}
+                      </div>
+                    </motion.div>
+                    <motion.div 
+                      className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center flex-1 min-w-0 ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                      style={{ height: FIELD_HEIGHT }}
+                      onClick={copyFromSIBase}
+                      animate={{
+                        opacity: flashFromSIBase ? [1, 0.3, 1] : 1,
+                        scale: flashFromSIBase ? [1, 1.02, 1] : 1
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('SI Base Units')}</div>
+                      <div className="font-mono text-sm text-foreground/80 truncate">
+                        {categoryData.baseSISymbol || '-'}
+                      </div>
+                    </motion.div>
                   </div>
-                </motion.div>
+                </div>
               </div>
 
               {fromUnitData?.description && (
@@ -2872,40 +2871,39 @@ export default function UnitConverter() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <motion.div 
-                    className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                    style={{ height: FIELD_HEIGHT, width: '100%' }}
-                    onClick={copyToSIBase}
-                    animate={{
-                      opacity: flashToSIBase ? [1, 0.3, 1] : 1,
-                      scale: flashToSIBase ? [1, 1.02, 1] : 1
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('SI Base Units')}</div>
-                    <div className="font-mono text-sm text-foreground/80 truncate">
-                      {categoryData.baseSISymbol || '-'}
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <motion.div 
-                  className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${toUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                  style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
-                  onClick={copyToBaseFactor}
-                  animate={{
-                    opacity: flashToBaseFactor ? [1, 0.3, 1] : 1,
-                    scale: flashToBaseFactor ? [1, 1.02, 1] : 1
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('Base Factor')}</div>
-                  <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''}>
-                    {toUnitData ? formatFactor(toUnitData.factor * toPrefixData.factor) : '-'}
+                  <div className="flex gap-2">
+                    <motion.div 
+                      className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${toUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                      style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
+                      onClick={copyToBaseFactor}
+                      animate={{
+                        opacity: flashToBaseFactor ? [1, 0.3, 1] : 1,
+                        scale: flashToBaseFactor ? [1, 1.02, 1] : 1
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('Base Factor')}</div>
+                      <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''}>
+                        {toUnitData ? formatFactor(toUnitData.factor * toPrefixData.factor) : '-'}
+                      </div>
+                    </motion.div>
+                    <motion.div 
+                      className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center flex-1 min-w-0 ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                      style={{ height: FIELD_HEIGHT }}
+                      onClick={copyToSIBase}
+                      animate={{
+                        opacity: flashToSIBase ? [1, 0.3, 1] : 1,
+                        scale: flashToSIBase ? [1, 1.02, 1] : 1
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('SI Base Units')}</div>
+                      <div className="font-mono text-sm text-foreground/80 truncate">
+                        {categoryData.baseSISymbol || '-'}
+                      </div>
+                    </motion.div>
                   </div>
-                </motion.div>
+                </div>
               </div>
 
               <div className="grid sm:grid-cols-[1fr_auto] gap-2 items-start">
