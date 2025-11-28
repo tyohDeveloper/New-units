@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { ArrowRightLeft, Copy, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { testId } from '@/lib/test-utils';
 
 const FIELD_HEIGHT = '2.5rem'; // 40px - change this to adjust all field heights
 const CommonFieldWidth = '380px'; // change this to adjust width of main value fields
@@ -2682,7 +2683,7 @@ export default function UnitConverter() {
                     className="font-mono px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left"
                     style={{ height: FIELD_HEIGHT, fontSize: '0.875rem', width: CommonFieldWidth }}
                     placeholder={getPlaceholder()}
-                    data-testid="input-value"
+                    {...testId('input-value')}
                   />
                   
                   {/* Prefix Dropdown */}
