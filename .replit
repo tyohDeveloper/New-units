@@ -100,3 +100,9 @@ waitForPort = 5000
 
 [agent]
 mockupState = "FULLSTACK"
+
+[userenv]
+
+[userenv.development]
+VITE_ALLOWED_HOSTS = "true"
+__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS = "all"
