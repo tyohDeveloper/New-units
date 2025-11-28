@@ -1305,7 +1305,11 @@ export default function UnitConverter() {
     },
     {
       name: "Mechanics",
-      categories: ['area', 'volume', 'speed', 'acceleration', 'force', 'pressure', 'energy', 'power', 'torque', 'flow', 'density', 'viscosity', 'surface_tension']
+      categories: ['area', 'volume', 'speed', 'acceleration', 'force', 'pressure', 'energy', 'power', 'torque', 'flow', 'density', 'viscosity', 'surface_tension', 'frequency', 'angular_velocity', 'momentum']
+    },
+    {
+      name: "Thermodynamics",
+      categories: ['thermal_conductivity', 'specific_heat', 'entropy']
     },
     {
       name: "Electricity & Magnetism",
@@ -1316,8 +1320,16 @@ export default function UnitConverter() {
       categories: ['radioactivity', 'radiation_dose', 'equivalent_dose', 'catalytic', 'angle', 'solid_angle', 'sound_pressure']
     },
     {
+      name: "Chemistry",
+      categories: ['concentration']
+    },
+    {
+      name: "Computing",
+      categories: ['data']
+    },
+    {
       name: "Human Response",
-      categories: ['luminous_flux', 'illuminance', 'refractive_power', 'lightbulb']
+      categories: ['luminous_flux', 'illuminance', 'refractive_power', 'lightbulb', 'fuel_economy']
     }
   ];
 
