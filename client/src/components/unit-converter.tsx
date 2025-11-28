@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowRightLeft, Copy, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
+const FIELD_HEIGHT = '2.5rem'; // 40px - change this to adjust all field heights
+
 export default function UnitConverter() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [activeCategory, setActiveCategory] = useState<UnitCategory>('length');
@@ -2672,8 +2674,8 @@ export default function UnitConverter() {
                   onChange={(e) => handleInputChange(e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   tabIndex={1}
-                  className="font-mono h-10 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left flex-1"
-                  style={{ fontSize: '0.875rem', minWidth: '220px' }}
+                  className="font-mono px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left flex-1"
+                  style={{ height: FIELD_HEIGHT, fontSize: '0.875rem', minWidth: '220px' }}
                   placeholder={getPlaceholder()}
                   data-testid="input-value"
                 />
@@ -2690,7 +2692,7 @@ export default function UnitConverter() {
                   onOpenChange={(open) => { if (!open) refocusInput(); }}
                   disabled={!fromUnitData?.allowPrefixes}
                 >
-                  <SelectTrigger tabIndex={2} className="h-10 w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                  <SelectTrigger tabIndex={2} className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
                     <SelectValue placeholder={t('Prefix')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[70vh]">
@@ -2707,7 +2709,7 @@ export default function UnitConverter() {
                   onValueChange={(val) => { setFromUnit(val); setFromPrefix('none'); refocusInput(); }}
                   onOpenChange={(open) => { if (!open) refocusInput(); }}
                 >
-                  <SelectTrigger tabIndex={3} className="h-10 w-[220px] bg-background/30 border-border font-medium shrink-0">
+                  <SelectTrigger tabIndex={3} className="w-[220px] bg-background/30 border-border font-medium shrink-0" style={{ height: FIELD_HEIGHT }}>
                     <SelectValue placeholder={t('Unit')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[70vh]">
@@ -2729,7 +2731,8 @@ export default function UnitConverter() {
               
               <div className="grid sm:grid-cols-[1fr_220px] gap-2">
                 <motion.div 
-                  className={`p-2 rounded bg-muted/20 border border-border/50 select-none ${fromUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                  className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${fromUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                  style={{ height: FIELD_HEIGHT }}
                   onClick={copyFromBaseFactor}
                   animate={{
                     opacity: flashFromBaseFactor ? [1, 0.3, 1] : 1,
@@ -2737,13 +2740,14 @@ export default function UnitConverter() {
                   }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">{t('Base Factor')}</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('Base Factor')}</div>
                   <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''}>
                     {fromUnitData ? formatFactor(fromUnitData.factor * fromPrefixData.factor) : '-'}
                   </div>
                 </motion.div>
                 <motion.div 
-                  className={`p-2 rounded bg-muted/20 border border-border/50 select-none ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                  className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                  style={{ height: FIELD_HEIGHT }}
                   onClick={copyFromSIBase}
                   animate={{
                     opacity: flashFromSIBase ? [1, 0.3, 1] : 1,
@@ -2751,7 +2755,7 @@ export default function UnitConverter() {
                   }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">{t('SI Base Units')}</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('SI Base Units')}</div>
                   <div className="font-mono text-sm text-foreground/80 truncate">
                     {categoryData.baseSISymbol || '-'}
                   </div>
@@ -2807,8 +2811,8 @@ export default function UnitConverter() {
               </div>
               <div className="flex gap-2">
                 <motion.div 
-                  className={`h-10 px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start flex-1 select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
-                  style={{ minWidth: '220px', pointerEvents: 'auto' }}
+                  className={`px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start flex-1 select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
+                  style={{ height: FIELD_HEIGHT, minWidth: '220px', pointerEvents: 'auto' }}
                   onClick={() => result !== null && copyResult()}
                   animate={{
                     opacity: flashCopyResult ? [1, 0.3, 1] : 1,
@@ -2837,7 +2841,7 @@ export default function UnitConverter() {
                   }}
                   disabled={!toUnitData?.allowPrefixes}
                 >
-                  <SelectTrigger className="h-10 w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                  <SelectTrigger className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
                     <SelectValue placeholder={t('Prefix')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[70vh]">
@@ -2850,7 +2854,7 @@ export default function UnitConverter() {
                 </Select>
 
                 <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); }}>
-                  <SelectTrigger className="h-10 w-[220px] bg-background/30 border-border font-medium shrink-0">
+                  <SelectTrigger className="w-[220px] bg-background/30 border-border font-medium shrink-0" style={{ height: FIELD_HEIGHT }}>
                     <SelectValue placeholder={t('Unit')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[70vh]">
@@ -2872,7 +2876,8 @@ export default function UnitConverter() {
 
               <div className="grid sm:grid-cols-[1fr_220px] gap-2">
                 <motion.div 
-                  className={`p-2 rounded bg-muted/20 border border-border/50 select-none ${toUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                  className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${toUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                  style={{ height: FIELD_HEIGHT }}
                   onClick={copyToBaseFactor}
                   animate={{
                     opacity: flashToBaseFactor ? [1, 0.3, 1] : 1,
@@ -2880,13 +2885,14 @@ export default function UnitConverter() {
                   }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">{t('Base Factor')}</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('Base Factor')}</div>
                   <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''}>
                     {toUnitData ? formatFactor(toUnitData.factor * toPrefixData.factor) : '-'}
                   </div>
                 </motion.div>
                 <motion.div 
-                  className={`p-2 rounded bg-muted/20 border border-border/50 select-none ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                  className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                  style={{ height: FIELD_HEIGHT }}
                   onClick={copyToSIBase}
                   animate={{
                     opacity: flashToSIBase ? [1, 0.3, 1] : 1,
@@ -2894,7 +2900,7 @@ export default function UnitConverter() {
                   }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 font-mono">{t('SI Base Units')}</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('SI Base Units')}</div>
                   <div className="font-mono text-sm text-foreground/80 truncate">
                     {categoryData.baseSISymbol || '-'}
                   </div>
@@ -2999,9 +3005,9 @@ export default function UnitConverter() {
             {/* Field 1 */}
             <div className="flex gap-2">
               <motion.div 
-                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[0] && copyCalcField(0)}
-                style={{ pointerEvents: 'auto' }}
+                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashCalcField1 ? [1, 0.3, 1] : 1,
                   scale: flashCalcField1 ? [1, 1.02, 1] : 1
@@ -3042,9 +3048,9 @@ export default function UnitConverter() {
             {/* Field 2 */}
             <div className="flex gap-1">
               <motion.div 
-                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[1] && copyCalcField(1)}
-                style={{ pointerEvents: 'auto' }}
+                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashCalcField2 ? [1, 0.3, 1] : 1,
                   scale: flashCalcField2 ? [1, 1.02, 1] : 1
@@ -3103,9 +3109,9 @@ export default function UnitConverter() {
             {/* Field 3 */}
             <div className="flex gap-1">
               <motion.div 
-                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[2] && copyCalcField(2)}
-                style={{ pointerEvents: 'auto' }}
+                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashCalcField3 ? [1, 0.3, 1] : 1,
                   scale: flashCalcField3 ? [1, 1.02, 1] : 1
@@ -3164,8 +3170,8 @@ export default function UnitConverter() {
             {/* Result Field 4 */}
             <div className="flex gap-1">
               <motion.div 
-                className={`h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                style={{ pointerEvents: 'auto' }}
+                className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
                 onClick={() => calcValues[3] && copyCalcResult()}
                 animate={{
                   opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
