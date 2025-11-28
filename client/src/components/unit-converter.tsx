@@ -1322,6 +1322,10 @@ export default function UnitConverter() {
     {
       name: "Human Response",
       categories: ['luminous_flux', 'illuminance', 'refractive_power', 'lightbulb', 'fuel_economy']
+    },
+    {
+      name: "Computing",
+      categories: ['data']
     }
   ];
 
