@@ -2620,7 +2620,7 @@ export default function UnitConverter() {
                 }}
                 onOpenChange={(open) => { if (!open) refocusInput(); }}
               >
-                <SelectTrigger tabIndex={6} className="h-6 w-[180px] text-xs">
+                <SelectTrigger tabIndex={6} className="h-10 w-[180px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -2641,7 +2641,7 @@ export default function UnitConverter() {
                 onOpenChange={(open) => { if (!open) refocusInput(); }}
                 disabled={numberFormat === 'arabic' || numberFormat === 'arabic-latin'}
               >
-                <SelectTrigger tabIndex={7} className="h-6 w-[75px] text-xs">
+                <SelectTrigger tabIndex={7} className="h-10 w-[75px] text-xs">
                   <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent className="max-h-[70vh]">
@@ -2672,7 +2672,7 @@ export default function UnitConverter() {
                   onChange={(e) => handleInputChange(e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   tabIndex={1}
-                  className="font-mono h-16 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left flex-1"
+                  className="font-mono h-10 px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left flex-1"
                   style={{ fontSize: '0.875rem', minWidth: '220px' }}
                   placeholder={getPlaceholder()}
                   data-testid="input-value"
@@ -2690,7 +2690,7 @@ export default function UnitConverter() {
                   onOpenChange={(open) => { if (!open) refocusInput(); }}
                   disabled={!fromUnitData?.allowPrefixes}
                 >
-                  <SelectTrigger tabIndex={2} className="h-16 w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                  <SelectTrigger tabIndex={2} className="h-10 w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                     <SelectValue placeholder={t('Prefix')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[70vh]">
@@ -2707,7 +2707,7 @@ export default function UnitConverter() {
                   onValueChange={(val) => { setFromUnit(val); setFromPrefix('none'); refocusInput(); }}
                   onOpenChange={(open) => { if (!open) refocusInput(); }}
                 >
-                  <SelectTrigger tabIndex={3} className="h-16 w-[220px] bg-background/30 border-border font-medium shrink-0">
+                  <SelectTrigger tabIndex={3} className="h-10 w-[220px] bg-background/30 border-border font-medium shrink-0">
                     <SelectValue placeholder={t('Unit')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[70vh]">
@@ -2789,7 +2789,7 @@ export default function UnitConverter() {
                       onValueChange={(val) => { setPrecision(parseInt(val)); refocusInput(); }}
                       onOpenChange={(open) => { if (!open) refocusInput(); }}
                     >
-                      <SelectTrigger tabIndex={4} className="h-7 w-[70px] text-xs">
+                      <SelectTrigger tabIndex={4} className="h-10 w-[70px] text-xs">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent align="end">
@@ -2807,7 +2807,7 @@ export default function UnitConverter() {
               </div>
               <div className="flex gap-2">
                 <motion.div 
-                  className={`h-16 px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start flex-1 select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
+                  className={`h-10 px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start flex-1 select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
                   style={{ minWidth: '220px', pointerEvents: 'auto' }}
                   onClick={() => result !== null && copyResult()}
                   animate={{
@@ -2837,7 +2837,7 @@ export default function UnitConverter() {
                   }}
                   disabled={!toUnitData?.allowPrefixes}
                 >
-                  <SelectTrigger className="h-16 w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                  <SelectTrigger className="h-10 w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                     <SelectValue placeholder={t('Prefix')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[70vh]">
@@ -2850,7 +2850,7 @@ export default function UnitConverter() {
                 </Select>
 
                 <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); }}>
-                  <SelectTrigger className="h-16 w-[220px] bg-background/30 border-border font-medium shrink-0">
+                  <SelectTrigger className="h-10 w-[220px] bg-background/30 border-border font-medium shrink-0">
                     <SelectValue placeholder={t('Unit')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-[70vh]">
@@ -2971,7 +2971,7 @@ export default function UnitConverter() {
                   value={calculatorPrecision.toString()} 
                   onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
                 >
-                  <SelectTrigger className="h-7 w-[70px] text-xs">
+                  <SelectTrigger className="h-10 w-[70px] text-xs">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent align="end">
@@ -2999,7 +2999,7 @@ export default function UnitConverter() {
             {/* Field 1 */}
             <div className="flex gap-2">
               <motion.div 
-                className={`h-16 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[0] && copyCalcField(0)}
                 style={{ pointerEvents: 'auto' }}
                 animate={{
@@ -3042,7 +3042,7 @@ export default function UnitConverter() {
             {/* Field 2 */}
             <div className="flex gap-1">
               <motion.div 
-                className={`h-16 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[1] && copyCalcField(1)}
                 style={{ pointerEvents: 'auto' }}
                 animate={{
@@ -3103,7 +3103,7 @@ export default function UnitConverter() {
             {/* Field 3 */}
             <div className="flex gap-1">
               <motion.div 
-                className={`h-16 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                className={`h-10 px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[2] && copyCalcField(2)}
                 style={{ pointerEvents: 'auto' }}
                 animate={{
@@ -3164,7 +3164,7 @@ export default function UnitConverter() {
             {/* Result Field 4 */}
             <div className="flex gap-1">
               <motion.div 
-                className={`h-16 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                className={`h-10 px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
                 style={{ pointerEvents: 'auto' }}
                 onClick={() => calcValues[3] && copyCalcResult()}
                 animate={{
@@ -3283,7 +3283,7 @@ export default function UnitConverter() {
                             return !unit?.allowPrefixes;
                           })()}
                         >
-                          <SelectTrigger className="h-9 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                          <SelectTrigger className="h-10 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                             <SelectValue placeholder={t('Prefix')} />
                           </SelectTrigger>
                           <SelectContent className="max-h-[70vh]">
@@ -3295,7 +3295,7 @@ export default function UnitConverter() {
                           </SelectContent>
                         </Select>
                         <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
-                          <SelectTrigger className="h-9 flex-1 text-xs">
+                          <SelectTrigger className="h-10 flex-1 text-xs">
                             <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
                           </SelectTrigger>
                           <SelectContent>
@@ -3345,7 +3345,7 @@ export default function UnitConverter() {
                           // Dimensionless
                           return (
                             <Select value="unitless" disabled>
-                              <SelectTrigger className="h-9 flex-1 text-xs">
+                              <SelectTrigger className="h-10 flex-1 text-xs">
                                 <SelectValue placeholder="" />
                               </SelectTrigger>
                               <SelectContent>
@@ -3371,7 +3371,7 @@ export default function UnitConverter() {
                               onValueChange={setResultPrefix}
                               disabled={containsKg}
                             >
-                              <SelectTrigger className="h-9 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                              <SelectTrigger className="h-10 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                                 <SelectValue placeholder={t('Prefix')} />
                               </SelectTrigger>
                               <SelectContent className="max-h-[70vh]">
@@ -3386,7 +3386,7 @@ export default function UnitConverter() {
                               value={selectedAlternative.toString()} 
                               onValueChange={(val) => setSelectedAlternative(parseInt(val))}
                             >
-                              <SelectTrigger className="h-9 flex-1 text-xs">
+                              <SelectTrigger className="h-10 flex-1 text-xs">
                                 <SelectValue placeholder="Select representation" />
                               </SelectTrigger>
                               <SelectContent>
