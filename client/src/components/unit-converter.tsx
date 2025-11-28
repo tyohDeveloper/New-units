@@ -11,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { testId } from '@/lib/test-utils';
 
 const FIELD_HEIGHT = '2.5rem'; // 40px - change this to adjust all field heights
-const CommonFieldWidth = '380px'; // change this to adjust width of main value fields
+const CommonFieldWidth = '285px'; // change this to adjust width of main value fields
 const OperatorBtnWidth = '36px'; // width of × and / operator buttons in calculator
 const ClearBtnWidth = '100px'; // width of Clear buttons in calculator
 
