@@ -2966,7 +2966,7 @@ export default function UnitConverter() {
         {/* Mini Calculator */}
         <Card className="p-6 bg-card border-border/50">
           <div className="flex gap-2 mb-4">
-            <div className="flex-1 flex items-center justify-between">
+            <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
               <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Calculator')}</Label>
               <div className="flex items-center gap-2">
                 <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
@@ -2987,16 +2987,14 @@ export default function UnitConverter() {
                 </Select>
               </div>
             </div>
-            <div className="flex gap-1 justify-end w-[220px]">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={clearCalculator}
-                className="text-xs"
-              >
-                {t('Clear')} {t('Calculator')}
-              </Button>
-            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={clearCalculator}
+              className="text-xs"
+            >
+              {t('Clear')} {t('Calculator')}
+            </Button>
           </div>
           <div className="space-y-2">
             {/* Field 1 */}
