@@ -1325,7 +1325,7 @@ export default function UnitConverter() {
     },
     {
       name: "Computing",
-      categories: ['data']
+      categories: ['data', 'rack_geometry', 'unitless']
     }
   ];
 
@@ -1504,6 +1504,8 @@ export default function UnitConverter() {
       entropy: { mass: 1, length: 2, time: -2, temperature: -1 },
       concentration: { amount: 1, length: -3 },
       data: {},
+      rack_geometry: { length: 1 },
+      unitless: {},
       refractive_power: { length: -1 },
       sound_pressure: { mass: 1, length: -1, time: -2 },
       fuel_economy: { length: -2 },

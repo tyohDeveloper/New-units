@@ -45,6 +45,8 @@ export type UnitCategory =
   | "entropy"
   | "concentration"
   | "data"
+  | "rack_geometry"
+  | "unitless"
   | "refractive_power"
   | "sound_pressure"
   | "fuel_economy"
@@ -790,6 +792,33 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     units: [
       { id: "bit", name: "Bit", symbol: "bit", factor: 0.125, allowPrefixes: true },
       { id: "b", name: "Byte", symbol: "B", factor: 1, allowPrefixes: true },
+    ],
+  },
+  {
+    id: "rack_geometry",
+    name: "Rack Geometry",
+    baseUnit: "rack unit",
+    baseSISymbol: "U",
+    units: [
+      { id: "u", name: "Rack Unit", symbol: "U", factor: 1 },
+      { id: "u2", name: "2U (Double)", symbol: "2U", factor: 2 },
+      { id: "u4", name: "4U (Quad)", symbol: "4U", factor: 4 },
+      { id: "m", name: "Meter", symbol: "m", factor: 22.4972 },
+      { id: "in", name: "Inch", symbol: "in", factor: 0.5714 },
+      { id: "ft", name: "Foot", symbol: "ft", factor: 6.8571 },
+      { id: "ft_in", name: "Foot:Inch", symbol: "ft:in", factor: 6.8571 },
+      { id: "rack_42u", name: "Full Rack (42U)", symbol: "42U", factor: 42 },
+      { id: "rack_24u", name: "Half Rack (24U)", symbol: "24U", factor: 24 },
+      { id: "rack_12u", name: "Quarter Rack (12U)", symbol: "12U", factor: 12 },
+    ],
+  },
+  {
+    id: "unitless",
+    name: "Unitless Number",
+    baseUnit: "number",
+    baseSISymbol: "1",
+    units: [
+      { id: "num", name: "Number", symbol: "×", factor: 1 },
     ],
   },
 ];
