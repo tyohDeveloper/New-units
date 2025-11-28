@@ -1308,8 +1308,8 @@ export default function UnitConverter() {
       categories: ['area', 'volume', 'speed', 'acceleration', 'force', 'pressure', 'energy', 'power', 'torque', 'flow', 'density', 'viscosity', 'surface_tension', 'frequency', 'angular_velocity', 'momentum']
     },
     {
-      name: "Thermodynamics",
-      categories: ['thermal_conductivity', 'specific_heat', 'entropy']
+      name: "Thermodynamics & Chemistry",
+      categories: ['thermal_conductivity', 'specific_heat', 'entropy', 'concentration']
     },
     {
       name: "Electricity & Magnetism",
@@ -1318,10 +1318,6 @@ export default function UnitConverter() {
     {
       name: "Radiation & Physics",
       categories: ['radioactivity', 'radiation_dose', 'equivalent_dose', 'catalytic', 'angle', 'solid_angle', 'sound_pressure']
-    },
-    {
-      name: "Chemistry",
-      categories: ['concentration']
     },
     {
       name: "Computing",
