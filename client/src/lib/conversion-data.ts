@@ -46,6 +46,7 @@ export type UnitCategory =
   | "concentration"
   | "data"
   | "rack_geometry"
+  | "shipping"
   | "unitless"
   | "refractive_power"
   | "sound_pressure"
@@ -810,6 +811,23 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "rack_42u", name: "Full Rack (42U)", symbol: "42U", factor: 42 },
       { id: "rack_24u", name: "Half Rack (24U)", symbol: "24U", factor: 24 },
       { id: "rack_12u", name: "Quarter Rack (12U)", symbol: "12U", factor: 12 },
+    ],
+  },
+  {
+    id: "shipping",
+    name: "Shipping Containers",
+    baseUnit: "meter",
+    baseSISymbol: "m",
+    units: [
+      { id: "m", name: "Meter", symbol: "m", factor: 1 },
+      { id: "ft", name: "Foot", symbol: "ft", factor: 0.3048 },
+      { id: "ft_in", name: "Foot:Inch", symbol: "ft:in", factor: 0.3048 },
+      { id: "teu_l", name: "TEU Length", symbol: "TEU-L", factor: 6.096 },
+      { id: "teu_w", name: "TEU Width", symbol: "TEU-W", factor: 2.438 },
+      { id: "teu_h", name: "TEU Height", symbol: "TEU-H", factor: 2.591 },
+      { id: "deu_l", name: "DEU Length", symbol: "DEU-L", factor: 12.192 },
+      { id: "deu_w", name: "DEU Width", symbol: "DEU-W", factor: 2.438 },
+      { id: "deu_h", name: "DEU Height", symbol: "DEU-H", factor: 2.591 },
     ],
   },
   {

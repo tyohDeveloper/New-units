@@ -1324,8 +1324,8 @@ export default function UnitConverter() {
       categories: ['luminous_flux', 'illuminance', 'refractive_power', 'lightbulb', 'fuel_economy']
     },
     {
-      name: "Computing",
-      categories: ['data', 'rack_geometry', 'unitless']
+      name: "Computing, Shipping, Other",
+      categories: ['data', 'rack_geometry', 'shipping', 'unitless']
     }
   ];
 
@@ -1505,6 +1505,7 @@ export default function UnitConverter() {
       concentration: { amount: 1, length: -3 },
       data: {},
       rack_geometry: { length: 1 },
+      shipping: { length: 1 },
       unitless: {},
       refractive_power: { length: -1 },
       sound_pressure: { mass: 1, length: -1, time: -2 },
