@@ -3008,7 +3008,7 @@ export default function UnitConverter() {
               variant="ghost" 
               size="sm" 
               onClick={clearCalculator}
-              className="text-xs w-full"
+              className="text-xs justify-self-start"
             >
               {t('Clear')} {t('Calculator')}
             </Button>
@@ -3054,7 +3054,7 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={clearField1}
                 disabled={!calcValues[0]}
-                className="text-xs w-full"
+                className="text-xs justify-self-start"
               >
                 {t('Clear')}
               </Button>
@@ -3114,7 +3114,7 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={clearField2}
                 disabled={!calcValues[1]}
-                className="text-xs w-full"
+                className="text-xs justify-self-start"
               >
                 {t('Clear')}
               </Button>
@@ -3174,16 +3174,16 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={clearField3}
                 disabled={!calcValues[2]}
-                className="text-xs w-full"
+                className="text-xs justify-self-start"
               >
                 {t('Clear')}
               </Button>
             </div>
 
             {/* Result Field 4 */}
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center" style={{ width: '100%' }}>
               <motion.div 
-                className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between select-none ${calcValues[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between select-none shrink-0 ${calcValues[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
                 style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
                 onClick={() => calcValues[3] && copyCalcResult()}
                 animate={{
@@ -3419,28 +3419,34 @@ export default function UnitConverter() {
                       );
                     })()
                   )}
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={copyCalcResult}
-                    disabled={!calcValues[3]}
-                    className="text-xs hover:text-accent gap-1 ml-auto shrink-0"
-                    style={{ width: ClearBtnWidth }}
-                  >
-                    <Copy className="w-3 h-3" />
-                    <motion.span
-                      animate={{
-                        opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
-                        scale: flashCopyCalc ? [1, 1.1, 1] : 1
-                      }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {t('Copy')}
-                    </motion.span>
-                  </Button>
                 </React.Fragment>
               )}
             </div>
+            
+            {/* Copy button on its own row */}
+            {calcValues[3] && (
+              <div className="flex justify-end mt-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={copyCalcResult}
+                  disabled={!calcValues[3]}
+                  className="text-xs hover:text-accent gap-1"
+                  style={{ width: ClearBtnWidth }}
+                >
+                  <Copy className="w-3 h-3" />
+                  <motion.span
+                    animate={{
+                      opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                      scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {t('Copy')}
+                  </motion.span>
+                </Button>
+              </div>
+            )}
           </div>
         </Card>
       </div>
