@@ -2975,7 +2975,7 @@ export default function UnitConverter() {
 
         {/* Mini Calculator */}
         <Card className="p-6 bg-card border-border/50">
-          <div className="flex gap-2 mb-4">
+          <div className="flex gap-2 mb-4 items-center">
             <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
               <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Calculator')}</Label>
               <div className="flex items-center gap-2">
@@ -2997,18 +2997,19 @@ export default function UnitConverter() {
                 </Select>
               </div>
             </div>
+            <div className="flex-1" />
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={clearCalculator}
-              className="text-xs"
+              className="text-xs w-[100px]"
             >
               {t('Clear')} {t('Calculator')}
             </Button>
           </div>
           <div className="space-y-2">
             {/* Field 1 */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[0] && copyCalcField(0)}
@@ -3037,21 +3038,20 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              <div className="flex gap-1 justify-end w-[220px]">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={clearField1}
-                  disabled={!calcValues[0]}
-                  className="text-xs"
-                >
-                  {t('Clear')}
-                </Button>
-              </div>
+              <div className="flex-1" />
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={clearField1}
+                disabled={!calcValues[0]}
+                className="text-xs w-[100px]"
+              >
+                {t('Clear')}
+              </Button>
             </div>
 
             {/* Field 2 */}
-            <div className="flex gap-1">
+            <div className="flex gap-2 items-center">
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[1] && copyCalcField(1)}
@@ -3080,39 +3080,38 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              <div className="flex gap-1 justify-between w-[220px]">
-                <div className="flex gap-1">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => setCalcOp1('*')}
-                    className={`text-sm ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
-                  >
-                    ×
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => setCalcOp1('/')}
-                    className={`text-sm ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
-                  >
-                    /
-                  </Button>
-                </div>
+              <div className="flex gap-1">
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={clearField2}
-                  disabled={!calcValues[1]}
-                  className="text-xs"
+                  onClick={() => setCalcOp1('*')}
+                  className={`text-sm ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
                 >
-                  {t('Clear')}
+                  ×
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setCalcOp1('/')}
+                  className={`text-sm ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
+                >
+                  /
                 </Button>
               </div>
+              <div className="flex-1" />
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={clearField2}
+                disabled={!calcValues[1]}
+                className="text-xs w-[100px]"
+              >
+                {t('Clear')}
+              </Button>
             </div>
 
             {/* Field 3 */}
-            <div className="flex gap-1">
+            <div className="flex gap-2 items-center">
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[2] && copyCalcField(2)}
@@ -3141,39 +3140,38 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              <div className="flex gap-1 justify-between w-[220px]">
-                <div className="flex gap-1">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => setCalcOp2('*')}
-                    className={`text-sm ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
-                  >
-                    ×
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => setCalcOp2('/')}
-                    className={`text-sm ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
-                  >
-                    /
-                  </Button>
-                </div>
+              <div className="flex gap-1">
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={clearField3}
-                  disabled={!calcValues[2]}
-                  className="text-xs"
+                  onClick={() => setCalcOp2('*')}
+                  className={`text-sm ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
                 >
-                  {t('Clear')}
+                  ×
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setCalcOp2('/')}
+                  className={`text-sm ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
+                >
+                  /
                 </Button>
               </div>
+              <div className="flex-1" />
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={clearField3}
+                disabled={!calcValues[2]}
+                className="text-xs w-[100px]"
+              >
+                {t('Clear')}
+              </Button>
             </div>
 
             {/* Result Field 4 */}
-            <div className="flex gap-1">
+            <div className="flex gap-2 items-center">
               <motion.div 
                 className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between select-none ${calcValues[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
                 style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
@@ -3261,178 +3259,176 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              <div className="flex gap-1 w-[220px]">
-                {calcValues[3] && (
-                  <React.Fragment>
-                    {resultCategory ? (
-                      <>
-                        <Select 
-                          value={resultPrefix} 
-                          onValueChange={setResultPrefix}
-                          disabled={(() => {
-                            const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                            const unit = cat?.units.find(u => u.id === resultUnit);
-                            
-                            // If using base SI unit (resultUnit === null), check if it contains "kg"
-                            if (resultUnit === null) {
-                              // If the base SI symbol contains "kg", disable prefixes
-                              if (cat?.baseSISymbol?.includes('kg')) {
-                                return true;
-                              }
-                              // Find the primary SI unit for this category (the one with factor=1 and allowPrefixes)
-                              const primarySI = cat?.units.find(u => u.factor === 1 && u.allowPrefixes);
-                              // If there's a primary SI unit with allowPrefixes, enable prefixes
-                              // Otherwise, disable (e.g., mass base is kg which doesn't have allowPrefixes)
-                              return primarySI ? false : true;
-                            }
-                            
-                            // If the unit symbol contains "kg", disable prefixes
-                            if (unit?.symbol?.includes('kg')) {
+              {calcValues[3] && (
+                <React.Fragment>
+                  {resultCategory ? (
+                    <>
+                      <Select 
+                        value={resultPrefix} 
+                        onValueChange={setResultPrefix}
+                        disabled={(() => {
+                          const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+                          const unit = cat?.units.find(u => u.id === resultUnit);
+                          
+                          // If using base SI unit (resultUnit === null), check if it contains "kg"
+                          if (resultUnit === null) {
+                            // If the base SI symbol contains "kg", disable prefixes
+                            if (cat?.baseSISymbol?.includes('kg')) {
                               return true;
                             }
-                            
-                            return !unit?.allowPrefixes;
-                          })()}
-                        >
-                          <SelectTrigger className="h-10 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
-                            <SelectValue placeholder={t('Prefix')} />
-                          </SelectTrigger>
-                          <SelectContent className="max-h-[70vh]">
-                            {PREFIXES.map((p) => (
-                              <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
-                                {p.symbol || '-'}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
-                          <SelectTrigger className="h-10 flex-1 text-xs">
-                            <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {(() => {
-                              const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                              if (!cat) return null;
-                              
-                              // Filter based on beer/wine checkbox
-                              let units = resultCategory === 'volume' && !includeBeerWine 
-                                ? cat.units.filter(u => !u.beerWine)
-                                : cat.units;
-                              
-                              // Check if base SI unit exists in units array with same symbol
-                              const baseUnitExists = units.some(u => u.symbol === cat.baseSISymbol);
-                              
-                              return (
-                                <>
-                                  {!baseUnitExists && (
-                                    <SelectItem value="base" className="text-xs font-mono">
-                                      <span className="font-bold mr-2">{cat.baseSISymbol}</span>
-                                      <span className="opacity-70">{t(applyRegionalSpelling(toTitleCase(cat.baseUnit)))}</span>
-                                    </SelectItem>
-                                  )}
-                                  {units.map(unit => (
-                                    <SelectItem key={unit.id} value={unit.id} className="text-xs font-mono">
-                                      {unit.symbol === unit.name ? (
-                                        <span className="font-bold">{unit.symbol}</span>
-                                      ) : (
-                                        <>
-                                          <span className="font-bold mr-2">{unit.symbol}</span>
-                                          <span className="opacity-70">{translateUnitName(unit.name)}</span>
-                                        </>
-                                      )}
-                                    </SelectItem>
-                                  ))}
-                                </>
-                              );
-                            })()}
-                          </SelectContent>
-                        </Select>
-                      </>
-                    ) : (
-                      (() => {
-                        // For complex dimensions that don't match a category, show alternative representations
-                        const val = calcValues[3];
-                        if (!val || Object.keys(val.dimensions).length === 0) {
-                          // Dimensionless
-                          return (
-                            <Select value="unitless" disabled>
-                              <SelectTrigger className="h-10 flex-1 text-xs">
-                                <SelectValue placeholder="" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="unitless" className="text-xs"></SelectItem>
-                              </SelectContent>
-                            </Select>
-                          );
-                        }
-                        
-                        // Generate alternative representations
-                        const alternatives = generateAlternativeRepresentations(val.dimensions);
-                        
-                        // Check if current alternative display contains "kg" - if so, disable prefix
-                        const currentAltSymbol = selectedAlternative < alternatives.length 
-                          ? alternatives[selectedAlternative].displaySymbol 
-                          : formatDimensions(val.dimensions);
-                        const containsKg = currentAltSymbol.includes('kg');
-                        
-                        return (
-                          <>
-                            <Select 
-                              value={resultPrefix} 
-                              onValueChange={setResultPrefix}
-                              disabled={containsKg}
-                            >
-                              <SelectTrigger className="h-10 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
-                                <SelectValue placeholder={t('Prefix')} />
-                              </SelectTrigger>
-                              <SelectContent className="max-h-[70vh]">
-                                {PREFIXES.map((p) => (
-                                  <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
-                                    {p.symbol || '-'}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <Select 
-                              value={selectedAlternative.toString()} 
-                              onValueChange={(val) => setSelectedAlternative(parseInt(val))}
-                            >
-                              <SelectTrigger className="h-10 flex-1 text-xs">
-                                <SelectValue placeholder="Select representation" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {alternatives.map((alt, index) => (
-                                  <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
-                                    <span className="font-bold">{alt.displaySymbol}</span>
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </>
-                        );
-                      })()
-                    )}
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={copyCalcResult}
-                      disabled={!calcValues[3]}
-                      className="text-xs hover:text-accent gap-1 shrink-0"
-                    >
-                      <Copy className="w-3 h-3" />
-                      <motion.span
-                        animate={{
-                          opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
-                          scale: flashCopyCalc ? [1, 1.1, 1] : 1
-                        }}
-                        transition={{ duration: 0.3 }}
+                            // Find the primary SI unit for this category (the one with factor=1 and allowPrefixes)
+                            const primarySI = cat?.units.find(u => u.factor === 1 && u.allowPrefixes);
+                            // If there's a primary SI unit with allowPrefixes, enable prefixes
+                            // Otherwise, disable (e.g., mass base is kg which doesn't have allowPrefixes)
+                            return primarySI ? false : true;
+                          }
+                          
+                          // If the unit symbol contains "kg", disable prefixes
+                          if (unit?.symbol?.includes('kg')) {
+                            return true;
+                          }
+                          
+                          return !unit?.allowPrefixes;
+                        })()}
                       >
-                        {t('Copy')}
-                      </motion.span>
-                    </Button>
-                  </React.Fragment>
-                )}
-              </div>
+                        <SelectTrigger className="h-10 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                          <SelectValue placeholder={t('Prefix')} />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[70vh]">
+                          {PREFIXES.map((p) => (
+                            <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
+                              {p.symbol || '-'}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
+                        <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
+                          <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {(() => {
+                            const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+                            if (!cat) return null;
+                            
+                            // Filter based on beer/wine checkbox
+                            let units = resultCategory === 'volume' && !includeBeerWine 
+                              ? cat.units.filter(u => !u.beerWine)
+                              : cat.units;
+                            
+                            // Check if base SI unit exists in units array with same symbol
+                            const baseUnitExists = units.some(u => u.symbol === cat.baseSISymbol);
+                            
+                            return (
+                              <>
+                                {!baseUnitExists && (
+                                  <SelectItem value="base" className="text-xs font-mono">
+                                    <span className="font-bold mr-2">{cat.baseSISymbol}</span>
+                                    <span className="opacity-70">{t(applyRegionalSpelling(toTitleCase(cat.baseUnit)))}</span>
+                                  </SelectItem>
+                                )}
+                                {units.map(unit => (
+                                  <SelectItem key={unit.id} value={unit.id} className="text-xs font-mono">
+                                    {unit.symbol === unit.name ? (
+                                      <span className="font-bold">{unit.symbol}</span>
+                                    ) : (
+                                      <>
+                                        <span className="font-bold mr-2">{unit.symbol}</span>
+                                        <span className="opacity-70">{translateUnitName(unit.name)}</span>
+                                      </>
+                                    )}
+                                  </SelectItem>
+                                ))}
+                              </>
+                            );
+                          })()}
+                        </SelectContent>
+                      </Select>
+                    </>
+                  ) : (
+                    (() => {
+                      // For complex dimensions that don't match a category, show alternative representations
+                      const val = calcValues[3];
+                      if (!val || Object.keys(val.dimensions).length === 0) {
+                        // Dimensionless
+                        return (
+                          <Select value="unitless" disabled>
+                            <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
+                              <SelectValue placeholder="" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="unitless" className="text-xs"></SelectItem>
+                            </SelectContent>
+                          </Select>
+                        );
+                      }
+                      
+                      // Generate alternative representations
+                      const alternatives = generateAlternativeRepresentations(val.dimensions);
+                      
+                      // Check if current alternative display contains "kg" - if so, disable prefix
+                      const currentAltSymbol = selectedAlternative < alternatives.length 
+                        ? alternatives[selectedAlternative].displaySymbol 
+                        : formatDimensions(val.dimensions);
+                      const containsKg = currentAltSymbol.includes('kg');
+                      
+                      return (
+                        <>
+                          <Select 
+                            value={resultPrefix} 
+                            onValueChange={setResultPrefix}
+                            disabled={containsKg}
+                          >
+                            <SelectTrigger className="h-10 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                              <SelectValue placeholder={t('Prefix')} />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-[70vh]">
+                              {PREFIXES.map((p) => (
+                                <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
+                                  {p.symbol || '-'}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <Select 
+                            value={selectedAlternative.toString()} 
+                            onValueChange={(val) => setSelectedAlternative(parseInt(val))}
+                          >
+                            <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
+                              <SelectValue placeholder="Select representation" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {alternatives.map((alt, index) => (
+                                <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
+                                  <span className="font-bold">{alt.displaySymbol}</span>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </>
+                      );
+                    })()
+                  )}
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={copyCalcResult}
+                    disabled={!calcValues[3]}
+                    className="text-xs hover:text-accent gap-1 w-[100px]"
+                  >
+                    <Copy className="w-3 h-3" />
+                    <motion.span
+                      animate={{
+                        opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                        scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {t('Copy')}
+                    </motion.span>
+                  </Button>
+                </React.Fragment>
+              )}
             </div>
           </div>
         </Card>
