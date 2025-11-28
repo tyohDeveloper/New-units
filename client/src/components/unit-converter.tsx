@@ -10,6 +10,7 @@ import { ArrowRightLeft, Copy, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const FIELD_HEIGHT = '2.5rem'; // 40px - change this to adjust all field heights
+const FIELD_WIDTH = '220px'; // change this to adjust width of main value fields
 
 export default function UnitConverter() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -2732,7 +2733,7 @@ export default function UnitConverter() {
               <div className="grid sm:grid-cols-[1fr_220px] gap-2">
                 <motion.div 
                   className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${fromUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                  style={{ height: FIELD_HEIGHT }}
+                  style={{ height: FIELD_HEIGHT, width: FIELD_WIDTH }}
                   onClick={copyFromBaseFactor}
                   animate={{
                     opacity: flashFromBaseFactor ? [1, 0.3, 1] : 1,
@@ -2811,8 +2812,8 @@ export default function UnitConverter() {
               </div>
               <div className="flex gap-2">
                 <motion.div 
-                  className={`px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start flex-1 select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
-                  style={{ height: FIELD_HEIGHT, minWidth: '220px', pointerEvents: 'auto' }}
+                  className={`px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-left justify-start select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
+                  style={{ height: FIELD_HEIGHT, width: FIELD_WIDTH, pointerEvents: 'auto' }}
                   onClick={() => result !== null && copyResult()}
                   animate={{
                     opacity: flashCopyResult ? [1, 0.3, 1] : 1,
@@ -2877,7 +2878,7 @@ export default function UnitConverter() {
               <div className="grid sm:grid-cols-[1fr_220px] gap-2">
                 <motion.div 
                   className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${toUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                  style={{ height: FIELD_HEIGHT }}
+                  style={{ height: FIELD_HEIGHT, width: FIELD_WIDTH }}
                   onClick={copyToBaseFactor}
                   animate={{
                     opacity: flashToBaseFactor ? [1, 0.3, 1] : 1,
@@ -3005,9 +3006,9 @@ export default function UnitConverter() {
             {/* Field 1 */}
             <div className="flex gap-2">
               <motion.div 
-                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[0] && copyCalcField(0)}
-                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
+                style={{ height: FIELD_HEIGHT, width: FIELD_WIDTH, pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashCalcField1 ? [1, 0.3, 1] : 1,
                   scale: flashCalcField1 ? [1, 1.02, 1] : 1
@@ -3048,9 +3049,9 @@ export default function UnitConverter() {
             {/* Field 2 */}
             <div className="flex gap-1">
               <motion.div 
-                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[1] && copyCalcField(1)}
-                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
+                style={{ height: FIELD_HEIGHT, width: FIELD_WIDTH, pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashCalcField2 ? [1, 0.3, 1] : 1,
                   scale: flashCalcField2 ? [1, 1.02, 1] : 1
@@ -3109,9 +3110,9 @@ export default function UnitConverter() {
             {/* Field 3 */}
             <div className="flex gap-1">
               <motion.div 
-                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => calcValues[2] && copyCalcField(2)}
-                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
+                style={{ height: FIELD_HEIGHT, width: FIELD_WIDTH, pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashCalcField3 ? [1, 0.3, 1] : 1,
                   scale: flashCalcField3 ? [1, 1.02, 1] : 1
@@ -3170,8 +3171,8 @@ export default function UnitConverter() {
             {/* Result Field 4 */}
             <div className="flex gap-1">
               <motion.div 
-                className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between flex-1 select-none ${calcValues[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
+                className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between select-none ${calcValues[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                style={{ height: FIELD_HEIGHT, width: FIELD_WIDTH, pointerEvents: 'auto' }}
                 onClick={() => calcValues[3] && copyCalcResult()}
                 animate={{
                   opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
