@@ -1,5 +1,6 @@
 import UnitConverter from '@/components/unit-converter';
-import packageJson from '../../../package.json';
+
+const APP_VERSION = '2.18.0';
 
 export default function Home() {
   return (
@@ -15,7 +16,7 @@ export default function Home() {
             <span className="font-bold text-xl tracking-tight">Omni<span className="text-primary">Unit</span> & Calculator</span>
           </div>
           <div className="text-xs font-mono text-muted-foreground hidden sm:block">
-            v{packageJson.version}
+            v{APP_VERSION}
           </div>
         </div>
       </header>
