@@ -232,7 +232,6 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "g", name: "Gram", symbol: "g", factor: 0.001, allowPrefixes: true },
       { id: "oz", name: "Ounce", symbol: "oz", factor: 0.0283495 },
       { id: "oz_t", name: "Troy Ounce", symbol: "oz t", factor: 0.0311035 },
-      { id: "lb_t", name: "Troy Pound", symbol: "lb t", factor: 0.3732417 },
       { id: "lb", name: "Pound", symbol: "lb", factor: 0.453592 },
       { id: "st", name: "Stone", symbol: "st", factor: 6.35029 },
       { id: "slug", name: "Slug", symbol: "slug", factor: 14.5939 },

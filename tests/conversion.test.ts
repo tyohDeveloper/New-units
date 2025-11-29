@@ -559,3 +559,151 @@ describe("Archaic & Regional Units", () => {
     });
   });
 });
+
+describe("Unit Ordering - SI Base First, Then Ascending Factor", () => {
+  // Categories with documented special ordering requirements:
+  // - lightbulb: efficiency-based ordering (lumens per watt)
+  // - math: functions/constants in logical groups
+  // - fuel_economy: inverse relationship units (km/L vs L/100km)
+  // - temperature: Kelvin first, then offset-based units (C, F, R)
+  // - radioactive_decay: mixed direct/inverse units (decay constant, half-life, mean lifetime)
+  // - fuel: complex multi-unit energy equivalents for different fuels
+  // - photon: inverse relationship (wavelength ↔ energy via E=hc/λ)
+  // - rack_geometry: mixed length and special rack units
+  // - shipping: mixed length and container units
+  const categoriesWithSpecialOrdering = [
+    'lightbulb',
+    'math', 
+    'fuel_economy',
+    'temperature',
+    'rack_geometry',
+    'shipping',
+    'radioactive_decay',
+    'fuel',
+    'photon'
+  ];
+
+  // Helper: Find SI base unit by criteria (not by position)
+  // Prioritizes factor=1 over baseSISymbol because some categories (e.g., cross_section)
+  // use a conventional base unit (barn) that differs from the SI unit (m²)
+  const findExpectedSIBase = (category: typeof CONVERSION_DATA[0]) => {
+    // First try to find unit with factor = 1 (canonical base definition)
+    const baseFactor1 = category.units.find(u => Math.abs(u.factor - 1) < 1e-10);
+    if (baseFactor1) return baseFactor1;
+    // Fall back to unit matching baseSISymbol
+    if (category.baseSISymbol) {
+      const baseBySymbol = category.units.find(u => u.symbol === category.baseSISymbol);
+      if (baseBySymbol) return baseBySymbol;
+    }
+    return undefined;
+  };
+
+  // Helper: Compute expected order (SI base first, then ascending factor)
+  const computeExpectedOrder = (category: typeof CONVERSION_DATA[0]) => {
+    const siBase = findExpectedSIBase(category);
+    const others = category.units.filter(u => u.id !== siBase?.id);
+    const sortedOthers = [...others].sort((a, b) => a.factor - b.factor);
+    return siBase ? [siBase, ...sortedOthers] : sortedOthers;
+  };
+
+  CONVERSION_DATA.forEach((category) => {
+    if (categoriesWithSpecialOrdering.includes(category.id)) return;
+
+    describe(`${category.name} (${category.id})`, () => {
+      it("should have SI base unit first (factor=1 or matching baseSISymbol)", () => {
+        const expectedSIBase = findExpectedSIBase(category);
+        const actualFirst = category.units[0];
+        
+        if (expectedSIBase) {
+          expect(actualFirst.id).toBe(expectedSIBase.id);
+        } else {
+          // If no SI base found, first unit should have factor ≈ 1
+          expect(Math.abs(actualFirst.factor - 1)).toBeLessThan(1e-10);
+        }
+      });
+
+      it("should have remaining units sorted by ascending factor", () => {
+        const units = category.units;
+        if (units.length <= 1) return;
+        
+        // Skip first unit (SI base), verify rest are ascending
+        for (let i = 1; i < units.length - 1; i++) {
+          const currentFactor = units[i].factor;
+          const nextFactor = units[i + 1].factor;
+          
+          expect(currentFactor).toBeLessThanOrEqual(nextFactor);
+        }
+      });
+
+      it("should match independently computed expected order", () => {
+        const expectedOrder = computeExpectedOrder(category);
+        const actualOrder = category.units;
+        
+        expect(actualOrder.length).toBe(expectedOrder.length);
+        
+        actualOrder.forEach((unit, idx) => {
+          expect(unit.id).toBe(expectedOrder[idx].id);
+        });
+      });
+    });
+  });
+
+  describe("Specific Category Order Verification", () => {
+    it("Mass should be ordered: kg, eV/c², g, oz, oz_t, lb, st, slug, ton_us, t, ton_uk", () => {
+      const mass = CONVERSION_DATA.find(c => c.id === "mass");
+      const ids = mass?.units.map(u => u.id);
+      
+      expect(ids?.[0]).toBe("kg");
+      expect(ids?.[1]).toBe("ev_c2");
+      expect(ids?.[2]).toBe("g");
+      expect(ids?.[3]).toBe("oz");
+      expect(ids?.[4]).toBe("oz_t");
+      expect(ids?.[5]).toBe("lb");
+    });
+
+    it("Length should be ordered: m, Å, in, ft, ft:in, yd, mi, nmi, AU, ly, pc", () => {
+      const length = CONVERSION_DATA.find(c => c.id === "length");
+      const ids = length?.units.map(u => u.id);
+      
+      expect(ids?.[0]).toBe("m");
+      expect(ids?.[1]).toBe("angstrom");
+      expect(ids?.[2]).toBe("in");
+    });
+
+    it("Energy should be ordered: J first, then ascending by factor", () => {
+      const energy = CONVERSION_DATA.find(c => c.id === "energy");
+      const joule = energy?.units.find(u => u.id === "j");
+      
+      expect(energy?.units[0].id).toBe("j");
+      expect(joule?.factor).toBe(1);
+    });
+
+    it("Power should be ordered: W first, then ascending by factor", () => {
+      const power = CONVERSION_DATA.find(c => c.id === "power");
+      const watt = power?.units.find(u => u.id === "w");
+      
+      expect(power?.units[0].id).toBe("w");
+      expect(watt?.factor).toBe(1);
+    });
+
+    it("Time should be ordered: s first, then ascending by factor", () => {
+      const time = CONVERSION_DATA.find(c => c.id === "time");
+      
+      expect(time?.units[0].id).toBe("s");
+      expect(time?.units[0].factor).toBe(1);
+    });
+  });
+
+  describe("Troy Pound Location", () => {
+    it("should have Troy Pound in archaic_mass, not main mass category", () => {
+      const mainMass = CONVERSION_DATA.find(c => c.id === "mass");
+      const archaicMass = CONVERSION_DATA.find(c => c.id === "archaic_mass");
+      
+      const troyInMain = mainMass?.units.find(u => u.id === "lb_t" || u.name.includes("Troy Pound"));
+      const troyInArchaic = archaicMass?.units.find(u => u.id === "troy_lb" || u.name.includes("Troy Pound"));
+      
+      expect(troyInMain).toBeUndefined();
+      expect(troyInArchaic).toBeDefined();
+    });
+  });
+});

@@ -22,7 +22,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="py-8 md:py-12">
+      <main className="py-4 md:py-6">
         <UnitConverter />
       </main>
     </div>

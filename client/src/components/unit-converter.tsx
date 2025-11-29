@@ -1333,83 +1333,64 @@ export default function UnitConverter() {
 
   const categoryData = CONVERSION_DATA.find(c => c.id === activeCategory)!;
   
-  // Helper to categorize units
-  const getUnitCategory = (unit: any, category: string): 'si' | 'non-si' | 'astronomy' => {
-    // Define SI units for each category
-    const siUnits: Record<string, string[]> = {
-      'length': ['m'],
-      'mass': ['kg', 'g', 't'],
-      'time': ['s'],
-      'current': ['a'],
-      'temperature': ['k', 'c'],
-      'amount': ['mol'],
-      'intensity': ['cd'],
-      'area': ['m2', 'ha'],
-      'volume': ['l'],
-      'beer_wine_volume': ['l'],
-      'speed': ['mps', 'kmh'],
-      'acceleration': ['mps2'],
-      'force': ['n'],
-      'pressure': ['pa', 'bar'],
-      'energy': ['j', 'kwh', 'wh'],
-      'power': ['w'],
-      'torque': ['nm'],
-      'viscosity': ['pas'],
-      'surface_tension': ['nm'],
-      'radiation_dose': ['gy'],
-      'equivalent_dose': ['sv'],
-      'catalytic': ['kat'],
-      'angle': ['rad'],
-      'solid_angle': ['sr'],
-      'sound_pressure': ['pa'],
-      'refractive_power': ['m-1'],
-      'printing': ['pt'],
-      'luminous_flux': ['lm'],
-      'illuminance': ['lx'],
-    };
-    
-    // Define astronomy units (for length category)
-    const astronomyUnits: string[] = ['au', 'ly', 'parsec'];
-    
-    if (siUnits[category]?.includes(unit.id)) {
-      return 'si';
-    } else if (category === 'length' && astronomyUnits.includes(unit.id)) {
-      return 'astronomy';
-    } else {
-      return 'non-si';
-    }
-  };
-  
   // Helper to get filtered and sorted units
+  // Rule: SI base unit first (factor=1 or matches baseSISymbol), then ALL other units sorted by ascending factor
+  // Special handling for offset/inverse units to preserve data ordering
   const getFilteredSortedUnits = (category: string) => {
     const catData = CONVERSION_DATA.find(c => c.id === category);
     if (!catData) return [];
     
     const units = catData.units;
     
-    // For lightbulb category, preserve original order from data
-    if (category === 'lightbulb') {
+    // Categories with special ordering that shouldn't be re-sorted:
+    // - lightbulb: efficiency-based ordering (lumens per watt)
+    // - math: functions/constants in logical groups
+    // - fuel_economy: inverse relationship units
+    // - temperature: Kelvin first, then offset-based units
+    // - radioactive_decay: inverse relationship units (half-life, mean lifetime)
+    // - fuel: complex multi-unit energy equivalents
+    // - photon: inverse relationship (wavelength ↔ energy)
+    // - rack_geometry: mixed length and special rack units (U heights interspersed)
+    // - shipping: mixed length and container units (TEU/DEU interspersed)
+    const preserveOrderCategories = ['lightbulb', 'math', 'fuel_economy', 'temperature', 'radioactive_decay', 'fuel', 'photon', 'rack_geometry', 'shipping'];
+    if (preserveOrderCategories.includes(category)) {
       return units;
     }
+    
+    // Auto-detect categories with offset or inverse units - these need special ordering
+    const hasOffsetUnits = units.some(u => u.offset !== undefined && u.offset !== 0);
+    const hasInverseUnits = units.some(u => u.isInverse === true);
+    if (hasOffsetUnits || hasInverseUnits) {
+      // Preserve original order for categories with offset/inverse semantics
+      return units;
+    }
+    
+    // Find the SI base unit by criteria (not by position):
+    // Prioritizes factor=1 over baseSISymbol because some categories (e.g., cross_section)
+    // use a conventional base unit (barn) that differs from the SI unit (m²)
+    const findSIBaseUnit = () => {
+      // First try to find unit with factor = 1 (canonical base definition)
+      const baseFactor1 = units.find(u => Math.abs(u.factor - 1) < 1e-10);
+      if (baseFactor1) return baseFactor1;
+      // Fall back to unit matching baseSISymbol
+      if (catData.baseSISymbol) {
+        const bySymbol = units.find(u => u.symbol === catData.baseSISymbol);
+        if (bySymbol) return bySymbol;
+      }
+      return undefined;
+    };
+    
+    const siBaseUnit = findSIBaseUnit();
       
-    // Sort: SI units first, then non-SI, then astronomy units (for length)
+    // Sort: SI base unit first, then all others by ascending factor
     return [...units].sort((a, b) => {
-      const aCat = getUnitCategory(a, category);
-      const bCat = getUnitCategory(b, category);
-      
-      // Order: si < non-si < astronomy
-      const order = { 'si': 0, 'non-si': 1, 'astronomy': 2 };
-      if (order[aCat] !== order[bCat]) {
-        return order[aCat] - order[bCat];
+      // SI base unit always comes first
+      if (siBaseUnit) {
+        if (a.id === siBaseUnit.id && b.id !== siBaseUnit.id) return -1;
+        if (a.id !== siBaseUnit.id && b.id === siBaseUnit.id) return 1;
       }
       
-      // Within same category, prioritize base SI unit first
-      const aIsBase = catData.baseSISymbol && a.symbol === catData.baseSISymbol;
-      const bIsBase = catData.baseSISymbol && b.symbol === catData.baseSISymbol;
-      if (aIsBase && !bIsBase) return -1;
-      if (!aIsBase && bIsBase) return 1;
-      
-      // Then sort by size (factor)
+      // All other units sorted by ascending factor
       return a.factor - b.factor;
     });
   };
