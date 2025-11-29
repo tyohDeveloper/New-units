@@ -67,7 +67,9 @@ export type UnitCategory =
   | "archaic_volume"
   | "archaic_area"
   | "archaic_energy"
-  | "archaic_power";
+  | "archaic_power"
+  | "typography"
+  | "cooking";
 
 export interface Prefix {
   id: string;
@@ -835,10 +837,13 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "newton meter",
     baseSISymbol: "kg⋅m²⋅s⁻²",
     units: [
-      { id: "nm", name: "Newton-meter", symbol: "N⋅m", factor: 1 },
+      { id: "nm", name: "Newton-meter", symbol: "N⋅m", factor: 1, allowPrefixes: true },
+      { id: "dyncm", name: "Dyne-centimeter", symbol: "dyn⋅cm", factor: 1e-7, allowPrefixes: true },
+      { id: "ozin", name: "Ounce-inch", symbol: "oz⋅in", factor: 0.00706155 },
+      { id: "kgfcm", name: "Kilogram-force centimeter", symbol: "kgf⋅cm", factor: 0.0980665 },
       { id: "inlb", name: "Inch-pound", symbol: "in⋅lb", factor: 0.112985 },
       { id: "ftlb", name: "Foot-pound", symbol: "ft⋅lb", factor: 1.35582 },
-      { id: "kgm", name: "Kilogram-meter", symbol: "kg⋅m", factor: 9.80665 },
+      { id: "kgfm", name: "Kilogram-force meter", symbol: "kgf⋅m", factor: 9.80665 },
     ],
   },
   {
@@ -847,7 +852,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "cubic metre/second",
     baseSISymbol: "m³⋅s⁻¹",
     units: [
-      { id: "m3s", name: "Cubic Metre/second", symbol: "m³⋅s⁻¹", factor: 1 },
+      { id: "m3s", name: "Cubic Metre/second", symbol: "m³⋅s⁻¹", factor: 1, allowPrefixes: true },
       { id: "cm3h", name: "Cubic Centimetre/hour", symbol: "cm³⋅h⁻¹", factor: 2.7778e-10 },
       { id: "cm3min", name: "Cubic Centimetre/minute", symbol: "cm³⋅min⁻¹", factor: 1.6667e-8 },
       { id: "gald", name: "US Gallon/day", symbol: "gal⋅d⁻¹", factor: 4.3815e-8 },
@@ -1321,6 +1326,61 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "erg_s", name: "Erg per Second", symbol: "erg⋅s⁻¹", factor: 1e-7 },
       { id: "ft_lbf_s", name: "Foot-pound per Second", symbol: "ft⋅lbf⋅s⁻¹", factor: 1.3558179483 },
       { id: "boiler_hp", name: "Boiler Horsepower", symbol: "hp (boiler)", factor: 9810.55 },
+    ],
+  },
+
+  // --- TYPOGRAPHY & DESIGN ---
+  {
+    id: "typography",
+    name: "Typography",
+    baseUnit: "meter",
+    baseSISymbol: "m",
+    units: [
+      { id: "m", name: "Meter", symbol: "m", factor: 1, allowPrefixes: true },
+      { id: "twip", name: "Twip", symbol: "twip", factor: 1.7639e-5 },
+      { id: "px", name: "Pixel (96 PPI)", symbol: "px", factor: 0.000264583 },
+      { id: "pt_trad", name: "Point (Traditional)", symbol: "pt (trad)", factor: 0.000351459 },
+      { id: "pt", name: "Point (Desktop)", symbol: "pt", factor: 0.0003527778 },
+      { id: "mm", name: "Millimeter", symbol: "mm", factor: 0.001 },
+      { id: "pc", name: "Pica", symbol: "pc", factor: 0.0042333 },
+      { id: "em", name: "Em (16px ref)", symbol: "em", factor: 0.0042333 },
+      { id: "cicero", name: "Cicero", symbol: "cicero", factor: 0.004512 },
+      { id: "in", name: "Inch", symbol: "in", factor: 0.0254 },
+      { id: "ft", name: "Foot", symbol: "ft", factor: 0.3048 },
+    ],
+  },
+
+  // --- COOKING & KITCHEN ---
+  {
+    id: "cooking",
+    name: "Cooking Measures",
+    baseUnit: "milliliter",
+    baseSISymbol: "mL",
+    units: [
+      { id: "ml", name: "Milliliter", symbol: "mL", factor: 1, allowPrefixes: true },
+      { id: "drop", name: "Drop", symbol: "drop", factor: 0.05 },
+      { id: "pinch", name: "Pinch", symbol: "pinch", factor: 0.3 },
+      { id: "dash", name: "Dash", symbol: "dash", factor: 0.6 },
+      { id: "tsp_us", name: "Teaspoon (US)", symbol: "tsp", factor: 4.92892 },
+      { id: "tsp_metric", name: "Teaspoon (Metric)", symbol: "tsp (M)", factor: 5 },
+      { id: "tsp_uk", name: "Teaspoon (UK)", symbol: "tsp (UK)", factor: 5.91939 },
+      { id: "dsp", name: "Dessertspoon", symbol: "dsp", factor: 10 },
+      { id: "tbsp_us", name: "Tablespoon (US)", symbol: "tbsp", factor: 14.7868 },
+      { id: "tbsp_metric", name: "Tablespoon (Metric)", symbol: "tbsp (M)", factor: 15 },
+      { id: "tbsp_uk", name: "Tablespoon (UK)", symbol: "tbsp (UK)", factor: 17.7582 },
+      { id: "fl_oz_uk", name: "Fluid Ounce (UK)", symbol: "fl oz (UK)", factor: 28.4131 },
+      { id: "fl_oz_us", name: "Fluid Ounce (US)", symbol: "fl oz", factor: 29.5735 },
+      { id: "shot", name: "Shot (US)", symbol: "shot", factor: 44.3603 },
+      { id: "jigger", name: "Jigger", symbol: "jigger", factor: 44.3603 },
+      { id: "cup_jp", name: "Cup (Japan)", symbol: "cup (JP)", factor: 200 },
+      { id: "cup_us", name: "Cup (US)", symbol: "cup", factor: 236.588 },
+      { id: "cup_metric", name: "Cup (Metric)", symbol: "cup (M)", factor: 250 },
+      { id: "cup_uk", name: "Cup (UK)", symbol: "cup (UK)", factor: 284.131 },
+      { id: "pt_us", name: "Pint (US)", symbol: "pt", factor: 473.176 },
+      { id: "pt_uk", name: "Pint (UK)", symbol: "pt (UK)", factor: 568.261 },
+      { id: "qt_us", name: "Quart (US)", symbol: "qt", factor: 946.353 },
+      { id: "l", name: "Liter", symbol: "L", factor: 1000, allowPrefixes: true },
+      { id: "gal_us", name: "Gallon (US)", symbol: "gal", factor: 3785.41 },
     ],
   },
 ];

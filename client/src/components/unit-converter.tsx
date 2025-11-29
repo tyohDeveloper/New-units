@@ -36,6 +36,7 @@ export default function UnitConverter() {
   const [flashToBaseFactor, setFlashToBaseFactor] = useState<boolean>(false);
   const [flashToSIBase, setFlashToSIBase] = useState<boolean>(false);
   const [flashConversionRatio, setFlashConversionRatio] = useState<boolean>(false);
+  const [comparisonMode, setComparisonMode] = useState<boolean>(false);
 
   // Dimensional formula tracking for calculator
   interface DimensionalFormula {
@@ -1517,7 +1518,9 @@ export default function UnitConverter() {
       archaic_volume: { length: 3 },
       archaic_area: { length: 2 },
       archaic_energy: { mass: 1, length: 2, time: -2 },
-      archaic_power: { mass: 1, length: 2, time: -3 }
+      archaic_power: { mass: 1, length: 2, time: -3 },
+      typography: { length: 1 },  // Length-based (points, picas, etc.)
+      cooking: { length: 3 }  // Volume-based (mL, cups, etc.)
     };
     return dimensionMap[category] || {};
   };
@@ -3067,7 +3070,18 @@ export default function UnitConverter() {
             {/* Output Section */}
             <div className="grid gap-4">
               <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
-                <Label className="text-xs font-mono uppercase text-muted-foreground">{t('To')}</Label>
+                <div className="flex items-center gap-2">
+                  <Label className="text-xs font-mono uppercase text-muted-foreground">{t('To')}</Label>
+                  <Button
+                    variant={comparisonMode ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setComparisonMode(!comparisonMode)}
+                    className={`h-6 px-2 text-[10px] font-mono uppercase ${comparisonMode ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                    data-testid="button-comparison-mode"
+                  >
+                    Compare All
+                  </Button>
+                </div>
                 <div className="flex items-center gap-2">
                   <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
                   <Select 
@@ -3246,6 +3260,78 @@ export default function UnitConverter() {
                   </motion.span>
                 </Button>
               </div>
+
+              {/* Comparison Mode Panel */}
+              <AnimatePresence>
+                {comparisonMode && result !== null && fromUnitData && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                    data-testid="comparison-panel"
+                  >
+                    <div className="mt-4 p-3 rounded-lg bg-muted/10 border border-border/30">
+                      <div className="text-[10px] font-mono uppercase text-muted-foreground mb-2">
+                        {t('Compare')} {inputValue} {fromPrefixData.id !== 'none' ? fromPrefixData.symbol : ''}{fromUnitData.symbol}
+                      </div>
+                      <div className="grid gap-1">
+                        {(() => {
+                          // Get all units in category, always include SI base first if not the source
+                          const allUnits = categoryData.units.filter(u => u.id !== fromUnit);
+                          // Limit to 8 most relevant units
+                          const displayUnits = allUnits.slice(0, 8);
+                          
+                          return displayUnits.map(unit => {
+                            // Convert to the target unit (no prefix)
+                            const convertedValue = convert(
+                              parseFloat(inputValue) || 0,
+                              fromUnit,
+                              unit.id,
+                              activeCategory,
+                              fromPrefixData.factor,
+                              1 // No prefix on target for comparison
+                            );
+                            
+                            // For units with prefixes, find optimal prefix and calculate display value
+                            const nonePrefix = PREFIXES.find(p => p.id === 'none')!;
+                            let displayPrefix = nonePrefix;
+                            let displayValue = convertedValue;
+                            
+                            if (unit.allowPrefixes && Math.abs(convertedValue) > 0) {
+                              // findOptimalPrefix returns { prefix, adjustedValue }
+                              const optimal = findOptimalPrefix(convertedValue, unit.symbol, precision);
+                              displayPrefix = optimal.prefix;
+                              displayValue = optimal.adjustedValue;
+                            }
+                            
+                            return (
+                              <div 
+                                key={unit.id}
+                                className="flex justify-between items-center px-2 py-1 rounded hover:bg-muted/20 cursor-pointer select-none"
+                                onClick={() => {
+                                  // Copy this value to clipboard
+                                  const copyText = `${displayValue.toFixed(precision)}`;
+                                  navigator.clipboard.writeText(copyText);
+                                }}
+                                data-testid={`comparison-row-${unit.id}`}
+                              >
+                                <span className="text-xs text-muted-foreground font-mono">
+                                  {displayPrefix.id !== 'none' ? displayPrefix.symbol : ''}{unit.symbol}
+                                </span>
+                                <span className="text-sm font-mono text-foreground">
+                                  {formatNumberWithSeparators(displayValue, precision)}
+                                </span>
+                              </div>
+                            );
+                          });
+                        })()}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
           </div>
