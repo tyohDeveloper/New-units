@@ -1934,7 +1934,7 @@ export default function UnitConverter() {
     { symbol: 'C', dimensions: { current: 1, time: 1 }, exponentSum: 2 },
     { symbol: 'kat', dimensions: { amount: 1, time: -1 }, exponentSum: 2 },
     { symbol: 'lm', dimensions: { intensity: 1, solid_angle: 1 }, exponentSum: 2 },
-    { symbol: 'Hz', dimensions: { time: -1 }, exponentSum: 1 },
+    // Hz removed: prefer s⁻¹ (base unit representation) over Hz (derived unit) when normalizing
   ].sort((a, b) => b.exponentSum - a.exponentSum);
 
   // Helper: Check if a derived unit can be factored out from remaining dimensions
@@ -2053,7 +2053,7 @@ export default function UnitConverter() {
       // Derived units
       [JSON.stringify({ length: 2 })]: 'm²',
       [JSON.stringify({ length: 3 })]: 'm³',
-      [JSON.stringify({ time: -1 })]: 'Hz',
+      [JSON.stringify({ time: -1 })]: 's⁻¹',
       [JSON.stringify({ length: 1, time: -1 })]: 'm/s',
       [JSON.stringify({ length: 1, time: -2 })]: 'm/s²',
       [JSON.stringify({ mass: 1, length: 1, time: -2 })]: 'N',
