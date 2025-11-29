@@ -2781,42 +2781,13 @@ export default function UnitConverter() {
     }
   }, [calcValues[0], calcValues[1], calcValues[2], calcOp1, calcOp2]);
 
-  // Auto-select prefix when user manually changes result unit
-  // If the result category matches the active category, use the TO prefix instead of 'none'
-  // BUT: Always use 'none' for units containing 'kg' to prevent prefix stacking
+  // Always reset prefix to 'none' when the result unit changes
+  // Prefixes should never be automatically chosen - user must select manually
   useEffect(() => {
     if (resultCategory && calcValues[3]) {
-      const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-      
-      // If resultUnit is null, we're using the base SI unit
-      if (resultUnit === null) {
-        // Check if base SI symbol contains 'kg' - if so, don't allow prefix
-        if (cat?.baseSISymbol?.includes('kg')) {
-          setResultPrefix('none');
-        } else if (resultCategory === activeCategory) {
-          setResultPrefix(toPrefix);
-        } else {
-          setResultPrefix('none');
-        }
-      } else if (resultUnit) {
-        // User selected a specific unit
-        const unit = cat?.units.find(u => u.id === resultUnit);
-        // Check if unit symbol contains 'kg' - if so, don't allow prefix
-        if (unit?.symbol?.includes('kg')) {
-          setResultPrefix('none');
-        } else if (unit?.allowPrefixes) {
-          // If result category matches the active category, use the TO prefix
-          if (resultCategory === activeCategory) {
-            setResultPrefix(toPrefix);
-          } else {
-            setResultPrefix('none');
-          }
-        } else {
-          setResultPrefix('none');
-        }
-      }
+      setResultPrefix('none');
     }
-  }, [resultUnit, resultCategory, activeCategory, toPrefix, calcValues[3]]);
+  }, [resultUnit]);
 
   const clearCalculator = () => {
     setCalcValues([null, null, null, null]);
