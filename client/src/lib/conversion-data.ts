@@ -65,7 +65,9 @@ export type UnitCategory =
   | "archaic_length"
   | "archaic_mass"
   | "archaic_volume"
-  | "archaic_area";
+  | "archaic_area"
+  | "archaic_energy"
+  | "archaic_power";
 
 export interface Prefix {
   id: string;
@@ -429,7 +431,10 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "wh", name: "Watt-hour", symbol: "Wh", factor: 3600 },
       { id: "kcal", name: "Kilocalorie", symbol: "kcal", factor: 4184 },
       { id: "kwh", name: "Kilowatt-hour", symbol: "kWh", factor: 3.6e6 },
+      { id: "therm", name: "Therm", symbol: "therm", factor: 1.05506e8 },
       { id: "tnt", name: "Ton of TNT", symbol: "tTNT", factor: 4.184e9 },
+      { id: "boe", name: "Barrel of Oil Equivalent", symbol: "BOE", factor: 6.1e9 },
+      { id: "tce", name: "Ton of Coal Equivalent", symbol: "TCE", factor: 2.93e10 },
     ],
   },
   {
@@ -439,8 +444,10 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "kg⋅m²⋅s⁻³",
     units: [
       { id: "w", name: "Watt", symbol: "W", factor: 1, allowPrefixes: true },
-      { id: "hp_m", name: "Metric HP", symbol: "hp", factor: 735.499 },
+      { id: "btu_h", name: "BTU per Hour", symbol: "BTU⋅h⁻¹", factor: 0.293071 },
+      { id: "hp_m", name: "Metric HP", symbol: "hp (M)", factor: 735.499 },
       { id: "hp", name: "Horsepower", symbol: "hp", factor: 745.7 },
+      { id: "ton_ref", name: "Ton of Refrigeration", symbol: "TR", factor: 3516.85 },
     ],
   },
   {
@@ -1290,6 +1297,31 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "qing_cn", name: "Qing (China)", symbol: "qing", factor: 66666.67 },
       { id: "section_us", name: "Section (US)", symbol: "section", factor: 2589988 },
       { id: "township_us", name: "Township (US)", symbol: "twp", factor: 93239571 },
+    ],
+  },
+  {
+    id: "archaic_energy",
+    name: "Archaic Energy",
+    baseUnit: "joule",
+    baseSISymbol: "kg⋅m²⋅s⁻²",
+    units: [
+      { id: "j", name: "Joule", symbol: "J", factor: 1, allowPrefixes: true },
+      { id: "erg", name: "Erg (CGS)", symbol: "erg", factor: 1e-7 },
+      { id: "ft_lbf", name: "Foot-pound Force", symbol: "ft⋅lbf", factor: 1.3558179483 },
+      { id: "thermie", name: "Thermie", symbol: "th", factor: 4.1868e6 },
+      { id: "quad", name: "Quad", symbol: "quad", factor: 1.055e18 },
+    ],
+  },
+  {
+    id: "archaic_power",
+    name: "Archaic Power",
+    baseUnit: "watt",
+    baseSISymbol: "kg⋅m²⋅s⁻³",
+    units: [
+      { id: "w", name: "Watt", symbol: "W", factor: 1, allowPrefixes: true },
+      { id: "erg_s", name: "Erg per Second", symbol: "erg⋅s⁻¹", factor: 1e-7 },
+      { id: "ft_lbf_s", name: "Foot-pound per Second", symbol: "ft⋅lbf⋅s⁻¹", factor: 1.3558179483 },
+      { id: "boiler_hp", name: "Boiler Horsepower", symbol: "hp (boiler)", factor: 9810.55 },
     ],
   },
 ];

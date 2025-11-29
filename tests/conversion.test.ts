@@ -308,7 +308,114 @@ describe("Base Quantity Selection", () => {
   });
 });
 
+describe("Energy & Power Categories", () => {
+  describe("Energy Category", () => {
+    const energyCategory = CONVERSION_DATA.find((c) => c.id === "energy");
+
+    it("should exist with joule as base unit", () => {
+      expect(energyCategory).toBeDefined();
+      expect(energyCategory?.baseUnit).toBe("joule");
+      expect(energyCategory?.baseSISymbol).toBe("kg⋅m²⋅s⁻²");
+    });
+
+    it("should have BTU with correct factor", () => {
+      const btu = energyCategory?.units.find((u) => u.id === "btu");
+      expect(btu?.factor).toBeCloseTo(1055.06, 2);
+    });
+
+    it("should have calorie with correct factor", () => {
+      const cal = energyCategory?.units.find((u) => u.id === "cal");
+      expect(cal?.factor).toBeCloseTo(4.184, 4);
+    });
+
+    it("should have kilowatt-hour with correct factor", () => {
+      const kwh = energyCategory?.units.find((u) => u.id === "kwh");
+      expect(kwh?.factor).toBe(3.6e6);
+    });
+
+    it("should have therm with correct factor (105.506 MJ)", () => {
+      const therm = energyCategory?.units.find((u) => u.id === "therm");
+      expect(therm?.factor).toBeCloseTo(1.05506e8, -3);
+    });
+
+    it("should have barrel of oil equivalent with correct factor (6.1 GJ)", () => {
+      const boe = energyCategory?.units.find((u) => u.id === "boe");
+      expect(boe?.factor).toBe(6.1e9);
+    });
+
+    it("should have ton of coal equivalent with correct factor (29.3 GJ)", () => {
+      const tce = energyCategory?.units.find((u) => u.id === "tce");
+      expect(tce?.factor).toBe(2.93e10);
+    });
+  });
+
+  describe("Power Category", () => {
+    const powerCategory = CONVERSION_DATA.find((c) => c.id === "power");
+
+    it("should exist with watt as base unit", () => {
+      expect(powerCategory).toBeDefined();
+      expect(powerCategory?.baseUnit).toBe("watt");
+      expect(powerCategory?.baseSISymbol).toBe("kg⋅m²⋅s⁻³");
+    });
+
+    it("should have horsepower with correct factor", () => {
+      const hp = powerCategory?.units.find((u) => u.id === "hp");
+      expect(hp?.factor).toBeCloseTo(745.7, 1);
+    });
+
+    it("should have metric horsepower with correct factor", () => {
+      const hpM = powerCategory?.units.find((u) => u.id === "hp_m");
+      expect(hpM?.factor).toBeCloseTo(735.499, 2);
+    });
+
+    it("should have BTU per hour with correct factor", () => {
+      const btuH = powerCategory?.units.find((u) => u.id === "btu_h");
+      expect(btuH?.factor).toBeCloseTo(0.293071, 5);
+    });
+
+    it("should have ton of refrigeration with correct factor", () => {
+      const tonRef = powerCategory?.units.find((u) => u.id === "ton_ref");
+      expect(tonRef?.factor).toBeCloseTo(3516.85, 1);
+    });
+  });
+});
+
 describe("Archaic & Regional Units", () => {
+  describe("Archaic Length Category", () => {
+    const lengthCategory = CONVERSION_DATA.find((c) => c.id === "archaic_length");
+
+    it("should exist with metre as base unit", () => {
+      expect(lengthCategory).toBeDefined();
+      expect(lengthCategory?.baseUnit).toBe("metre");
+      expect(lengthCategory?.baseSISymbol).toBe("m");
+    });
+
+    it("should have cubit with correct factor", () => {
+      const cubit = lengthCategory?.units.find((u) => u.id === "cubit_common");
+      expect(cubit?.factor).toBeCloseTo(0.4572, 4);
+    });
+
+    it("should have Japanese shaku with correct factor", () => {
+      const shaku = lengthCategory?.units.find((u) => u.id === "shaku_jp");
+      expect(shaku?.factor).toBeCloseTo(0.30303, 4);
+    });
+
+    it("should have Chinese chi with correct factor", () => {
+      const chi = lengthCategory?.units.find((u) => u.id === "chi_cn");
+      expect(chi?.factor).toBeCloseTo(0.3333, 3);
+    });
+
+    it("should have Japanese ken with correct factor", () => {
+      const ken = lengthCategory?.units.find((u) => u.id === "ken_jp");
+      expect(ken?.factor).toBeCloseTo(1.818, 2);
+    });
+
+    it("should have Chinese zhang with correct factor", () => {
+      const zhang = lengthCategory?.units.find((u) => u.id === "zhang_cn");
+      expect(zhang?.factor).toBeCloseTo(3.333, 2);
+    });
+  });
+
   describe("Archaic Area Category", () => {
     const areaCategory = CONVERSION_DATA.find((c) => c.id === "archaic_area");
 
@@ -394,6 +501,61 @@ describe("Archaic & Regional Units", () => {
       const m3 = volumeCategory?.units.find((u) => u.id === "m3");
       expect(m3?.factor).toBe(1000);
       expect(m3?.allowPrefixes).toBe(true);
+    });
+  });
+
+  describe("Archaic Energy Category", () => {
+    const energyCategory = CONVERSION_DATA.find((c) => c.id === "archaic_energy");
+
+    it("should exist with joule as base unit", () => {
+      expect(energyCategory).toBeDefined();
+      expect(energyCategory?.baseUnit).toBe("joule");
+      expect(energyCategory?.baseSISymbol).toBe("kg⋅m²⋅s⁻²");
+    });
+
+    it("should have erg with correct factor (10⁻⁷ J)", () => {
+      const erg = energyCategory?.units.find((u) => u.id === "erg");
+      expect(erg?.factor).toBe(1e-7);
+    });
+
+    it("should have foot-pound force with correct factor", () => {
+      const ftLbf = energyCategory?.units.find((u) => u.id === "ft_lbf");
+      expect(ftLbf?.factor).toBeCloseTo(1.3558179483, 6);
+    });
+
+    it("should have thermie with correct factor (4.1868 MJ)", () => {
+      const thermie = energyCategory?.units.find((u) => u.id === "thermie");
+      expect(thermie?.factor).toBe(4.1868e6);
+    });
+
+    it("should have quad with correct factor (1.055 EJ)", () => {
+      const quad = energyCategory?.units.find((u) => u.id === "quad");
+      expect(quad?.factor).toBe(1.055e18);
+    });
+  });
+
+  describe("Archaic Power Category", () => {
+    const powerCategory = CONVERSION_DATA.find((c) => c.id === "archaic_power");
+
+    it("should exist with watt as base unit", () => {
+      expect(powerCategory).toBeDefined();
+      expect(powerCategory?.baseUnit).toBe("watt");
+      expect(powerCategory?.baseSISymbol).toBe("kg⋅m²⋅s⁻³");
+    });
+
+    it("should have erg per second with correct factor (10⁻⁷ W)", () => {
+      const ergS = powerCategory?.units.find((u) => u.id === "erg_s");
+      expect(ergS?.factor).toBe(1e-7);
+    });
+
+    it("should have foot-pound per second with correct factor", () => {
+      const ftLbfS = powerCategory?.units.find((u) => u.id === "ft_lbf_s");
+      expect(ftLbfS?.factor).toBeCloseTo(1.3558179483, 6);
+    });
+
+    it("should have boiler horsepower with correct factor", () => {
+      const boilerHp = powerCategory?.units.find((u) => u.id === "boiler_hp");
+      expect(boilerHp?.factor).toBeCloseTo(9810.55, 1);
     });
   });
 });
