@@ -12,6 +12,7 @@ import {
   NUMBER_FORMATS,
   type NumberFormat
 } from '../client/src/lib/formatting';
+import { findOptimalPrefix, PREFIXES, CONVERSION_DATA } from '../client/src/lib/conversion-data';
 
 describe('Banker Rounding (roundToNearestEven)', () => {
   describe('standard rounding cases', () => {
@@ -333,5 +334,189 @@ describe('Precision Behavior', () => {
   it('should handle precision for formatted numbers with separators', () => {
     expect(formatNumberWithSeparators(1234.5678, 2, 'uk')).toBe('1,234.57');
     expect(formatNumberWithSeparators(1234.5678, 4, 'uk')).toBe('1,234.5678');
+  });
+});
+
+describe('findOptimalPrefix', () => {
+  describe('large values (should scale down)', () => {
+    it('should select kilo prefix for values >= 1000', () => {
+      const result = findOptimalPrefix(1500, 'm', 4);
+      expect(result.prefix.id).toBe('kilo');
+      expect(result.adjustedValue).toBeCloseTo(1.5, 4);
+    });
+
+    it('should select mega prefix for values >= 1,000,000', () => {
+      const result = findOptimalPrefix(1500000, 'J', 4);
+      expect(result.prefix.id).toBe('mega');
+      expect(result.adjustedValue).toBeCloseTo(1.5, 4);
+    });
+
+    it('should select giga prefix for values >= 1,000,000,000', () => {
+      const result = findOptimalPrefix(2.5e9, 'W', 4);
+      expect(result.prefix.id).toBe('giga');
+      expect(result.adjustedValue).toBeCloseTo(2.5, 4);
+    });
+
+    it('should keep values in [1, 1000) range for minimal digits', () => {
+      const result = findOptimalPrefix(500000, 'm', 4);
+      expect(result.prefix.id).toBe('kilo');
+      expect(result.adjustedValue).toBe(500);
+    });
+  });
+
+  describe('small values (should scale up)', () => {
+    it('should select milli prefix for values < 1', () => {
+      const result = findOptimalPrefix(0.005, 'm', 4);
+      expect(result.prefix.id).toBe('milli');
+      expect(result.adjustedValue).toBe(5);
+    });
+
+    it('should select micro prefix for very small values', () => {
+      const result = findOptimalPrefix(0.000005, 'm', 4);
+      expect(result.prefix.id).toBe('micro');
+      expect(result.adjustedValue).toBeCloseTo(5, 10);
+    });
+
+    it('should select nano prefix for extremely small values', () => {
+      const result = findOptimalPrefix(5e-9, 'm', 4);
+      expect(result.prefix.id).toBe('nano');
+      expect(result.adjustedValue).toBeCloseTo(5, 4);
+    });
+
+    it('should select pico prefix for values that would display as 0', () => {
+      const result = findOptimalPrefix(1e-12, 'm', 4);
+      expect(result.prefix.id).toBe('pico');
+      expect(result.adjustedValue).toBe(1);
+    });
+  });
+
+  describe('values already in optimal range', () => {
+    it('should use no prefix for values between 1 and 1000', () => {
+      const result = findOptimalPrefix(42, 'm', 4);
+      expect(result.prefix.id).toBe('none');
+      expect(result.adjustedValue).toBe(42);
+    });
+
+    it('should use no prefix for value of exactly 1', () => {
+      const result = findOptimalPrefix(1, 'N', 4);
+      expect(result.prefix.id).toBe('none');
+      expect(result.adjustedValue).toBe(1);
+    });
+  });
+
+  describe('precision-aware prefix selection', () => {
+    it('should select smaller prefix to avoid displaying 0', () => {
+      const result = findOptimalPrefix(0.00001, 'm', 4);
+      expect(result.adjustedValue).toBeGreaterThan(0);
+      expect(result.adjustedValue).toBeGreaterThanOrEqual(1);
+    });
+
+    it('should handle precision 2 with small values', () => {
+      const result = findOptimalPrefix(0.001, 'm', 2);
+      expect(result.prefix.id).toBe('milli');
+      expect(result.adjustedValue).toBe(1);
+    });
+  });
+
+  describe('negative values', () => {
+    it('should handle negative large values', () => {
+      const result = findOptimalPrefix(-1500, 'm', 4);
+      expect(result.prefix.id).toBe('kilo');
+      expect(result.adjustedValue).toBeCloseTo(-1.5, 4);
+    });
+
+    it('should handle negative small values', () => {
+      const result = findOptimalPrefix(-0.005, 'm', 4);
+      expect(result.prefix.id).toBe('milli');
+      expect(result.adjustedValue).toBe(-5);
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should return none prefix for zero', () => {
+      const result = findOptimalPrefix(0, 'm', 4);
+      expect(result.prefix.id).toBe('none');
+      expect(result.adjustedValue).toBe(0);
+    });
+
+    it('should return none prefix for units containing kg (already prefixed)', () => {
+      const result = findOptimalPrefix(1500, 'kg', 4);
+      expect(result.prefix.id).toBe('none');
+      expect(result.adjustedValue).toBe(1500);
+    });
+
+    it('should still find optimal prefix for any unit symbol (caller decides if applicable)', () => {
+      const result = findOptimalPrefix(1500, 'ft', 4);
+      expect(result.prefix.id).toBe('kilo');
+      expect(result.adjustedValue).toBeCloseTo(1.5, 4);
+    });
+  });
+});
+
+describe('Photon/Light Category', () => {
+  const photonCategory = CONVERSION_DATA.find((c) => c.id === 'photon');
+
+  it('should exist as a category', () => {
+    expect(photonCategory).toBeDefined();
+  });
+
+  it('should have wavelength, frequency, and energy units', () => {
+    expect(photonCategory?.units.some((u) => u.id === 'm_wave')).toBe(true);
+    expect(photonCategory?.units.some((u) => u.id === 'nm_wave')).toBe(true);
+    expect(photonCategory?.units.some((u) => u.id === 'Hz')).toBe(true);
+    expect(photonCategory?.units.some((u) => u.id === 'eV')).toBe(true);
+  });
+
+  it('should have inverse conversion for wavelength units', () => {
+    const photonM = photonCategory?.units.find((u) => u.id === 'm_wave');
+    const photonNm = photonCategory?.units.find((u) => u.id === 'nm_wave');
+    expect(photonM?.isInverse).toBe(true);
+    expect(photonNm?.isInverse).toBe(true);
+  });
+
+  it('should use correct conversion constants (hc = 1.239841984e-6 eV·m)', () => {
+    const photonM = photonCategory?.units.find((u) => u.id === 'm_wave');
+    expect(photonM?.factor).toBeCloseTo(1.239841984e-6, 12);
+  });
+
+  it('should have nanometer with correct factor', () => {
+    const photonNm = photonCategory?.units.find((u) => u.id === 'nm_wave');
+    expect(photonNm?.factor).toBeCloseTo(1239.841984, 3);
+  });
+});
+
+describe('Electron Volt Conversions', () => {
+  describe('Energy category eV', () => {
+    const energyCategory = CONVERSION_DATA.find((c) => c.id === 'energy');
+    const eV = energyCategory?.units.find((u) => u.id === 'ev');
+
+    it('should have electron volt in energy category', () => {
+      expect(eV).toBeDefined();
+    });
+
+    it('should have correct factor (1.602176634e-19 J)', () => {
+      expect(eV?.factor).toBeCloseTo(1.602176634e-19, 28);
+    });
+
+    it('should allow SI prefixes', () => {
+      expect(eV?.allowPrefixes).toBe(true);
+    });
+  });
+
+  describe('Mass category eV/c²', () => {
+    const massCategory = CONVERSION_DATA.find((c) => c.id === 'mass');
+    const eVc2 = massCategory?.units.find((u) => u.id === 'ev_c2');
+
+    it('should have electron volt mass equivalent in mass category', () => {
+      expect(eVc2).toBeDefined();
+    });
+
+    it('should have correct factor (1.78266192e-36 kg)', () => {
+      expect(eVc2?.factor).toBeCloseTo(1.78266192e-36, 42);
+    });
+
+    it('should allow SI prefixes', () => {
+      expect(eVc2?.allowPrefixes).toBe(true);
+    });
   });
 });

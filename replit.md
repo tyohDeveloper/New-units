@@ -4,7 +4,7 @@
 
 OmniUnit is a comprehensive unit conversion web application that enables conversions across a wide range of measurement systems including SI units, Imperial, US Customary, Archaic, and specialized industrial units. The application is built as a frontend-only TypeScript project with React, designed with a "scientific archival" aesthetic theme. Production builds create a single standalone HTML file for easy distribution.
 
-**Current Version:** v2.14.0
+**Current Version:** v2.15.0
 
 ## User Preferences
 
@@ -50,7 +50,7 @@ OmniUnit is a comprehensive unit conversion web application that enables convers
 
 **Clipboard Copying**
 - Respects precision settings when copying values
-- Evaluate & Copy: evaluates calculation, copies result, clears fields, moves result to field 1 for chained calculations
+- Normalize & Copy: normalizes to SI units, applies optimal prefix, copies result
 
 **Math Category**
 - Positioned at top of "Other" group for easy access
@@ -141,6 +141,14 @@ client/
 
 ## Recent Changes
 
+- v2.15.0: Auto-prefix selection: Converter automatically chooses optimal prefix when result calculated (e.g., 1000 m → 1 km)
+- v2.15.0: Precision-aware prefix selection: Auto-selects smaller prefixes to avoid values displaying as 0.0000
+- v2.15.0: Added Photon/Light category with wavelength (m, nm), frequency (Hz), and energy (eV) units using inverse conversion (E = hc/λ)
+- v2.15.0: Added electron volt (eV) to Energy category (1.602176634e-19 J, SI prefixes enabled)
+- v2.15.0: Added electron volt mass equivalent (eV/c²) to Mass category (1.78266192e-36 kg, SI prefixes enabled)
+- v2.15.0: Removed "Evaluate & Copy" button from calculator (Normalize & Copy and Copy buttons remain)
+- v2.15.0: User can override auto-prefix by manually selecting a different prefix; auto-selection re-enabled on unit change
+- v2.15.0: Unit tests expanded to 160 tests (added findOptimalPrefix, photon conversions, eV conversions)
 - v2.14.0: Added Glass (Wine) unit to Beer & Wine category (150ml = 0.00015 m³)
 - v2.14.0: Moved Lightbulb Efficiency and Fuel Economy from Human Response group to Other group
 - v2.14.0: Normalize & Copy now selects optimal SI prefix to minimize digit count (e.g., 1500000 J → 1.5 MJ)
