@@ -60,7 +60,8 @@ export type UnitCategory =
   | "electric_field"
   | "magnetic_field_h"
   | "sound_intensity"
-  | "acoustic_impedance";
+  | "acoustic_impedance"
+  | "fuel";
 
 export interface Prefix {
   id: string;
@@ -961,6 +962,49 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "fluorescent_w", name: "Fluorescent Bulb (watts)", symbol: "W (CFL)", factor: 70 },
       { id: "led_w", name: "LED Bulb (watts)", symbol: "W (LED)", factor: 95 },
       { id: "sodium_w", name: "Sodium Vapor Lamp (watts)", symbol: "W (Na)", factor: 100 },
+    ],
+  },
+  {
+    id: "fuel",
+    name: "Fuel Energy",
+    baseUnit: "joule",
+    baseSISymbol: "J",
+    units: [
+      { id: "j", name: "Joule", symbol: "J", factor: 1, allowPrefixes: true },
+      { id: "cal", name: "Calorie", symbol: "cal", factor: 4.184, allowPrefixes: true },
+      { id: "btu", name: "BTU", symbol: "BTU", factor: 1055.06 },
+      { id: "kwh", name: "Kilowatt-hour", symbol: "kWh", factor: 3600000 },
+      { id: "lb_ethanol", name: "Pound of Ethanol", symbol: "lb (ethanol)", factor: 26800000 / 2.20462 },
+      { id: "lb_e85", name: "Pound of E-85", symbol: "lb (E-85)", factor: 29200000 / 2.20462 },
+      { id: "lb_kerosene", name: "Pound of Kerosene (Paraffin)", symbol: "lb (kero)", factor: 43300000 / 2.20462 },
+      { id: "lb_jetfuel", name: "Pound of Jet Fuel", symbol: "lb (jet)", factor: 43500000 / 2.20462 },
+      { id: "lb_gasoline", name: "Pound of Gasoline (Petrol)", symbol: "lb (gas)", factor: 45300000 / 2.20462 },
+      { id: "lb_diesel", name: "Pound of Diesel", symbol: "lb (diesel)", factor: 45400000 / 2.20462 },
+      { id: "lb_propane", name: "Pound of Propane", symbol: "lb (propane)", factor: 50300000 / 2.20462 },
+      { id: "l_ethanol", name: "Litre of Ethanol", symbol: "L (ethanol)", factor: 21200000 },
+      { id: "l_e85", name: "Litre of E-85", symbol: "L (E-85)", factor: 22800000 },
+      { id: "l_propane", name: "Litre of Propane (LPG)", symbol: "L (propane)", factor: 25700000 },
+      { id: "kg_ethanol", name: "Kilogram of Ethanol", symbol: "kg (ethanol)", factor: 26800000 },
+      { id: "kg_e85", name: "Kilogram of E-85", symbol: "kg (E-85)", factor: 29200000 },
+      { id: "l_gasoline", name: "Litre of Gasoline (Petrol)", symbol: "L (gas)", factor: 34200000 },
+      { id: "l_jetfuel", name: "Litre of Jet Fuel (Jet A)", symbol: "L (jet)", factor: 35000000 },
+      { id: "l_kerosene", name: "Litre of Kerosene (Paraffin)", symbol: "L (kero)", factor: 35100000 },
+      { id: "l_diesel", name: "Litre of Diesel", symbol: "L (diesel)", factor: 38600000 },
+      { id: "kg_kerosene", name: "Kilogram of Kerosene (Paraffin)", symbol: "kg (kero)", factor: 43300000 },
+      { id: "kg_jetfuel", name: "Kilogram of Jet Fuel", symbol: "kg (jet)", factor: 43500000 },
+      { id: "kg_gasoline", name: "Kilogram of Gasoline (Petrol)", symbol: "kg (gas)", factor: 45300000 },
+      { id: "kg_diesel", name: "Kilogram of Diesel", symbol: "kg (diesel)", factor: 45400000 },
+      { id: "kg_propane", name: "Kilogram of Propane", symbol: "kg (propane)", factor: 50300000 },
+      { id: "gal_ethanol", name: "Gallon of Ethanol (US)", symbol: "gal (ethanol)", factor: 21200000 * 3.78541 },
+      { id: "gal_e85", name: "Gallon of E-85 (US)", symbol: "gal (E-85)", factor: 22800000 * 3.78541 },
+      { id: "gal_propane", name: "Gallon of Propane (US)", symbol: "gal (propane)", factor: 25700000 * 3.78541 },
+      { id: "therm", name: "Therm (US)", symbol: "therm", factor: 105505600 },
+      { id: "gal_gasoline", name: "Gallon of Gasoline (US)", symbol: "gal (gas)", factor: 34200000 * 3.78541 },
+      { id: "gal_jetfuel", name: "Gallon of Jet Fuel (US)", symbol: "gal (jet)", factor: 35000000 * 3.78541 },
+      { id: "gal_kerosene", name: "Gallon of Kerosene (US)", symbol: "gal (kero)", factor: 35100000 * 3.78541 },
+      { id: "gal_diesel", name: "Gallon of Diesel (US)", symbol: "gal (diesel)", factor: 38600000 * 3.78541 },
+      { id: "tce", name: "Tonne of Coal Equivalent", symbol: "tce", factor: 29307600000 },
+      { id: "toe", name: "Tonne of Oil Equivalent", symbol: "toe", factor: 41868000000 },
     ],
   },
 

@@ -1323,7 +1323,7 @@ export default function UnitConverter() {
     },
     {
       name: "Other",
-      categories: ['math', 'data', 'rack_geometry', 'shipping', 'beer_wine_volume', 'lightbulb', 'fuel_economy']
+      categories: ['math', 'fuel', 'data', 'rack_geometry', 'shipping', 'beer_wine_volume', 'lightbulb', 'fuel_economy']
     }
   ];
 
@@ -1525,7 +1525,8 @@ export default function UnitConverter() {
       electric_field: { mass: 1, length: 1, time: -3, current: -1 },  // V/m = kg⋅m⋅s⁻³⋅A⁻¹
       magnetic_field_h: { current: 1, length: -1 },  // A/m
       sound_intensity: { mass: 1, time: -3 },  // W/m² = kg⋅s⁻³
-      acoustic_impedance: { mass: 1, length: -2, time: -1 }  // Pa⋅s/m = kg⋅m⁻²⋅s⁻¹
+      acoustic_impedance: { mass: 1, length: -2, time: -1 },  // Pa⋅s/m = kg⋅m⁻²⋅s⁻¹
+      fuel: { mass: 1, length: 2, time: -2 }  // Energy (J) = kg⋅m²⋅s⁻²
     };
     return dimensionMap[category] || {};
   };
