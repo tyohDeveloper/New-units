@@ -1324,6 +1324,10 @@ export default function UnitConverter() {
     {
       name: "Other",
       categories: ['math', 'fuel', 'data', 'rack_geometry', 'shipping', 'beer_wine_volume', 'lightbulb', 'fuel_economy']
+    },
+    {
+      name: "Archaic & Regional",
+      categories: ['archaic_length', 'archaic_mass', 'archaic_volume']
     }
   ];
 
@@ -1526,7 +1530,10 @@ export default function UnitConverter() {
       magnetic_field_h: { current: 1, length: -1 },  // A/m
       sound_intensity: { mass: 1, time: -3 },  // W/m² = kg⋅s⁻³
       acoustic_impedance: { mass: 1, length: -2, time: -1 },  // Pa⋅s/m = kg⋅m⁻²⋅s⁻¹
-      fuel: { mass: 1, length: 2, time: -2 }  // Energy (J) = kg⋅m²⋅s⁻²
+      fuel: { mass: 1, length: 2, time: -2 },  // Energy (J) = kg⋅m²⋅s⁻²
+      archaic_length: { length: 1 },
+      archaic_mass: { mass: 1 },
+      archaic_volume: { length: 3 }
     };
     return dimensionMap[category] || {};
   };

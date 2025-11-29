@@ -61,7 +61,10 @@ export type UnitCategory =
   | "magnetic_field_h"
   | "sound_intensity"
   | "acoustic_impedance"
-  | "fuel";
+  | "fuel"
+  | "archaic_length"
+  | "archaic_mass"
+  | "archaic_volume";
 
 export interface Prefix {
   id: string;
@@ -1041,7 +1044,6 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "u", name: "Rack Unit Height", symbol: "U", factor: 1.75 * 0.0254 },
       { id: "u2", name: "2U Height", symbol: "2U", factor: 3.5 * 0.0254 },
       { id: "u4", name: "4U Height", symbol: "4U", factor: 7 * 0.0254 },
-      { id: "link", name: "Link (Gunter)", symbol: "li", factor: 0.201168 },
       { id: "ft", name: "Foot", symbol: "ft", factor: 0.3048, allowPrefixes: true },
       { id: "ft_in", name: "Foot:Inch", symbol: "ft:in", factor: 0.3048 },
       { id: "rack_12u", name: "Quarter Rack (12U)", symbol: "12U", factor: 12 * 1.75 * 0.0254 },
@@ -1051,9 +1053,6 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "rack_24u", name: "Half Rack (24U)", symbol: "24U", factor: 24 * 1.75 * 0.0254 },
       { id: "fathom", name: "Fathom", symbol: "ftm", factor: 1.8288 },
       { id: "rack_42u", name: "Full Rack (42U)", symbol: "42U", factor: 42 * 1.75 * 0.0254 },
-      { id: "rod", name: "Rod", symbol: "rd", factor: 5.0292 },
-      { id: "chain", name: "Chain", symbol: "ch", factor: 20.1168 },
-      { id: "furlong", name: "Furlong", symbol: "fur", factor: 201.168 },
       { id: "mi", name: "Mile", symbol: "mi", factor: 1609.344 },
       { id: "nmi", name: "Nautical Mile", symbol: "nmi", factor: 1852 },
       { id: "au", name: "Astronomical Unit", symbol: "AU", factor: 1.496e11 },
@@ -1151,6 +1150,88 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "ln", name: "Natural Log", symbol: "ln", factor: 1, mathFunction: 'ln' },
       { id: "exp", name: "Exponential (eˣ)", symbol: "exp", factor: 1, mathFunction: 'exp' },
       { id: "abs", name: "Absolute Value", symbol: "|x|", factor: 1, mathFunction: 'abs' },
+    ],
+  },
+
+  // --- ARCHAIC & REGIONAL UNITS ---
+  {
+    id: "archaic_length",
+    name: "Archaic Length",
+    baseUnit: "metre",
+    baseSISymbol: "m",
+    units: [
+      { id: "m", name: "Meter", symbol: "m", factor: 1, allowPrefixes: true },
+      { id: "digit", name: "Digit (Egyptian)", symbol: "digit", factor: 0.01875 },
+      { id: "palm", name: "Palm", symbol: "palm", factor: 0.075 },
+      { id: "hand", name: "Hand", symbol: "hh", factor: 0.1016 },
+      { id: "link", name: "Link (Gunter)", symbol: "li", factor: 0.201168 },
+      { id: "span", name: "Span", symbol: "span", factor: 0.2286 },
+      { id: "shaku_jp", name: "Shaku (Japan)", symbol: "shaku", factor: 0.303030 },
+      { id: "ja_kr", name: "Ja (Korea)", symbol: "ja", factor: 0.303030 },
+      { id: "chi_cn", name: "Chi (China)", symbol: "chi", factor: 0.3333 },
+      { id: "cubit_common", name: "Cubit (Common)", symbol: "cubit", factor: 0.4572 },
+      { id: "cubit_royal", name: "Cubit (Egyptian Royal)", symbol: "cubit-R", factor: 0.524 },
+      { id: "pace", name: "Pace (Roman)", symbol: "pace", factor: 1.48 },
+      { id: "ken_jp", name: "Ken (Japan)", symbol: "ken", factor: 1.818 },
+      { id: "fathom", name: "Fathom", symbol: "ftm", factor: 1.8288 },
+      { id: "zhang_cn", name: "Zhang (China)", symbol: "zhang", factor: 3.333 },
+      { id: "rod", name: "Rod/Pole/Perch", symbol: "rd", factor: 5.0292 },
+      { id: "chain", name: "Chain (Gunter)", symbol: "ch", factor: 20.1168 },
+      { id: "stade", name: "Stade (Greek)", symbol: "stade", factor: 185 },
+      { id: "furlong", name: "Furlong", symbol: "fur", factor: 201.168 },
+      { id: "ri_kr", name: "Ri (Korea)", symbol: "ri-kr", factor: 392.727 },
+      { id: "li_cn", name: "Li (China)", symbol: "li-cn", factor: 500 },
+      { id: "ri_jp", name: "Ri (Japan)", symbol: "ri-jp", factor: 3927.27 },
+      { id: "league", name: "League", symbol: "lea", factor: 4828.032 },
+    ],
+  },
+  {
+    id: "archaic_mass",
+    name: "Archaic Mass",
+    baseUnit: "kilogram",
+    baseSISymbol: "kg",
+    units: [
+      { id: "kg", name: "Kilogram", symbol: "kg", factor: 1, allowPrefixes: true },
+      { id: "g", name: "Gram", symbol: "g", factor: 0.001, allowPrefixes: true },
+      { id: "grain", name: "Grain", symbol: "gr", factor: 0.00006479891 },
+      { id: "pennyweight", name: "Pennyweight", symbol: "dwt", factor: 0.00155517 },
+      { id: "dram", name: "Dram", symbol: "dr", factor: 0.001771845 },
+      { id: "momme_jp", name: "Momme (Japan)", symbol: "momme", factor: 0.00375 },
+      { id: "mace_cn", name: "Mace (China, PRC)", symbol: "mace", factor: 0.005 },
+      { id: "troy_oz", name: "Troy Ounce", symbol: "oz t", factor: 0.0311035 },
+      { id: "tael_cn", name: "Tael (China, PRC)", symbol: "tael", factor: 0.05 },
+      { id: "jin_cn", name: "Jin (China, PRC)", symbol: "jin", factor: 0.5 },
+      { id: "geun_kr", name: "Geun (Korea)", symbol: "geun", factor: 0.6 },
+      { id: "catty_hk", name: "Catty (HK/Traditional)", symbol: "catty", factor: 0.60478982 },
+      { id: "kan_jp", name: "Kan (Japan)", symbol: "kan", factor: 3.75 },
+      { id: "dan_cn", name: "Dan (China, PRC)", symbol: "dan", factor: 50 },
+      { id: "picul_hk", name: "Picul (HK/Traditional)", symbol: "picul", factor: 60.478982 },
+    ],
+  },
+  {
+    id: "archaic_volume",
+    name: "Archaic Volume",
+    baseUnit: "litre",
+    baseSISymbol: "L",
+    units: [
+      { id: "l", name: "Litre", symbol: "L", factor: 1, allowPrefixes: true },
+      { id: "ml", name: "Millilitre", symbol: "mL", factor: 0.001 },
+      { id: "teaspoon", name: "Teaspoon (US)", symbol: "tsp", factor: 0.00492892 },
+      { id: "tablespoon", name: "Tablespoon (US)", symbol: "tbsp", factor: 0.0147868 },
+      { id: "jigger", name: "Jigger", symbol: "jigger", factor: 0.044355 },
+      { id: "gill_us", name: "Gill (US)", symbol: "gi", factor: 0.118294 },
+      { id: "go_jp", name: "Go (Japan)", symbol: "go", factor: 0.18039 },
+      { id: "cup_us", name: "Cup (US)", symbol: "cup", factor: 0.236588 },
+      { id: "sheng_cn", name: "Sheng (China)", symbol: "sheng", factor: 1.0355 },
+      { id: "sho_jp", name: "Sho (Japan)", symbol: "sho", factor: 1.8039 },
+      { id: "doe_kr", name: "Doe (Korea)", symbol: "doe", factor: 1.8039 },
+      { id: "peck_us", name: "Peck (US)", symbol: "pk", factor: 8.80977 },
+      { id: "dou_cn", name: "Dou (China)", symbol: "dou", factor: 10.355 },
+      { id: "to_jp", name: "To (Japan)", symbol: "to", factor: 18.039 },
+      { id: "mal_kr", name: "Mal (Korea)", symbol: "mal", factor: 18.039 },
+      { id: "bushel_us", name: "Bushel (US)", symbol: "bu", factor: 35.2391 },
+      { id: "dan_vol_cn", name: "Dan (China volume)", symbol: "dan-v", factor: 103.55 },
+      { id: "koku_jp", name: "Koku (Japan)", symbol: "koku", factor: 180.39 },
     ],
   },
 ];
