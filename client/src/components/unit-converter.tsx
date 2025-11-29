@@ -3570,26 +3570,8 @@ export default function UnitConverter() {
               )}
             </div>
 
-            {/* Button row below result - right justified */}
-            <div className="flex justify-end gap-2" style={{ width: '100%' }}>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={copyCalcResult}
-                disabled={!calcValues[3]}
-                className="text-xs hover:text-accent gap-1 shrink-0"
-              >
-                <Copy className="w-3 h-3" />
-                <motion.span
-                  animate={{
-                    opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
-                    scale: flashCopyCalc ? [1, 1.1, 1] : 1
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {t('Copy')}
-                </motion.span>
-              </Button>
+            {/* Normalize & Copy row - right justified below result field */}
+            <div className="flex justify-end" style={{ width: CommonFieldWidth }}>
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -3607,6 +3589,10 @@ export default function UnitConverter() {
                   {t('Normalize & Copy')}
                 </motion.span>
               </Button>
+            </div>
+
+            {/* Execute & Copy, Copy row - right justified */}
+            <div className="flex justify-end gap-2" style={{ width: CommonFieldWidth }}>
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -3622,6 +3608,24 @@ export default function UnitConverter() {
                   transition={{ duration: 0.3 }}
                 >
                   {t('Execute & Copy')}
+                </motion.span>
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={copyCalcResult}
+                disabled={!calcValues[3]}
+                className="text-xs hover:text-accent gap-1 shrink-0"
+              >
+                <Copy className="w-3 h-3" />
+                <motion.span
+                  animate={{
+                    opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                    scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {t('Copy')}
                 </motion.span>
               </Button>
             </div>
