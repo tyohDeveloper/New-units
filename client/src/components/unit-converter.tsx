@@ -4352,7 +4352,7 @@ export default function UnitConverter() {
               <div className="flex flex-col gap-2">
                 <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Result')}</Label>
                 <motion.div 
-                  className="px-4 bg-background/50 border border-border rounded-md font-mono text-primary cursor-pointer hover:bg-background/70 flex items-center"
+                  className="px-4 bg-background/50 border border-border rounded-md font-mono text-primary cursor-pointer hover:bg-background/70 flex items-center justify-between gap-4"
                   style={{ height: FIELD_HEIGHT, minWidth: CommonFieldWidth }}
                   onClick={() => {
                     const numValue = parseNumberWithFormat(directValue);
@@ -4374,8 +4374,13 @@ export default function UnitConverter() {
                   {(() => {
                     const numValue = parseNumberWithFormat(directValue);
                     const unitSymbol = buildDirectUnitSymbol();
-                    if (isNaN(numValue) || !directValue) return '...';
-                    return `${formatResultValue(numValue, precision)} ${unitSymbol}`;
+                    if (isNaN(numValue) || !directValue) return <span>...</span>;
+                    return (
+                      <>
+                        <span>{formatResultValue(numValue, precision)}</span>
+                        <span className="text-muted-foreground">{unitSymbol}</span>
+                      </>
+                    );
                   })()}
                 </motion.div>
               </div>
@@ -4418,12 +4423,12 @@ export default function UnitConverter() {
               <div className="flex items-center justify-between mb-2">
                 <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Dimensions')}</Label>
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   size="sm" 
                   onClick={() => setDirectExponents({
                     m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
                   })}
-                  className="text-xs"
+                  className="text-xs hover:text-accent"
                 >
                   {t('Clear')}
                 </Button>
@@ -4453,7 +4458,7 @@ export default function UnitConverter() {
                         <button
                           key={exp}
                           onClick={() => setDirectExponents(prev => ({ ...prev, [unit]: exp }))}
-                          className={`min-w-[36px] h-7 px-1 text-xs font-mono border transition-all ${
+                          className={`w-12 h-7 text-xs font-mono border transition-all text-center shrink-0 ${
                             isSelected 
                               ? 'bg-accent text-accent-foreground border-accent' 
                               : 'bg-background/30 border-border/50 hover:bg-muted/50 text-muted-foreground'
