@@ -40,6 +40,13 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 - **Comparison Mode**: Toggle button ("Compare All") next to the "To" label shows input value converted to up to 8 units simultaneously with optimal prefix display and click-to-copy functionality
 - **Typography Category**: 11 units for print/design measurements including point (1/72 inch), pica (12 points), pixel (96 PPI ref), em, twip, cicero, with meter as SI base
 - **Cooking Measures Category**: 24 units for kitchen measurements covering US/UK/Metric/Japan variants including teaspoons, tablespoons, cups, fluid ounces, pints, quarts, gallons, with mL as base unit
+- **Multilingual Support**: 12 languages with complete translations:
+  - en (English UK), en-us (English US), ar (Arabic), de (German), es (Spanish), fr (French), it (Italian), ja (Japanese), ko (Korean), pt (Portuguese), ru (Russian), zh (Chinese)
+  - Unit NAMES are translated, but SYMBOLS and SI prefixes remain in Latin/ISO standard
+  - Asian units display proper native characters:
+    - Japanese: 尺 (shaku), 間 (ken), 里 (ri), 匁 (momme), 貫 (kan), 石 (koku), 畳 (tatami), 坪 (tsubo)
+    - Chinese: 寸 (cun), 尺 (chi), 丈 (zhang), 里 (li), 两 (tael), 斤 (jin), 升 (sheng), 斗 (dou), 亩 (mu)
+    - Korean: 자 (ja), 리 (ri), 돈 (don), 근 (geun), 홉 (hop), 되 (doe), 말 (mal), 평 (pyeong)
 
 ### Build & Deployment
 - **TypeScript Configuration**: Strict mode enabled, path alias for client code, ESNext module system.

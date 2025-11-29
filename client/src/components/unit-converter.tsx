@@ -145,6 +145,7 @@ export default function UnitConverter() {
     'fr', // French (77M native, 280M total)
     'it', // Italian (64M)
     'ja', // Japanese (125M)
+    'ko', // Korean (77M)
     'pt', // Portuguese (236M)
     'ru', // Russian (150M)
     'zh', // Chinese (920M+)
@@ -410,7 +411,7 @@ export default function UnitConverter() {
 
   // Translations for multiple languages
   // Supported languages: en (English), ar (Arabic), de (German), es (Spanish), fr (French), 
-  // it (Italian), pt (Portuguese), ru (Russian), zh (Chinese), ja (Japanese)
+  // it (Italian), ko (Korean), pt (Portuguese), ru (Russian), zh (Chinese), ja (Japanese)
   // Other languages fall back to English
   const TRANSLATIONS: Record<string, { 
     en: string; 
@@ -419,6 +420,7 @@ export default function UnitConverter() {
     es?: string;
     fr?: string;
     it?: string;
+    ko?: string;
     pt?: string;
     ru?: string;
     zh?: string;
@@ -427,143 +429,153 @@ export default function UnitConverter() {
     // Category Groups
     'Base Quantities': { 
       en: 'Base Quantities', ar: 'الكميات الأساسية', de: 'Basisgrößen',
-      es: 'Cantidades Base', fr: 'Grandeurs de Base', it: 'Grandezze di Base',
+      es: 'Cantidades Base', fr: 'Grandeurs de Base', it: 'Grandezze di Base', ko: '기본량',
       pt: 'Grandezas Base', ru: 'Базовые Величины', zh: '基本量', ja: '基本量'
     },
     'Mechanics': { 
       en: 'Mechanics', ar: 'الميكانيكا', de: 'Mechanik',
-      es: 'Mecánica', fr: 'Mécanique', it: 'Meccanica',
+      es: 'Mecánica', fr: 'Mécanique', it: 'Meccanica', ko: '역학',
       pt: 'Mecânica', ru: 'Механика', zh: '力学', ja: '力学'
+    },
+    'Thermodynamics & Chemistry': { 
+      en: 'Thermodynamics & Chemistry', ar: 'الديناميكا الحرارية والكيمياء', de: 'Thermodynamik & Chemie',
+      es: 'Termodinámica y Química', fr: 'Thermodynamique et Chimie', it: 'Termodinamica e Chimica', ko: '열역학 및 화학',
+      pt: 'Termodinâmica e Química', ru: 'Термодинамика и Химия', zh: '热力学与化学', ja: '熱力学と化学'
     },
     'Electricity & Magnetism': { 
       en: 'Electricity & Magnetism', ar: 'الكهرباء والمغناطيسية', de: 'Elektrizität & Magnetismus',
-      es: 'Electricidad y Magnetismo', fr: 'Électricité et Magnétisme', it: 'Elettricità e Magnetismo',
+      es: 'Electricidad y Magnetismo', fr: 'Électricité et Magnétisme', it: 'Elettricità e Magnetismo', ko: '전기 및 자기',
       pt: 'Eletricidade e Magnetismo', ru: 'Электричество и Магнетизм', zh: '电磁学', ja: '電気と磁気'
     },
     'Radiation & Physics': { 
       en: 'Radiation & Physics', ar: 'الإشعاع والفيزياء', de: 'Strahlung & Physik',
-      es: 'Radiación y Física', fr: 'Radiation et Physique', it: 'Radiazione e Fisica',
+      es: 'Radiación y Física', fr: 'Radiation et Physique', it: 'Radiazione e Fisica', ko: '방사선 및 물리학',
       pt: 'Radiação e Física', ru: 'Излучение и Физика', zh: '辐射与物理', ja: '放射線と物理学'
     },
     'Human Response': { 
       en: 'Human Response', ar: 'الاستجابة البشرية', de: 'Menschliche Wahrnehmung',
-      es: 'Respuesta Humana', fr: 'Réponse Humaine', it: 'Risposta Umana',
+      es: 'Respuesta Humana', fr: 'Réponse Humaine', it: 'Risposta Umana', ko: '인간 반응',
       pt: 'Resposta Humana', ru: 'Человеческое Восприятие', zh: '人体响应', ja: '人間の反応'
     },
     'Specialized': { 
       en: 'Specialized', ar: 'متخصص', de: 'Spezialisiert',
-      es: 'Especializado', fr: 'Spécialisé', it: 'Specializzato',
+      es: 'Especializado', fr: 'Spécialisé', it: 'Specializzato', ko: '특수',
       pt: 'Especializado', ru: 'Специализированные', zh: '专业', ja: '専門'
+    },
+    'Other': { 
+      en: 'Other', ar: 'أخرى', de: 'Andere',
+      es: 'Otros', fr: 'Autres', it: 'Altri', ko: '기타',
+      pt: 'Outros', ru: 'Другое', zh: '其他', ja: 'その他'
     },
     // Categories
     'Length': { 
       en: 'Length', ar: 'الطول', de: 'Länge',
-      es: 'Longitud', fr: 'Longueur', it: 'Lunghezza',
+      es: 'Longitud', fr: 'Longueur', it: 'Lunghezza', ko: '길이',
       pt: 'Comprimento', ru: 'Длина', zh: '长度', ja: '長さ'
     },
     'Mass': { 
       en: 'Mass', ar: 'الكتلة', de: 'Masse',
-      es: 'Masa', fr: 'Masse', it: 'Massa',
+      es: 'Masa', fr: 'Masse', it: 'Massa', ko: '질량',
       pt: 'Massa', ru: 'Масса', zh: '质量', ja: '質量'
     },
     'Time': { 
       en: 'Time', ar: 'الوقت', de: 'Zeit',
-      es: 'Tiempo', fr: 'Temps', it: 'Tempo',
+      es: 'Tiempo', fr: 'Temps', it: 'Tempo', ko: '시간',
       pt: 'Tempo', ru: 'Время', zh: '时间', ja: '時間'
     },
     'Electric Current': { 
       en: 'Electric Current', ar: 'التيار الكهربائي', de: 'Elektrischer Strom',
-      es: 'Corriente Eléctrica', fr: 'Courant Électrique', it: 'Corrente Elettrica',
+      es: 'Corriente Eléctrica', fr: 'Courant Électrique', it: 'Corrente Elettrica', ko: '전류',
       pt: 'Corrente Elétrica', ru: 'Электрический Ток', zh: '电流', ja: '電流'
     },
     'Temperature': { 
       en: 'Temperature', ar: 'درجة الحرارة', de: 'Temperatur',
-      es: 'Temperatura', fr: 'Température', it: 'Temperatura',
+      es: 'Temperatura', fr: 'Température', it: 'Temperatura', ko: '온도',
       pt: 'Temperatura', ru: 'Температура', zh: '温度', ja: '温度'
     },
     'Amount of Substance': { 
       en: 'Amount of Substance', ar: 'كمية المادة', de: 'Stoffmenge',
-      es: 'Cantidad de Sustancia', fr: 'Quantité de Matière', it: 'Quantità di Sostanza',
+      es: 'Cantidad de Sustancia', fr: 'Quantité de Matière', it: 'Quantità di Sostanza', ko: '물질량',
       pt: 'Quantidade de Substância', ru: 'Количество Вещества', zh: '物质的量', ja: '物質量'
     },
     'Luminous Intensity': { 
       en: 'Luminous Intensity', ar: 'شدة الإضاءة', de: 'Lichtstärke',
-      es: 'Intensidad Luminosa', fr: 'Intensité Lumineuse', it: 'Intensità Luminosa',
+      es: 'Intensidad Luminosa', fr: 'Intensité Lumineuse', it: 'Intensità Luminosa', ko: '광도',
       pt: 'Intensidade Luminosa', ru: 'Сила Света', zh: '发光强度', ja: '光度'
     },
     'Area': { 
       en: 'Area', ar: 'المساحة', de: 'Fläche',
-      es: 'Área', fr: 'Surface', it: 'Area',
+      es: 'Área', fr: 'Surface', it: 'Area', ko: '면적',
       pt: 'Área', ru: 'Площадь', zh: '面积', ja: '面積'
     },
     'Volume': { 
       en: 'Volume', ar: 'الحجم', de: 'Volumen',
-      es: 'Volumen', fr: 'Volume', it: 'Volume',
+      es: 'Volumen', fr: 'Volume', it: 'Volume', ko: '부피',
       pt: 'Volume', ru: 'Объём', zh: '体积', ja: '体積'
     },
     'Speed': { 
       en: 'Speed', ar: 'السرعة', de: 'Geschwindigkeit',
-      es: 'Velocidad', fr: 'Vitesse', it: 'Velocità',
+      es: 'Velocidad', fr: 'Vitesse', it: 'Velocità', ko: '속도',
       pt: 'Velocidade', ru: 'Скорость', zh: '速度', ja: '速度'
     },
     'Acceleration': { 
       en: 'Acceleration', ar: 'التسارع', de: 'Beschleunigung',
-      es: 'Aceleración', fr: 'Accélération', it: 'Accelerazione',
+      es: 'Aceleración', fr: 'Accélération', it: 'Accelerazione', ko: '가속도',
       pt: 'Aceleração', ru: 'Ускорение', zh: '加速度', ja: '加速度'
     },
     'Force': { 
       en: 'Force', ar: 'القوة', de: 'Kraft',
-      es: 'Fuerza', fr: 'Force', it: 'Forza',
+      es: 'Fuerza', fr: 'Force', it: 'Forza', ko: '힘',
       pt: 'Força', ru: 'Сила', zh: '力', ja: '力'
     },
     'Pressure': { 
       en: 'Pressure', ar: 'الضغط', de: 'Druck',
-      es: 'Presión', fr: 'Pression', it: 'Pressione',
+      es: 'Presión', fr: 'Pression', it: 'Pressione', ko: '압력',
       pt: 'Pressão', ru: 'Давление', zh: '压力', ja: '圧力'
     },
     'Energy': { 
       en: 'Energy', ar: 'الطاقة', de: 'Energie',
-      es: 'Energía', fr: 'Énergie', it: 'Energia',
+      es: 'Energía', fr: 'Énergie', it: 'Energia', ko: '에너지',
       pt: 'Energia', ru: 'Энергия', zh: '能量', ja: 'エネルギー'
     },
     'Power': { 
       en: 'Power', ar: 'القدرة', de: 'Leistung',
-      es: 'Potencia', fr: 'Puissance', it: 'Potenza',
+      es: 'Potencia', fr: 'Puissance', it: 'Potenza', ko: '일률',
       pt: 'Potência', ru: 'Мощность', zh: '功率', ja: '仕事率'
     },
     'Torque': { 
       en: 'Torque', ar: 'عزم الدوران', de: 'Drehmoment',
-      es: 'Par', fr: 'Couple', it: 'Coppia',
+      es: 'Par', fr: 'Couple', it: 'Coppia', ko: '토크',
       pt: 'Torque', ru: 'Крутящий Момент', zh: '扭矩', ja: 'トルク'
     },
     'Flow Rate': { 
       en: 'Flow Rate', ar: 'معدل التدفق', de: 'Durchflussrate',
-      es: 'Caudal', fr: 'Débit', it: 'Portata',
+      es: 'Caudal', fr: 'Débit', it: 'Portata', ko: '유량',
       pt: 'Taxa de Fluxo', ru: 'Расход', zh: '流量', ja: '流量'
     },
     'Flow Rate (Volumetric)': { 
       en: 'Flow Rate (Volumetric)', ar: 'معدل التدفق (الحجمي)', de: 'Durchflussrate (Volumetrisch)',
-      es: 'Caudal (Volumétrico)', fr: 'Débit (Volumétrique)', it: 'Portata (Volumetrica)',
+      es: 'Caudal (Volumétrico)', fr: 'Débit (Volumétrique)', it: 'Portata (Volumetrica)', ko: '유량 (체적)',
       pt: 'Taxa de Fluxo (Volumétrica)', ru: 'Расход (Объёмный)', zh: '流量（体积）', ja: '流量（体積）'
     },
     'Density': { 
       en: 'Density', ar: 'الكثافة', de: 'Dichte',
-      es: 'Densidad', fr: 'Densité', it: 'Densità',
+      es: 'Densidad', fr: 'Densité', it: 'Densità', ko: '밀도',
       pt: 'Densidade', ru: 'Плотность', zh: '密度', ja: '密度'
     },
     'Dynamic Viscosity': { 
       en: 'Dynamic Viscosity', ar: 'اللزوجة الديناميكية', de: 'Dynamische Viskosität',
-      es: 'Viscosidad Dinámica', fr: 'Viscosité Dynamique', it: 'Viscosità Dinamica',
+      es: 'Viscosidad Dinámica', fr: 'Viscosité Dynamique', it: 'Viscosità Dinamica', ko: '동점성',
       pt: 'Viscosidade Dinâmica', ru: 'Динамическая Вязкость', zh: '动态粘度', ja: '動粘度'
     },
     'Viscosity (Dynamic)': { 
       en: 'Viscosity (Dynamic)', ar: 'اللزوجة (الديناميكية)', de: 'Viskosität (Dynamisch)',
-      es: 'Viscosidad (Dinámica)', fr: 'Viscosité (Dynamique)', it: 'Viscosità (Dinamica)',
+      es: 'Viscosidad (Dinámica)', fr: 'Viscosité (Dynamique)', it: 'Viscosità (Dinamica)', ko: '점성 (동적)',
       pt: 'Viscosidade (Dinâmica)', ru: 'Вязкость (Динамическая)', zh: '粘度（动态）', ja: '粘度（動的）'
     },
     'Surface Tension': { 
       en: 'Surface Tension', ar: 'التوتر السطحي', de: 'Oberflächenspannung',
-      es: 'Tensión Superficial', fr: 'Tension Superficielle', it: 'Tensione Superficiale',
+      es: 'Tensión Superficial', fr: 'Tension Superficielle', it: 'Tensione Superficiale', ko: '표면 장력',
       pt: 'Tensão Superficial', ru: 'Поверхностное Натяжение', zh: '表面张力', ja: '表面張力'
     },
     'Charge': { 
@@ -1243,6 +1255,58 @@ export default function UnitConverter() {
     'Incandescent Bulb (watts)': { en: 'Incandescent Bulb (watts)', ar: 'مصباح متوهج (واط)' },
     'Halogen Bulb (watts)': { en: 'Halogen Bulb (watts)', ar: 'مصباح هالوجين (واط)' },
     'Sodium Vapor Lamp (watts)': { en: 'Sodium Vapor Lamp (watts)', ar: 'مصباح بخار الصوديوم (واط)' },
+    'Archaic Length': { en: 'Archaic Length', ar: 'الأطوال القديمة', de: 'Archaische Längen', es: 'Longitud Arcaica', fr: 'Longueur Archaïque', it: 'Lunghezza Arcaica', ko: '고대 길이', pt: 'Comprimento Arcaico', ru: 'Архаичные Длины', zh: '古代长度', ja: '古代の長さ' },
+    'Archaic Mass': { en: 'Archaic Mass', ar: 'الأوزان القديمة', de: 'Archaische Masse', es: 'Masa Arcaica', fr: 'Masse Archaïque', it: 'Massa Arcaica', ko: '고대 질량', pt: 'Massa Arcaica', ru: 'Архаичные Массы', zh: '古代质量', ja: '古代の質量' },
+    'Archaic Volume': { en: 'Archaic Volume', ar: 'الأحجام القديمة', de: 'Archaisches Volumen', es: 'Volumen Arcaico', fr: 'Volume Archaïque', it: 'Volume Arcaico', ko: '고대 부피', pt: 'Volume Arcaico', ru: 'Архаичные Объёмы', zh: '古代容量', ja: '古代の容積' },
+    'Archaic Area': { en: 'Archaic Area', ar: 'المساحات القديمة', de: 'Archaische Flächen', es: 'Área Arcaica', fr: 'Surface Archaïque', it: 'Area Arcaica', ko: '고대 면적', pt: 'Área Arcaica', ru: 'Архаичные Площади', zh: '古代面积', ja: '古代の面積' },
+    'Archaic Energy': { en: 'Archaic Energy', ar: 'الطاقة القديمة', de: 'Archaische Energie', es: 'Energía Arcaica', fr: 'Énergie Archaïque', it: 'Energia Arcaica', ko: '고대 에너지', pt: 'Energia Arcaica', ru: 'Архаичная Энергия', zh: '古代能量', ja: '古代のエネルギー' },
+    'Archaic Power': { en: 'Archaic Power', ar: 'القدرة القديمة', de: 'Archaische Leistung', es: 'Potencia Arcaica', fr: 'Puissance Archaïque', it: 'Potenza Arcaica', ko: '고대 일률', pt: 'Potência Arcaica', ru: 'Архаичная Мощность', zh: '古代功率', ja: '古代の仕事率' },
+    'Archaic & Regional': { en: 'Archaic & Regional', ar: 'القديمة والإقليمية', de: 'Archaisch & Regional', es: 'Arcaico y Regional', fr: 'Archaïque et Régional', it: 'Arcaico e Regionale', ko: '고대와 지역', pt: 'Arcaico e Regional', ru: 'Архаичные и Региональные', zh: '古代与地区', ja: '古代と地域' },
+    'Typography': { en: 'Typography', ar: 'الطباعة', de: 'Typografie', es: 'Tipografía', fr: 'Typographie', it: 'Tipografia', ko: '타이포그래피', pt: 'Tipografia', ru: 'Типографика', zh: '字体排印', ja: 'タイポグラフィ' },
+    'Cooking Measures': { en: 'Cooking Measures', ar: 'مقاييس الطهي', de: 'Kochmaße', es: 'Medidas de Cocina', fr: 'Mesures de Cuisine', it: 'Misure di Cucina', ko: '요리 계량', pt: 'Medidas de Cozinha', ru: 'Кулинарные Меры', zh: '烹饪量度', ja: '料理用計量' },
+    'Sun (Japan)': { en: 'Sun (Japan)', ar: 'سون (اليابان)', de: 'Sun (Japan)', es: 'Sun (Japón)', fr: 'Sun (Japon)', it: 'Sun (Giappone)', ko: '촌 (일본)', pt: 'Sun (Japão)', ru: 'Сун (Япония)', zh: '寸（日本）', ja: '寸' },
+    'Shaku (Japan)': { en: 'Shaku (Japan)', ar: 'شاكو (اليابان)', de: 'Shaku (Japan)', es: 'Shaku (Japón)', fr: 'Shaku (Japon)', it: 'Shaku (Giappone)', ko: '자 (일본)', pt: 'Shaku (Japão)', ru: 'Сяку (Япония)', zh: '尺（日本）', ja: '尺' },
+    'Ken (Japan)': { en: 'Ken (Japan)', ar: 'كين (اليابان)', de: 'Ken (Japan)', es: 'Ken (Japón)', fr: 'Ken (Japon)', it: 'Ken (Giappone)', ko: '간 (일본)', pt: 'Ken (Japão)', ru: 'Кэн (Япония)', zh: '间（日本）', ja: '間' },
+    'Jō (Japan)': { en: 'Jō (Japan)', ar: 'جو (اليابان)', de: 'Jō (Japan)', es: 'Jō (Japón)', fr: 'Jō (Japon)', it: 'Jō (Giappone)', ko: '장 (일본)', pt: 'Jō (Japão)', ru: 'Дзё (Япония)', zh: '丈（日本）', ja: '丈' },
+    'Ri (Japan)': { en: 'Ri (Japan)', ar: 'ري (اليابان)', de: 'Ri (Japan)', es: 'Ri (Japón)', fr: 'Ri (Japon)', it: 'Ri (Giappone)', ko: '리 (일본)', pt: 'Ri (Japão)', ru: 'Ри (Япония)', zh: '里（日本）', ja: '里' },
+    'Fun (Japan)': { en: 'Fun (Japan)', ar: 'فن (اليابان)', de: 'Fun (Japan)', es: 'Fun (Japón)', fr: 'Fun (Japon)', it: 'Fun (Giappone)', ko: '푼 (일본)', pt: 'Fun (Japão)', ru: 'Фун (Япония)', zh: '分（日本）', ja: '分' },
+    'Momme (Japan)': { en: 'Momme (Japan)', ar: 'مومي (اليابان)', de: 'Momme (Japan)', es: 'Momme (Japón)', fr: 'Momme (Japon)', it: 'Momme (Giappone)', ko: '몸메 (일본)', pt: 'Momme (Japão)', ru: 'Моммэ (Япония)', zh: '匁（日本）', ja: '匁' },
+    'Ryō (Japan)': { en: 'Ryō (Japan)', ar: 'ريو (اليابان)', de: 'Ryō (Japan)', es: 'Ryō (Japón)', fr: 'Ryō (Japon)', it: 'Ryō (Giappone)', ko: '료 (일본)', pt: 'Ryō (Japão)', ru: 'Рё (Япония)', zh: '两（日本）', ja: '両' },
+    'Kan (Japan)': { en: 'Kan (Japan)', ar: 'كان (اليابان)', de: 'Kan (Japan)', es: 'Kan (Japón)', fr: 'Kan (Japon)', it: 'Kan (Giappone)', ko: '관 (일본)', pt: 'Kan (Japão)', ru: 'Кан (Япония)', zh: '贯（日本）', ja: '貫' },
+    'Go (Japan)': { en: 'Go (Japan)', ar: 'غو (اليابان)', de: 'Go (Japan)', es: 'Go (Japón)', fr: 'Go (Japon)', it: 'Go (Giappone)', ko: '합 (일본)', pt: 'Go (Japão)', ru: 'Го (Япония)', zh: '合（日本）', ja: '合' },
+    'Sho (Japan)': { en: 'Shō (Japan)', ar: 'شو (اليابان)', de: 'Shō (Japan)', es: 'Shō (Japón)', fr: 'Shō (Japon)', it: 'Shō (Giappone)', ko: '승 (일본)', pt: 'Shō (Japão)', ru: 'Сё (Япония)', zh: '升（日本）', ja: '升' },
+    'To (Japan)': { en: 'To (Japan)', ar: 'تو (اليابان)', de: 'To (Japan)', es: 'To (Japón)', fr: 'To (Japon)', it: 'To (Giappone)', ko: '두 (일본)', pt: 'To (Japão)', ru: 'То (Япония)', zh: '斗（日本）', ja: '斗' },
+    'Koku (Japan)': { en: 'Koku (Japan)', ar: 'كوكو (اليابان)', de: 'Koku (Japan)', es: 'Koku (Japón)', fr: 'Koku (Japon)', it: 'Koku (Giappone)', ko: '석 (일본)', pt: 'Koku (Japão)', ru: 'Коку (Япония)', zh: '石（日本）', ja: '石' },
+    'Tsubo (Japan)': { en: 'Tsubo (Japan)', ar: 'تسوبو (اليابان)', de: 'Tsubo (Japan)', es: 'Tsubo (Japón)', fr: 'Tsubo (Japon)', it: 'Tsubo (Giappone)', ko: '평 (일본)', pt: 'Tsubo (Japão)', ru: 'Цубо (Япония)', zh: '坪（日本）', ja: '坪' },
+    'Tan (Japan)': { en: 'Tan (Japan)', ar: 'تان (اليابان)', de: 'Tan (Japan)', es: 'Tan (Japón)', fr: 'Tan (Japon)', it: 'Tan (Giappone)', ko: '단 (일본)', pt: 'Tan (Japão)', ru: 'Тан (Япония)', zh: '反（日本）', ja: '反' },
+    'Chō (Japan)': { en: 'Chō (Japan)', ar: 'تشو (اليابان)', de: 'Chō (Japan)', es: 'Chō (Japón)', fr: 'Chō (Japon)', it: 'Chō (Giappone)', ko: '정 (일본)', pt: 'Chō (Japão)', ru: 'Тё (Япония)', zh: '町（日本）', ja: '町' },
+    'Jō/Tatami (Japan)': { en: 'Jō/Tatami (Japan)', ar: 'تاتامي (اليابان)', de: 'Tatami (Japan)', es: 'Tatami (Japón)', fr: 'Tatami (Japon)', it: 'Tatami (Giappone)', ko: '다다미 (일본)', pt: 'Tatami (Japão)', ru: 'Татами (Япония)', zh: '畳（日本）', ja: '畳' },
+    'Danchi-ma (Japan)': { en: 'Danchi-ma (Japan)', ar: 'دانتشي-ما (اليابان)', de: 'Danchi-ma (Japan)', es: 'Danchi-ma (Japón)', fr: 'Danchi-ma (Japon)', it: 'Danchi-ma (Giappone)', ko: '단치마 (일본)', pt: 'Danchi-ma (Japão)', ru: 'Данти-ма (Япония)', zh: '团地间（日本）', ja: '団地間' },
+    'Edoma/Kantō-ma (Japan)': { en: 'Edoma/Kantō-ma (Japan)', ar: 'إيدوما (اليابان)', de: 'Edoma (Japan)', es: 'Edoma (Japón)', fr: 'Edoma (Japon)', it: 'Edoma (Giappone)', ko: '에도마 (일본)', pt: 'Edoma (Japão)', ru: 'Эдома (Япония)', zh: '江户间（日本）', ja: '江戸間' },
+    'Chūkyō-ma (Japan)': { en: 'Chūkyō-ma (Japan)', ar: 'تشوكيو-ما (اليابان)', de: 'Chūkyō-ma (Japan)', es: 'Chūkyō-ma (Japón)', fr: 'Chūkyō-ma (Japon)', it: 'Chūkyō-ma (Giappone)', ko: '추쿄마 (일본)', pt: 'Chūkyō-ma (Japão)', ru: 'Тюкё-ма (Япония)', zh: '中京间（日本）', ja: '中京間' },
+    'Kyōma (Japan)': { en: 'Kyōma (Japan)', ar: 'كيوما (اليابان)', de: 'Kyōma (Japan)', es: 'Kyōma (Japón)', fr: 'Kyōma (Japon)', it: 'Kyōma (Giappone)', ko: '교마 (일본)', pt: 'Kyōma (Japão)', ru: 'Кёма (Япония)', zh: '京间（日本）', ja: '京間' },
+    'Cun (China)': { en: 'Cun (China)', ar: 'تسون (الصين)', de: 'Cun (China)', es: 'Cun (China)', fr: 'Cun (Chine)', it: 'Cun (Cina)', ko: '촌 (중국)', pt: 'Cun (China)', ru: 'Цунь (Китай)', zh: '寸', ja: '寸（中国）' },
+    'Chi (China)': { en: 'Chi (China)', ar: 'تشي (الصين)', de: 'Chi (China)', es: 'Chi (China)', fr: 'Chi (Chine)', it: 'Chi (Cina)', ko: '척 (중국)', pt: 'Chi (China)', ru: 'Чи (Китай)', zh: '尺', ja: '尺（中国）' },
+    'Zhang (China)': { en: 'Zhang (China)', ar: 'تشانغ (الصين)', de: 'Zhang (China)', es: 'Zhang (China)', fr: 'Zhang (Chine)', it: 'Zhang (Cina)', ko: '장 (중국)', pt: 'Zhang (China)', ru: 'Чжан (Китай)', zh: '丈', ja: '丈（中国）' },
+    'Li (China)': { en: 'Li (China)', ar: 'لي (الصين)', de: 'Li (China)', es: 'Li (China)', fr: 'Li (Chine)', it: 'Li (Cina)', ko: '리 (중국)', pt: 'Li (China)', ru: 'Ли (Китай)', zh: '里', ja: '里（中国）' },
+    'Mace (China, PRC)': { en: 'Mace (China, PRC)', ar: 'ميس (الصين)', de: 'Mace (China)', es: 'Mace (China)', fr: 'Mace (Chine)', it: 'Mace (Cina)', ko: '전 (중국)', pt: 'Mace (China)', ru: 'Мэйс (Китай)', zh: '钱', ja: '銭（中国）' },
+    'Tael (China, PRC)': { en: 'Tael (China, PRC)', ar: 'تايل (الصين)', de: 'Tael (China)', es: 'Tael (China)', fr: 'Tael (Chine)', it: 'Tael (Cina)', ko: '냥 (중국)', pt: 'Tael (China)', ru: 'Лян (Китай)', zh: '两', ja: '両（中国）' },
+    'Jin (China, PRC)': { en: 'Jin (China, PRC)', ar: 'جين (الصين)', de: 'Jin (China)', es: 'Jin (China)', fr: 'Jin (Chine)', it: 'Jin (Cina)', ko: '근 (중국)', pt: 'Jin (China)', ru: 'Цзинь (Китай)', zh: '斤', ja: '斤（中国）' },
+    'Dan (China, PRC)': { en: 'Dan (China, PRC)', ar: 'دان (الصين)', de: 'Dan (China)', es: 'Dan (China)', fr: 'Dan (Chine)', it: 'Dan (Cina)', ko: '담 (중국)', pt: 'Dan (China)', ru: 'Дань (Китай)', zh: '担', ja: '担（中国）' },
+    'Sheng (China)': { en: 'Sheng (China)', ar: 'شينغ (الصين)', de: 'Sheng (China)', es: 'Sheng (China)', fr: 'Sheng (Chine)', it: 'Sheng (Cina)', ko: '승 (중국)', pt: 'Sheng (China)', ru: 'Шэн (Китай)', zh: '升', ja: '升（中国）' },
+    'Dou (China)': { en: 'Dou (China)', ar: 'دو (الصين)', de: 'Dou (China)', es: 'Dou (China)', fr: 'Dou (Chine)', it: 'Dou (Cina)', ko: '두 (중국)', pt: 'Dou (China)', ru: 'Доу (Китай)', zh: '斗', ja: '斗（中国）' },
+    'Dan (China volume)': { en: 'Dan (China volume)', ar: 'دان (حجم الصين)', de: 'Dan (China Volumen)', es: 'Dan (China volumen)', fr: 'Dan (Chine volume)', it: 'Dan (Cina volume)', ko: '석 (중국)', pt: 'Dan (China volume)', ru: 'Дань (Китай объём)', zh: '石', ja: '石（中国）' },
+    'Mu (China)': { en: 'Mu (China)', ar: 'مو (الصين)', de: 'Mu (China)', es: 'Mu (China)', fr: 'Mu (Chine)', it: 'Mu (Cina)', ko: '무 (중국)', pt: 'Mu (China)', ru: 'Му (Китай)', zh: '亩', ja: '畝（中国）' },
+    'Qing (China)': { en: 'Qing (China)', ar: 'تشينغ (الصين)', de: 'Qing (China)', es: 'Qing (China)', fr: 'Qing (Chine)', it: 'Qing (Cina)', ko: '경 (중국)', pt: 'Qing (China)', ru: 'Цин (Китай)', zh: '顷', ja: '頃（中国）' },
+    'Ja (Korea)': { en: 'Ja (Korea)', ar: 'جا (كوريا)', de: 'Ja (Korea)', es: 'Ja (Corea)', fr: 'Ja (Corée)', it: 'Ja (Corea)', ko: '자', pt: 'Ja (Coreia)', ru: 'Чжа (Корея)', zh: '자（韩国）', ja: '尺（韓国）' },
+    'Ri (Korea)': { en: 'Ri (Korea)', ar: 'ري (كوريا)', de: 'Ri (Korea)', es: 'Ri (Corea)', fr: 'Ri (Corée)', it: 'Ri (Corea)', ko: '리', pt: 'Ri (Coreia)', ru: 'Ри (Корея)', zh: '리（韩国）', ja: '里（韓国）' },
+    'Don (Korea)': { en: 'Don (Korea)', ar: 'دون (كوريا)', de: 'Don (Korea)', es: 'Don (Corea)', fr: 'Don (Corée)', it: 'Don (Corea)', ko: '돈', pt: 'Don (Coreia)', ru: 'Дон (Корея)', zh: '돈（韩国）', ja: '銭（韓国）' },
+    'Geun (Korea)': { en: 'Geun (Korea)', ar: 'جون (كوريا)', de: 'Geun (Korea)', es: 'Geun (Corea)', fr: 'Geun (Corée)', it: 'Geun (Corea)', ko: '근', pt: 'Geun (Coreia)', ru: 'Кын (Корея)', zh: '근（韩国）', ja: '斤（韓国）' },
+    'Hop (Korea)': { en: 'Hop (Korea)', ar: 'هوب (كوريا)', de: 'Hop (Korea)', es: 'Hop (Corea)', fr: 'Hop (Corée)', it: 'Hop (Corea)', ko: '홉', pt: 'Hop (Coreia)', ru: 'Хоп (Корея)', zh: '홉（韩国）', ja: '合（韓国）' },
+    'Doe (Korea)': { en: 'Doe (Korea)', ar: 'دو (كوريا)', de: 'Doe (Korea)', es: 'Doe (Corea)', fr: 'Doe (Corée)', it: 'Doe (Corea)', ko: '되', pt: 'Doe (Coreia)', ru: 'Дой (Корея)', zh: '되（韩国）', ja: '升（韓国）' },
+    'Mal (Korea)': { en: 'Mal (Korea)', ar: 'مال (كوريا)', de: 'Mal (Korea)', es: 'Mal (Corea)', fr: 'Mal (Corée)', it: 'Mal (Corea)', ko: '말', pt: 'Mal (Coreia)', ru: 'Маль (Корея)', zh: '말（韩国）', ja: '斗（韓国）' },
+    'Pyeong (Korea)': { en: 'Pyeong (Korea)', ar: 'بيونغ (كوريا)', de: 'Pyeong (Korea)', es: 'Pyeong (Corea)', fr: 'Pyeong (Corée)', it: 'Pyeong (Corea)', ko: '평', pt: 'Pyeong (Coreia)', ru: 'Пхён (Корея)', zh: '평（韩国）', ja: '坪（韓国）' },
+    'Se (Korea)': { en: 'Se (Korea)', ar: 'سي (كوريا)', de: 'Se (Korea)', es: 'Se (Corea)', fr: 'Se (Corée)', it: 'Se (Corea)', ko: '세', pt: 'Se (Coreia)', ru: 'Се (Корея)', zh: '세（韩国）', ja: '畝（韓国）' },
   };
 
   // Helper: Get translated text - uses language dropdown
@@ -1260,6 +1324,7 @@ export default function UnitConverter() {
       if (language === 'fr' && trans.fr) return trans.fr;
       if (language === 'it' && trans.it) return trans.it;
       if (language === 'pt' && trans.pt) return trans.pt;
+      if (language === 'ko' && trans.ko) return trans.ko;
       if (language === 'ru' && trans.ru) return trans.ru;
       if (language === 'zh' && trans.zh) return trans.zh;
       if (language === 'ja' && trans.ja) return trans.ja;
