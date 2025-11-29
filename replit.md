@@ -18,10 +18,11 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 ### Key Design Decisions
 - **Calculator Layout**: CSS Grid-based, six-column layout with four arithmetic operators (×, /, +, −). Addition and subtraction require dimensional compatibility.
 - **Clipboard Copying**: Supports precision settings and "Normalize & Copy" for normalizing to SI units with optimal prefixing.
-- **Math Category**: Includes 22 functions and 3 constants, all producing dimensionless outputs:
+- **Math Category**: Includes 28 functions and 3 constants, all producing dimensionless outputs:
   - Trigonometric: sin, cos, tan, asin, acos, atan
   - Hyperbolic: sinh, cosh, tanh, asinh, acosh, atanh
   - Roots: sqrt (√), cbrt (∛), root4 (∜)
+  - Powers: square (x²), cube (x³), pow4 (x⁴)
   - Logarithmic/Exponential: log (log₁₀), ln, log2 (log₂), exp
   - Rounding: floor (⌊x⌋), ceil (⌈x⌉), round, trunc
   - Other: abs, sign (sgn)
