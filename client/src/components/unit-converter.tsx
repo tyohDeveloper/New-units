@@ -4064,7 +4064,7 @@ export default function UnitConverter() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
+                  <Select value={resultUnit || 'base'} onValueChange={(val) => { setResultUnit(val === 'base' ? null : val); setResultPrefix('none'); }}>
                     <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
                       <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
                     </SelectTrigger>
