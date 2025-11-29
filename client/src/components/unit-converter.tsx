@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { ArrowRightLeft, Copy, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { testId } from '@/lib/test-utils';
 
@@ -3278,12 +3277,30 @@ export default function UnitConverter() {
         {/* Header with formatting options */}
         <div className="mb-2">
           <div className="flex items-center justify-between">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
-              <TabsList className="h-9">
-                <TabsTrigger value="converter" className="text-sm px-4">{t('Converter')}</TabsTrigger>
-                <TabsTrigger value="custom" className="text-sm px-4">{t('Custom')}</TabsTrigger>
-              </TabsList>
-            </Tabs>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setActiveTab('converter')}
+                className={`text-sm px-4 py-1.5 rounded-md font-medium transition-all ${
+                  activeTab === 'converter'
+                    ? 'bg-accent text-accent-foreground'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                }`}
+                {...testId('tab-converter')}
+              >
+                {t('Converter')}
+              </button>
+              <button
+                onClick={() => setActiveTab('custom')}
+                className={`text-sm px-4 py-1.5 rounded-md font-medium transition-all ${
+                  activeTab === 'custom'
+                    ? 'bg-accent text-accent-foreground'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                }`}
+                {...testId('tab-custom')}
+              >
+                {t('Custom')}
+              </button>
+            </div>
             <div className="flex items-center gap-3">
               <Label className="text-xs text-muted-foreground">{t('Number formatting')}</Label>
               <Select 
@@ -3351,9 +3368,11 @@ export default function UnitConverter() {
           )}
         </div>
 
-        {/* Converter Tab Content */}
-        {activeTab === 'converter' && (
-        <Card className="p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden">
+        {/* Fixed-height content container to prevent layout shift */}
+        <div className="min-h-[420px]">
+          {/* Converter Tab Content */}
+          {activeTab === 'converter' && (
+          <Card className="p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden h-full">
           {/* Background decoration */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
 
@@ -3761,13 +3780,13 @@ export default function UnitConverter() {
               </AnimatePresence>
             </div>
 
-          </div>
-        </Card>
-        )}
+            </div>
+          </Card>
+          )}
 
-        {/* Custom Tab Content */}
-        {activeTab === 'custom' && (
-        <Card className="p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden">
+          {/* Custom Tab Content */}
+          {activeTab === 'custom' && (
+          <Card className="p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden h-full">
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
           
           <div className="flex flex-col gap-6 relative z-10">
@@ -3934,8 +3953,9 @@ export default function UnitConverter() {
               ))}
             </div>
           </div>
-        </Card>
-        )}
+          </Card>
+          )}
+        </div>
 
         {/* Mini Calculator */}
         <Card className="p-6 bg-card border-border/50">
