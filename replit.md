@@ -17,7 +17,7 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 
 ### Key Design Decisions
 - **Calculator Layout**: CSS Grid-based, six-column layout with four arithmetic operators (×, /, +, −). Addition and subtraction require dimensional compatibility.
-- **Clipboard Copying**: Supports precision settings and "Normalize & Copy" for normalizing to SI units with optimal prefixing.
+- **Clipboard Copying**: Supports precision settings and "Normalize & Copy" for normalizing to SI units with optimal prefixing. Uses `normalizeDimensions` to convert raw dimensional formulas to derived units (J, N, W, etc.) before applying prefixes, preventing prefix stacking with kg.
 - **Math Category**: Includes 28 functions and 3 constants, all producing dimensionless outputs:
   - Trigonometric: sin, cos, tan, asin, acos, atan
   - Hyperbolic: sinh, cosh, tanh, asinh, acosh, atanh
