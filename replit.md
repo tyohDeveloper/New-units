@@ -4,7 +4,7 @@
 
 OmniUnit is a comprehensive unit conversion web application that enables conversions across a wide range of measurement systems including SI units, Imperial, US Customary, Archaic, and specialized industrial units. The application is built as a frontend-only TypeScript project with React, designed with a "scientific archival" aesthetic theme. Production builds create a single standalone HTML file for easy distribution.
 
-**Current Version:** v2.9.0
+**Current Version:** v2.10.0
 
 ## User Preferences
 
@@ -141,6 +141,8 @@ client/
 
 ## Recent Changes
 
+- v2.10.0: Calculator action buttons (Copy, Normalize & Copy, Execute & Copy) moved to dedicated row below result field
+- v2.10.0: Added "Normalize & Copy" button that simplifies complex dimensions to SI derived units (e.g., kg·m·s⁻² → N)
 - v2.9.0: Calculator operators reordered to × / + − (multiplication/division first, then addition/subtraction)
 - v2.9.0: Math category now at top of "Other" group with math functions (sin, cos, tan, sqrt, log, ln, exp, abs) and constants (π, e, √2)
 - v2.9.0: Execute & Copy button: evaluates calculator, copies result, clears fields, moves result to field 1
