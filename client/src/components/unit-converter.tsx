@@ -231,6 +231,7 @@ export default function UnitConverter() {
 
   // Helper: Apply regional spelling variations (ONLY for English language)
   // This function should ONLY be called when the language is English
+  // Handles: meter/metre, liter/litre, gasoline/petrol, kerosene/paraffin
   const applyRegionalSpelling = (unitName: string): string => {
     // Only apply regional spelling variations for English variants
     // For all other languages, use their own translations directly
@@ -238,13 +239,22 @@ export default function UnitConverter() {
       return unitName;
     }
     
-    // en-us uses US spelling (meter, liter)
+    // en-us (US English): Use US terms, remove UK alternatives in parentheses
     if (language === 'en-us') {
-      return unitName;
+      return unitName
+        // Remove UK alternatives in parentheses for fuel types
+        .replace(/\s*\(Petrol\)/g, '')      // "Gasoline (Petrol)" → "Gasoline"
+        .replace(/\s*\(Paraffin\)/g, '');   // "Kerosene (Paraffin)" → "Kerosene"
     }
     
-    // en (British English) uses UK spelling (metre, litre)
+    // en (British English): Use UK terms, apply UK spelling
     return unitName
+      // Replace US terms with UK equivalents
+      .replace(/Gasoline\s*\(Petrol\)/g, 'Petrol')      // "Gasoline (Petrol)" → "Petrol"
+      .replace(/Kerosene\s*\(Paraffin\)/g, 'Paraffin')  // "Kerosene (Paraffin)" → "Paraffin"
+      .replace(/Gasoline/g, 'Petrol')                    // Standalone "Gasoline" → "Petrol"
+      .replace(/Kerosene/g, 'Paraffin')                  // Standalone "Kerosene" → "Paraffin"
+      // UK spelling variations
       .replace(/Meter/g, 'Metre')
       .replace(/meter/g, 'metre')
       .replace(/Liter/g, 'Litre')
@@ -3018,8 +3028,14 @@ export default function UnitConverter() {
   };
 
   const formatFactor = (f: number) => {
-    if (f === 1) return "1";
-    if (f >= 1e9 || f <= 1e-8) return `×${f.toExponential(7)}`;
+    const format = NUMBER_FORMATS[numberFormat];
+    if (f === 1) {
+      return format.useArabicNumerals ? '١' : '1';
+    }
+    if (f >= 1e9 || f <= 1e-8) {
+      const expStr = f.toExponential(7);
+      return format.useArabicNumerals ? `×${toArabicNumerals(expStr)}` : `×${expStr}`;
+    }
     
     // Format with up to 9 total digits and 8 decimal places
     // Use toPrecision for total significant figures, then clean up
@@ -3033,13 +3049,18 @@ export default function UnitConverter() {
 
   // Helper to format result with scientific notation for extreme values
   const formatResultValue = (num: number, precisionValue: number): string => {
-    if (num === 0) return "0";
+    const format = NUMBER_FORMATS[numberFormat];
+    if (num === 0) {
+      // Apply Arabic numerals to zero if needed
+      return format.useArabicNumerals ? '٠' : '0';
+    }
     const absNum = Math.abs(num);
     // Use scientific notation for very small (<1e-6) or very large (>=1e12) values
     if (absNum < 1e-6 || absNum >= 1e12) {
       // Use precision for significant figures in exponential notation
       const expStr = num.toExponential(Math.min(precisionValue, 10));
-      return expStr;
+      // Apply Arabic numerals to scientific notation if needed
+      return format.useArabicNumerals ? toArabicNumerals(expStr) : expStr;
     }
     return formatNumberWithSeparators(num, precisionValue);
   };
@@ -3485,7 +3506,7 @@ export default function UnitConverter() {
                     >
                       <div className="text-xs font-mono text-muted-foreground flex gap-2 items-center">
                         <span className="text-foreground font-bold">
-                          1 {fromPrefixData.id !== 'none' ? fromPrefixData.symbol : ''}{fromUnitData.symbol}
+                          {NUMBER_FORMATS[numberFormat].useArabicNumerals ? '١' : '1'} {fromPrefixData.id !== 'none' ? fromPrefixData.symbol : ''}{fromUnitData.symbol}
                         </span>
                         <span>=</span>
                         <span className="text-foreground font-bold">

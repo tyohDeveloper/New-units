@@ -245,6 +245,11 @@ export const UI_TRANSLATIONS: Record<string, Translation> = {
     es: 'Momento', fr: 'Quantité de Mouvement', it: 'Quantità di Moto',
     pt: 'Momento', ru: 'Импульс', zh: '动量', ja: '運動量', ko: '운동량'
   },
+  'Angular Momentum': {
+    en: 'Angular Momentum', ar: 'الزخم الزاوي', de: 'Drehimpuls',
+    es: 'Momento Angular', fr: 'Moment Cinétique', it: 'Momento Angolare',
+    pt: 'Momento Angular', ru: 'Угловой Момент', zh: '角动量', ja: '角運動量', ko: '각운동량'
+  },
   'Luminous Flux': {
     en: 'Luminous Flux', ar: 'التدفق الضوئي', de: 'Lichtstrom',
     es: 'Flujo Luminoso', fr: 'Flux Lumineux', it: 'Flusso Luminoso',

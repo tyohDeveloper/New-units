@@ -419,3 +419,221 @@ describe('Consistency Between Translations and Data', () => {
     }
   });
 });
+
+describe('Arabic-Indic Numeral Conversion', () => {
+  const toArabicNumerals = (str: string): string => {
+    const arabicMap: Record<string, string> = {
+      '0': '٠', '1': '١', '2': '٢', '3': '٣', '4': '٤',
+      '5': '٥', '6': '٦', '7': '٧', '8': '٨', '9': '٩'
+    };
+    return str.split('').map(c => arabicMap[c] || c).join('');
+  };
+
+  const toLatinNumerals = (str: string): string => {
+    const latinMap: Record<string, string> = {
+      '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+      '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+    };
+    return str.split('').map(c => latinMap[c] || c).join('');
+  };
+
+  it('should convert single digits correctly', () => {
+    expect(toArabicNumerals('0')).toBe('٠');
+    expect(toArabicNumerals('1')).toBe('١');
+    expect(toArabicNumerals('5')).toBe('٥');
+    expect(toArabicNumerals('9')).toBe('٩');
+  });
+
+  it('should convert multi-digit numbers correctly', () => {
+    expect(toArabicNumerals('123')).toBe('١٢٣');
+    expect(toArabicNumerals('456789')).toBe('٤٥٦٧٨٩');
+    expect(toArabicNumerals('1000000')).toBe('١٠٠٠٠٠٠');
+  });
+
+  it('should convert numbers with decimals correctly', () => {
+    expect(toArabicNumerals('3.14159')).toBe('٣.١٤١٥٩');
+    expect(toArabicNumerals('0.001')).toBe('٠.٠٠١');
+    expect(toArabicNumerals('123.456')).toBe('١٢٣.٤٥٦');
+  });
+
+  it('should convert negative numbers correctly', () => {
+    expect(toArabicNumerals('-5')).toBe('-٥');
+    expect(toArabicNumerals('-123.456')).toBe('-١٢٣.٤٥٦');
+  });
+
+  it('should convert scientific notation correctly', () => {
+    expect(toArabicNumerals('1.0546e-34')).toBe('١.٠٥٤٦e-٣٤');
+    expect(toArabicNumerals('6.022e23')).toBe('٦.٠٢٢e٢٣');
+    expect(toArabicNumerals('1e10')).toBe('١e١٠');
+  });
+
+  it('should preserve non-digit characters', () => {
+    expect(toArabicNumerals('×1.5')).toBe('×١.٥');
+    expect(toArabicNumerals('100%')).toBe('١٠٠%');
+    expect(toArabicNumerals('$123.45')).toBe('$١٢٣.٤٥');
+  });
+
+  it('should convert Arabic numerals back to Latin', () => {
+    expect(toLatinNumerals('٠')).toBe('0');
+    expect(toLatinNumerals('١٢٣')).toBe('123');
+    expect(toLatinNumerals('٣.١٤١٥٩')).toBe('3.14159');
+    expect(toLatinNumerals('١.٠٥٤٦e-٣٤')).toBe('1.0546e-34');
+  });
+
+  it('should handle round-trip conversion correctly', () => {
+    const testNumbers = ['0', '123', '3.14159', '-456.789', '1.0546e-34'];
+    for (const num of testNumbers) {
+      expect(toLatinNumerals(toArabicNumerals(num))).toBe(num);
+    }
+  });
+});
+
+describe('EN vs EN-US Regional Spelling', () => {
+  const applyRegionalSpelling = (unitName: string, language: 'en' | 'en-us'): string => {
+    if (language === 'en-us') {
+      return unitName
+        .replace(/\s*\(Petrol\)/g, '')
+        .replace(/\s*\(Paraffin\)/g, '');
+    }
+    return unitName
+      .replace(/Gasoline\s*\(Petrol\)/g, 'Petrol')
+      .replace(/Kerosene\s*\(Paraffin\)/g, 'Paraffin')
+      .replace(/Gasoline/g, 'Petrol')
+      .replace(/Kerosene/g, 'Paraffin')
+      .replace(/Meter/g, 'Metre')
+      .replace(/meter/g, 'metre')
+      .replace(/Liter/g, 'Litre')
+      .replace(/liter/g, 'litre');
+  };
+
+  describe('Fuel Type Names', () => {
+    it('should display Gasoline for en-us locale', () => {
+      expect(applyRegionalSpelling('Litre of Gasoline (Petrol)', 'en-us')).toBe('Litre of Gasoline');
+      expect(applyRegionalSpelling('Kilogram of Gasoline (Petrol)', 'en-us')).toBe('Kilogram of Gasoline');
+      expect(applyRegionalSpelling('Gallon of Gasoline (US)', 'en-us')).toBe('Gallon of Gasoline (US)');
+    });
+
+    it('should display Petrol for en (UK) locale', () => {
+      expect(applyRegionalSpelling('Litre of Gasoline (Petrol)', 'en')).toBe('Litre of Petrol');
+      expect(applyRegionalSpelling('Kilogram of Gasoline (Petrol)', 'en')).toBe('Kilogram of Petrol');
+    });
+
+    it('should display Kerosene for en-us locale', () => {
+      expect(applyRegionalSpelling('Litre of Kerosene (Paraffin)', 'en-us')).toBe('Litre of Kerosene');
+      expect(applyRegionalSpelling('Kilogram of Kerosene (Paraffin)', 'en-us')).toBe('Kilogram of Kerosene');
+    });
+
+    it('should display Paraffin for en (UK) locale', () => {
+      expect(applyRegionalSpelling('Litre of Kerosene (Paraffin)', 'en')).toBe('Litre of Paraffin');
+      expect(applyRegionalSpelling('Kilogram of Kerosene (Paraffin)', 'en')).toBe('Kilogram of Paraffin');
+    });
+  });
+
+  describe('Meter/Metre Spelling', () => {
+    it('should keep Meter spelling for en-us', () => {
+      expect(applyRegionalSpelling('Meter', 'en-us')).toBe('Meter');
+      expect(applyRegionalSpelling('meter', 'en-us')).toBe('meter');
+    });
+
+    it('should convert to Metre spelling for en (UK)', () => {
+      expect(applyRegionalSpelling('Meter', 'en')).toBe('Metre');
+      expect(applyRegionalSpelling('meter', 'en')).toBe('metre');
+    });
+  });
+
+  describe('Liter/Litre Spelling', () => {
+    it('should keep Liter spelling for en-us', () => {
+      expect(applyRegionalSpelling('Liter', 'en-us')).toBe('Liter');
+      expect(applyRegionalSpelling('liter', 'en-us')).toBe('liter');
+    });
+
+    it('should convert to Litre spelling for en (UK)', () => {
+      expect(applyRegionalSpelling('Liter', 'en')).toBe('Litre');
+      expect(applyRegionalSpelling('liter', 'en')).toBe('litre');
+    });
+  });
+});
+
+describe('Angular Momentum Category', () => {
+  const angularMomentumCategory = CONVERSION_DATA.find(c => c.name === 'Angular Momentum');
+
+  it('should have Angular Momentum category defined', () => {
+    expect(angularMomentumCategory).toBeDefined();
+  });
+
+  it('should have correct SI base unit', () => {
+    expect(angularMomentumCategory?.baseUnit).toBe('kilogram meter²/second');
+    expect(angularMomentumCategory?.baseSISymbol).toBe('kg⋅m²⋅s⁻¹');
+  });
+
+  it('should be in the Mechanics category group (mass·length²·time⁻¹ dimensions)', () => {
+    expect(angularMomentumCategory?.id).toBe('angular_momentum');
+    expect(angularMomentumCategory?.name).toBe('Angular Momentum');
+  });
+
+  it('should have 8 units defined', () => {
+    expect(angularMomentumCategory?.units).toHaveLength(8);
+  });
+
+  it('should have correct conversion factors for key units', () => {
+    const units = angularMomentumCategory?.units || [];
+    
+    const kgm2s = units.find(u => u.id === 'kgm2s');
+    expect(kgm2s?.factor).toBe(1);
+    
+    const gcm2s = units.find(u => u.id === 'gcm2s');
+    expect(gcm2s?.factor).toBe(1e-7);
+    
+    const hbar = units.find(u => u.id === 'hbar');
+    expect(hbar?.factor).toBeCloseTo(1.054571817e-34, 44);
+  });
+
+  it('should have reduced Planck constant (ℏ) as a unit', () => {
+    const hbar = angularMomentumCategory?.units.find(u => u.id === 'hbar');
+    expect(hbar).toBeDefined();
+    expect(hbar?.symbol).toBe('ℏ');
+    expect(hbar?.name).toBe('Reduced Planck constant');
+  });
+
+  it('should have translations for Angular Momentum category name', () => {
+    expect(translate('Angular Momentum', 'ko', UI_TRANSLATIONS)).toBe('각운동량');
+    expect(translate('Angular Momentum', 'ja', UI_TRANSLATIONS)).toBe('角運動量');
+    expect(translate('Angular Momentum', 'zh', UI_TRANSLATIONS)).toBe('角动量');
+    expect(translate('Angular Momentum', 'de', UI_TRANSLATIONS)).toBe('Drehimpuls');
+    expect(translate('Angular Momentum', 'fr', UI_TRANSLATIONS)).toBe('Moment Cinétique');
+  });
+
+  describe('Angular Momentum Conversions', () => {
+    const convert = (value: number, fromId: string, toId: string): number => {
+      const units = angularMomentumCategory?.units || [];
+      const fromUnit = units.find(u => u.id === fromId);
+      const toUnit = units.find(u => u.id === toId);
+      if (!fromUnit || !toUnit) return NaN;
+      return value * fromUnit.factor / toUnit.factor;
+    };
+
+    it('should convert 1 kg⋅m²/s to kg⋅m²/s correctly', () => {
+      expect(convert(1, 'kgm2s', 'kgm2s')).toBe(1);
+    });
+
+    it('should convert 1 J⋅s to kg⋅m²/s correctly', () => {
+      expect(convert(1, 'js', 'kgm2s')).toBeCloseTo(1, 10);
+    });
+
+    it('should convert 1 g⋅cm²/s to kg⋅m²/s correctly', () => {
+      expect(convert(1, 'gcm2s', 'kgm2s')).toBeCloseTo(1e-7, 17);
+    });
+
+    it('should convert 1 ℏ to kg⋅m²/s correctly', () => {
+      const hbarValue = convert(1, 'hbar', 'kgm2s');
+      expect(hbarValue).toBeCloseTo(1.054571817e-34, 44);
+    });
+
+    it('should handle very small values (ℏ) without displaying as 0', () => {
+      const hbarValue = convert(1, 'hbar', 'kgm2s');
+      expect(hbarValue).not.toBe(0);
+      expect(Math.abs(hbarValue)).toBeGreaterThan(0);
+      expect(Math.abs(hbarValue)).toBeLessThan(1e-30);
+    });
+  });
+});
