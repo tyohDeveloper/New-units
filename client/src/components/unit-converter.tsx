@@ -2783,15 +2783,17 @@ export default function UnitConverter() {
 
   // Auto-select prefix when user manually changes result unit
   // If the result category matches the active category, use the TO prefix instead of 'none'
+  // BUT: Always use 'none' for units containing 'kg' to prevent prefix stacking
   useEffect(() => {
     if (resultCategory && calcValues[3]) {
       const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
       
       // If resultUnit is null, we're using the base SI unit
       if (resultUnit === null) {
-        // Base SI unit always allows prefixes
-        // If result category matches the active category, use the TO prefix
-        if (resultCategory === activeCategory) {
+        // Check if base SI symbol contains 'kg' - if so, don't allow prefix
+        if (cat?.baseSISymbol?.includes('kg')) {
+          setResultPrefix('none');
+        } else if (resultCategory === activeCategory) {
           setResultPrefix(toPrefix);
         } else {
           setResultPrefix('none');
@@ -2799,7 +2801,10 @@ export default function UnitConverter() {
       } else if (resultUnit) {
         // User selected a specific unit
         const unit = cat?.units.find(u => u.id === resultUnit);
-        if (unit?.allowPrefixes) {
+        // Check if unit symbol contains 'kg' - if so, don't allow prefix
+        if (unit?.symbol?.includes('kg')) {
+          setResultPrefix('none');
+        } else if (unit?.allowPrefixes) {
           // If result category matches the active category, use the TO prefix
           if (resultCategory === activeCategory) {
             setResultPrefix(toPrefix);
@@ -4161,7 +4166,7 @@ export default function UnitConverter() {
                       </Select>
                       <Select 
                         value={selectedAlternative.toString()} 
-                        onValueChange={(val) => setSelectedAlternative(parseInt(val))}
+                        onValueChange={(val) => { setSelectedAlternative(parseInt(val)); setResultPrefix('none'); }}
                       >
                         <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
                           <SelectValue placeholder="Select representation" />
