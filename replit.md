@@ -4,7 +4,7 @@
 
 OmniUnit is a comprehensive unit conversion web application that enables conversions across a wide range of measurement systems including SI units, Imperial, US Customary, Archaic, and specialized industrial units. The application is built as a frontend-only TypeScript project with React, designed with a "scientific archival" aesthetic theme. Production builds create a single standalone HTML file for easy distribution.
 
-**Current Version:** v2.15.0
+**Current Version:** v2.16.0
 
 ## User Preferences
 
@@ -141,9 +141,20 @@ client/
 
 ## Recent Changes
 
+- v2.16.0: Added 7 new physics/engineering categories: Radioactive Decay, Cross-Section, Kinematic Viscosity, Electric Field Strength, Magnetic Field Strength (H), Sound Intensity, Acoustic Impedance
+- v2.16.0: Radioactive Decay category with half-life ↔ decay constant ↔ mean lifetime conversions using inverse relationships (t½ = ln(2)/λ, τ = 1/λ)
+- v2.16.0: Cross-Section category with barn (10⁻²⁸ m²), femtobarn, and square meter units for particle physics
+- v2.16.0: Kinematic Viscosity with Stokes (St), centistokes (cSt), and m²/s
+- v2.16.0: Electric Field Strength with V/m, kV/m, kV/cm, statV/cm
+- v2.16.0: Magnetic Field Strength (H) with A/m and Oersted (1 Oe ≈ 79.58 A/m)
+- v2.16.0: Sound Intensity with W/m², W/cm², reference intensity I₀ (10⁻¹² W/m²)
+- v2.16.0: Acoustic Impedance with Rayl, MRayl, Pa·s/m
+- v2.16.0: Removed separate nm_wave unit from Photon/Light - use nano prefix on meter wavelength instead (avoids prefix stacking)
+- v2.16.0: Moved Photon/Light category from Electricity & Magnetism to Radiation & Physics group
+- v2.16.0: Unit tests expanded to 185 tests (added tests for all new categories)
 - v2.15.0: Auto-prefix selection: Converter automatically chooses optimal prefix when result calculated (e.g., 1000 m → 1 km)
 - v2.15.0: Precision-aware prefix selection: Auto-selects smaller prefixes to avoid values displaying as 0.0000
-- v2.15.0: Added Photon/Light category with wavelength (m, nm), frequency (Hz), and energy (eV) units using inverse conversion (E = hc/λ)
+- v2.15.0: Added Photon/Light category with wavelength (m), frequency (Hz), and energy (eV) units using inverse conversion (E = hc/λ)
 - v2.15.0: Added electron volt (eV) to Energy category (1.602176634e-19 J, SI prefixes enabled)
 - v2.15.0: Added electron volt mass equivalent (eV/c²) to Mass category (1.78266192e-36 kg, SI prefixes enabled)
 - v2.15.0: Removed "Evaluate & Copy" button from calculator (Normalize & Copy and Copy buttons remain)
