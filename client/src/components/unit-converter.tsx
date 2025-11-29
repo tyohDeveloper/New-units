@@ -4388,23 +4388,24 @@ export default function UnitConverter() {
                   <span className="font-mono text-sm w-8 text-right text-muted-foreground">{unit}</span>
                   <div className="flex gap-0">
                     {[0, 1, 2, 3, 4, 5, -1, -2, -3, -4, -5].map((exp) => {
-                      const expLabels: Record<number, string> = {
-                        0: '', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵',
+                      const superscripts: Record<number, string> = {
+                        1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵',
                         [-1]: '⁻¹', [-2]: '⁻²', [-3]: '⁻³', [-4]: '⁻⁴', [-5]: '⁻⁵'
                       };
+                      const label = exp === 0 ? '-' : `${unit}${superscripts[exp] || ''}`;
                       const isSelected = directExponents[unit] === exp;
                       return (
                         <button
                           key={exp}
                           onClick={() => setDirectExponents(prev => ({ ...prev, [unit]: exp }))}
-                          className={`w-7 h-7 text-xs font-mono border transition-all ${
+                          className={`min-w-[36px] h-7 px-1 text-xs font-mono border transition-all ${
                             isSelected 
                               ? 'bg-accent text-accent-foreground border-accent' 
                               : 'bg-background/30 border-border/50 hover:bg-muted/50 text-muted-foreground'
                           } ${exp === 0 ? 'rounded-l' : ''} ${exp === -5 ? 'rounded-r' : ''}`}
                           {...testId(`direct-exp-${unit}-${exp}`)}
                         >
-                          {expLabels[exp] || '-'}
+                          {label}
                         </button>
                       );
                     })}
