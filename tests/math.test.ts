@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { convert, CONVERSION_DATA, applyMathFunction } from '../client/src/lib/conversion-data';
+import { UNIT_NAME_TRANSLATIONS, type SupportedLanguage } from '../client/src/lib/localization';
 
 describe('Math Category', () => {
   const mathCategory = CONVERSION_DATA.find(c => c.id === 'math');
@@ -478,6 +479,89 @@ describe('Math Category', () => {
 
       expect(floor?.symbol).toBe('⌊x⌋');
       expect(ceil?.symbol).toBe('⌈x⌉');
+    });
+  });
+
+  describe('Math Function Name Localization', () => {
+    const mathUnits = CONVERSION_DATA.find(c => c.id === 'math')?.units || [];
+    
+    const mathFunctionNames = [
+      'Number', 'Pi (π)', "Euler's Number (ℯ)", 'Square Root of 2',
+      'Sine', 'Cosine', 'Tangent', 'Arc Sine', 'Arc Cosine', 'Arc Tangent',
+      'Hyperbolic Sine', 'Hyperbolic Cosine', 'Hyperbolic Tangent',
+      'Inverse Hyperbolic Sine', 'Inverse Hyperbolic Cosine', 'Inverse Hyperbolic Tangent',
+      'Square Root', 'Cube Root', 'Fourth Root',
+      'Square', 'Cube', 'Fourth Power',
+      'Log Base 10', 'Log Base 2', 'Natural Log', 'Exponential (eˣ)',
+      'Absolute Value', 'Sign', 'Floor', 'Ceiling', 'Round', 'Truncate'
+    ];
+
+    it('all math function names should have translation entries', () => {
+      mathFunctionNames.forEach(name => {
+        expect(UNIT_NAME_TRANSLATIONS[name]).toBeDefined();
+      });
+    });
+
+    it('all math function names should have German translations', () => {
+      mathFunctionNames.forEach(name => {
+        const trans = UNIT_NAME_TRANSLATIONS[name];
+        expect(trans?.de).toBeDefined();
+        expect(trans?.de).not.toBe('');
+      });
+    });
+
+    it('all math function names should have Japanese translations', () => {
+      mathFunctionNames.forEach(name => {
+        const trans = UNIT_NAME_TRANSLATIONS[name];
+        expect(trans?.ja).toBeDefined();
+        expect(trans?.ja).not.toBe('');
+      });
+    });
+
+    it('all math function names should have Arabic translations', () => {
+      mathFunctionNames.forEach(name => {
+        const trans = UNIT_NAME_TRANSLATIONS[name];
+        expect(trans?.ar).toBeDefined();
+        expect(trans?.ar).not.toBe('');
+      });
+    });
+
+    it('all math function names should have Chinese translations', () => {
+      mathFunctionNames.forEach(name => {
+        const trans = UNIT_NAME_TRANSLATIONS[name];
+        expect(trans?.zh).toBeDefined();
+        expect(trans?.zh).not.toBe('');
+      });
+    });
+
+    it('should translate Sine correctly in German', () => {
+      expect(UNIT_NAME_TRANSLATIONS['Sine']?.de).toBe('Sinus');
+    });
+
+    it('should translate Square Root correctly in German', () => {
+      expect(UNIT_NAME_TRANSLATIONS['Square Root']?.de).toBe('Quadratwurzel');
+    });
+
+    it('should translate Square correctly in Japanese', () => {
+      expect(UNIT_NAME_TRANSLATIONS['Square']?.ja).toBe('二乗');
+    });
+
+    it('should translate Cube correctly in Chinese', () => {
+      expect(UNIT_NAME_TRANSLATIONS['Cube']?.zh).toBe('立方');
+    });
+
+    it('should translate Absolute Value correctly in Arabic', () => {
+      expect(UNIT_NAME_TRANSLATIONS['Absolute Value']?.ar).toBe('القيمة المطلقة');
+    });
+
+    it('should translate Floor correctly in Korean', () => {
+      expect(UNIT_NAME_TRANSLATIONS['Floor']?.ko).toBe('내림');
+    });
+
+    it('every math unit name in conversion-data should have a translation entry', () => {
+      mathUnits.forEach(unit => {
+        expect(UNIT_NAME_TRANSLATIONS[unit.name]).toBeDefined();
+      });
     });
   });
 });

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES, Prefix, findOptimalPrefix } from '@/lib/conversion-data';
+import { UNIT_NAME_TRANSLATIONS, type SupportedLanguage } from '@/lib/localization';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -1536,12 +1537,27 @@ export default function UnitConverter() {
   // Helper: Translate unit names while keeping symbols in Latin
   // Unit NAMES are translated (e.g., "Meter" → "Metro" in Spanish), but unit SYMBOLS remain Latin (e.g., "m" stays "m")
   const translateUnitName = (unitName: string): string => {
-    // First try to get translation using t() function
+    // First try to get translation using t() function (for UI and category translations)
     const translated = t(unitName);
     // If translation found (different from key), use it
     if (translated !== unitName) {
       return translated;
     }
+    
+    // Then check UNIT_NAME_TRANSLATIONS from localization.ts (for all unit names including math functions)
+    if (UNIT_NAME_TRANSLATIONS[unitName]) {
+      const trans = UNIT_NAME_TRANSLATIONS[unitName];
+      const langKey = language as SupportedLanguage;
+      if (langKey === 'en' || langKey === 'en-us') {
+        return trans.en || unitName;
+      }
+      // Check for translation in selected language
+      const langValue = trans[langKey as keyof typeof trans];
+      if (langValue) return langValue as string;
+      // Fall back to English
+      return trans.en || unitName;
+    }
+    
     // Otherwise, apply regional spelling variations (meter vs metre) for English variations
     return applyRegionalSpelling(unitName);
   };
