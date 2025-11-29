@@ -94,6 +94,78 @@ export const BINARY_PREFIXES: Prefix[] = [
 
 export const ALL_PREFIXES: Prefix[] = [...PREFIXES, ...BINARY_PREFIXES].sort((a, b) => b.factor - a.factor);
 
+/**
+ * Find the optimal SI prefix for a value to minimize displayed digits.
+ * The goal is to keep values in the range [1, 1000) when possible.
+ * For example: 1500000 J → 1.5 MJ, 0.000001 m → 1 µm
+ * 
+ * @param value - The numeric value to find a prefix for
+ * @param unitSymbol - The unit symbol (used to check for 'kg' which can't use prefixes)
+ * @param precision - Optional precision setting to ensure value is displayable
+ * @returns Object with the best prefix and the adjusted value
+ */
+export function findOptimalPrefix(
+  value: number, 
+  unitSymbol: string = '',
+  precision: number = 8
+): { prefix: Prefix; adjustedValue: number } {
+  const nonePrefix = PREFIXES.find(p => p.id === 'none')!;
+  
+  // If unit contains 'kg', can't use prefixes (kg is already prefixed)
+  if (unitSymbol.includes('kg')) {
+    return { prefix: nonePrefix, adjustedValue: value };
+  }
+  
+  const absValue = Math.abs(value);
+  if (absValue === 0 || !isFinite(absValue)) {
+    return { prefix: nonePrefix, adjustedValue: value };
+  }
+  
+  // Find the prefix that results in a value closest to 1-1000 range
+  // This minimizes the number of digits before the decimal point
+  let bestPrefix = nonePrefix;
+  let bestScore = Math.abs(Math.log10(absValue)); // Score: distance from 1
+  
+  for (const prefix of PREFIXES) {
+    if (prefix.id === 'none') continue;
+    
+    const adjustedAbs = absValue / prefix.factor;
+    
+    // Ideal range is [1, 1000) - gives 1-3 digits before decimal
+    if (adjustedAbs >= 1 && adjustedAbs < 1000) {
+      // Score based on closeness to 1 (lower is better)
+      const score = Math.abs(Math.log10(adjustedAbs));
+      if (score < bestScore) {
+        bestScore = score;
+        bestPrefix = prefix;
+      }
+    }
+  }
+  
+  // Precision-aware fallback: if the value with no prefix would round to 0,
+  // find a prefix that makes it displayable at the given precision
+  const adjustedWithBest = value / bestPrefix.factor;
+  const roundedWithBest = parseFloat(adjustedWithBest.toFixed(precision));
+  
+  if (roundedWithBest === 0 && value !== 0) {
+    // Value would round to 0, try to find a smaller prefix
+    for (const prefix of PREFIXES) {
+      if (prefix.factor >= bestPrefix.factor) continue; // Only try smaller prefixes
+      const adjusted = absValue / prefix.factor;
+      const rounded = parseFloat(adjusted.toFixed(precision));
+      if (rounded !== 0) {
+        bestPrefix = prefix;
+        break;
+      }
+    }
+  }
+  
+  return { 
+    prefix: bestPrefix, 
+    adjustedValue: value / bestPrefix.factor 
+  };
+}
+
 export interface UnitDefinition {
   id: string;
   name: string;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES, Prefix } from '@/lib/conversion-data';
+import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES, Prefix, findOptimalPrefix } from '@/lib/conversion-data';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -1440,6 +1440,7 @@ export default function UnitConverter() {
       }
       setFromPrefix('none');
       setToPrefix('none');
+      setAutoSelectPrefix(true); // Enable auto-prefix when category changes
     }
   }, [activeCategory]);
 
@@ -1759,46 +1760,6 @@ export default function UnitConverter() {
     return parts.join('⋅') || formatDimensions(dims);
   };
 
-  // Helper: Find optimal prefix to minimize digit count
-  // Returns the prefix that keeps the value closest to the range [1, 1000)
-  const findOptimalPrefix = (value: number, unitSymbol: string): { prefix: Prefix; adjustedValue: number } => {
-    // If unit contains 'kg', can't use prefixes (kg is already prefixed)
-    if (unitSymbol.includes('kg')) {
-      return { prefix: PREFIXES.find(p => p.id === 'none')!, adjustedValue: value };
-    }
-    
-    const absValue = Math.abs(value);
-    if (absValue === 0 || !isFinite(absValue)) {
-      return { prefix: PREFIXES.find(p => p.id === 'none')!, adjustedValue: value };
-    }
-    
-    // Find the prefix that results in a value closest to 1-1000 range
-    // This minimizes the number of digits before the decimal point
-    let bestPrefix = PREFIXES.find(p => p.id === 'none')!;
-    let bestScore = Math.abs(Math.log10(absValue)); // Score: distance from 1
-    
-    for (const prefix of PREFIXES) {
-      if (prefix.id === 'none') continue;
-      
-      const adjustedAbs = absValue / prefix.factor;
-      
-      // Ideal range is [1, 1000) - gives 1-3 digits before decimal
-      if (adjustedAbs >= 1 && adjustedAbs < 1000) {
-        // Score based on closeness to 1 (lower is better)
-        const score = Math.abs(Math.log10(adjustedAbs));
-        if (score < bestScore) {
-          bestScore = score;
-          bestPrefix = prefix;
-        }
-      }
-    }
-    
-    return { 
-      prefix: bestPrefix, 
-      adjustedValue: value / bestPrefix.factor 
-    };
-  };
-
   // Helper: Get derived unit symbol from dimensions (for exact matches only)
   const getDerivedUnit = (dims: DimensionalFormula): string => {
     const dimsStr = JSON.stringify(dims);
@@ -1974,6 +1935,9 @@ export default function UnitConverter() {
     return val;
   };
 
+  // Track whether we should auto-select prefix (true when unit changes, false when user manually selects)
+  const [autoSelectPrefix, setAutoSelectPrefix] = useState(true);
+  
   // Calculate result
   useEffect(() => {
     if (!inputValue || !fromUnit || !toUnit) {
@@ -1999,11 +1963,26 @@ export default function UnitConverter() {
     const isSpecialTo = toUnit === 'deg_dms' || toUnit === 'ft_in';
 
     const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData && !isSpecialFrom) ? fromPrefixData.factor : 1;
-    const toFactor = (toUnitData?.allowPrefixes && toPrefixData && !isSpecialTo) ? toPrefixData.factor : 1;
-
-    const res = convert(val, fromUnit, toUnit, activeCategory, fromFactor, toFactor);
-    setResult(res);
-  }, [inputValue, fromUnit, toUnit, activeCategory, fromPrefix, toPrefix, fromUnitData, toUnitData]);
+    
+    // Auto-select optimal prefix for "to" unit if enabled
+    if (autoSelectPrefix && toUnitData?.allowPrefixes && !isSpecialTo) {
+      // Calculate result with no prefix first to find optimal prefix
+      const rawResult = convert(val, fromUnit, toUnit, activeCategory, fromFactor, 1);
+      const { prefix: optimalPrefix } = findOptimalPrefix(rawResult, toUnitData.symbol || '', precision);
+      
+      // Set the optimal prefix and calculate final result
+      if (optimalPrefix.id !== toPrefix) {
+        setToPrefix(optimalPrefix.id);
+      }
+      const res = rawResult / optimalPrefix.factor;
+      setResult(res);
+    } else {
+      // Use user-selected prefix
+      const toFactor = (toUnitData?.allowPrefixes && toPrefixData && !isSpecialTo) ? toPrefixData.factor : 1;
+      const res = convert(val, fromUnit, toUnit, activeCategory, fromFactor, toFactor);
+      setResult(res);
+    }
+  }, [inputValue, fromUnit, toUnit, activeCategory, fromPrefix, toPrefix, fromUnitData, toUnitData, autoSelectPrefix, precision]);
 
   const swapUnits = () => {
     const tempUnit = fromUnit;
@@ -2551,44 +2530,6 @@ export default function UnitConverter() {
     setResultPrefix('none');
   };
 
-  const executeAndCopy = () => {
-    if (calcValues[3] == null) return;
-    
-    // Get the current result value
-    const val = calcValues[3];
-    
-    // Apply precision to the result value - this becomes the new field 1 value
-    // The precision is applied in SI base units (val.value is already in base units)
-    const precisionAppliedValue = fixPrecision(parseFloat(cleanNumber(val.value, calculatorPrecision)));
-    
-    // Create the new value with precision applied
-    const newValue: CalcValue = {
-      value: precisionAppliedValue,
-      dimensions: val.dimensions,
-      prefix: 'none'
-    };
-    
-    // Update calculator field first (put precision-applied result in field 1)
-    setCalcValues([newValue, null, null, null]);
-    setCalcOp1(null);
-    setCalcOp2(null);
-    setResultUnit(null);
-    setResultCategory(null);
-    setResultPrefix('none');
-    
-    // Now copy the precision-applied value
-    const format = NUMBER_FORMATS[numberFormat];
-    const valueStr = cleanNumber(precisionAppliedValue, calculatorPrecision);
-    const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
-    const unitSymbol = formatDimensions(val.dimensions);
-    const textToCopy = unitSymbol ? `${formattedStr} ${unitSymbol}` : formattedStr;
-    navigator.clipboard.writeText(textToCopy);
-    
-    // Trigger flash animation
-    setFlashCopyCalc(true);
-    setTimeout(() => setFlashCopyCalc(false), 300);
-  };
-
   const normalizeAndCopy = () => {
     // Use the canonical calculator result (already computed by useEffect)
     if (calcValues[3] == null) return;
@@ -2615,7 +2556,7 @@ export default function UnitConverter() {
     let adjustedValue = precisionAppliedValue;
     
     if (canUsePrefix) {
-      const result = findOptimalPrefix(precisionAppliedValue, unitSymbol);
+      const result = findOptimalPrefix(precisionAppliedValue, unitSymbol, calculatorPrecision);
       optimalPrefix = result.prefix;
       adjustedValue = result.adjustedValue;
     }
@@ -3181,6 +3122,7 @@ export default function UnitConverter() {
                       const normalized = normalizeMassUnit(toUnit, val);
                       setToUnit(normalized.unit);
                       setToPrefix(normalized.prefix);
+                      setAutoSelectPrefix(false); // User manually selected, disable auto-selection
                     }}
                     disabled={!toUnitData?.allowPrefixes}
                   >
@@ -3196,7 +3138,7 @@ export default function UnitConverter() {
                     </SelectContent>
                   </Select>
 
-                  <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); }}>
+                  <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setAutoSelectPrefix(true); }}>
                     <SelectTrigger className="flex-1 min-w-0 bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
                       <SelectValue placeholder={t('Unit')} />
                     </SelectTrigger>
@@ -3797,7 +3739,7 @@ export default function UnitConverter() {
               )}
             </div>
 
-            {/* Action buttons row - Normalize & Copy aligned to calculator field, Evaluate & Copy and Copy at far right of page */}
+            {/* Action buttons row - Normalize & Copy aligned to calculator field, Copy at far right of page */}
             <div className="flex items-center">
               {/* Normalize & Copy - right-aligned within calculator field width */}
               <div className="flex justify-end" style={{ width: CommonFieldWidth }}>
@@ -3821,44 +3763,25 @@ export default function UnitConverter() {
               </div>
               {/* Spacer */}
               <div className="flex-1" />
-              {/* Evaluate & Copy and Copy - at far right of page */}
-              <div className="flex gap-2">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={executeAndCopy}
-                  disabled={!calcValues[3]}
-                  className="text-xs hover:text-accent gap-1 shrink-0"
+              {/* Copy - at far right of page */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={copyCalcResult}
+                disabled={!calcValues[3]}
+                className="text-xs hover:text-accent gap-1 shrink-0"
+              >
+                <Copy className="w-3 h-3" />
+                <motion.span
+                  animate={{
+                    opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                    scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <motion.span
-                    animate={{
-                      opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
-                      scale: flashCopyCalc ? [1, 1.1, 1] : 1
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {t('Evaluate & Copy')}
-                  </motion.span>
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={copyCalcResult}
-                  disabled={!calcValues[3]}
-                  className="text-xs hover:text-accent gap-1 shrink-0"
-                >
-                  <Copy className="w-3 h-3" />
-                  <motion.span
-                    animate={{
-                      opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
-                      scale: flashCopyCalc ? [1, 1.1, 1] : 1
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {t('Copy')}
-                  </motion.span>
-                </Button>
-              </div>
+                  {t('Copy')}
+                </motion.span>
+              </Button>
             </div>
           </div>
         </Card>
