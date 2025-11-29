@@ -44,6 +44,13 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
     - Specific Heat: J⋅kg⁻¹⋅K⁻¹ (no prefix) + J⋅g⁻¹⋅K⁻¹ (with prefixes, factor=1000 - inverted denominator)
     - When g-based unit + kilo prefix is selected → auto-switches to kg-based unit with no prefix
 - **Unit Change Behavior**: When changing From or To unit, prefix resets to 'none' automatically
+- **Scientific Notation Display**: Results automatically switch to scientific notation (e.g., 1.0000e-25) when:
+  - Value < 1e-6 (very small numbers)
+  - Value would round to 0 at current precision (prevents showing "0" for insignificant but non-zero values)
+  - Value >= 1e8 (8+ digits in integer part, e.g., 100,000,000+)
+  - Precision setting controls significant figures in scientific notation mode
+  - Copy function uses same formatting as display for consistency
+- **Scientific Notation Input**: Input field accepts scientific notation (e.g., 12e35, 1.5e-10, 3E8, 2.998e+8)
 - **CGS Unit Prefixes**: All CGS base units support prefixes (dyne, erg, poise, stokes, gauss, maxwell, oersted, statampere, statvolt, etc.) but pre-prefixed units (centipoise, centistokes) do NOT allow additional prefixes
 - **Comparison Mode**: Toggle button ("Compare All") next to the "To" label shows input value converted to up to 8 units simultaneously with optimal prefix display and click-to-copy functionality
 - **Typography Category**: 11 units for print/design measurements including point (1/72 inch), pica (12 points), pixel (96 PPI ref), em, twip, cicero, with meter as SI base
