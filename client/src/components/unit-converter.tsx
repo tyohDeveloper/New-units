@@ -3368,12 +3368,15 @@ export default function UnitConverter() {
           )}
         </div>
 
-        {/* Fixed-height content container to prevent layout shift */}
-        <div className="min-h-[420px]">
-          {/* Converter Tab Content */}
-          {activeTab === 'converter' && (
-          <Card className="p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden h-full">
-          {/* Background decoration */}
+        {/* Fixed-height content container - both tabs rendered, only active one visible */}
+        <div className="grid">
+          {/* Converter Tab Content - always rendered, visibility controlled */}
+          <Card 
+            className={`p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden col-start-1 row-start-1 ${
+              activeTab === 'converter' ? '' : 'invisible'
+            }`}
+          >
+            {/* Background decoration */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
 
           <div className="grid gap-8 relative z-10">
@@ -3782,12 +3785,14 @@ export default function UnitConverter() {
 
             </div>
           </Card>
-          )}
 
-          {/* Custom Tab Content */}
-          {activeTab === 'custom' && (
-          <Card className="p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden h-full">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+          {/* Custom Tab Content - always rendered, visibility controlled */}
+          <Card 
+            className={`p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden col-start-1 row-start-1 ${
+              activeTab === 'custom' ? '' : 'invisible'
+            }`}
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
           
           <div className="flex flex-col gap-6 relative z-10">
             {/* Top row: Value input, Result display, and Copy button */}
@@ -3954,7 +3959,6 @@ export default function UnitConverter() {
             </div>
           </div>
           </Card>
-          )}
         </div>
 
         {/* Mini Calculator */}
