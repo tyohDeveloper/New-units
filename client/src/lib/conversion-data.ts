@@ -373,7 +373,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "m⋅s⁻¹",
     units: [
       { id: "mps", name: "Meter/Second", symbol: "m⋅s⁻¹", factor: 1, allowPrefixes: true },
-      { id: "kmh", name: "Kilometer/Hour", symbol: "km⋅h⁻¹", factor: 0.277778 },
+      { id: "kmh", name: "Kilometer/Hour", symbol: "km⋅h⁻¹", factor: 1000/3600 },
       { id: "mph", name: "Mile/Hour", symbol: "mph", factor: 0.44704 },
       { id: "kn", name: "Knot", symbol: "kn", factor: 0.514444 },
       { id: "mach", name: "Mach", symbol: "Ma", factor: 343 },
@@ -716,11 +716,11 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "rad",
     units: [
       { id: "rad", name: "Radian", symbol: "rad", factor: 1, allowPrefixes: true },
-      { id: "arcsec", name: "Arcsecond", symbol: "″", factor: 4.848e-6 },
-      { id: "arcmin", name: "Arcminute", symbol: "′", factor: 0.000290888 },
-      { id: "grad", name: "Gradian", symbol: "grad", factor: 0.015708 },
-      { id: "deg", name: "Degree", symbol: "°", factor: 0.0174533 },
-      { id: "deg_dms", name: "Degree (DMS)", symbol: "° ′ ″", factor: 0.0174533 },
+      { id: "arcsec", name: "Arcsecond", symbol: "″", factor: Math.PI/648000 },
+      { id: "arcmin", name: "Arcminute", symbol: "′", factor: Math.PI/10800 },
+      { id: "grad", name: "Gradian", symbol: "grad", factor: Math.PI/200 },
+      { id: "deg", name: "Degree", symbol: "°", factor: Math.PI/180 },
+      { id: "deg_dms", name: "Degree (DMS)", symbol: "° ′ ″", factor: Math.PI/180 },
     ],
   },
   {
@@ -731,7 +731,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     units: [
       { id: "sr", name: "Steradian", symbol: "sr", factor: 1, allowPrefixes: true },
       { id: "sqdeg", name: "Square Degree", symbol: "deg²", factor: 0.0003046 },
-      { id: "sp", name: "Spat", symbol: "sp", factor: 12.56637 },
+      { id: "sp", name: "Spat", symbol: "sp", factor: 4*Math.PI },
     ],
   },
   {
@@ -893,7 +893,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "lm", name: "Lumen", symbol: "lm", factor: 1, allowPrefixes: true },
       { id: "cdsr", name: "Candela-Steradian", symbol: "cd⋅sr", factor: 1 },
       { id: "talbot", name: "Talbot", symbol: "T", factor: 1, description: "Lumen-second (photographic)" },
-      { id: "candlepower", name: "Candlepower (spherical)", symbol: "cp", factor: 12.566371 },
+      { id: "candlepower", name: "Candlepower (spherical)", symbol: "cp", factor: 4*Math.PI },
     ],
   },
   {
