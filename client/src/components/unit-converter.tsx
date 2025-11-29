@@ -2999,10 +2999,13 @@ export default function UnitConverter() {
     if (!val) return;
     
     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-    const displayValue = fixPrecision(val.value / prefix.factor);
     // Use normalizeDimensions to get derived units (like J, N, W) instead of raw base units
-    // This prevents prefix stacking with kg (e.g., "mkg" instead of "mJ")
-    const unitSymbol = `${prefix.symbol}${normalizeDimensions(val.dimensions)}`;
+    const normalizedSymbol = normalizeDimensions(val.dimensions);
+    // Don't apply prefix if the symbol contains 'kg' - prevents stacking like "Gkg"
+    const canApplyPrefix = !normalizedSymbol.includes('kg');
+    const effectivePrefix = canApplyPrefix ? prefix : PREFIXES.find(p => p.id === 'none')!;
+    const displayValue = fixPrecision(val.value / effectivePrefix.factor);
+    const unitSymbol = `${effectivePrefix.symbol}${normalizedSymbol}`;
     
     // Copy with only decimal separator, no thousands separator
     const format = NUMBER_FORMATS[numberFormat];
@@ -3725,7 +3728,9 @@ export default function UnitConverter() {
                     const val = calcValues[0];
                     if (!val) return '';
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    const displayValue = val.value / prefix.factor;
+                    const normalizedSymbol = normalizeDimensions(val.dimensions);
+                    const effectiveFactor = normalizedSymbol.includes('kg') ? 1 : prefix.factor;
+                    const displayValue = val.value / effectiveFactor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : ''}
                 </span>
@@ -3734,7 +3739,9 @@ export default function UnitConverter() {
                     const val = calcValues[0];
                     if (!val) return '';
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    return `${prefix.symbol}${normalizeDimensions(val.dimensions)}`;
+                    const normalizedSymbol = normalizeDimensions(val.dimensions);
+                    const prefixSymbol = normalizedSymbol.includes('kg') ? '' : prefix.symbol;
+                    return `${prefixSymbol}${normalizedSymbol}`;
                   })() : ''}
                 </span>
               </motion.div>
@@ -3773,7 +3780,9 @@ export default function UnitConverter() {
                     const val = calcValues[1];
                     if (!val) return '';
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    const displayValue = val.value / prefix.factor;
+                    const normalizedSymbol = normalizeDimensions(val.dimensions);
+                    const effectiveFactor = normalizedSymbol.includes('kg') ? 1 : prefix.factor;
+                    const displayValue = val.value / effectiveFactor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : ''}
                 </span>
@@ -3782,7 +3791,9 @@ export default function UnitConverter() {
                     const val = calcValues[1];
                     if (!val) return '';
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    return `${prefix.symbol}${normalizeDimensions(val.dimensions)}`;
+                    const normalizedSymbol = normalizeDimensions(val.dimensions);
+                    const prefixSymbol = normalizedSymbol.includes('kg') ? '' : prefix.symbol;
+                    return `${prefixSymbol}${normalizedSymbol}`;
                   })() : ''}
                 </span>
               </motion.div>
@@ -3853,7 +3864,9 @@ export default function UnitConverter() {
                     const val = calcValues[2];
                     if (!val) return '';
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    const displayValue = val.value / prefix.factor;
+                    const normalizedSymbol = normalizeDimensions(val.dimensions);
+                    const effectiveFactor = normalizedSymbol.includes('kg') ? 1 : prefix.factor;
+                    const displayValue = val.value / effectiveFactor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : ''}
                 </span>
@@ -3862,7 +3875,9 @@ export default function UnitConverter() {
                     const val = calcValues[2];
                     if (!val) return '';
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    return `${prefix.symbol}${normalizeDimensions(val.dimensions)}`;
+                    const normalizedSymbol = normalizeDimensions(val.dimensions);
+                    const prefixSymbol = normalizedSymbol.includes('kg') ? '' : prefix.symbol;
+                    return `${prefixSymbol}${normalizedSymbol}`;
                   })() : ''}
                 </span>
               </motion.div>
@@ -3930,9 +3945,10 @@ export default function UnitConverter() {
                     const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                     const unit = cat?.units.find(u => u.id === resultUnit);
                     if (unit) {
-                      // Apply the result prefix if the unit allows prefixes
+                      // Apply the result prefix if the unit allows prefixes AND symbol doesn't contain 'kg'
                       const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
-                      const prefixFactor = unit.allowPrefixes ? prefixData.factor : 1;
+                      const canApplyPrefix = unit.allowPrefixes && !unit.symbol?.includes('kg');
+                      const prefixFactor = canApplyPrefix ? prefixData.factor : 1;
                       let convertedValue = calcValues[3].value / (unit.factor * prefixFactor);
                       
                       return formatNumberWithSeparators(convertedValue, calculatorPrecision);
@@ -3941,10 +3957,12 @@ export default function UnitConverter() {
                   })() : calcValues[3] && resultCategory ? (() => {
                     const val = calcValues[3];
                     if (!val) return '';
+                    const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                     
-                    // Display using SI base unit with selected prefix
+                    // Display using SI base unit with selected prefix, but not if it contains 'kg'
                     const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
-                    const displayValue = val.value / prefixData.factor;
+                    const canApplyPrefix = !cat?.baseSISymbol?.includes('kg');
+                    const displayValue = val.value / (canApplyPrefix ? prefixData.factor : 1);
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : calcValues[3] ? (() => {
                     const val = calcValues[3];
@@ -3971,9 +3989,10 @@ export default function UnitConverter() {
                     const unit = cat?.units.find(u => u.id === resultUnit);
                     if (!unit) return formatDimensions(val.dimensions);
                     
-                    // Include prefix symbol if unit allows prefixes
+                    // Include prefix symbol if unit allows prefixes AND symbol doesn't contain 'kg'
                     const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
-                    const prefixSymbol = unit.allowPrefixes && resultPrefix !== 'none' ? prefixData.symbol : '';
+                    const canApplyPrefix = unit.allowPrefixes && !unit.symbol?.includes('kg');
+                    const prefixSymbol = canApplyPrefix && resultPrefix !== 'none' ? prefixData.symbol : '';
                     return `${prefixSymbol}${unit.symbol}`;
                   })() : calcValues[3] && resultCategory ? (() => {
                     const val = calcValues[3];
@@ -3981,9 +4000,10 @@ export default function UnitConverter() {
                     const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                     if (!cat) return formatDimensions(val.dimensions);
                     
-                    // Display SI base unit symbol with prefix
+                    // Display SI base unit symbol with prefix, but not if it contains 'kg'
                     const prefixData = PREFIXES.find(p => p.id === resultPrefix) || PREFIXES.find(p => p.id === 'none')!;
-                    const prefixSymbol = resultPrefix !== 'none' ? prefixData.symbol : '';
+                    const canApplyPrefix = !cat.baseSISymbol?.includes('kg');
+                    const prefixSymbol = canApplyPrefix && resultPrefix !== 'none' ? prefixData.symbol : '';
                     return `${prefixSymbol}${cat.baseSISymbol}`;
                   })() : calcValues[3] ? (() => {
                     const val = calcValues[3];
