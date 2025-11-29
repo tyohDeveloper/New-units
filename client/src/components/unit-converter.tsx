@@ -3153,7 +3153,7 @@ export default function UnitConverter() {
                     </SelectContent>
                   </Select>
 
-                  <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); setAutoSelectPrefix(true); }}>
+                  <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); setAutoSelectPrefix(false); }}>
                     <SelectTrigger className="flex-1 min-w-0 bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
                       <SelectValue placeholder={t('Unit')} />
                     </SelectTrigger>
