@@ -25,6 +25,12 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 - **Archaic & Regional Categories**: Six specialized categories for historical and regional units: Archaic Length (cubits, furlongs, Chinese chi/zhang/li, Japanese shaku/ken/ri, Korean ja/ri), Archaic Mass (grains, troy ounce, carat, tola, don, Chinese jin/tael, Japanese momme/kan, Korean geun), Archaic Volume (apothecary units, US kitchen units, bushels, Chinese sheng/dou, Japanese go/sho/koku, Korean doe/mal), Archaic Area (Japanese tatami variants, Korean pyeong, Chinese mu/qing, Israeli dunam, Egyptian feddan/qirat), Archaic Energy (Erg, Foot-pound force, Thermie, Quad), Archaic Power (Erg/s, Foot-pound/s, Boiler HP).
 - **Type Safety**: End-to-end TypeScript coverage with strict mode and Zod for schema validation.
 - **Modularity**: Component-based UI, client-side conversion logic, and plugin-based Vite configuration.
+- **SI Prefix Handling**: 
+  - Kilogram (kg) is the SI base unit (factor=1) but has NO `allowPrefixes` to prevent stacking (no "milli-kilo-gram")
+  - Gram (g) has `allowPrefixes: true` enabling mg, cg, µg, etc. via prefix dropdown
+  - Binary prefixes (Ki, Mi, Gi) apply ONLY to Data/Information category
+  - All other categories use decimal SI prefixes only (k, M, G, m, µ, etc.)
+- **CGS Unit Prefixes**: All CGS base units support prefixes (dyne, erg, poise, stokes, gauss, maxwell, oersted, statampere, statvolt, etc.) but pre-prefixed units (centipoise, centistokes) do NOT allow additional prefixes
 
 ### Build & Deployment
 - **TypeScript Configuration**: Strict mode enabled, path alias for client code, ESNext module system.
