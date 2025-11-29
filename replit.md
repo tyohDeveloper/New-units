@@ -18,7 +18,14 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 ### Key Design Decisions
 - **Calculator Layout**: CSS Grid-based, six-column layout with four arithmetic operators (×, /, +, −). Addition and subtraction require dimensional compatibility.
 - **Clipboard Copying**: Supports precision settings and "Normalize & Copy" for normalizing to SI units with optimal prefixing.
-- **Math Category**: Includes functions (sin, cos, tan, sqrt, log, ln, exp, abs) and constants (π, e, √2), all producing dimensionless outputs.
+- **Math Category**: Includes 22 functions and 3 constants, all producing dimensionless outputs:
+  - Trigonometric: sin, cos, tan, asin, acos, atan
+  - Hyperbolic: sinh, cosh, tanh, asinh, acosh, atanh
+  - Roots: sqrt (√), cbrt (∛), root4 (∜)
+  - Logarithmic/Exponential: log (log₁₀), ln, log2 (log₂), exp
+  - Rounding: floor (⌊x⌋), ceil (⌈x⌉), round, trunc
+  - Other: abs, sign (sgn)
+  - Constants: π, ℯ (Euler's number using Unicode U+212F), √2
 - **Fuel Energy Category**: Converts between fuel volumes, masses, and energy units for 8 fuel types (Gasoline, Diesel, Jet Fuel, Kerosene, Ethanol, E-85, Propane, LNG) plus explosive equivalents (TNT, Dynamite). Uses Joule as base unit with Wh (with prefixes for kWh/MWh/GWh), BTU, Therm, and tce/toe.
 - **Main Energy Category**: Includes Joule (SI), eV, BTU, cal, kcal, Wh, kWh, Therm, Ton of TNT, Barrel of Oil Equivalent (BOE), Ton of Coal Equivalent (TCE) for industrial/utility applications.
 - **Main Power Category**: Includes Watt (SI), BTU per Hour (HVAC), Metric HP, Horsepower, Ton of Refrigeration (cooling industry).
