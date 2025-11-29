@@ -19,7 +19,7 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 - **Calculator Layout**: CSS Grid-based, six-column layout with four arithmetic operators (×, /, +, −). Addition and subtraction require dimensional compatibility.
 - **Clipboard Copying**: Supports precision settings and "Normalize & Copy" for normalizing to SI units with optimal prefixing.
 - **Math Category**: Includes functions (sin, cos, tan, sqrt, log, ln, exp, abs) and constants (π, e, √2), all producing dimensionless outputs.
-- **Fuel Energy Category**: Converts between fuel volumes, masses, and energy units for various fuel types (e.g., Gasoline, Diesel, Jet Fuel) using Joule as the base unit with energy dimensions (kg⋅m²⋅s⁻²).
+- **Fuel Energy Category**: Converts between fuel volumes, masses, and energy units for 8 fuel types (Gasoline, Diesel, Jet Fuel, Kerosene, Ethanol, E-85, Propane, LNG) plus explosive equivalents (TNT, Dynamite). Uses Joule as base unit with Wh (with prefixes for kWh/MWh/GWh), BTU, Therm, and tce/toe.
 - **Type Safety**: End-to-end TypeScript coverage with strict mode and Zod for schema validation.
 - **Modularity**: Component-based UI, client-side conversion logic, and plugin-based Vite configuration.
 
