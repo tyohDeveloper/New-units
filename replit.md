@@ -31,6 +31,9 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
   - Binary prefixes (Ki, Mi, Gi) apply ONLY to Data/Information category
   - All other categories use decimal SI prefixes only (k, M, G, m, µ, etc.)
 - **CGS Unit Prefixes**: All CGS base units support prefixes (dyne, erg, poise, stokes, gauss, maxwell, oersted, statampere, statvolt, etc.) but pre-prefixed units (centipoise, centistokes) do NOT allow additional prefixes
+- **Comparison Mode**: Toggle button ("Compare All") next to the "To" label shows input value converted to up to 8 units simultaneously with optimal prefix display and click-to-copy functionality
+- **Typography Category**: 11 units for print/design measurements including point (1/72 inch), pica (12 points), pixel (96 PPI ref), em, twip, cicero, with meter as SI base
+- **Cooking Measures Category**: 24 units for kitchen measurements covering US/UK/Metric/Japan variants including teaspoons, tablespoons, cups, fluid ounces, pints, quarts, gallons, with mL as base unit
 
 ### Build & Deployment
 - **TypeScript Configuration**: Strict mode enabled, path alias for client code, ESNext module system.
