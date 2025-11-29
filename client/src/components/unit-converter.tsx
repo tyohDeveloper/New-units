@@ -2287,7 +2287,7 @@ export default function UnitConverter() {
   };
 
   // Helper to format number for copying with precision (no thousands separator)
-  // Uses scientific notation for extreme values to match display format
+  // Prefers decimal notation, only uses scientific for extreme values
   const formatForClipboard = (num: number, precisionValue: number): string => {
     const format = NUMBER_FORMATS[numberFormat];
     // Apply fixPrecision to remove floating-point artifacts
@@ -2300,18 +2300,23 @@ export default function UnitConverter() {
     
     const absNum = Math.abs(cleanedNum);
     
-    // Check if value would round to 0 at current precision
-    const wouldRoundToZero = absNum > 0 && absNum < Math.pow(10, -(precisionValue + 1));
-    
-    // Use scientific notation for extreme values (same thresholds as display)
-    if (absNum < 1e-6 || wouldRoundToZero || absNum >= 1e8) {
+    // Only use scientific notation for truly extreme values
+    if (absNum < 1e-12 || absNum >= 1e15) {
       const expStr = cleanedNum.toExponential(Math.min(precisionValue, 10));
       return format.useArabicNumerals ? toArabicNumerals(expStr) : expStr;
     }
     
+    // For small values, extend precision to show meaningful digits
+    let effectivePrecision = precisionValue;
+    if (absNum < 1 && absNum > 0) {
+      const magnitude = Math.floor(Math.log10(absNum));
+      const neededDecimals = Math.abs(magnitude) + precisionValue;
+      effectivePrecision = Math.min(neededDecimals, 12);
+    }
+    
     // Limit precision based on magnitude
     const magnitude = Math.floor(Math.log10(absNum));
-    const maxDecimals = Math.max(0, Math.min(precisionValue, 14 - magnitude));
+    const maxDecimals = Math.max(0, Math.min(effectivePrecision, 14 - magnitude));
     const formatted = toFixedBanker(cleanedNum, maxDecimals);
     // Remove trailing zeros after decimal point
     const cleaned = formatted.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
@@ -3022,7 +3027,7 @@ export default function UnitConverter() {
   };
 
   // Helper to format number with separators based on selected format
-  // Uses scientific notation for extreme values (same thresholds as formatResultValue)
+  // Prefers decimal notation, only uses scientific for extreme values
   const formatNumberWithSeparators = (num: number, precision: number): string => {
     const format = NUMBER_FORMATS[numberFormat];
     
@@ -3033,11 +3038,8 @@ export default function UnitConverter() {
     
     const absNum = Math.abs(num);
     
-    // Check if value would round to 0 at current precision
-    const wouldRoundToZero = absNum > 0 && absNum < Math.pow(10, -(precision + 1));
-    
-    // Use scientific notation for extreme values
-    if (absNum < 1e-6 || wouldRoundToZero || absNum >= 1e8) {
+    // Only use scientific notation for truly extreme values
+    if (absNum < 1e-12 || absNum >= 1e15) {
       const expStr = num.toExponential(Math.min(precision, 10));
       return format.useArabicNumerals ? toArabicNumerals(expStr) : expStr;
     }
@@ -3101,33 +3103,33 @@ export default function UnitConverter() {
     return `×${formatted}`;
   };
 
-  // Helper to format result with scientific notation for extreme values
-  // Uses scientific notation when:
-  // 1. Value is very small (< 1e-6) or would round to 0 at current precision
-  // 2. Value is very large (>= 1e8, i.e., 8+ digits in integer part)
+  // Helper to format result - prefers decimal notation, only uses scientific for extreme values
+  // Uses scientific notation only when:
+  // 1. Value is extremely small (< 1e-12, beyond reasonable display)
+  // 2. Value is extremely large (>= 1e15, beyond typical display)
   const formatResultValue = (num: number, precisionValue: number): string => {
     const format = NUMBER_FORMATS[numberFormat];
     if (num === 0) {
-      // Apply Arabic numerals to zero if needed
       return format.useArabicNumerals ? '٠' : '0';
     }
     const absNum = Math.abs(num);
     
-    // Check if value would round to 0 at current precision
-    // This happens when absNum < 10^-(precision+1) due to rounding
-    const wouldRoundToZero = absNum > 0 && absNum < Math.pow(10, -(precisionValue + 1));
-    
-    // Use scientific notation for:
-    // - Very small values (< 1e-6) 
-    // - Values that would round to 0 at current precision
-    // - Very large values (>= 1e8, meaning 8+ digits in integer part)
-    if (absNum < 1e-6 || wouldRoundToZero || absNum >= 1e8) {
-      // Use precision for significant figures in exponential notation
+    // Only use scientific notation for truly extreme values
+    if (absNum < 1e-12 || absNum >= 1e15) {
       const expStr = num.toExponential(Math.min(precisionValue, 10));
-      // Apply Arabic numerals to scientific notation if needed
       return format.useArabicNumerals ? toArabicNumerals(expStr) : expStr;
     }
-    return formatNumberWithSeparators(num, precisionValue);
+    
+    // For small values, extend precision to show meaningful digits
+    let effectivePrecision = precisionValue;
+    if (absNum < 1 && absNum > 0) {
+      // Calculate how many decimal places needed to show the value
+      const magnitude = Math.floor(Math.log10(absNum));
+      const neededDecimals = Math.abs(magnitude) + precisionValue;
+      effectivePrecision = Math.min(neededDecimals, 12); // Cap at 12 decimal places
+    }
+    
+    return formatNumberWithSeparators(num, effectivePrecision);
   };
 
   // Helper to determine input placeholder
