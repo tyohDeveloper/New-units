@@ -141,7 +141,7 @@ client/
 
 ## Recent Changes
 
-- v2.11.0: Created separate "Beer & Wine Volume" category with all volume units plus beer/wine-specific units
+- v2.11.0: Created separate "Beer & Wine" category with all volume units plus beer/wine-specific units (under Other group)
 - v2.11.0: Removed beer/wine checkbox from Volume category (now a dedicated category)
 - v2.11.0: Rack Geometry and Shipping Containers now include all standard length units plus specialized units
 - v2.11.0: All 3 action buttons (Normalize & Copy, Evaluate & Copy, Copy) consolidated to single row below result

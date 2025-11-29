@@ -1303,7 +1303,7 @@ export default function UnitConverter() {
     },
     {
       name: "Mechanics",
-      categories: ['area', 'volume', 'beer_wine_volume', 'speed', 'acceleration', 'force', 'pressure', 'energy', 'power', 'torque', 'flow', 'density', 'viscosity', 'surface_tension', 'frequency', 'angular_velocity', 'momentum']
+      categories: ['area', 'volume', 'speed', 'acceleration', 'force', 'pressure', 'energy', 'power', 'torque', 'flow', 'density', 'viscosity', 'surface_tension', 'frequency', 'angular_velocity', 'momentum']
     },
     {
       name: "Thermodynamics & Chemistry",
@@ -1323,7 +1323,7 @@ export default function UnitConverter() {
     },
     {
       name: "Other",
-      categories: ['math', 'data', 'rack_geometry', 'shipping']
+      categories: ['math', 'data', 'rack_geometry', 'shipping', 'beer_wine_volume']
     }
   ];
 

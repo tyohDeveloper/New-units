@@ -851,7 +851,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
   },
   {
     id: "beer_wine_volume",
-    name: "Beer & Wine Volume",
+    name: "Beer & Wine",
     baseUnit: "cubic meter",
     baseSISymbol: "m³",
     units: [
