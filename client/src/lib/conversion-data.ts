@@ -264,8 +264,8 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "A",
     units: [
       { id: "a", name: "Ampere", symbol: "A", factor: 1, allowPrefixes: true },
-      { id: "statA", name: "Statampere", symbol: "statA", factor: 3.33564e-10 },
-      { id: "biot", name: "Biot (abampere)", symbol: "Bi", factor: 10 },
+      { id: "statA", name: "Statampere", symbol: "statA", factor: 3.33564e-10, allowPrefixes: true },
+      { id: "biot", name: "Biot (abampere)", symbol: "Bi", factor: 10, allowPrefixes: true },
     ],
   },
   {
@@ -397,7 +397,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "kg⋅m⋅s⁻²",
     units: [
       { id: "n", name: "Newton", symbol: "N", factor: 1, allowPrefixes: true },
-      { id: "dyn", name: "Dyne", symbol: "dyn", factor: 1e-5 },
+      { id: "dyn", name: "Dyne", symbol: "dyn", factor: 1e-5, allowPrefixes: true },
       { id: "lbf", name: "Pound-force", symbol: "lbf", factor: 4.44822 },
       { id: "kgf", name: "Kilogram-force", symbol: "kgf", factor: 9.80665 },
       { id: "kip", name: "Kip", symbol: "kip", factor: 4448.22 },
@@ -413,7 +413,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "torr", name: "Torr", symbol: "Torr", factor: 133.322 },
       { id: "mmhg", name: "mmHg (Blood)", symbol: "mmHg", factor: 133.322 },
       { id: "psi", name: "PSI", symbol: "psi", factor: 6894.76 },
-      { id: "bar", name: "Bar", symbol: "bar", factor: 100000 },
+      { id: "bar", name: "Bar", symbol: "bar", factor: 100000, allowPrefixes: true },
       { id: "atm", name: "Atmosphere", symbol: "atm", factor: 101325 },
     ],
   },
@@ -483,7 +483,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "kg⋅m²⋅s⁻³⋅A⁻¹",
     units: [
       { id: "v", name: "Volt", symbol: "V", factor: 1, allowPrefixes: true },
-      { id: "statv", name: "Statvolt", symbol: "statV", factor: 299.792 },
+      { id: "statv", name: "Statvolt", symbol: "statV", factor: 299.792, allowPrefixes: true },
     ],
   },
   {
@@ -493,8 +493,8 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "kg⁻¹⋅m⁻²⋅s⁴⋅A²",
     units: [
       { id: "f", name: "Farad", symbol: "F", factor: 1, allowPrefixes: true },
-      { id: "statf", name: "Statfarad", symbol: "statF", factor: 1.11265e-12 },
-      { id: "abf", name: "Abfarad", symbol: "abF", factor: 1e-9 },
+      { id: "statf", name: "Statfarad", symbol: "statF", factor: 1.11265e-12, allowPrefixes: true },
+      { id: "abf", name: "Abfarad", symbol: "abF", factor: 1e-9, allowPrefixes: true },
     ],
   },
   {
@@ -523,7 +523,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "kg⋅m²⋅s⁻²⋅A⁻¹",
     units: [
       { id: "wb", name: "Weber", symbol: "Wb", factor: 1, allowPrefixes: true },
-      { id: "mx", name: "Maxwell", symbol: "Mx", factor: 1e-8 },
+      { id: "mx", name: "Maxwell", symbol: "Mx", factor: 1e-8, allowPrefixes: true },
     ],
   },
   {
@@ -533,7 +533,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "kg⋅s⁻²⋅A⁻¹",
     units: [
       { id: "t", name: "Tesla", symbol: "T", factor: 1, allowPrefixes: true },
-      { id: "g", name: "Gauss", symbol: "G", factor: 1e-4 },
+      { id: "g", name: "Gauss", symbol: "G", factor: 1e-4, allowPrefixes: true },
     ],
   },
   {
@@ -642,7 +642,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     units: [
       { id: "m2_per_s", name: "Square Meter per Second", symbol: "m²⋅s⁻¹", factor: 1, allowPrefixes: true },
       { id: "centistokes", name: "Centistokes", symbol: "cSt", factor: 1e-6 },
-      { id: "stokes", name: "Stokes", symbol: "St", factor: 1e-4 },
+      { id: "stokes", name: "Stokes", symbol: "St", factor: 1e-4, allowPrefixes: true },
       { id: "ft2_per_s", name: "Square Foot per Second", symbol: "ft²⋅s⁻¹", factor: 0.09290304 },
     ],
   },
@@ -666,7 +666,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "A⋅m⁻¹",
     units: [
       { id: "a_per_m", name: "Ampere per Meter", symbol: "A⋅m⁻¹", factor: 1, allowPrefixes: true },
-      { id: "oersted", name: "Oersted", symbol: "Oe", factor: 79.5774715 },
+      { id: "oersted", name: "Oersted", symbol: "Oe", factor: 79.5774715, allowPrefixes: true },
       { id: "ka_per_m", name: "Kiloampere per Meter", symbol: "kA⋅m⁻¹", factor: 1000 },
     ],
   },
@@ -776,7 +776,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     units: [
       { id: "pas", name: "Pascal-second", symbol: "Pa·s", factor: 1 },
       { id: "cp", name: "Centipoise", symbol: "cP", factor: 0.001 },
-      { id: "poise", name: "Poise", symbol: "P", factor: 0.1 },
+      { id: "poise", name: "Poise", symbol: "P", factor: 0.1, allowPrefixes: true },
     ],
   },
   {
@@ -1305,7 +1305,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "kg⋅m²⋅s⁻²",
     units: [
       { id: "j", name: "Joule", symbol: "J", factor: 1, allowPrefixes: true },
-      { id: "erg", name: "Erg (CGS)", symbol: "erg", factor: 1e-7 },
+      { id: "erg", name: "Erg (CGS)", symbol: "erg", factor: 1e-7, allowPrefixes: true },
       { id: "ft_lbf", name: "Foot-pound Force", symbol: "ft⋅lbf", factor: 1.3558179483 },
       { id: "thermie", name: "Thermie", symbol: "th", factor: 4.1868e6 },
       { id: "quad", name: "Quad", symbol: "quad", factor: 1.055e18 },

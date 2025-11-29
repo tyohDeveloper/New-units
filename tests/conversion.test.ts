@@ -72,6 +72,136 @@ describe("Conversion Data", () => {
     });
   });
 
+  describe("Prefix Stacking Prevention", () => {
+    describe("Mass - kg vs g prefix handling", () => {
+      const massCategory = CONVERSION_DATA.find((c) => c.id === "mass");
+      const kg = massCategory?.units.find((u) => u.id === "kg");
+      const g = massCategory?.units.find((u) => u.id === "g");
+
+      it("kilogram (kg) should NOT allow prefixes to prevent stacking like 'milli-kilo-gram'", () => {
+        expect(kg).toBeDefined();
+        expect(kg?.allowPrefixes).toBeFalsy();
+      });
+
+      it("gram (g) should allow prefixes for mg, cg, µg, etc.", () => {
+        expect(g).toBeDefined();
+        expect(g?.allowPrefixes).toBe(true);
+      });
+
+      it("kg should have factor=1 as the SI base for mass calculations", () => {
+        expect(kg?.factor).toBe(1);
+      });
+
+      it("gram should have factor=0.001 relative to kg", () => {
+        expect(g?.factor).toBe(0.001);
+      });
+    });
+
+    describe("Electronvolt (eV) prefix handling", () => {
+      const energyCategory = CONVERSION_DATA.find((c) => c.id === "energy");
+      const ev = energyCategory?.units.find((u) => u.id === "ev");
+
+      it("electronvolt should allow prefixes for keV, MeV, GeV, TeV", () => {
+        expect(ev).toBeDefined();
+        expect(ev?.allowPrefixes).toBe(true);
+      });
+    });
+
+    describe("CGS units should allow prefixes on base units only", () => {
+      it("dyne should allow prefixes", () => {
+        const forceCategory = CONVERSION_DATA.find((c) => c.id === "force");
+        const dyne = forceCategory?.units.find((u) => u.id === "dyn");
+        expect(dyne?.allowPrefixes).toBe(true);
+      });
+
+      it("erg should allow prefixes", () => {
+        const archaicEnergy = CONVERSION_DATA.find((c) => c.id === "archaic_energy");
+        const erg = archaicEnergy?.units.find((u) => u.id === "erg");
+        expect(erg?.allowPrefixes).toBe(true);
+      });
+
+      it("poise should allow prefixes", () => {
+        const viscosity = CONVERSION_DATA.find((c) => c.id === "viscosity");
+        const poise = viscosity?.units.find((u) => u.id === "poise");
+        expect(poise?.allowPrefixes).toBe(true);
+      });
+
+      it("centipoise should NOT allow prefixes (already prefixed)", () => {
+        const viscosity = CONVERSION_DATA.find((c) => c.id === "viscosity");
+        const centipoise = viscosity?.units.find((u) => u.id === "cp");
+        expect(centipoise?.allowPrefixes).toBeFalsy();
+      });
+
+      it("stokes should allow prefixes", () => {
+        const kinematicViscosity = CONVERSION_DATA.find((c) => c.id === "kinematic_viscosity");
+        const stokes = kinematicViscosity?.units.find((u) => u.id === "stokes");
+        expect(stokes?.allowPrefixes).toBe(true);
+      });
+
+      it("centistokes should NOT allow prefixes (already prefixed)", () => {
+        const kinematicViscosity = CONVERSION_DATA.find((c) => c.id === "kinematic_viscosity");
+        const centistokes = kinematicViscosity?.units.find((u) => u.id === "centistokes");
+        expect(centistokes?.allowPrefixes).toBeFalsy();
+      });
+
+      it("gauss should allow prefixes", () => {
+        const magneticDensity = CONVERSION_DATA.find((c) => c.id === "magnetic_density");
+        const gauss = magneticDensity?.units.find((u) => u.id === "g");
+        expect(gauss?.allowPrefixes).toBe(true);
+      });
+
+      it("maxwell should allow prefixes", () => {
+        const magneticFlux = CONVERSION_DATA.find((c) => c.id === "magnetic_flux");
+        const maxwell = magneticFlux?.units.find((u) => u.id === "mx");
+        expect(maxwell?.allowPrefixes).toBe(true);
+      });
+
+      it("oersted should allow prefixes", () => {
+        const magneticFieldH = CONVERSION_DATA.find((c) => c.id === "magnetic_field_h");
+        const oersted = magneticFieldH?.units.find((u) => u.id === "oersted");
+        expect(oersted?.allowPrefixes).toBe(true);
+      });
+
+      it("bar should allow prefixes (for mbar)", () => {
+        const pressure = CONVERSION_DATA.find((c) => c.id === "pressure");
+        const bar = pressure?.units.find((u) => u.id === "bar");
+        expect(bar?.allowPrefixes).toBe(true);
+      });
+    });
+
+    describe("CGS electromagnetic units should allow prefixes", () => {
+      it("statampere should allow prefixes", () => {
+        const current = CONVERSION_DATA.find((c) => c.id === "current");
+        const statA = current?.units.find((u) => u.id === "statA");
+        expect(statA?.allowPrefixes).toBe(true);
+      });
+
+      it("biot should allow prefixes", () => {
+        const current = CONVERSION_DATA.find((c) => c.id === "current");
+        const biot = current?.units.find((u) => u.id === "biot");
+        expect(biot?.allowPrefixes).toBe(true);
+      });
+
+      it("statvolt should allow prefixes", () => {
+        const potential = CONVERSION_DATA.find((c) => c.id === "potential");
+        const statv = potential?.units.find((u) => u.id === "statv");
+        expect(statv?.allowPrefixes).toBe(true);
+      });
+
+      it("statfarad should allow prefixes", () => {
+        const capacitance = CONVERSION_DATA.find((c) => c.id === "capacitance");
+        const statf = capacitance?.units.find((u) => u.id === "statf");
+        expect(statf?.allowPrefixes).toBe(true);
+      });
+
+      it("abfarad should allow prefixes", () => {
+        const capacitance = CONVERSION_DATA.find((c) => c.id === "capacitance");
+        const abf = capacitance?.units.find((u) => u.id === "abf");
+        expect(abf?.allowPrefixes).toBe(true);
+      });
+    });
+  });
+
   describe("All Categories", () => {
     it("should have multiple categories defined", () => {
       expect(CONVERSION_DATA.length).toBeGreaterThan(10);
