@@ -52,7 +52,8 @@ export type UnitCategory =
   | "refractive_power"
   | "sound_pressure"
   | "fuel_economy"
-  | "lightbulb";
+  | "lightbulb"
+  | "photon";
 
 export interface Prefix {
   id: string;
@@ -102,6 +103,7 @@ export interface UnitDefinition {
   description?: string;
   allowPrefixes?: boolean;
   mathFunction?: 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan' | 'sqrt' | 'log10' | 'ln' | 'exp' | 'abs'; // For math function units
+  isInverse?: boolean; // For photon wavelength: E = constant/λ (inverse relationship)
 }
 
 export interface CategoryDefinition {
@@ -157,6 +159,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "oz_t", name: "Troy Ounce", symbol: "oz t", factor: 0.0311035 },
       { id: "carat", name: "Carat", symbol: "ct", factor: 0.0002 },
       { id: "slug", name: "Slug", symbol: "slug", factor: 14.5939 },
+      { id: "ev_c2", name: "Electronvolt/c²", symbol: "eV/c²", factor: 1.78266192e-36, allowPrefixes: true },
     ],
   },
   {
@@ -358,7 +361,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "wh", name: "Watt-hour", symbol: "Wh", factor: 3600 },
       { id: "kwh", name: "Kilowatt-hour", symbol: "kWh", factor: 3.6e6 },
       { id: "btu", name: "BTU", symbol: "BTU", factor: 1055.06 },
-      { id: "ev", name: "Electronvolt", symbol: "eV", factor: 1.602e-19 },
+      { id: "ev", name: "Electronvolt", symbol: "eV", factor: 1.602176634e-19, allowPrefixes: true },
       { id: "tnt", name: "Ton of TNT", symbol: "tTNT", factor: 4.184e9 },
     ],
   },
@@ -467,6 +470,25 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "kg⋅m²⋅s⁻²⋅A⁻²",
     units: [
       { id: "h", name: "Henry", symbol: "H", factor: 1, allowPrefixes: true },
+    ],
+  },
+  {
+    id: "photon",
+    name: "Photon/Light",
+    baseUnit: "electronvolt",
+    baseSISymbol: "eV",
+    units: [
+      // Energy (base unit) - direct relationship
+      { id: "eV", name: "Electronvolt", symbol: "eV", factor: 1, allowPrefixes: true },
+      // Frequency - direct relationship: E = hν, so ν = E/h
+      // 1 eV photon has frequency = 1 eV / (4.135667696e-15 eV·s) = 2.417989242e14 Hz
+      // factor = h in eV·s = 4.135667696e-15 (multiply eV by this to get Hz)
+      { id: "Hz", name: "Hertz", symbol: "Hz", factor: 4.135667696e-15, allowPrefixes: true },
+      // Wavelength - INVERSE relationship: E = hc/λ, so λ = hc/E
+      // hc = 1.239841984e-6 eV·m
+      // 1 eV photon has wavelength = 1.239841984e-6 m = 1239.841984 nm
+      { id: "m_wave", name: "Meter (wavelength)", symbol: "m", factor: 1.239841984e-6, allowPrefixes: true, isInverse: true },
+      { id: "nm_wave", name: "Nanometer (wavelength)", symbol: "nm", factor: 1239.841984, allowPrefixes: true, isInverse: true },
     ],
   },
 
@@ -971,7 +993,26 @@ export function convert(
     return targetUnitValue / toPrefixFactor;
   }
 
-  // Standard conversion
-  const baseValue = val * fromUnit.factor;
-  return baseValue / (toUnit.factor * toPrefixFactor);
+  // Handle inverse units (like photon wavelength where E = hc/λ)
+  // For inverse units: baseValue = factor / val (instead of val * factor)
+  // For converting to inverse units: result = factor / baseValue (instead of baseValue / factor)
+  let baseValue: number;
+  if (fromUnit.isInverse) {
+    // Inverse input: E = hc/λ → baseValue = factor / val
+    baseValue = fromUnit.factor / val;
+  } else {
+    // Standard input
+    baseValue = val * fromUnit.factor;
+  }
+
+  let result: number;
+  if (toUnit.isInverse) {
+    // Inverse output: λ = hc/E → result = factor / baseValue
+    result = toUnit.factor / baseValue;
+  } else {
+    // Standard output
+    result = baseValue / toUnit.factor;
+  }
+
+  return result / toPrefixFactor;
 }

@@ -1311,7 +1311,7 @@ export default function UnitConverter() {
     },
     {
       name: "Electricity & Magnetism",
-      categories: ['charge', 'potential', 'capacitance', 'resistance', 'conductance', 'inductance', 'magnetic_flux', 'magnetic_density']
+      categories: ['charge', 'potential', 'capacitance', 'resistance', 'conductance', 'inductance', 'magnetic_flux', 'magnetic_density', 'photon']
     },
     {
       name: "Radiation & Physics",
@@ -1516,7 +1516,8 @@ export default function UnitConverter() {
       refractive_power: { length: -1 },
       sound_pressure: { mass: 1, length: -1, time: -2 },
       fuel_economy: { length: -2 },
-      lightbulb: { intensity: 1, solid_angle: 1 }
+      lightbulb: { intensity: 1, solid_angle: 1 },
+      photon: { mass: 1, length: 2, time: -2 }  // Energy dimensions (eV is base unit)
     };
     return dimensionMap[category] || {};
   };
