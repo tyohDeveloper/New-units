@@ -1133,6 +1133,81 @@ export const UNIT_NAME_TRANSLATIONS: Record<string, Translation> = {
     es: 'Cuarta Potencia', fr: 'Puissance Quatrième', it: 'Quarta Potenza',
     pt: 'Quarta Potência', ru: 'Четвёртая Степень', zh: '四次方', ja: '四乗', ko: '네제곱'
   },
+  'Number': { 
+    en: 'Number', ar: 'رقم', de: 'Zahl',
+    es: 'Número', fr: 'Nombre', it: 'Numero',
+    pt: 'Número', ru: 'Число', zh: '数字', ja: '数', ko: '숫자'
+  },
+  'Pi (π)': { 
+    en: 'Pi (π)', ar: 'باي (π)', de: 'Pi (π)',
+    es: 'Pi (π)', fr: 'Pi (π)', it: 'Pi greco (π)',
+    pt: 'Pi (π)', ru: 'Пи (π)', zh: '圆周率 (π)', ja: '円周率 (π)', ko: '파이 (π)'
+  },
+  "Euler's Number (ℯ)": { 
+    en: "Euler's Number (ℯ)", ar: 'عدد أويلر (ℯ)', de: 'Eulersche Zahl (ℯ)',
+    es: 'Número de Euler (ℯ)', fr: "Nombre d'Euler (ℯ)", it: 'Numero di Eulero (ℯ)',
+    pt: 'Número de Euler (ℯ)', ru: 'Число Эйлера (ℯ)', zh: '欧拉数 (ℯ)', ja: 'オイラー数 (ℯ)', ko: '오일러 수 (ℯ)'
+  },
+  'Square Root of 2': { 
+    en: 'Square Root of 2', ar: 'الجذر التربيعي لـ 2', de: 'Quadratwurzel von 2',
+    es: 'Raíz Cuadrada de 2', fr: 'Racine Carrée de 2', it: 'Radice Quadrata di 2',
+    pt: 'Raiz Quadrada de 2', ru: 'Квадратный Корень из 2', zh: '2的平方根', ja: '2の平方根', ko: '2의 제곱근'
+  },
+  'Sine': { 
+    en: 'Sine', ar: 'جيب', de: 'Sinus',
+    es: 'Seno', fr: 'Sinus', it: 'Seno',
+    pt: 'Seno', ru: 'Синус', zh: '正弦', ja: '正弦', ko: '사인'
+  },
+  'Cosine': { 
+    en: 'Cosine', ar: 'جيب التمام', de: 'Kosinus',
+    es: 'Coseno', fr: 'Cosinus', it: 'Coseno',
+    pt: 'Cosseno', ru: 'Косинус', zh: '余弦', ja: '余弦', ko: '코사인'
+  },
+  'Tangent': { 
+    en: 'Tangent', ar: 'ظل', de: 'Tangens',
+    es: 'Tangente', fr: 'Tangente', it: 'Tangente',
+    pt: 'Tangente', ru: 'Тангенс', zh: '正切', ja: '正接', ko: '탄젠트'
+  },
+  'Arc Sine': { 
+    en: 'Arc Sine', ar: 'قوس الجيب', de: 'Arkussinus',
+    es: 'Arcoseno', fr: 'Arc Sinus', it: 'Arcoseno',
+    pt: 'Arcosseno', ru: 'Арксинус', zh: '反正弦', ja: '逆正弦', ko: '아크사인'
+  },
+  'Arc Cosine': { 
+    en: 'Arc Cosine', ar: 'قوس جيب التمام', de: 'Arkuskosinus',
+    es: 'Arcocoseno', fr: 'Arc Cosinus', it: 'Arcocoseno',
+    pt: 'Arcocosseno', ru: 'Арккосинус', zh: '反余弦', ja: '逆余弦', ko: '아크코사인'
+  },
+  'Arc Tangent': { 
+    en: 'Arc Tangent', ar: 'قوس الظل', de: 'Arkustangens',
+    es: 'Arcotangente', fr: 'Arc Tangente', it: 'Arcotangente',
+    pt: 'Arcotangente', ru: 'Арктангенс', zh: '反正切', ja: '逆正接', ko: '아크탄젠트'
+  },
+  'Square Root': { 
+    en: 'Square Root', ar: 'الجذر التربيعي', de: 'Quadratwurzel',
+    es: 'Raíz Cuadrada', fr: 'Racine Carrée', it: 'Radice Quadrata',
+    pt: 'Raiz Quadrada', ru: 'Квадратный Корень', zh: '平方根', ja: '平方根', ko: '제곱근'
+  },
+  'Log Base 10': { 
+    en: 'Log Base 10', ar: 'اللوغاريتم للأساس 10', de: 'Logarithmus Basis 10',
+    es: 'Logaritmo Base 10', fr: 'Logarithme Base 10', it: 'Logaritmo Base 10',
+    pt: 'Logaritmo Base 10', ru: 'Логарифм по Основанию 10', zh: '常用对数', ja: '常用対数', ko: '상용로그'
+  },
+  'Natural Log': { 
+    en: 'Natural Log', ar: 'اللوغاريتم الطبيعي', de: 'Natürlicher Logarithmus',
+    es: 'Logaritmo Natural', fr: 'Logarithme Naturel', it: 'Logaritmo Naturale',
+    pt: 'Logaritmo Natural', ru: 'Натуральный Логарифм', zh: '自然对数', ja: '自然対数', ko: '자연로그'
+  },
+  'Exponential (eˣ)': { 
+    en: 'Exponential (eˣ)', ar: 'الدالة الأسية (eˣ)', de: 'Exponentialfunktion (eˣ)',
+    es: 'Exponencial (eˣ)', fr: 'Exponentielle (eˣ)', it: 'Esponenziale (eˣ)',
+    pt: 'Exponencial (eˣ)', ru: 'Экспонента (eˣ)', zh: '指数函数 (eˣ)', ja: '指数関数 (eˣ)', ko: '지수함수 (eˣ)'
+  },
+  'Absolute Value': { 
+    en: 'Absolute Value', ar: 'القيمة المطلقة', de: 'Absolutwert',
+    es: 'Valor Absoluto', fr: 'Valeur Absolue', it: 'Valore Assoluto',
+    pt: 'Valor Absoluto', ru: 'Абсолютное Значение', zh: '绝对值', ja: '絶対値', ko: '절댓값'
+  },
 };
 
 export const SI_SYMBOLS = [
