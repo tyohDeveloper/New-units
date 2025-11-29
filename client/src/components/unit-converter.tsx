@@ -723,6 +723,151 @@ export default function UnitConverter() {
       es: 'Potencia Refractiva (Visión)', fr: 'Puissance de Réfraction (Vision)', it: 'Potere Rifrattivo (Vista)', ko: '굴절력 (시력)',
       pt: 'Poder Refrativo (Visão)', ru: 'Оптическая Сила (Зрение)', zh: '屈光度（视力）', ja: '屈折力（視覚）'
     },
+    'Angular Velocity': { 
+      en: 'Angular Velocity', ar: 'السرعة الزاوية', de: 'Winkelgeschwindigkeit',
+      es: 'Velocidad Angular', fr: 'Vitesse Angulaire', it: 'Velocità Angolare', ko: '각속도',
+      pt: 'Velocidade Angular', ru: 'Угловая Скорость', zh: '角速度', ja: '角速度'
+    },
+    'Kinematic Viscosity': { 
+      en: 'Kinematic Viscosity', ar: 'اللزوجة الحركية', de: 'Kinematische Viskosität',
+      es: 'Viscosidad Cinemática', fr: 'Viscosité Cinématique', it: 'Viscosità Cinematica', ko: '동점성',
+      pt: 'Viscosidade Cinemática', ru: 'Кинематическая Вязкость', zh: '运动粘度', ja: '動粘度'
+    },
+    'Momentum': { 
+      en: 'Momentum', ar: 'الزخم', de: 'Impuls',
+      es: 'Momento', fr: 'Quantité de Mouvement', it: 'Momento', ko: '운동량',
+      pt: 'Momento', ru: 'Импульс', zh: '动量', ja: '運動量'
+    },
+    'Thermal Conductivity': { 
+      en: 'Thermal Conductivity', ar: 'التوصيل الحراري', de: 'Wärmeleitfähigkeit',
+      es: 'Conductividad Térmica', fr: 'Conductivité Thermique', it: 'Conducibilità Termica', ko: '열전도율',
+      pt: 'Condutividade Térmica', ru: 'Теплопроводность', zh: '热导率', ja: '熱伝導率'
+    },
+    'Specific Heat Capacity': { 
+      en: 'Specific Heat Capacity', ar: 'السعة الحرارية النوعية', de: 'Spezifische Wärmekapazität',
+      es: 'Capacidad Calorífica Específica', fr: 'Capacité Thermique Massique', it: 'Capacità Termica Specifica', ko: '비열',
+      pt: 'Capacidade Térmica Específica', ru: 'Удельная Теплоёмкость', zh: '比热容', ja: '比熱容量'
+    },
+    'Entropy': { 
+      en: 'Entropy', ar: 'الإنتروبيا', de: 'Entropie',
+      es: 'Entropía', fr: 'Entropie', it: 'Entropia', ko: '엔트로피',
+      pt: 'Entropia', ru: 'Энтропия', zh: '熵', ja: 'エントロピー'
+    },
+    'Electric Field Strength': { 
+      en: 'Electric Field Strength', ar: 'شدة المجال الكهربائي', de: 'Elektrische Feldstärke',
+      es: 'Intensidad de Campo Eléctrico', fr: 'Intensité de Champ Électrique', it: 'Intensità di Campo Elettrico', ko: '전기장 세기',
+      pt: 'Intensidade de Campo Elétrico', ru: 'Напряжённость Электрического Поля', zh: '电场强度', ja: '電界強度'
+    },
+    'Magnetic Field Strength (H)': { 
+      en: 'Magnetic Field Strength (H)', ar: 'شدة المجال المغناطيسي (H)', de: 'Magnetische Feldstärke (H)',
+      es: 'Intensidad de Campo Magnético (H)', fr: 'Intensité de Champ Magnétique (H)', it: 'Intensità di Campo Magnetico (H)', ko: '자기장 세기 (H)',
+      pt: 'Intensidade de Campo Magnético (H)', ru: 'Напряжённость Магнитного Поля (H)', zh: '磁场强度 (H)', ja: '磁界強度 (H)'
+    },
+    'Radioactive Decay': { 
+      en: 'Radioactive Decay', ar: 'الاضمحلال الإشعاعي', de: 'Radioaktiver Zerfall',
+      es: 'Decaimiento Radiactivo', fr: 'Désintégration Radioactive', it: 'Decadimento Radioattivo', ko: '방사성 붕괴',
+      pt: 'Decaimento Radioativo', ru: 'Радиоактивный Распад', zh: '放射性衰变', ja: '放射性崩壊'
+    },
+    'Cross-Section': { 
+      en: 'Cross-Section', ar: 'المقطع العرضي', de: 'Wirkungsquerschnitt',
+      es: 'Sección Transversal', fr: 'Section Efficace', it: 'Sezione d\'Urto', ko: '단면적',
+      pt: 'Seção de Choque', ru: 'Сечение', zh: '截面', ja: '断面積'
+    },
+    'Photon/Light': { 
+      en: 'Photon/Light', ar: 'الفوتون/الضوء', de: 'Photon/Licht',
+      es: 'Fotón/Luz', fr: 'Photon/Lumière', it: 'Fotone/Luce', ko: '광자/빛',
+      pt: 'Fóton/Luz', ru: 'Фотон/Свет', zh: '光子/光', ja: '光子/光'
+    },
+    'Sound Intensity': { 
+      en: 'Sound Intensity', ar: 'شدة الصوت', de: 'Schallintensität',
+      es: 'Intensidad de Sonido', fr: 'Intensité Sonore', it: 'Intensità Sonora', ko: '음향 강도',
+      pt: 'Intensidade Sonora', ru: 'Интенсивность Звука', zh: '声强', ja: '音響強度'
+    },
+    'Acoustic Impedance': { 
+      en: 'Acoustic Impedance', ar: 'الممانعة الصوتية', de: 'Akustische Impedanz',
+      es: 'Impedancia Acústica', fr: 'Impédance Acoustique', it: 'Impedenza Acustica', ko: '음향 임피던스',
+      pt: 'Impedância Acústica', ru: 'Акустический Импеданс', zh: '声阻抗', ja: '音響インピーダンス'
+    },
+    'Concentration': { 
+      en: 'Concentration', ar: 'التركيز', de: 'Konzentration',
+      es: 'Concentración', fr: 'Concentration', it: 'Concentrazione', ko: '농도',
+      pt: 'Concentração', ru: 'Концентрация', zh: '浓度', ja: '濃度'
+    },
+    'Fuel Economy': { 
+      en: 'Fuel Economy', ar: 'كفاءة الوقود', de: 'Kraftstoffverbrauch',
+      es: 'Economía de Combustible', fr: 'Économie de Carburant', it: 'Consumo Carburante', ko: '연비',
+      pt: 'Economia de Combustível', ru: 'Экономия Топлива', zh: '燃油经济性', ja: '燃費'
+    },
+    'Fuel Energy': { 
+      en: 'Fuel Energy', ar: 'طاقة الوقود', de: 'Brennstoffenergie',
+      es: 'Energía de Combustible', fr: 'Énergie du Carburant', it: 'Energia del Carburante', ko: '연료 에너지',
+      pt: 'Energia de Combustível', ru: 'Энергия Топлива', zh: '燃料能量', ja: '燃料エネルギー'
+    },
+    'Data/Information': { 
+      en: 'Data/Information', ar: 'البيانات/المعلومات', de: 'Daten/Information',
+      es: 'Datos/Información', fr: 'Données/Information', it: 'Dati/Informazioni', ko: '데이터/정보',
+      pt: 'Dados/Informação', ru: 'Данные/Информация', zh: '数据/信息', ja: 'データ/情報'
+    },
+    'Rack Geometry': { 
+      en: 'Rack Geometry', ar: 'هندسة الرفوف', de: 'Rack-Geometrie',
+      es: 'Geometría de Rack', fr: 'Géométrie de Rack', it: 'Geometria del Rack', ko: '랙 구조',
+      pt: 'Geometria de Rack', ru: 'Геометрия Стойки', zh: '机架几何', ja: 'ラック形状'
+    },
+    'Shipping Containers': { 
+      en: 'Shipping Containers', ar: 'حاويات الشحن', de: 'Versandcontainer',
+      es: 'Contenedores de Envío', fr: 'Conteneurs d\'Expédition', it: 'Container di Spedizione', ko: '선적 컨테이너',
+      pt: 'Contêineres de Transporte', ru: 'Транспортные Контейнеры', zh: '集装箱', ja: '輸送コンテナ'
+    },
+    'Beer & Wine': { 
+      en: 'Beer & Wine', ar: 'البيرة والنبيذ', de: 'Bier & Wein',
+      es: 'Cerveza y Vino', fr: 'Bière et Vin', it: 'Birra e Vino', ko: '맥주 & 와인',
+      pt: 'Cerveja e Vinho', ru: 'Пиво и Вино', zh: '啤酒与葡萄酒', ja: 'ビール＆ワイン'
+    },
+    'Math': { 
+      en: 'Math', ar: 'الرياضيات', de: 'Mathematik',
+      es: 'Matemáticas', fr: 'Mathématiques', it: 'Matematica', ko: '수학',
+      pt: 'Matemática', ru: 'Математика', zh: '数学', ja: '数学'
+    },
+    'Typography': { 
+      en: 'Typography', ar: 'الطباعة', de: 'Typografie',
+      es: 'Tipografía', fr: 'Typographie', it: 'Tipografia', ko: '타이포그래피',
+      pt: 'Tipografia', ru: 'Типографика', zh: '排版', ja: 'タイポグラフィ'
+    },
+    'Cooking Measures': { 
+      en: 'Cooking Measures', ar: 'مقاييس الطبخ', de: 'Kochmaße',
+      es: 'Medidas de Cocina', fr: 'Mesures de Cuisine', it: 'Misure da Cucina', ko: '요리 계량',
+      pt: 'Medidas Culinárias', ru: 'Кулинарные Меры', zh: '烹饪用量', ja: '調理用計量'
+    },
+    'Archaic Length': { 
+      en: 'Archaic Length', ar: 'الطول القديم', de: 'Historische Längenmaße',
+      es: 'Longitud Arcaica', fr: 'Longueur Archaïque', it: 'Lunghezza Arcaica', ko: '고대 길이',
+      pt: 'Comprimento Arcaico', ru: 'Архаичная Длина', zh: '古代长度', ja: '古代の長さ'
+    },
+    'Archaic Mass': { 
+      en: 'Archaic Mass', ar: 'الكتلة القديمة', de: 'Historische Massenmaße',
+      es: 'Masa Arcaica', fr: 'Masse Archaïque', it: 'Massa Arcaica', ko: '고대 질량',
+      pt: 'Massa Arcaica', ru: 'Архаичная Масса', zh: '古代质量', ja: '古代の質量'
+    },
+    'Archaic Volume': { 
+      en: 'Archaic Volume', ar: 'الحجم القديم', de: 'Historische Volumenmaße',
+      es: 'Volumen Arcaico', fr: 'Volume Archaïque', it: 'Volume Arcaico', ko: '고대 부피',
+      pt: 'Volume Arcaico', ru: 'Архаичный Объём', zh: '古代容积', ja: '古代の体積'
+    },
+    'Archaic Area': { 
+      en: 'Archaic Area', ar: 'المساحة القديمة', de: 'Historische Flächenmaße',
+      es: 'Área Arcaica', fr: 'Aire Archaïque', it: 'Area Arcaica', ko: '고대 면적',
+      pt: 'Área Arcaica', ru: 'Архаичная Площадь', zh: '古代面积', ja: '古代の面積'
+    },
+    'Archaic Energy': { 
+      en: 'Archaic Energy', ar: 'الطاقة القديمة', de: 'Historische Energieeinheiten',
+      es: 'Energía Arcaica', fr: 'Énergie Archaïque', it: 'Energia Arcaica', ko: '고대 에너지',
+      pt: 'Energia Arcaica', ru: 'Архаичная Энергия', zh: '古代能量', ja: '古代のエネルギー'
+    },
+    'Archaic Power': { 
+      en: 'Archaic Power', ar: 'القدرة القديمة', de: 'Historische Leistungseinheiten',
+      es: 'Potencia Arcaica', fr: 'Puissance Archaïque', it: 'Potenza Arcaica', ko: '고대 일률',
+      pt: 'Potência Arcaica', ru: 'Архаичная Мощность', zh: '古代功率', ja: '古代の仕事率'
+    },
     'Digital Storage': { 
       en: 'Digital Storage', ar: 'التخزين الرقمي', de: 'Digitaler Speicher',
       es: 'Almacenamiento Digital', fr: 'Stockage Numérique', it: 'Archiviazione Digitale', ko: '디지털 저장',
@@ -808,6 +953,41 @@ export default function UnitConverter() {
       en: 'To', ar: 'إلى', de: 'Zu',
       es: 'A', fr: 'À', it: 'A', ko: '로',
       pt: 'Para', ru: 'В', zh: '到', ja: 'へ'
+    },
+    'Compare': { 
+      en: 'Compare', ar: 'قارن', de: 'Vergleichen',
+      es: 'Comparar', fr: 'Comparer', it: 'Confronta', ko: '비교',
+      pt: 'Comparar', ru: 'Сравнить', zh: '比较', ja: '比較'
+    },
+    'Normalize & Copy': { 
+      en: 'Normalize & Copy', ar: 'تطبيع ونسخ', de: 'Normalisieren & Kopieren',
+      es: 'Normalizar y Copiar', fr: 'Normaliser et Copier', it: 'Normalizza e Copia', ko: '정규화 및 복사',
+      pt: 'Normalizar e Copiar', ru: 'Нормализовать и Копировать', zh: '标准化并复制', ja: '正規化してコピー'
+    },
+    'Swap': { 
+      en: 'Swap', ar: 'تبديل', de: 'Tauschen',
+      es: 'Intercambiar', fr: 'Échanger', it: 'Scambia', ko: '교환',
+      pt: 'Trocar', ru: 'Поменять', zh: '交换', ja: '入れ替え'
+    },
+    'Input': { 
+      en: 'Input', ar: 'إدخال', de: 'Eingabe',
+      es: 'Entrada', fr: 'Entrée', it: 'Input', ko: '입력',
+      pt: 'Entrada', ru: 'Ввод', zh: '输入', ja: '入力'
+    },
+    'Select category': { 
+      en: 'Select category', ar: 'اختر الفئة', de: 'Kategorie auswählen',
+      es: 'Seleccionar categoría', fr: 'Sélectionner une catégorie', it: 'Seleziona categoria', ko: '카테고리 선택',
+      pt: 'Selecionar categoria', ru: 'Выбрать категорию', zh: '选择类别', ja: 'カテゴリーを選択'
+    },
+    'Select unit': { 
+      en: 'Select unit', ar: 'اختر الوحدة', de: 'Einheit auswählen',
+      es: 'Seleccionar unidad', fr: 'Sélectionner une unité', it: 'Seleziona unità', ko: '단위 선택',
+      pt: 'Selecionar unidade', ru: 'Выбрать единицу', zh: '选择单位', ja: '単位を選択'
+    },
+    'Select prefix': { 
+      en: 'Select prefix', ar: 'اختر البادئة', de: 'Präfix auswählen',
+      es: 'Seleccionar prefijo', fr: 'Sélectionner un préfixe', it: 'Seleziona prefisso', ko: '접두사 선택',
+      pt: 'Selecionar prefixo', ru: 'Выбрать префикс', zh: '选择前缀', ja: '接頭辞を選択'
     },
     // Common unit base names (lowercase for SI base unit display)
     'meter': { en: 'meter', ar: 'متر', de: 'Meter', es: 'metro', fr: 'mètre', it: 'metro', ko: '미터', pt: 'metro', ru: 'метр', zh: '米', ja: 'メートル' },
@@ -1255,15 +1435,6 @@ export default function UnitConverter() {
     'Incandescent Bulb (watts)': { en: 'Incandescent Bulb (watts)', ar: 'مصباح متوهج (واط)', de: 'Glühlampe (Watt)', es: 'Bombilla incandescente (vatios)', fr: 'Ampoule à incandescence (watts)', it: 'Lampadina a incandescenza (watt)', ko: '백열등 (와트)', pt: 'Lâmpada incandescente (watts)', ru: 'Лампа накаливания (ватт)', zh: '白炽灯（瓦特）', ja: '白熱電球（ワット）' },
     'Halogen Bulb (watts)': { en: 'Halogen Bulb (watts)', ar: 'مصباح هالوجين (واط)', de: 'Halogenlampe (Watt)', es: 'Bombilla halógena (vatios)', fr: 'Ampoule halogène (watts)', it: 'Lampadina alogena (watt)', ko: '할로겐 전구 (와트)', pt: 'Lâmpada halógena (watts)', ru: 'Галогенная лампа (ватт)', zh: '卤素灯（瓦特）', ja: 'ハロゲン電球（ワット）' },
     'Sodium Vapor Lamp (watts)': { en: 'Sodium Vapor Lamp (watts)', ar: 'مصباح بخار الصوديوم (واط)', de: 'Natriumdampflampe (Watt)', es: 'Lámpara de vapor de sodio (vatios)', fr: 'Lampe à vapeur de sodium (watts)', it: 'Lampada a vapori di sodio (watt)', ko: '나트륨등 (와트)', pt: 'Lâmpada de vapor de sódio (watts)', ru: 'Натриевая лампа (ватт)', zh: '钠灯（瓦特）', ja: 'ナトリウム灯（ワット）' },
-    'Archaic Length': { en: 'Archaic Length', ar: 'الأطوال القديمة', de: 'Archaische Längen', es: 'Longitud Arcaica', fr: 'Longueur Archaïque', it: 'Lunghezza Arcaica', ko: '고대 길이', pt: 'Comprimento Arcaico', ru: 'Архаичные Длины', zh: '古代长度', ja: '古代の長さ' },
-    'Archaic Mass': { en: 'Archaic Mass', ar: 'الأوزان القديمة', de: 'Archaische Masse', es: 'Masa Arcaica', fr: 'Masse Archaïque', it: 'Massa Arcaica', ko: '고대 질량', pt: 'Massa Arcaica', ru: 'Архаичные Массы', zh: '古代质量', ja: '古代の質量' },
-    'Archaic Volume': { en: 'Archaic Volume', ar: 'الأحجام القديمة', de: 'Archaisches Volumen', es: 'Volumen Arcaico', fr: 'Volume Archaïque', it: 'Volume Arcaico', ko: '고대 부피', pt: 'Volume Arcaico', ru: 'Архаичные Объёмы', zh: '古代容量', ja: '古代の容積' },
-    'Archaic Area': { en: 'Archaic Area', ar: 'المساحات القديمة', de: 'Archaische Flächen', es: 'Área Arcaica', fr: 'Surface Archaïque', it: 'Area Arcaica', ko: '고대 면적', pt: 'Área Arcaica', ru: 'Архаичные Площади', zh: '古代面积', ja: '古代の面積' },
-    'Archaic Energy': { en: 'Archaic Energy', ar: 'الطاقة القديمة', de: 'Archaische Energie', es: 'Energía Arcaica', fr: 'Énergie Archaïque', it: 'Energia Arcaica', ko: '고대 에너지', pt: 'Energia Arcaica', ru: 'Архаичная Энергия', zh: '古代能量', ja: '古代のエネルギー' },
-    'Archaic Power': { en: 'Archaic Power', ar: 'القدرة القديمة', de: 'Archaische Leistung', es: 'Potencia Arcaica', fr: 'Puissance Archaïque', it: 'Potenza Arcaica', ko: '고대 일률', pt: 'Potência Arcaica', ru: 'Архаичная Мощность', zh: '古代功率', ja: '古代の仕事率' },
-    'Archaic & Regional': { en: 'Archaic & Regional', ar: 'القديمة والإقليمية', de: 'Archaisch & Regional', es: 'Arcaico y Regional', fr: 'Archaïque et Régional', it: 'Arcaico e Regionale', ko: '고대와 지역', pt: 'Arcaico e Regional', ru: 'Архаичные и Региональные', zh: '古代与地区', ja: '古代と地域' },
-    'Typography': { en: 'Typography', ar: 'الطباعة', de: 'Typografie', es: 'Tipografía', fr: 'Typographie', it: 'Tipografia', ko: '타이포그래피', pt: 'Tipografia', ru: 'Типографика', zh: '字体排印', ja: 'タイポグラフィ' },
-    'Cooking Measures': { en: 'Cooking Measures', ar: 'مقاييس الطهي', de: 'Kochmaße', es: 'Medidas de Cocina', fr: 'Mesures de Cuisine', it: 'Misure di Cucina', ko: '요리 계량', pt: 'Medidas de Cozinha', ru: 'Кулинарные Меры', zh: '烹饪量度', ja: '料理用計量' },
     'Sun (Japan)': { en: 'Sun (Japan)', ar: 'سون (اليابان)', de: 'Sun (Japan)', es: 'Sun (Japón)', fr: 'Sun (Japon)', it: 'Sun (Giappone)', ko: '촌 (일본)', pt: 'Sun (Japão)', ru: 'Сун (Япония)', zh: '寸（日本）', ja: '寸' },
     'Shaku (Japan)': { en: 'Shaku (Japan)', ar: 'شاكو (اليابان)', de: 'Shaku (Japan)', es: 'Shaku (Japón)', fr: 'Shaku (Japon)', it: 'Shaku (Giappone)', ko: '자 (일본)', pt: 'Shaku (Japão)', ru: 'Сяку (Япония)', zh: '尺（日本）', ja: '尺' },
     'Ken (Japan)': { en: 'Ken (Japan)', ar: 'كين (اليابان)', de: 'Ken (Japan)', es: 'Ken (Japón)', fr: 'Ken (Japon)', it: 'Ken (Giappone)', ko: '간 (일본)', pt: 'Ken (Japão)', ru: 'Кэн (Япония)', zh: '间（日本）', ja: '間' },

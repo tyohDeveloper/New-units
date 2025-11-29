@@ -54,6 +54,14 @@ describe('Language Localization', () => {
       expect(translate('Power', 'ja', UI_TRANSLATIONS)).toBe('仕事率');
     });
 
+    it('should translate category names correctly for Korean', () => {
+      expect(translate('Length', 'ko', UI_TRANSLATIONS)).toBe('길이');
+      expect(translate('Mass', 'ko', UI_TRANSLATIONS)).toBe('질량');
+      expect(translate('Energy', 'ko', UI_TRANSLATIONS)).toBe('에너지');
+      expect(translate('Temperature', 'ko', UI_TRANSLATIONS)).toBe('온도');
+      expect(translate('Time', 'ko', UI_TRANSLATIONS)).toBe('시간');
+    });
+
     it('should translate category names correctly for Arabic', () => {
       expect(translate('Length', 'ar', UI_TRANSLATIONS)).toBe('الطول');
       expect(translate('Mass', 'ar', UI_TRANSLATIONS)).toBe('الكتلة');
@@ -66,6 +74,18 @@ describe('Language Localization', () => {
       expect(translate('Pressure', 'ru', UI_TRANSLATIONS)).toBe('Давление');
     });
 
+    it('should translate category names correctly for Italian', () => {
+      expect(translate('Length', 'it', UI_TRANSLATIONS)).toBe('Lunghezza');
+      expect(translate('Mass', 'it', UI_TRANSLATIONS)).toBe('Massa');
+      expect(translate('Energy', 'it', UI_TRANSLATIONS)).toBe('Energia');
+    });
+
+    it('should translate category names correctly for Portuguese', () => {
+      expect(translate('Length', 'pt', UI_TRANSLATIONS)).toBe('Comprimento');
+      expect(translate('Mass', 'pt', UI_TRANSLATIONS)).toBe('Massa');
+      expect(translate('Energy', 'pt', UI_TRANSLATIONS)).toBe('Energia');
+    });
+
     it('should fall back to English for missing translations', () => {
       const result = translate('Unknown Key', 'de', UI_TRANSLATIONS);
       expect(result).toBe('Unknown Key');
@@ -74,6 +94,83 @@ describe('Language Localization', () => {
     it('should handle en-us as English variant', () => {
       expect(translate('Length', 'en-us', UI_TRANSLATIONS)).toBe('Length');
       expect(translate('Mass', 'en-us', UI_TRANSLATIONS)).toBe('Mass');
+    });
+  });
+
+  describe('Physics Quantity Translations', () => {
+    it('should translate mechanics quantities for all languages', () => {
+      expect(translate('Angular Velocity', 'de', UI_TRANSLATIONS)).toBe('Winkelgeschwindigkeit');
+      expect(translate('Momentum', 'ja', UI_TRANSLATIONS)).toBe('運動量');
+      expect(translate('Kinematic Viscosity', 'zh', UI_TRANSLATIONS)).toBe('运动粘度');
+      expect(translate('Angular Velocity', 'ko', UI_TRANSLATIONS)).toBe('각속도');
+    });
+
+    it('should translate thermodynamics quantities for all languages', () => {
+      expect(translate('Thermal Conductivity', 'de', UI_TRANSLATIONS)).toBe('Wärmeleitfähigkeit');
+      expect(translate('Specific Heat', 'fr', UI_TRANSLATIONS)).toBe('Chaleur Spécifique');
+      expect(translate('Entropy', 'ja', UI_TRANSLATIONS)).toBe('エントロピー');
+      expect(translate('Entropy', 'ko', UI_TRANSLATIONS)).toBe('엔트로피');
+    });
+
+    it('should translate electromagnetic quantities for all languages', () => {
+      expect(translate('Electric Charge', 'es', UI_TRANSLATIONS)).toBe('Carga Eléctrica');
+      expect(translate('Magnetic Flux', 'ru', UI_TRANSLATIONS)).toBe('Магнитный Поток');
+      expect(translate('Conductance', 'ko', UI_TRANSLATIONS)).toBe('컨덕턴스');
+    });
+
+    it('should translate radiation quantities for all languages', () => {
+      expect(translate('Radioactivity', 'de', UI_TRANSLATIONS)).toBe('Radioaktivität');
+      expect(translate('Radiation Dose', 'zh', UI_TRANSLATIONS)).toBe('辐射剂量');
+      expect(translate('Radiation Dose', 'ko', UI_TRANSLATIONS)).toBe('방사선량');
+    });
+
+    it('should translate optical quantities for all languages', () => {
+      expect(translate('Luminous Flux', 'it', UI_TRANSLATIONS)).toBe('Flusso Luminoso');
+      expect(translate('Illuminance', 'fr', UI_TRANSLATIONS)).toBe('Éclairement');
+      expect(translate('Luminance', 'ko', UI_TRANSLATIONS)).toBe('휘도');
+    });
+  });
+
+  describe('Specialty Category Translations', () => {
+    it('should translate data and digital categories', () => {
+      expect(translate('Data', 'zh', UI_TRANSLATIONS)).toBe('数据');
+      expect(translate('Data', 'ko', UI_TRANSLATIONS)).toBe('데이터');
+      expect(translate('Rack Geometry', 'de', UI_TRANSLATIONS)).toBe('Rack-Geometrie');
+    });
+
+    it('should translate archaic categories for all languages', () => {
+      expect(translate('Archaic Length', 'ja', UI_TRANSLATIONS)).toBe('古代の長さ');
+      expect(translate('Archaic Mass', 'zh', UI_TRANSLATIONS)).toBe('古代质量');
+      expect(translate('Archaic Volume', 'ko', UI_TRANSLATIONS)).toBe('고대 부피');
+      expect(translate('Archaic Area', 'ru', UI_TRANSLATIONS)).toBe('Архаичные Площади');
+      expect(translate('Archaic Energy', 'fr', UI_TRANSLATIONS)).toBe('Énergie Archaïque');
+      expect(translate('Archaic Power', 'de', UI_TRANSLATIONS)).toBe('Archaische Leistung');
+    });
+
+    it('should translate cooking and typography categories', () => {
+      expect(translate('Typography', 'ko', UI_TRANSLATIONS)).toBe('타이포그래피');
+      expect(translate('Cooking Measures', 'ja', UI_TRANSLATIONS)).toBe('料理用計量');
+      expect(translate('Cooking Measures', 'ko', UI_TRANSLATIONS)).toBe('요리 계량');
+    });
+
+    it('should translate fuel and economy categories', () => {
+      expect(translate('Fuel Energy', 'de', UI_TRANSLATIONS)).toBe('Brennstoffenergie');
+      expect(translate('Fuel Economy', 'ko', UI_TRANSLATIONS)).toBe('연비');
+      expect(translate('Beer & Wine Volume', 'ja', UI_TRANSLATIONS)).toBe('ビール・ワイン容量');
+    });
+  });
+
+  describe('Category Group Translations', () => {
+    it('should translate category group headers', () => {
+      expect(translate('Base Quantities', 'ko', UI_TRANSLATIONS)).toBe('기본량');
+      expect(translate('Mechanics', 'ja', UI_TRANSLATIONS)).toBe('力学');
+      expect(translate('Electricity & Magnetism', 'zh', UI_TRANSLATIONS)).toBe('电磁学');
+      expect(translate('Light & Radiation', 'de', UI_TRANSLATIONS)).toBe('Licht & Strahlung');
+      expect(translate('Thermodynamics', 'fr', UI_TRANSLATIONS)).toBe('Thermodynamique');
+      expect(translate('Acoustics', 'ko', UI_TRANSLATIONS)).toBe('음향학');
+      expect(translate('Chemistry & Nuclear', 'ru', UI_TRANSLATIONS)).toBe('Химия и Ядерная');
+      expect(translate('CGS System', 'ko', UI_TRANSLATIONS)).toBe('CGS 단위계');
+      expect(translate('Archaic & Regional', 'it', UI_TRANSLATIONS)).toBe('Arcaico e Regionale');
     });
   });
 
@@ -114,10 +211,26 @@ describe('Language Localization', () => {
       expect(translate('Newton', 'ja', UNIT_NAME_TRANSLATIONS)).toBe('ニュートン');
     });
 
+    it('should translate unit names correctly for Korean', () => {
+      expect(translate('Meter', 'ko', UNIT_NAME_TRANSLATIONS)).toBe('미터');
+      expect(translate('Kilogram', 'ko', UNIT_NAME_TRANSLATIONS)).toBe('킬로그램');
+      expect(translate('Newton', 'ko', UNIT_NAME_TRANSLATIONS)).toBe('뉴턴');
+      expect(translate('Joule', 'ko', UNIT_NAME_TRANSLATIONS)).toBe('줄');
+      expect(translate('Watt', 'ko', UNIT_NAME_TRANSLATIONS)).toBe('와트');
+    });
+
     it('should translate temperature units correctly', () => {
       expect(translate('Kelvin', 'de', UNIT_NAME_TRANSLATIONS)).toBe('Kelvin');
       expect(translate('Celsius', 'zh', UNIT_NAME_TRANSLATIONS)).toBe('摄氏度');
       expect(translate('Fahrenheit', 'ja', UNIT_NAME_TRANSLATIONS)).toBe('華氏');
+      expect(translate('Kelvin', 'ko', UNIT_NAME_TRANSLATIONS)).toBe('켈빈');
+    });
+
+    it('should translate electrical units correctly for Korean', () => {
+      expect(translate('Ampere', 'ko', UNIT_NAME_TRANSLATIONS)).toBe('암페어');
+      expect(translate('Volt', 'ko', UNIT_NAME_TRANSLATIONS)).toBe('볼트');
+      expect(translate('Ohm', 'ko', UNIT_NAME_TRANSLATIONS)).toBe('옴');
+      expect(translate('Coulomb', 'ko', UNIT_NAME_TRANSLATIONS)).toBe('쿨롱');
     });
   });
 
@@ -180,8 +293,8 @@ describe('Language Localization', () => {
   });
 
   describe('Translation Coverage', () => {
-    it('should support all 11 languages', () => {
-      expect(SUPPORTED_LANGUAGES).toHaveLength(11);
+    it('should support all 12 languages', () => {
+      expect(SUPPORTED_LANGUAGES).toHaveLength(12);
       expect(SUPPORTED_LANGUAGES).toContain('en');
       expect(SUPPORTED_LANGUAGES).toContain('en-us');
       expect(SUPPORTED_LANGUAGES).toContain('ar');
@@ -190,6 +303,7 @@ describe('Language Localization', () => {
       expect(SUPPORTED_LANGUAGES).toContain('fr');
       expect(SUPPORTED_LANGUAGES).toContain('it');
       expect(SUPPORTED_LANGUAGES).toContain('ja');
+      expect(SUPPORTED_LANGUAGES).toContain('ko');
       expect(SUPPORTED_LANGUAGES).toContain('pt');
       expect(SUPPORTED_LANGUAGES).toContain('ru');
       expect(SUPPORTED_LANGUAGES).toContain('zh');
@@ -210,6 +324,32 @@ describe('Language Localization', () => {
         expect(trans.ar).toBeTruthy();
       }
     });
+
+    it('should have Korean translations for core UI elements', () => {
+      const coreUIElements = [
+        'Length', 'Mass', 'Time', 'Temperature', 'Energy', 'Power', 'Force',
+        'Pressure', 'Volume', 'Area', 'Speed', 'Acceleration', 'Frequency'
+      ];
+      
+      for (const key of coreUIElements) {
+        const translation = translate(key, 'ko', UI_TRANSLATIONS);
+        expect(translation).toBeTruthy();
+        expect(translation).not.toBe(key);
+      }
+    });
+
+    it('should have Korean translations for core unit names', () => {
+      const coreUnits = [
+        'Meter', 'Kilogram', 'Second', 'Newton', 'Joule', 'Watt', 
+        'Pascal', 'Hertz', 'Ampere', 'Volt'
+      ];
+      
+      for (const key of coreUnits) {
+        const translation = translate(key, 'ko', UNIT_NAME_TRANSLATIONS);
+        expect(translation).toBeTruthy();
+        expect(translation).not.toBe(key);
+      }
+    });
   });
 
   describe('Regional Spelling Variations (English)', () => {
@@ -219,6 +359,36 @@ describe('Language Localization', () => {
 
     it('should use "Meter" for en (British uses "Metre" in display, but base is "Meter")', () => {
       expect(translate('Meter', 'en', UNIT_NAME_TRANSLATIONS)).toBe('Meter');
+    });
+  });
+
+  describe('Asian Script Rendering', () => {
+    it('should display Chinese characters correctly', () => {
+      expect(translate('Length', 'zh', UI_TRANSLATIONS)).toBe('长度');
+      expect(translate('Energy', 'zh', UI_TRANSLATIONS)).toBe('能量');
+      expect(translate('Meter', 'zh', UNIT_NAME_TRANSLATIONS)).toBe('米');
+    });
+
+    it('should display Japanese characters (kanji/katakana) correctly', () => {
+      expect(translate('Length', 'ja', UI_TRANSLATIONS)).toBe('長さ');
+      expect(translate('Meter', 'ja', UNIT_NAME_TRANSLATIONS)).toBe('メートル');
+      expect(translate('Newton', 'ja', UNIT_NAME_TRANSLATIONS)).toBe('ニュートン');
+    });
+
+    it('should display Korean characters (hangul) correctly', () => {
+      expect(translate('Length', 'ko', UI_TRANSLATIONS)).toBe('길이');
+      expect(translate('Meter', 'ko', UNIT_NAME_TRANSLATIONS)).toBe('미터');
+      expect(translate('Newton', 'ko', UNIT_NAME_TRANSLATIONS)).toBe('뉴턴');
+    });
+
+    it('should display Arabic characters correctly with proper direction', () => {
+      expect(translate('Length', 'ar', UI_TRANSLATIONS)).toBe('الطول');
+      expect(translate('Mass', 'ar', UI_TRANSLATIONS)).toBe('الكتلة');
+    });
+
+    it('should display Russian Cyrillic characters correctly', () => {
+      expect(translate('Length', 'ru', UI_TRANSLATIONS)).toBe('Длина');
+      expect(translate('Meter', 'ru', UNIT_NAME_TRANSLATIONS)).toBe('Метр');
     });
   });
 });
@@ -238,6 +408,14 @@ describe('Consistency Between Translations and Data', () => {
         expect(unit.name).toBeTruthy();
         expect(typeof unit.name).toBe('string');
       }
+    }
+  });
+
+  it('should have translations for all category names in conversion data', () => {
+    const categoryNames = CONVERSION_DATA.map(c => c.name);
+    for (const name of categoryNames) {
+      const enTranslation = translate(name, 'en', UI_TRANSLATIONS);
+      expect(enTranslation).toBeTruthy();
     }
   });
 });
