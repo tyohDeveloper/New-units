@@ -580,466 +580,466 @@ export default function UnitConverter() {
     },
     'Charge': { 
       en: 'Charge', ar: 'الشحنة', de: 'Ladung',
-      es: 'Carga', fr: 'Charge', it: 'Carica',
+      es: 'Carga', fr: 'Charge', it: 'Carica', ko: '전하',
       pt: 'Carga', ru: 'Заряд', zh: '电荷', ja: '電荷'
     },
     'Electric Charge': { 
       en: 'Electric Charge', ar: 'الشحنة الكهربائية', de: 'Elektrische Ladung',
-      es: 'Carga Eléctrica', fr: 'Charge Électrique', it: 'Carica Elettrica',
+      es: 'Carga Eléctrica', fr: 'Charge Électrique', it: 'Carica Elettrica', ko: '전하',
       pt: 'Carga Elétrica', ru: 'Электрический Заряд', zh: '电荷', ja: '電荷'
     },
     'Potential': { 
       en: 'Potential', ar: 'الجهد', de: 'Potential',
-      es: 'Potencial', fr: 'Potentiel', it: 'Potenziale',
+      es: 'Potencial', fr: 'Potentiel', it: 'Potenziale', ko: '전위',
       pt: 'Potencial', ru: 'Потенциал', zh: '电势', ja: '電位'
     },
     'Electric Potential': { 
       en: 'Electric Potential', ar: 'الجهد الكهربائي', de: 'Elektrisches Potential',
-      es: 'Potencial Eléctrico', fr: 'Potentiel Électrique', it: 'Potenziale Elettrico',
+      es: 'Potencial Eléctrico', fr: 'Potentiel Électrique', it: 'Potenziale Elettrico', ko: '전위',
       pt: 'Potencial Elétrico', ru: 'Электрический Потенциал', zh: '电势', ja: '電位'
     },
     'Capacitance': { 
       en: 'Capacitance', ar: 'السعة', de: 'Kapazität',
-      es: 'Capacitancia', fr: 'Capacité', it: 'Capacità',
+      es: 'Capacitancia', fr: 'Capacité', it: 'Capacità', ko: '정전용량',
       pt: 'Capacitância', ru: 'Ёмкость', zh: '电容', ja: '静電容量'
     },
     'Resistance': { 
       en: 'Resistance', ar: 'المقاومة', de: 'Widerstand',
-      es: 'Resistencia', fr: 'Résistance', it: 'Resistenza',
+      es: 'Resistencia', fr: 'Résistance', it: 'Resistenza', ko: '저항',
       pt: 'Resistência', ru: 'Сопротивление', zh: '电阻', ja: '抵抗'
     },
     'Conductance': { 
       en: 'Conductance', ar: 'الموصلية', de: 'Leitwert',
-      es: 'Conductancia', fr: 'Conductance', it: 'Conduttanza',
+      es: 'Conductancia', fr: 'Conductance', it: 'Conduttanza', ko: '전도도',
       pt: 'Condutância', ru: 'Проводимость', zh: '电导', ja: 'コンダクタンス'
     },
     'Inductance': { 
       en: 'Inductance', ar: 'الحث', de: 'Induktivität',
-      es: 'Inductancia', fr: 'Inductance', it: 'Induttanza',
+      es: 'Inductancia', fr: 'Inductance', it: 'Induttanza', ko: '인덕턴스',
       pt: 'Indutância', ru: 'Индуктивность', zh: '电感', ja: 'インダクタンス'
     },
     'Magnetic Flux': { 
       en: 'Magnetic Flux', ar: 'التدفق المغناطيسي', de: 'Magnetischer Fluss',
-      es: 'Flujo Magnético', fr: 'Flux Magnétique', it: 'Flusso Magnetico',
+      es: 'Flujo Magnético', fr: 'Flux Magnétique', it: 'Flusso Magnetico', ko: '자속',
       pt: 'Fluxo Magnético', ru: 'Магнитный Поток', zh: '磁通量', ja: '磁束'
     },
     'Magnetic Flux Density': { 
       en: 'Magnetic Flux Density', ar: 'كثافة التدفق المغناطيسي', de: 'Magnetische Flussdichte',
-      es: 'Densidad de Flujo Magnético', fr: 'Densité de Flux Magnétique', it: 'Densità di Flusso Magnetico',
+      es: 'Densidad de Flujo Magnético', fr: 'Densité de Flux Magnétique', it: 'Densità di Flusso Magnetico', ko: '자속밀도',
       pt: 'Densidade de Fluxo Magnético', ru: 'Магнитная Индукция', zh: '磁通密度', ja: '磁束密度'
     },
     'Radioactivity': { 
       en: 'Radioactivity', ar: 'النشاط الإشعاعي', de: 'Radioaktivität',
-      es: 'Radioactividad', fr: 'Radioactivité', it: 'Radioattività',
+      es: 'Radioactividad', fr: 'Radioactivité', it: 'Radioattività', ko: '방사능',
       pt: 'Radioatividade', ru: 'Радиоактивность', zh: '放射性', ja: '放射能'
     },
     'Radiation Dose': { 
       en: 'Radiation Dose', ar: 'جرعة الإشعاع', de: 'Strahlendosis',
-      es: 'Dosis de Radiación', fr: 'Dose de Radiation', it: 'Dose di Radiazione',
+      es: 'Dosis de Radiación', fr: 'Dose de Radiation', it: 'Dose di Radiazione', ko: '방사선량',
       pt: 'Dose de Radiação', ru: 'Доза Излучения', zh: '辐射剂量', ja: '放射線量'
     },
     'Absorbed Radiation Dose': { 
       en: 'Absorbed Radiation Dose', ar: 'جرعة الإشعاع الممتص', de: 'Absorbierte Strahlendosis',
-      es: 'Dosis de Radiación Absorbida', fr: 'Dose de Radiation Absorbée', it: 'Dose di Radiazione Assorbita',
+      es: 'Dosis de Radiación Absorbida', fr: 'Dose de Radiation Absorbée', it: 'Dose di Radiazione Assorbita', ko: '흡수선량',
       pt: 'Dose de Radiação Absorvida', ru: 'Поглощённая Доза', zh: '吸收剂量', ja: '吸収線量'
     },
     'Equivalent Dose': { 
       en: 'Equivalent Dose', ar: 'الجرعة المكافئة', de: 'Äquivalentdosis',
-      es: 'Dosis Equivalente', fr: 'Dose Équivalente', it: 'Dose Equivalente',
+      es: 'Dosis Equivalente', fr: 'Dose Équivalente', it: 'Dose Equivalente', ko: '등가선량',
       pt: 'Dose Equivalente', ru: 'Эквивалентная Доза', zh: '当量剂量', ja: '等価線量'
     },
     'Equivalent Radiation Dose': { 
       en: 'Equivalent Radiation Dose', ar: 'جرعة الإشعاع المكافئة', de: 'Äquivalente Strahlendosis',
-      es: 'Dosis de Radiación Equivalente', fr: 'Dose de Radiation Équivalente', it: 'Dose di Radiazione Equivalente',
+      es: 'Dosis de Radiación Equivalente', fr: 'Dose de Radiation Équivalente', it: 'Dose di Radiazione Equivalente', ko: '등가방사선량',
       pt: 'Dose de Radiação Equivalente', ru: 'Эквивалентная Доза Излучения', zh: '等效剂量', ja: '等価線量'
     },
     'Catalytic Activity': { 
       en: 'Catalytic Activity', ar: 'النشاط التحفيزي', de: 'Katalytische Aktivität',
-      es: 'Actividad Catalítica', fr: 'Activité Catalytique', it: 'Attività Catalitica',
+      es: 'Actividad Catalítica', fr: 'Activité Catalytique', it: 'Attività Catalitica', ko: '촉매활성',
       pt: 'Atividade Catalítica', ru: 'Каталитическая Активность', zh: '催化活性', ja: '触媒活性'
     },
     'Angle': { 
       en: 'Angle', ar: 'الزاوية', de: 'Winkel',
-      es: 'Ángulo', fr: 'Angle', it: 'Angolo',
+      es: 'Ángulo', fr: 'Angle', it: 'Angolo', ko: '각도',
       pt: 'Ângulo', ru: 'Угол', zh: '角度', ja: '角度'
     },
     'Plane Angle': { 
       en: 'Plane Angle', ar: 'الزاوية المستوية', de: 'Ebener Winkel',
-      es: 'Ángulo Plano', fr: 'Angle Plan', it: 'Angolo Piano',
+      es: 'Ángulo Plano', fr: 'Angle Plan', it: 'Angolo Piano', ko: '평면각',
       pt: 'Ângulo Plano', ru: 'Плоский Угол', zh: '平面角', ja: '平面角'
     },
     'Solid Angle': { 
       en: 'Solid Angle', ar: 'الزاوية المجسمة', de: 'Raumwinkel',
-      es: 'Ángulo Sólido', fr: 'Angle Solide', it: 'Angolo Solido',
+      es: 'Ángulo Sólido', fr: 'Angle Solide', it: 'Angolo Solido', ko: '입체각',
       pt: 'Ângulo Sólido', ru: 'Телесный Угол', zh: '立体角', ja: '立体角'
     },
     'Frequency': { 
       en: 'Frequency', ar: 'التردد', de: 'Frequenz',
-      es: 'Frecuencia', fr: 'Fréquence', it: 'Frequenza',
+      es: 'Frecuencia', fr: 'Fréquence', it: 'Frequenza', ko: '주파수',
       pt: 'Frequência', ru: 'Частота', zh: '频率', ja: '周波数'
     },
     'Sound Pressure': { 
       en: 'Sound Pressure', ar: 'ضغط الصوت', de: 'Schalldruck',
-      es: 'Presión Sonora', fr: 'Pression Sonore', it: 'Pressione Sonora',
+      es: 'Presión Sonora', fr: 'Pression Sonore', it: 'Pressione Sonora', ko: '음압',
       pt: 'Pressão Sonora', ru: 'Звуковое Давление', zh: '声压', ja: '音圧'
     },
     'Luminous Flux': { 
       en: 'Luminous Flux', ar: 'التدفق الضوئي', de: 'Lichtstrom',
-      es: 'Flujo Luminoso', fr: 'Flux Lumineux', it: 'Flusso Luminoso',
+      es: 'Flujo Luminoso', fr: 'Flux Lumineux', it: 'Flusso Luminoso', ko: '광속',
       pt: 'Fluxo Luminoso', ru: 'Световой Поток', zh: '光通量', ja: '光束'
     },
     'Luminous Flux (Human)': { 
       en: 'Luminous Flux (Human)', ar: 'التدفق الضوئي (البشري)', de: 'Lichtstrom (Menschlich)',
-      es: 'Flujo Luminoso (Humano)', fr: 'Flux Lumineux (Humain)', it: 'Flusso Luminoso (Umano)',
+      es: 'Flujo Luminoso (Humano)', fr: 'Flux Lumineux (Humain)', it: 'Flusso Luminoso (Umano)', ko: '광속 (인간)',
       pt: 'Fluxo Luminoso (Humano)', ru: 'Световой Поток (Человеческий)', zh: '光通量（人眼）', ja: '光束（人間）'
     },
     'Illuminance': { 
       en: 'Illuminance', ar: 'الإضاءة', de: 'Beleuchtungsstärke',
-      es: 'Iluminancia', fr: 'Éclairement', it: 'Illuminamento',
+      es: 'Iluminancia', fr: 'Éclairement', it: 'Illuminamento', ko: '조도',
       pt: 'Iluminância', ru: 'Освещённость', zh: '照度', ja: '照度'
     },
     'Luminous Exitance': { 
       en: 'Luminous Exitance', ar: 'الإشعاع الضوئي', de: 'Spezifische Lichtausstrahlung',
-      es: 'Exitancia Luminosa', fr: 'Exitance Lumineuse', it: 'Emittanza Luminosa',
+      es: 'Exitancia Luminosa', fr: 'Exitance Lumineuse', it: 'Emittanza Luminosa', ko: '광출사도',
       pt: 'Exitância Luminosa', ru: 'Светимость', zh: '光出射度', ja: '光出射度'
     },
     'Luminance': { 
       en: 'Luminance', ar: 'اللمعان', de: 'Leuchtdichte',
-      es: 'Luminancia', fr: 'Luminance', it: 'Luminanza',
+      es: 'Luminancia', fr: 'Luminance', it: 'Luminanza', ko: '휘도',
       pt: 'Luminância', ru: 'Яркость', zh: '亮度', ja: '輝度'
     },
     'Lightbulb Efficiency': { 
       en: 'Lightbulb Efficiency', ar: 'كفاءة المصباح', de: 'Glühbirnen-Effizienz',
-      es: 'Eficiencia de Bombilla', fr: 'Efficacité d\'Ampoule', it: 'Efficienza Lampadina',
+      es: 'Eficiencia de Bombilla', fr: 'Efficacité d\'Ampoule', it: 'Efficienza Lampadina', ko: '전구효율',
       pt: 'Eficiência de Lâmpada', ru: 'Эффективность Лампочки', zh: '灯泡效率', ja: '電球効率'
     },
     'Refractive Power': { 
       en: 'Refractive Power', ar: 'قوة الانكسار', de: 'Brechkraft',
-      es: 'Potencia Refractiva', fr: 'Puissance de Réfraction', it: 'Potere Rifrattivo',
+      es: 'Potencia Refractiva', fr: 'Puissance de Réfraction', it: 'Potere Rifrattivo', ko: '굴절력',
       pt: 'Poder Refrativo', ru: 'Оптическая Сила', zh: '屈光度', ja: '屈折力'
     },
     'Refractive Power (Vision)': { 
       en: 'Refractive Power (Vision)', ar: 'قوة الانكسار (البصر)', de: 'Brechkraft (Sehen)',
-      es: 'Potencia Refractiva (Visión)', fr: 'Puissance de Réfraction (Vision)', it: 'Potere Rifrattivo (Vista)',
+      es: 'Potencia Refractiva (Visión)', fr: 'Puissance de Réfraction (Vision)', it: 'Potere Rifrattivo (Vista)', ko: '굴절력 (시력)',
       pt: 'Poder Refrativo (Visão)', ru: 'Оптическая Сила (Зрение)', zh: '屈光度（视力）', ja: '屈折力（視覚）'
     },
     'Digital Storage': { 
       en: 'Digital Storage', ar: 'التخزين الرقمي', de: 'Digitaler Speicher',
-      es: 'Almacenamiento Digital', fr: 'Stockage Numérique', it: 'Archiviazione Digitale',
+      es: 'Almacenamiento Digital', fr: 'Stockage Numérique', it: 'Archiviazione Digitale', ko: '디지털 저장',
       pt: 'Armazenamento Digital', ru: 'Цифровое Хранилище', zh: '数字存储', ja: 'デジタルストレージ'
     },
     'Typographic Units': { 
       en: 'Typographic Units', ar: 'وحدات الطباعة', de: 'Typografische Einheiten',
-      es: 'Unidades Tipográficas', fr: 'Unités Typographiques', it: 'Unità Tipografiche',
+      es: 'Unidades Tipográficas', fr: 'Unités Typographiques', it: 'Unità Tipografiche', ko: '타이포그래피 단위',
       pt: 'Unidades Tipográficas', ru: 'Типографские Единицы', zh: '排版单位', ja: 'タイポグラフィ単位'
     },
     // UI Labels
     'Base unit:': { 
       en: 'Base unit:', ar: ':الوحدة الأساسية', de: 'Basiseinheit:',
-      es: 'Unidad base:', fr: 'Unité de base:', it: 'Unità di base:',
+      es: 'Unidad base:', fr: 'Unité de base:', it: 'Unità di base:', ko: '기본 단위:',
       pt: 'Unidade base:', ru: 'Базовая единица:', zh: '基本单位：', ja: '基本単位：'
     },
     'Include Beer/Wine': { 
       en: 'Include Beer/Wine', ar: 'تضمين البيرة/النبيذ', de: 'Bier/Wein einschließen',
-      es: 'Incluir Cerveza/Vino', fr: 'Inclure Bière/Vin', it: 'Includi Birra/Vino',
+      es: 'Incluir Cerveza/Vino', fr: 'Inclure Bière/Vin', it: 'Includi Birra/Vino', ko: '맥주/와인 포함',
       pt: 'Incluir Cerveja/Vinho', ru: 'Включить Пиво/Вино', zh: '包括啤酒/葡萄酒', ja: 'ビール/ワインを含む'
     },
     'Base Factor': { 
       en: 'Base Factor', ar: 'العامل الأساسي', de: 'Basisfaktor',
-      es: 'Factor Base', fr: 'Facteur de Base', it: 'Fattore di Base',
+      es: 'Factor Base', fr: 'Facteur de Base', it: 'Fattore di Base', ko: '기본 인수',
       pt: 'Fator Base', ru: 'Базовый Множитель', zh: '基础因子', ja: '基本係数'
     },
     'SI Base Units': { 
       en: 'SI Base Units', ar: 'وحدات SI الأساسية', de: 'SI-Basiseinheiten',
-      es: 'Unidades Base SI', fr: 'Unités de Base SI', it: 'Unità di Base SI',
+      es: 'Unidades Base SI', fr: 'Unités de Base SI', it: 'Unità di Base SI', ko: 'SI 기본 단위',
       pt: 'Unidades Base SI', ru: 'Базовые Единицы SI', zh: 'SI基本单位', ja: 'SI基本単位'
     },
     'Decimals': { 
       en: 'Decimals', ar: 'الكسور العشرية', de: 'Dezimalstellen',
-      es: 'Decimales', fr: 'Décimales', it: 'Decimali',
+      es: 'Decimales', fr: 'Décimales', it: 'Decimali', ko: '소수점',
       pt: 'Decimais', ru: 'Десятичные', zh: '小数', ja: '小数'
     },
     'Precision': { 
       en: 'Precision', ar: 'الدقة', de: 'Genauigkeit',
-      es: 'Precisión', fr: 'Précision', it: 'Precisione',
+      es: 'Precisión', fr: 'Précision', it: 'Precisione', ko: '정밀도',
       pt: 'Precisão', ru: 'Точность', zh: '精度', ja: '精度'
     },
     'Copy': { 
       en: 'Copy', ar: 'نسخ', de: 'Kopieren',
-      es: 'Copiar', fr: 'Copier', it: 'Copia',
+      es: 'Copiar', fr: 'Copier', it: 'Copia', ko: '복사',
       pt: 'Copiar', ru: 'Копировать', zh: '复制', ja: 'コピー'
     },
     'Prefix': { 
       en: 'Prefix', ar: 'بادئة', de: 'Präfix',
-      es: 'Prefijo', fr: 'Préfixe', it: 'Prefisso',
+      es: 'Prefijo', fr: 'Préfixe', it: 'Prefisso', ko: '접두사',
       pt: 'Prefixo', ru: 'Префикс', zh: '前缀', ja: '接頭辞'
     },
     'Unit': { 
       en: 'Unit', ar: 'وحدة', de: 'Einheit',
-      es: 'Unidad', fr: 'Unité', it: 'Unità',
+      es: 'Unidad', fr: 'Unité', it: 'Unità', ko: '단위',
       pt: 'Unidade', ru: 'Единица', zh: '单位', ja: '単位'
     },
     'Result': { 
       en: 'Result', ar: 'النتيجة', de: 'Ergebnis',
-      es: 'Resultado', fr: 'Résultat', it: 'Risultato',
+      es: 'Resultado', fr: 'Résultat', it: 'Risultato', ko: '결과',
       pt: 'Resultado', ru: 'Результат', zh: '结果', ja: '結果'
     },
     'Calculator': { 
       en: 'Calculator', ar: 'الآلة الحاسبة', de: 'Rechner',
-      es: 'Calculadora', fr: 'Calculatrice', it: 'Calcolatrice',
+      es: 'Calculadora', fr: 'Calculatrice', it: 'Calcolatrice', ko: '계산기',
       pt: 'Calculadora', ru: 'Калькулятор', zh: '计算器', ja: '計算機'
     },
     'Clear': { 
       en: 'Clear', ar: 'مسح', de: 'Löschen',
-      es: 'Limpiar', fr: 'Effacer', it: 'Cancella',
+      es: 'Limpiar', fr: 'Effacer', it: 'Cancella', ko: '지우기',
       pt: 'Limpar', ru: 'Очистить', zh: '清除', ja: 'クリア'
     },
     'Dimensional Analysis': { 
       en: 'Dimensional Analysis', ar: 'التحليل البعدي', de: 'Dimensionsanalyse',
-      es: 'Análisis Dimensional', fr: 'Analyse Dimensionnelle', it: 'Analisi Dimensionale',
+      es: 'Análisis Dimensional', fr: 'Analyse Dimensionnelle', it: 'Analisi Dimensionale', ko: '차원 분석',
       pt: 'Análise Dimensional', ru: 'Размерный Анализ', zh: '量纲分析', ja: '次元解析'
     },
     'From': { 
       en: 'From', ar: 'من', de: 'Von',
-      es: 'De', fr: 'De', it: 'Da',
+      es: 'De', fr: 'De', it: 'Da', ko: '에서',
       pt: 'De', ru: 'Из', zh: '从', ja: 'から'
     },
     'To': { 
       en: 'To', ar: 'إلى', de: 'Zu',
-      es: 'A', fr: 'À', it: 'A',
+      es: 'A', fr: 'À', it: 'A', ko: '로',
       pt: 'Para', ru: 'В', zh: '到', ja: 'へ'
     },
-    // Common unit base names
-    'meter': { en: 'meter', ar: 'متر' },
-    'metre': { en: 'metre', ar: 'متر' },
-    'kilogram': { en: 'kilogram', ar: 'كيلوغرام' },
-    'second': { en: 'second', ar: 'ثانية' },
-    'ampere': { en: 'ampere', ar: 'أمبير' },
-    'kelvin': { en: 'kelvin', ar: 'كلفن' },
-    'celsius': { en: 'celsius', ar: 'سلزيوس' },
-    'mole': { en: 'mole', ar: 'مول' },
-    'candela': { en: 'candela', ar: 'شمعة' },
-    'liter': { en: 'liter', ar: 'لتر' },
-    'litre': { en: 'litre', ar: 'لتر' },
-    'square meter': { en: 'square meter', ar: 'متر مربع' },
-    'square metre': { en: 'square metre', ar: 'متر مربع' },
-    'cubic meter': { en: 'cubic meter', ar: 'متر مكعب' },
-    'cubic metre': { en: 'cubic metre', ar: 'متر مكعب' },
-    'meter/second': { en: 'meter/second', ar: 'متر/ثانية' },
-    'metre/second': { en: 'metre/second', ar: 'متر/ثانية' },
-    'meter/sq second': { en: 'meter/sq second', ar: 'متر/ثانية²' },
-    'metre/sq second': { en: 'metre/sq second', ar: 'متر/ثانية²' },
-    'newton': { en: 'newton', ar: 'نيوتن' },
-    'pascal': { en: 'pascal', ar: 'باسكال' },
-    'joule': { en: 'joule', ar: 'جول' },
-    'watt': { en: 'watt', ar: 'واط' },
-    'newton meter': { en: 'newton meter', ar: 'نيوتن متر' },
-    'newton metre': { en: 'newton metre', ar: 'نيوتن متر' },
-    'liter/second': { en: 'liter/second', ar: 'لتر/ثانية' },
-    'litre/second': { en: 'litre/second', ar: 'لتر/ثانية' },
-    'coulomb': { en: 'coulomb', ar: 'كولوم' },
-    'volt': { en: 'volt', ar: 'فولت' },
-    'farad': { en: 'farad', ar: 'فاراد' },
-    'ohm': { en: 'ohm', ar: 'أوم' },
-    'siemens': { en: 'siemens', ar: 'سيمنز' },
-    'henry': { en: 'henry', ar: 'هنري' },
-    'weber': { en: 'weber', ar: 'ويبر' },
-    'tesla': { en: 'tesla', ar: 'تسلا' },
-    'becquerel': { en: 'becquerel', ar: 'بكريل' },
-    'gray': { en: 'gray', ar: 'غراي' },
-    'sievert': { en: 'sievert', ar: 'سيفرت' },
-    'katal': { en: 'katal', ar: 'كاتال' },
-    'radian': { en: 'radian', ar: 'راديان' },
-    'degree': { en: 'degree', ar: 'درجة' },
-    'steradian': { en: 'steradian', ar: 'ستراديان' },
-    'hertz': { en: 'hertz', ar: 'هرتز' },
-    'decibel': { en: 'decibel', ar: 'ديسيبل' },
-    'lumen': { en: 'lumen', ar: 'لومن' },
-    'lux': { en: 'lux', ar: 'لوكس' },
-    'lumen/square-meter': { en: 'lumen/square-meter', ar: 'لومن/متر²' },
-    'lumen/square-metre': { en: 'lumen/square-metre', ar: 'لومن/متر²' },
-    'candela/square-meter': { en: 'candela/square-meter', ar: 'شمعة/متر²' },
-    'candela/square-metre': { en: 'candela/square-metre', ar: 'شمعة/متر²' },
-    'reciprocal-meter': { en: 'reciprocal-meter', ar: 'متر⁻¹' },
-    'reciprocal-metre': { en: 'reciprocal-metre', ar: 'متر⁻¹' },
-    'byte': { en: 'byte', ar: 'بايت' },
-    'point': { en: 'point', ar: 'نقطة' },
-    'newton/meter': { en: 'newton/meter', ar: 'نيوتن/متر' },
-    'newton/metre': { en: 'newton/metre', ar: 'نيوتن/متر' },
-    'pascal-second': { en: 'pascal-second', ar: 'باسكال ثانية' },
+    // Common unit base names (lowercase for SI base unit display)
+    'meter': { en: 'meter', ar: 'متر', de: 'Meter', es: 'metro', fr: 'mètre', it: 'metro', ko: '미터', pt: 'metro', ru: 'метр', zh: '米', ja: 'メートル' },
+    'metre': { en: 'metre', ar: 'متر', de: 'Meter', es: 'metro', fr: 'mètre', it: 'metro', ko: '미터', pt: 'metro', ru: 'метр', zh: '米', ja: 'メートル' },
+    'kilogram': { en: 'kilogram', ar: 'كيلوغرام', de: 'Kilogramm', es: 'kilogramo', fr: 'kilogramme', it: 'chilogrammo', ko: '킬로그램', pt: 'quilograma', ru: 'килограмм', zh: '千克', ja: 'キログラム' },
+    'second': { en: 'second', ar: 'ثانية', de: 'Sekunde', es: 'segundo', fr: 'seconde', it: 'secondo', ko: '초', pt: 'segundo', ru: 'секунда', zh: '秒', ja: '秒' },
+    'ampere': { en: 'ampere', ar: 'أمبير', de: 'Ampere', es: 'amperio', fr: 'ampère', it: 'ampere', ko: '암페어', pt: 'ampere', ru: 'ампер', zh: '安培', ja: 'アンペア' },
+    'kelvin': { en: 'kelvin', ar: 'كلفن', de: 'Kelvin', es: 'kelvin', fr: 'kelvin', it: 'kelvin', ko: '켈빈', pt: 'kelvin', ru: 'кельвин', zh: '开尔文', ja: 'ケルビン' },
+    'celsius': { en: 'celsius', ar: 'سلزيوس', de: 'Celsius', es: 'celsius', fr: 'celsius', it: 'celsius', ko: '섭씨', pt: 'celsius', ru: 'цельсий', zh: '摄氏度', ja: '摂氏' },
+    'mole': { en: 'mole', ar: 'مول', de: 'Mol', es: 'mol', fr: 'mole', it: 'mole', ko: '몰', pt: 'mol', ru: 'моль', zh: '摩尔', ja: 'モル' },
+    'candela': { en: 'candela', ar: 'شمعة', de: 'Candela', es: 'candela', fr: 'candela', it: 'candela', ko: '칸델라', pt: 'candela', ru: 'кандела', zh: '坎德拉', ja: 'カンデラ' },
+    'liter': { en: 'liter', ar: 'لتر', de: 'Liter', es: 'litro', fr: 'litre', it: 'litro', ko: '리터', pt: 'litro', ru: 'литр', zh: '升', ja: 'リットル' },
+    'litre': { en: 'litre', ar: 'لتر', de: 'Liter', es: 'litro', fr: 'litre', it: 'litro', ko: '리터', pt: 'litro', ru: 'литр', zh: '升', ja: 'リットル' },
+    'square meter': { en: 'square meter', ar: 'متر مربع', de: 'Quadratmeter', es: 'metro cuadrado', fr: 'mètre carré', it: 'metro quadrato', ko: '제곱미터', pt: 'metro quadrado', ru: 'квадратный метр', zh: '平方米', ja: '平方メートル' },
+    'square metre': { en: 'square metre', ar: 'متر مربع', de: 'Quadratmeter', es: 'metro cuadrado', fr: 'mètre carré', it: 'metro quadrato', ko: '제곱미터', pt: 'metro quadrado', ru: 'квадратный метр', zh: '平方米', ja: '平方メートル' },
+    'cubic meter': { en: 'cubic meter', ar: 'متر مكعب', de: 'Kubikmeter', es: 'metro cúbico', fr: 'mètre cube', it: 'metro cubo', ko: '세제곱미터', pt: 'metro cúbico', ru: 'кубический метр', zh: '立方米', ja: '立方メートル' },
+    'cubic metre': { en: 'cubic metre', ar: 'متر مكعب', de: 'Kubikmeter', es: 'metro cúbico', fr: 'mètre cube', it: 'metro cubo', ko: '세제곱미터', pt: 'metro cúbico', ru: 'кубический метр', zh: '立方米', ja: '立方メートル' },
+    'meter/second': { en: 'meter/second', ar: 'متر/ثانية', de: 'Meter/Sekunde', es: 'metro/segundo', fr: 'mètre/seconde', it: 'metro/secondo', ko: '미터/초', pt: 'metro/segundo', ru: 'метр/секунда', zh: '米/秒', ja: 'メートル/秒' },
+    'metre/second': { en: 'metre/second', ar: 'متر/ثانية', de: 'Meter/Sekunde', es: 'metro/segundo', fr: 'mètre/seconde', it: 'metro/secondo', ko: '미터/초', pt: 'metro/segundo', ru: 'метр/секунда', zh: '米/秒', ja: 'メートル/秒' },
+    'meter/sq second': { en: 'meter/sq second', ar: 'متر/ثانية²', de: 'Meter/Sek²', es: 'metro/seg²', fr: 'mètre/sec²', it: 'metro/sec²', ko: '미터/초²', pt: 'metro/seg²', ru: 'метр/сек²', zh: '米/秒²', ja: 'メートル/秒²' },
+    'metre/sq second': { en: 'metre/sq second', ar: 'متر/ثانية²', de: 'Meter/Sek²', es: 'metro/seg²', fr: 'mètre/sec²', it: 'metro/sec²', ko: '미터/초²', pt: 'metro/seg²', ru: 'метр/сек²', zh: '米/秒²', ja: 'メートル/秒²' },
+    'newton': { en: 'newton', ar: 'نيوتن', de: 'Newton', es: 'newton', fr: 'newton', it: 'newton', ko: '뉴턴', pt: 'newton', ru: 'ньютон', zh: '牛顿', ja: 'ニュートン' },
+    'pascal': { en: 'pascal', ar: 'باسكال', de: 'Pascal', es: 'pascal', fr: 'pascal', it: 'pascal', ko: '파스칼', pt: 'pascal', ru: 'паскаль', zh: '帕斯卡', ja: 'パスカル' },
+    'joule': { en: 'joule', ar: 'جول', de: 'Joule', es: 'julio', fr: 'joule', it: 'joule', ko: '줄', pt: 'joule', ru: 'джоуль', zh: '焦耳', ja: 'ジュール' },
+    'watt': { en: 'watt', ar: 'واط', de: 'Watt', es: 'vatio', fr: 'watt', it: 'watt', ko: '와트', pt: 'watt', ru: 'ватт', zh: '瓦特', ja: 'ワット' },
+    'newton meter': { en: 'newton meter', ar: 'نيوتن متر', de: 'Newtonmeter', es: 'newton metro', fr: 'newton mètre', it: 'newton metro', ko: '뉴턴 미터', pt: 'newton metro', ru: 'ньютон-метр', zh: '牛顿米', ja: 'ニュートンメートル' },
+    'newton metre': { en: 'newton metre', ar: 'نيوتن متر', de: 'Newtonmeter', es: 'newton metro', fr: 'newton mètre', it: 'newton metro', ko: '뉴턴 미터', pt: 'newton metro', ru: 'ньютон-метр', zh: '牛顿米', ja: 'ニュートンメートル' },
+    'liter/second': { en: 'liter/second', ar: 'لتر/ثانية', de: 'Liter/Sekunde', es: 'litro/segundo', fr: 'litre/seconde', it: 'litro/secondo', ko: '리터/초', pt: 'litro/segundo', ru: 'литр/секунда', zh: '升/秒', ja: 'リットル/秒' },
+    'litre/second': { en: 'litre/second', ar: 'لتر/ثانية', de: 'Liter/Sekunde', es: 'litro/segundo', fr: 'litre/seconde', it: 'litro/secondo', ko: '리터/초', pt: 'litro/segundo', ru: 'литр/секунда', zh: '升/秒', ja: 'リットル/秒' },
+    'coulomb': { en: 'coulomb', ar: 'كولوم', de: 'Coulomb', es: 'culombio', fr: 'coulomb', it: 'coulomb', ko: '쿨롱', pt: 'coulomb', ru: 'кулон', zh: '库仑', ja: 'クーロン' },
+    'volt': { en: 'volt', ar: 'فولت', de: 'Volt', es: 'voltio', fr: 'volt', it: 'volt', ko: '볼트', pt: 'volt', ru: 'вольт', zh: '伏特', ja: 'ボルト' },
+    'farad': { en: 'farad', ar: 'فاراد', de: 'Farad', es: 'faradio', fr: 'farad', it: 'farad', ko: '패럿', pt: 'farad', ru: 'фарад', zh: '法拉', ja: 'ファラド' },
+    'ohm': { en: 'ohm', ar: 'أوم', de: 'Ohm', es: 'ohmio', fr: 'ohm', it: 'ohm', ko: '옴', pt: 'ohm', ru: 'ом', zh: '欧姆', ja: 'オーム' },
+    'siemens': { en: 'siemens', ar: 'سيمنز', de: 'Siemens', es: 'siemens', fr: 'siemens', it: 'siemens', ko: '지멘스', pt: 'siemens', ru: 'сименс', zh: '西门子', ja: 'ジーメンス' },
+    'henry': { en: 'henry', ar: 'هنري', de: 'Henry', es: 'henrio', fr: 'henry', it: 'henry', ko: '헨리', pt: 'henry', ru: 'генри', zh: '亨利', ja: 'ヘンリー' },
+    'weber': { en: 'weber', ar: 'ويبر', de: 'Weber', es: 'weber', fr: 'weber', it: 'weber', ko: '웨버', pt: 'weber', ru: 'вебер', zh: '韦伯', ja: 'ウェーバー' },
+    'tesla': { en: 'tesla', ar: 'تسلا', de: 'Tesla', es: 'tesla', fr: 'tesla', it: 'tesla', ko: '테슬라', pt: 'tesla', ru: 'тесла', zh: '特斯拉', ja: 'テスラ' },
+    'becquerel': { en: 'becquerel', ar: 'بكريل', de: 'Becquerel', es: 'becquerel', fr: 'becquerel', it: 'becquerel', ko: '베크렐', pt: 'becquerel', ru: 'беккерель', zh: '贝克勒尔', ja: 'ベクレル' },
+    'gray': { en: 'gray', ar: 'غراي', de: 'Gray', es: 'gray', fr: 'gray', it: 'gray', ko: '그레이', pt: 'gray', ru: 'грей', zh: '戈瑞', ja: 'グレイ' },
+    'sievert': { en: 'sievert', ar: 'سيفرت', de: 'Sievert', es: 'sievert', fr: 'sievert', it: 'sievert', ko: '시버트', pt: 'sievert', ru: 'зиверт', zh: '希沃特', ja: 'シーベルト' },
+    'katal': { en: 'katal', ar: 'كاتال', de: 'Katal', es: 'katal', fr: 'katal', it: 'katal', ko: '카탈', pt: 'katal', ru: 'катал', zh: '开特', ja: 'カタール' },
+    'radian': { en: 'radian', ar: 'راديان', de: 'Radiant', es: 'radián', fr: 'radian', it: 'radiante', ko: '라디안', pt: 'radiano', ru: 'радиан', zh: '弧度', ja: 'ラジアン' },
+    'degree': { en: 'degree', ar: 'درجة', de: 'Grad', es: 'grado', fr: 'degré', it: 'grado', ko: '도', pt: 'grau', ru: 'градус', zh: '度', ja: '度' },
+    'steradian': { en: 'steradian', ar: 'ستراديان', de: 'Steradiant', es: 'estereorradián', fr: 'stéradian', it: 'steradiante', ko: '스테라디안', pt: 'esterradiano', ru: 'стерадиан', zh: '球面度', ja: 'ステラジアン' },
+    'hertz': { en: 'hertz', ar: 'هرتز', de: 'Hertz', es: 'hercio', fr: 'hertz', it: 'hertz', ko: '헤르츠', pt: 'hertz', ru: 'герц', zh: '赫兹', ja: 'ヘルツ' },
+    'decibel': { en: 'decibel', ar: 'ديسيبل', de: 'Dezibel', es: 'decibelio', fr: 'décibel', it: 'decibel', ko: '데시벨', pt: 'decibel', ru: 'децибел', zh: '分贝', ja: 'デシベル' },
+    'lumen': { en: 'lumen', ar: 'لومن', de: 'Lumen', es: 'lumen', fr: 'lumen', it: 'lumen', ko: '루멘', pt: 'lúmen', ru: 'люмен', zh: '流明', ja: 'ルーメン' },
+    'lux': { en: 'lux', ar: 'لوكس', de: 'Lux', es: 'lux', fr: 'lux', it: 'lux', ko: '럭스', pt: 'lux', ru: 'люкс', zh: '勒克斯', ja: 'ルクス' },
+    'lumen/square-meter': { en: 'lumen/square-meter', ar: 'لومن/متر²', de: 'Lumen/m²', es: 'lumen/m²', fr: 'lumen/m²', it: 'lumen/m²', ko: '루멘/m²', pt: 'lúmen/m²', ru: 'люмен/м²', zh: '流明/平方米', ja: 'ルーメン/m²' },
+    'lumen/square-metre': { en: 'lumen/square-metre', ar: 'لومن/متر²', de: 'Lumen/m²', es: 'lumen/m²', fr: 'lumen/m²', it: 'lumen/m²', ko: '루멘/m²', pt: 'lúmen/m²', ru: 'люмен/м²', zh: '流明/平方米', ja: 'ルーメン/m²' },
+    'candela/square-meter': { en: 'candela/square-meter', ar: 'شمعة/متر²', de: 'Candela/m²', es: 'candela/m²', fr: 'candela/m²', it: 'candela/m²', ko: '칸델라/m²', pt: 'candela/m²', ru: 'кандела/м²', zh: '坎德拉/平方米', ja: 'カンデラ/m²' },
+    'candela/square-metre': { en: 'candela/square-metre', ar: 'شمعة/متر²', de: 'Candela/m²', es: 'candela/m²', fr: 'candela/m²', it: 'candela/m²', ko: '칸델라/m²', pt: 'candela/m²', ru: 'кандела/м²', zh: '坎德拉/平方米', ja: 'カンデラ/m²' },
+    'reciprocal-meter': { en: 'reciprocal-meter', ar: 'متر⁻¹', de: 'Reziprok-Meter', es: 'metro recíproco', fr: 'mètre réciproque', it: 'metro reciproco', ko: '역미터', pt: 'metro recíproco', ru: 'обратный метр', zh: '米⁻¹', ja: '逆メートル' },
+    'reciprocal-metre': { en: 'reciprocal-metre', ar: 'متر⁻¹', de: 'Reziprok-Meter', es: 'metro recíproco', fr: 'mètre réciproque', it: 'metro reciproco', ko: '역미터', pt: 'metro recíproco', ru: 'обратный метр', zh: '米⁻¹', ja: '逆メートル' },
+    'byte': { en: 'byte', ar: 'بايت', de: 'Byte', es: 'byte', fr: 'octet', it: 'byte', ko: '바이트', pt: 'byte', ru: 'байт', zh: '字节', ja: 'バイト' },
+    'point': { en: 'point', ar: 'نقطة', de: 'Punkt', es: 'punto', fr: 'point', it: 'punto', ko: '포인트', pt: 'ponto', ru: 'пункт', zh: '点', ja: 'ポイント' },
+    'newton/meter': { en: 'newton/meter', ar: 'نيوتن/متر', de: 'Newton/Meter', es: 'newton/metro', fr: 'newton/mètre', it: 'newton/metro', ko: '뉴턴/미터', pt: 'newton/metro', ru: 'ньютон/метр', zh: '牛顿/米', ja: 'ニュートン/メートル' },
+    'newton/metre': { en: 'newton/metre', ar: 'نيوتن/متر', de: 'Newton/Meter', es: 'newton/metro', fr: 'newton/mètre', it: 'newton/metro', ko: '뉴턴/미터', pt: 'newton/metro', ru: 'ньютон/метр', zh: '牛顿/米', ja: 'ニュートン/メートル' },
+    'pascal-second': { en: 'pascal-second', ar: 'باسكال ثانية', de: 'Pascal-Sekunde', es: 'pascal-segundo', fr: 'pascal-seconde', it: 'pascal-secondo', ko: '파스칼초', pt: 'pascal-segundo', ru: 'паскаль-секунда', zh: '帕斯卡秒', ja: 'パスカル秒' },
     // Unit names (all capitalized forms from conversion-data.ts)
     'Meter': { 
       en: 'Meter', ar: 'متر', de: 'Meter',
-      es: 'Metro', fr: 'Mètre', it: 'Metro',
+      es: 'Metro', fr: 'Mètre', it: 'Metro', ko: '미터',
       pt: 'Metro', ru: 'Метр', zh: '米', ja: 'メートル'
     },
     'Metre': { 
       en: 'Metre', ar: 'متر', de: 'Meter',
-      es: 'Metro', fr: 'Mètre', it: 'Metro',
+      es: 'Metro', fr: 'Mètre', it: 'Metro', ko: '미터',
       pt: 'Metro', ru: 'Метр', zh: '米', ja: 'メートル'
     },
     'Millimeter': { 
       en: 'Millimeter', ar: 'مليمتر', de: 'Millimeter',
-      es: 'Milímetro', fr: 'Millimètre', it: 'Millimetro',
+      es: 'Milímetro', fr: 'Millimètre', it: 'Millimetro', ko: '밀리미터',
       pt: 'Milímetro', ru: 'Миллиметр', zh: '毫米', ja: 'ミリメートル'
     },
     'Inch': { 
       en: 'Inch', ar: 'بوصة', de: 'Zoll',
-      es: 'Pulgada', fr: 'Pouce', it: 'Pollice',
+      es: 'Pulgada', fr: 'Pouce', it: 'Pollice', ko: '인치',
       pt: 'Polegada', ru: 'Дюйм', zh: '英寸', ja: 'インチ'
     },
     'Foot': { 
       en: 'Foot', ar: 'قدم', de: 'Fuß',
-      es: 'Pie', fr: 'Pied', it: 'Piede',
+      es: 'Pie', fr: 'Pied', it: 'Piede', ko: '피트',
       pt: 'Pé', ru: 'Фут', zh: '英尺', ja: 'フィート'
     },
     'Foot:Inch': { 
       en: 'Foot:Inch', ar: 'قدم:بوصة', de: 'Fuß:Zoll',
-      es: 'Pie:Pulgada', fr: 'Pied:Pouce', it: 'Piede:Pollice',
+      es: 'Pie:Pulgada', fr: 'Pied:Pouce', it: 'Piede:Pollice', ko: '피트:인치',
       pt: 'Pé:Polegada', ru: 'Фут:Дюйм', zh: '英尺:英寸', ja: 'フィート:インチ'
     },
     'Yard': { 
       en: 'Yard', ar: 'ياردة', de: 'Yard',
-      es: 'Yarda', fr: 'Yard', it: 'Iarda',
+      es: 'Yarda', fr: 'Yard', it: 'Iarda', ko: '야드',
       pt: 'Jarda', ru: 'Ярд', zh: '码', ja: 'ヤード'
     },
     'Mile': { 
       en: 'Mile', ar: 'ميل', de: 'Meile',
-      es: 'Milla', fr: 'Mille', it: 'Miglio',
+      es: 'Milla', fr: 'Mille', it: 'Miglio', ko: '마일',
       pt: 'Milha', ru: 'Миля', zh: '英里', ja: 'マイル'
     },
     'Nautical Mile': { 
       en: 'Nautical Mile', ar: 'ميل بحري', de: 'Seemeile',
-      es: 'Milla Náutica', fr: 'Mille Marin', it: 'Miglio Nautico',
+      es: 'Milla Náutica', fr: 'Mille Marin', it: 'Miglio Nautico', ko: '해리',
       pt: 'Milha Náutica', ru: 'Морская Миля', zh: '海里', ja: '海里'
     },
-    'Link (Gunter)': { en: 'Link (Gunter)', ar: 'وصلة (غونتر)', de: 'Link (Gunter)', es: 'Eslabón (Gunter)', fr: 'Chaînon (Gunter)', it: 'Link (Gunter)', pt: 'Elo (Gunter)', ru: 'Линк (Гюнтера)', zh: '链节', ja: 'リンク' },
-    'Rod': { en: 'Rod', ar: 'قضيب', de: 'Rute', es: 'Vara', fr: 'Perche', it: 'Pertica', pt: 'Vara', ru: 'Род', zh: '杆', ja: 'ロッド' },
-    'Chain': { en: 'Chain', ar: 'سلسلة', de: 'Kette', es: 'Cadena', fr: 'Chaîne', it: 'Catena', pt: 'Corrente', ru: 'Чейн', zh: '链', ja: 'チェーン' },
-    'Furlong': { en: 'Furlong', ar: 'فرلنغ', de: 'Furlong', es: 'Furlong', fr: 'Furlong', it: 'Furlong', pt: 'Furlong', ru: 'Фарлонг', zh: '弗隆', ja: 'ハロン' },
-    'Fathom': { en: 'Fathom', ar: 'قامة', de: 'Faden', es: 'Braza', fr: 'Brasse', it: 'Braccio', pt: 'Braça', ru: 'Фатом', zh: '英寻', ja: 'ファゾム' },
-    'Parsec': { en: 'Parsec', ar: 'فرسخ فلكي', de: 'Parsec', es: 'Pársec', fr: 'Parsec', it: 'Parsec', pt: 'Parsec', ru: 'Парсек', zh: '秒差距', ja: 'パーセク' },
-    'Astronomical Unit': { en: 'Astronomical Unit', ar: 'وحدة فلكية', de: 'Astronomische Einheit', es: 'Unidad Astronómica', fr: 'Unité Astronomique', it: 'Unità Astronomica', pt: 'Unidade Astronômica', ru: 'Астрономическая Единица', zh: '天文单位', ja: '天文単位' },
-    'Light Year': { en: 'Light Year', ar: 'سنة ضوئية', de: 'Lichtjahr', es: 'Año Luz', fr: 'Année-Lumière', it: 'Anno Luce', pt: 'Ano-Luz', ru: 'Световой Год', zh: '光年', ja: '光年' },
-    'Angstrom': { en: 'Angstrom', ar: 'أنجستروم', de: 'Ångström', es: 'Ángstrom', fr: 'Ångström', it: 'Ångström', pt: 'Ångström', ru: 'Ангстрем', zh: '埃', ja: 'オングストローム' },
+    'Link (Gunter)': { en: 'Link (Gunter)', ar: 'وصلة (غونتر)', de: 'Link (Gunter)', es: 'Eslabón (Gunter)', fr: 'Chaînon (Gunter)', it: 'Link (Gunter)', ko: '링크 (건터)', pt: 'Elo (Gunter)', ru: 'Линк (Гюнтера)', zh: '链节', ja: 'リンク' },
+    'Rod': { en: 'Rod', ar: 'قضيب', de: 'Rute', es: 'Vara', fr: 'Perche', it: 'Pertica', ko: '로드', pt: 'Vara', ru: 'Род', zh: '杆', ja: 'ロッド' },
+    'Chain': { en: 'Chain', ar: 'سلسلة', de: 'Kette', es: 'Cadena', fr: 'Chaîne', it: 'Catena', ko: '체인', pt: 'Corrente', ru: 'Чейн', zh: '链', ja: 'チェーン' },
+    'Furlong': { en: 'Furlong', ar: 'فرلنغ', de: 'Furlong', es: 'Furlong', fr: 'Furlong', it: 'Furlong', ko: '펄롱', pt: 'Furlong', ru: 'Фарлонг', zh: '弗隆', ja: 'ハロン' },
+    'Fathom': { en: 'Fathom', ar: 'قامة', de: 'Faden', es: 'Braza', fr: 'Brasse', it: 'Braccio', ko: '패덤', pt: 'Braça', ru: 'Фатом', zh: '英寻', ja: 'ファゾム' },
+    'Parsec': { en: 'Parsec', ar: 'فرسخ فلكي', de: 'Parsec', es: 'Pársec', fr: 'Parsec', it: 'Parsec', ko: '파섹', pt: 'Parsec', ru: 'Парсек', zh: '秒差距', ja: 'パーセク' },
+    'Astronomical Unit': { en: 'Astronomical Unit', ar: 'وحدة فلكية', de: 'Astronomische Einheit', es: 'Unidad Astronómica', fr: 'Unité Astronomique', it: 'Unità Astronomica', ko: '천문단위', pt: 'Unidade Astronômica', ru: 'Астрономическая Единица', zh: '天文单位', ja: '天文単位' },
+    'Light Year': { en: 'Light Year', ar: 'سنة ضوئية', de: 'Lichtjahr', es: 'Año Luz', fr: 'Année-Lumière', it: 'Anno Luce', ko: '광년', pt: 'Ano-Luz', ru: 'Световой Год', zh: '光年', ja: '光年' },
+    'Angstrom': { en: 'Angstrom', ar: 'أنجستروم', de: 'Ångström', es: 'Ángstrom', fr: 'Ångström', it: 'Ångström', ko: '옹스트롬', pt: 'Ångström', ru: 'Ангстрем', zh: '埃', ja: 'オングストローム' },
     'Kilogram': { 
       en: 'Kilogram', ar: 'كيلوغرام', de: 'Kilogramm',
-      es: 'Kilogramo', fr: 'Kilogramme', it: 'Chilogrammo',
+      es: 'Kilogramo', fr: 'Kilogramme', it: 'Chilogrammo', ko: '킬로그램',
       pt: 'Quilograma', ru: 'Килограмм', zh: '千克', ja: 'キログラム'
     },
     'Gram': { 
       en: 'Gram', ar: 'غرام', de: 'Gramm',
-      es: 'Gramo', fr: 'Gramme', it: 'Grammo',
+      es: 'Gramo', fr: 'Gramme', it: 'Grammo', ko: '그램',
       pt: 'Grama', ru: 'Грамм', zh: '克', ja: 'グラム'
     },
     'Tonne': { 
       en: 'Tonne', ar: 'طن متري', de: 'Tonne',
-      es: 'Tonelada', fr: 'Tonne', it: 'Tonnellata',
+      es: 'Tonelada', fr: 'Tonne', it: 'Tonnellata', ko: '톤',
       pt: 'Tonelada', ru: 'Тонна', zh: '吨', ja: 'トン'
     },
     'Ounce': { 
       en: 'Ounce', ar: 'أونصة', de: 'Unze',
-      es: 'Onza', fr: 'Once', it: 'Oncia',
+      es: 'Onza', fr: 'Once', it: 'Oncia', ko: '온스',
       pt: 'Onça', ru: 'Унция', zh: '盎司', ja: 'オンス'
     },
     'Pound': { 
       en: 'Pound', ar: 'باوند', de: 'Pfund',
-      es: 'Libra', fr: 'Livre', it: 'Libbra',
+      es: 'Libra', fr: 'Livre', it: 'Libbra', ko: '파운드',
       pt: 'Libra', ru: 'Фунт', zh: '磅', ja: 'ポンド'
     },
     'Stone': { 
       en: 'Stone', ar: 'ستون', de: 'Stone',
-      es: 'Stone', fr: 'Stone', it: 'Stone',
+      es: 'Stone', fr: 'Stone', it: 'Stone', ko: '스톤',
       pt: 'Stone', ru: 'Стоун', zh: '英石', ja: 'ストーン'
     },
     'Short Ton (US)': { 
       en: 'Short Ton (US)', ar: 'طن قصير (أمريكي)', de: 'Short Ton (US)',
-      es: 'Tonelada Corta (EE.UU.)', fr: 'Tonne Courte (US)', it: 'Tonnellata Corta (US)',
+      es: 'Tonelada Corta (EE.UU.)', fr: 'Tonne Courte (US)', it: 'Tonnellata Corta (US)', ko: '숏톤 (미국)',
       pt: 'Tonelada Curta (EUA)', ru: 'Короткая Тонна (США)', zh: '短吨（美国）', ja: 'ショートトン（米国）'
     },
     'Long Ton (UK)': { 
       en: 'Long Ton (UK)', ar: 'طن طويل (بريطاني)', de: 'Long Ton (UK)',
-      es: 'Tonelada Larga (UK)', fr: 'Tonne Longue (UK)', it: 'Tonnellata Lunga (UK)',
+      es: 'Tonelada Larga (UK)', fr: 'Tonne Longue (UK)', it: 'Tonnellata Lunga (UK)', ko: '롱톤 (영국)',
       pt: 'Tonelada Longa (Reino Unido)', ru: 'Длинная Тонна (Великобритания)', zh: '长吨（英国）', ja: 'ロングトン（英国）'
     },
-    'Grain': { en: 'Grain', ar: 'حبة', de: 'Gran', es: 'Grano', fr: 'Grain', it: 'Grano', pt: 'Grão', ru: 'Гран', zh: '格令', ja: 'グレーン' },
-    'Pennyweight': { en: 'Pennyweight', ar: 'بيني وايت', de: 'Pennyweight', es: 'Peso de Penique', fr: 'Pennyweight', it: 'Pennyweight', pt: 'Pennyweight', ru: 'Пеннивейт', zh: '本尼威特', ja: 'ペニーウェイト' },
-    'Troy Ounce': { en: 'Troy Ounce', ar: 'أونصة ترويا', de: 'Feinunze', es: 'Onza Troy', fr: 'Once Troy', it: 'Oncia Troy', pt: 'Onça Troy', ru: 'Тройская Унция', zh: '金衡盎司', ja: 'トロイオンス' },
-    'Carat': { en: 'Carat', ar: 'قيراط', de: 'Karat', es: 'Quilate', fr: 'Carat', it: 'Carato', pt: 'Quilate', ru: 'Карат', zh: '克拉', ja: 'カラット' },
-    'Slug': { en: 'Slug', ar: 'سلَغ', de: 'Slug', es: 'Slug', fr: 'Slug', it: 'Slug', pt: 'Slug', ru: 'Слаг', zh: '斯勒格', ja: 'スラグ' },
+    'Grain': { en: 'Grain', ar: 'حبة', de: 'Gran', es: 'Grano', fr: 'Grain', it: 'Grano', ko: '그레인', pt: 'Grão', ru: 'Гран', zh: '格令', ja: 'グレーン' },
+    'Pennyweight': { en: 'Pennyweight', ar: 'بيني وايت', de: 'Pennyweight', es: 'Peso de Penique', fr: 'Pennyweight', it: 'Pennyweight', ko: '페니웨이트', pt: 'Pennyweight', ru: 'Пеннивейт', zh: '本尼威特', ja: 'ペニーウェイト' },
+    'Troy Ounce': { en: 'Troy Ounce', ar: 'أونصة ترويا', de: 'Feinunze', es: 'Onza Troy', fr: 'Once Troy', it: 'Oncia Troy', ko: '트로이온스', pt: 'Onça Troy', ru: 'Тройская Унция', zh: '金衡盎司', ja: 'トロイオンス' },
+    'Carat': { en: 'Carat', ar: 'قيراط', de: 'Karat', es: 'Quilate', fr: 'Carat', it: 'Carato', ko: '캐럿', pt: 'Quilate', ru: 'Карат', zh: '克拉', ja: 'カラット' },
+    'Slug': { en: 'Slug', ar: 'سلَغ', de: 'Slug', es: 'Slug', fr: 'Slug', it: 'Slug', ko: '슬러그', pt: 'Slug', ru: 'Слаг', zh: '斯勒格', ja: 'スラグ' },
     'Second': { 
       en: 'Second', ar: 'ثانية', de: 'Sekunde',
-      es: 'Segundo', fr: 'Seconde', it: 'Secondo',
+      es: 'Segundo', fr: 'Seconde', it: 'Secondo', ko: '초',
       pt: 'Segundo', ru: 'Секунда', zh: '秒', ja: '秒'
     },
     'Minute': { 
       en: 'Minute', ar: 'دقيقة', de: 'Minute',
-      es: 'Minuto', fr: 'Minute', it: 'Minuto',
+      es: 'Minuto', fr: 'Minute', it: 'Minuto', ko: '분',
       pt: 'Minuto', ru: 'Минута', zh: '分钟', ja: '分'
     },
     'Hour': { 
       en: 'Hour', ar: 'ساعة', de: 'Stunde',
-      es: 'Hora', fr: 'Heure', it: 'Ora',
+      es: 'Hora', fr: 'Heure', it: 'Ora', ko: '시간',
       pt: 'Hora', ru: 'Час', zh: '小时', ja: '時間'
     },
     'Day': { 
       en: 'Day', ar: 'يوم', de: 'Tag',
-      es: 'Día', fr: 'Jour', it: 'Giorno',
+      es: 'Día', fr: 'Jour', it: 'Giorno', ko: '일',
       pt: 'Dia', ru: 'День', zh: '天', ja: '日'
     },
     'Week': { 
       en: 'Week', ar: 'أسبوع', de: 'Woche',
-      es: 'Semana', fr: 'Semaine', it: 'Settimana',
+      es: 'Semana', fr: 'Semaine', it: 'Settimana', ko: '주',
       pt: 'Semana', ru: 'Неделя', zh: '周', ja: '週'
     },
     'Month (Avg)': { 
       en: 'Month (Avg)', ar: 'شهر (متوسط)', de: 'Monat (Durchschn.)',
-      es: 'Mes (Promedio)', fr: 'Mois (Moy.)', it: 'Mese (Media)',
+      es: 'Mes (Promedio)', fr: 'Mois (Moy.)', it: 'Mese (Media)', ko: '월 (평균)',
       pt: 'Mês (Média)', ru: 'Месяц (Средн.)', zh: '月（平均）', ja: '月（平均）'
     },
     'Year': { 
       en: 'Year', ar: 'سنة', de: 'Jahr',
-      es: 'Año', fr: 'Année', it: 'Anno',
+      es: 'Año', fr: 'Année', it: 'Anno', ko: '년',
       pt: 'Ano', ru: 'Год', zh: '年', ja: '年'
     },
-    'Shake': { en: 'Shake', ar: 'شيك', de: 'Shake', es: 'Shake', fr: 'Shake', it: 'Shake', pt: 'Shake', ru: 'Шейк', zh: '摇动', ja: 'シェイク' },
-    'Sidereal Day': { en: 'Sidereal Day', ar: 'يوم نجمي', de: 'Siderischer Tag', es: 'Día Sideral', fr: 'Jour Sidéral', it: 'Giorno Siderale', pt: 'Dia Sideral', ru: 'Звёздные Сутки', zh: '恒星日', ja: '恒星日' },
-    'Ampere': { en: 'Ampere', ar: 'أمبير', de: 'Ampere', es: 'Amperio', fr: 'Ampère', it: 'Ampere', pt: 'Ampere', ru: 'Ампер', zh: '安培', ja: 'アンペア' },
-    'Biot (abampere)': { en: 'Biot (abampere)', ar: 'بيوت (أمبير مطلق)', de: 'Biot (Abampere)', es: 'Biot (abamperio)', fr: 'Biot (abampère)', it: 'Biot (abampere)', pt: 'Biot (abampere)', ru: 'Био (абампер)', zh: '毕奥', ja: 'ビオ' },
-    'Statampere': { en: 'Statampere', ar: 'ستات أمبير', de: 'Statampere', es: 'Estatamperio', fr: 'Statampère', it: 'Statampere', pt: 'Statampere', ru: 'Статампер', zh: '静安培', ja: 'スタットアンペア' },
+    'Shake': { en: 'Shake', ar: 'شيك', de: 'Shake', es: 'Shake', fr: 'Shake', it: 'Shake', ko: '셰이크', pt: 'Shake', ru: 'Шейк', zh: '摇动', ja: 'シェイク' },
+    'Sidereal Day': { en: 'Sidereal Day', ar: 'يوم نجمي', de: 'Siderischer Tag', es: 'Día Sideral', fr: 'Jour Sidéral', it: 'Giorno Siderale', ko: '항성일', pt: 'Dia Sideral', ru: 'Звёздные Сутки', zh: '恒星日', ja: '恒星日' },
+    'Ampere': { en: 'Ampere', ar: 'أمبير', de: 'Ampere', es: 'Amperio', fr: 'Ampère', it: 'Ampere', ko: '암페어', pt: 'Ampere', ru: 'Ампер', zh: '安培', ja: 'アンペア' },
+    'Biot (abampere)': { en: 'Biot (abampere)', ar: 'بيوت (أمبير مطلق)', de: 'Biot (Abampere)', es: 'Biot (abamperio)', fr: 'Biot (abampère)', it: 'Biot (abampere)', ko: '비오', pt: 'Biot (abampere)', ru: 'Био (абампер)', zh: '毕奥', ja: 'ビオ' },
+    'Statampere': { en: 'Statampere', ar: 'ستات أمبير', de: 'Statampere', es: 'Estatamperio', fr: 'Statampère', it: 'Statampere', ko: '스탯암페어', pt: 'Statampere', ru: 'Статампер', zh: '静安培', ja: 'スタットアンペア' },
     'Celsius': { 
       en: 'Celsius', ar: 'سلزيوس', de: 'Celsius',
-      es: 'Celsius', fr: 'Celsius', it: 'Celsius',
+      es: 'Celsius', fr: 'Celsius', it: 'Celsius', ko: '섭씨',
       pt: 'Celsius', ru: 'Цельсий', zh: '摄氏度', ja: '摂氏'
     },
     'Fahrenheit': { 
       en: 'Fahrenheit', ar: 'فهرنهايت', de: 'Fahrenheit',
-      es: 'Fahrenheit', fr: 'Fahrenheit', it: 'Fahrenheit',
+      es: 'Fahrenheit', fr: 'Fahrenheit', it: 'Fahrenheit', ko: '화씨',
       pt: 'Fahrenheit', ru: 'Фаренгейт', zh: '华氏度', ja: '華氏'
     },
     'Kelvin': { 
       en: 'Kelvin', ar: 'كلفن', de: 'Kelvin',
-      es: 'Kelvin', fr: 'Kelvin', it: 'Kelvin',
+      es: 'Kelvin', fr: 'Kelvin', it: 'Kelvin', ko: '켈빈',
       pt: 'Kelvin', ru: 'Кельвин', zh: '开尔文', ja: 'ケルビン'
     },
     'Rankine': { 
       en: 'Rankine', ar: 'رانكين', de: 'Rankine',
-      es: 'Rankine', fr: 'Rankine', it: 'Rankine',
+      es: 'Rankine', fr: 'Rankine', it: 'Rankine', ko: '랭킨',
       pt: 'Rankine', ru: 'Ранкин', zh: '兰氏度', ja: 'ランキン'
     },
-    'Mole': { en: 'Mole', ar: 'مول', de: 'Mol', es: 'Mol', fr: 'Mole', it: 'Mole', pt: 'Mol', ru: 'Моль', zh: '摩尔', ja: 'モル' },
-    'Pound-mole': { en: 'Pound-mole', ar: 'باوند مول', de: 'Pfund-mol', es: 'Libra-mol', fr: 'Livre-mole', it: 'Libbra-mole', pt: 'Libra-mol', ru: 'Фунт-моль', zh: '磅摩尔', ja: 'ポンドモル' },
-    'Candela': { en: 'Candela', ar: 'شمعة', de: 'Candela', es: 'Candela', fr: 'Candela', it: 'Candela', pt: 'Candela', ru: 'Кандела', zh: '坎德拉', ja: 'カンデラ' },
-    'Candlepower': { en: 'Candlepower', ar: 'قوة شمعة', de: 'Kerzenstärke', es: 'Bujía', fr: 'Bougie', it: 'Candela', pt: 'Candela', ru: 'Свеча', zh: '烛光', ja: 'キャンドルパワー' },
-    'Hefnerkerze': { en: 'Hefnerkerze', ar: 'هيفنركيرزي', de: 'Hefnerkerze', es: 'Hefnerkerze', fr: 'Hefnerkerze', it: 'Hefnerkerze', pt: 'Hefnerkerze', ru: 'Хефнеркерце', zh: '赫夫纳烛光', ja: 'ヘフナーケルツェ' },
+    'Mole': { en: 'Mole', ar: 'مول', de: 'Mol', es: 'Mol', fr: 'Mole', it: 'Mole', ko: '몰', pt: 'Mol', ru: 'Моль', zh: '摩尔', ja: 'モル' },
+    'Pound-mole': { en: 'Pound-mole', ar: 'باوند مول', de: 'Pfund-mol', es: 'Libra-mol', fr: 'Livre-mole', it: 'Libbra-mole', ko: '파운드몰', pt: 'Libra-mol', ru: 'Фунт-моль', zh: '磅摩尔', ja: 'ポンドモル' },
+    'Candela': { en: 'Candela', ar: 'شمعة', de: 'Candela', es: 'Candela', fr: 'Candela', it: 'Candela', ko: '칸델라', pt: 'Candela', ru: 'Кандела', zh: '坎德拉', ja: 'カンデラ' },
+    'Candlepower': { en: 'Candlepower', ar: 'قوة شمعة', de: 'Kerzenstärke', es: 'Bujía', fr: 'Bougie', it: 'Candela', ko: '촉광', pt: 'Candela', ru: 'Свеча', zh: '烛光', ja: 'キャンドルパワー' },
+    'Hefnerkerze': { en: 'Hefnerkerze', ar: 'هيفنركيرزي', de: 'Hefnerkerze', es: 'Hefnerkerze', fr: 'Hefnerkerze', it: 'Hefnerkerze', ko: '헤프너케르체', pt: 'Hefnerkerze', ru: 'Хефнеркерце', zh: '赫夫纳烛光', ja: 'ヘフナーケルツェ' },
     'Square Meter': { 
       en: 'Square Meter', ar: 'متر مربع', de: 'Quadratmeter',
-      es: 'Metro Cuadrado', fr: 'Mètre Carré', it: 'Metro Quadrato',
+      es: 'Metro Cuadrado', fr: 'Mètre Carré', it: 'Metro Quadrato', ko: '제곱미터',
       pt: 'Metro Quadrado', ru: 'Квадратный Метр', zh: '平方米', ja: '平方メートル'
     },
     'Square Metre': { 
       en: 'Square Metre', ar: 'متر مربع', de: 'Quadratmeter',
-      es: 'Metro Cuadrado', fr: 'Mètre Carré', it: 'Metro Quadrato',
+      es: 'Metro Cuadrado', fr: 'Mètre Carré', it: 'Metro Quadrato', ko: '제곱미터',
       pt: 'Metro Quadrado', ru: 'Квадратный Метр', zh: '平方米', ja: '平方メートル'
     },
     'Hectare': { 
