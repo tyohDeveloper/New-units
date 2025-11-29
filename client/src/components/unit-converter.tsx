@@ -4383,9 +4383,19 @@ export default function UnitConverter() {
             {/* Right side: SI base units with exponent radio buttons */}
             <div className="flex flex-col gap-1">
               <Label className="text-xs font-mono uppercase text-muted-foreground mb-2">{t('Dimensions')}</Label>
-              {(['m', 'kg', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr'] as const).map((unit) => (
+              {([
+                { unit: 'm', quantity: 'Length' },
+                { unit: 'kg', quantity: 'Mass' },
+                { unit: 's', quantity: 'Time' },
+                { unit: 'A', quantity: 'Electric Current' },
+                { unit: 'K', quantity: 'Temperature' },
+                { unit: 'mol', quantity: 'Amount of Substance' },
+                { unit: 'cd', quantity: 'Luminous Intensity' },
+                { unit: 'rad', quantity: 'Plane Angle' },
+                { unit: 'sr', quantity: 'Solid Angle' }
+              ] as const).map(({ unit, quantity }) => (
                 <div key={unit} className="flex items-center gap-2">
-                  <span className="font-mono text-sm w-8 text-right text-muted-foreground">{unit}</span>
+                  <span className="text-xs w-32 text-right text-muted-foreground truncate" title={t(quantity)}>{t(quantity)}</span>
                   <div className="flex gap-0">
                     {[0, 1, 2, 3, 4, 5, -1, -2, -3, -4, -5].map((exp) => {
                       const superscripts: Record<number, string> = {
