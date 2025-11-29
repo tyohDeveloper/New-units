@@ -1327,7 +1327,7 @@ export default function UnitConverter() {
     },
     {
       name: "Archaic & Regional",
-      categories: ['archaic_length', 'archaic_mass', 'archaic_volume', 'archaic_area']
+      categories: ['archaic_length', 'archaic_mass', 'archaic_volume', 'archaic_area', 'archaic_energy', 'archaic_power']
     }
   ];
 
@@ -1534,7 +1534,9 @@ export default function UnitConverter() {
       archaic_length: { length: 1 },
       archaic_mass: { mass: 1 },
       archaic_volume: { length: 3 },
-      archaic_area: { length: 2 }
+      archaic_area: { length: 2 },
+      archaic_energy: { mass: 1, length: 2, time: -2 },
+      archaic_power: { mass: 1, length: 2, time: -3 }
     };
     return dimensionMap[category] || {};
   };
