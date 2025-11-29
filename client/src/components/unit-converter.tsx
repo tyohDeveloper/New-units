@@ -3284,8 +3284,16 @@ export default function UnitConverter() {
                         {(() => {
                           // Get all units in category, always include SI base first if not the source
                           const allUnits = categoryData.units.filter(u => u.id !== fromUnit);
-                          // Limit to 8 most relevant units
-                          const displayUnits = allUnits.slice(0, 8);
+                          // Limit to 8 most relevant units, but ensure important units are included
+                          let displayUnits = allUnits.slice(0, 8);
+                          
+                          // For length, ensure ly (light-year) is included
+                          if (activeCategory === 'length') {
+                            const lyUnit = allUnits.find(u => u.id === 'ly');
+                            if (lyUnit && !displayUnits.find(u => u.id === 'ly')) {
+                              displayUnits = [...displayUnits.slice(0, 7), lyUnit];
+                            }
+                          }
                           
                           return displayUnits.map(unit => {
                             // Convert to the target unit (no prefix)

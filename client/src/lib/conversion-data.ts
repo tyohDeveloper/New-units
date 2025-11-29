@@ -340,7 +340,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "cubic meter",
     baseSISymbol: "m³",
     units: [
-      { id: "m3", name: "Cubic Meter", symbol: "m³", factor: 1, allowPrefixes: false },
+      { id: "m3", name: "Cubic Meter", symbol: "m³", factor: 1, allowPrefixes: true },
       { id: "tsp", name: "Teaspoon (US)", symbol: "tsp", factor: 0.00000492892 },
       { id: "tsp_imp", name: "Teaspoon (Imp)", symbol: "tsp", factor: 0.00000591939 },
       { id: "tbsp", name: "Tablespoon (US)", symbol: "tbsp", factor: 0.0000147868 },
@@ -372,7 +372,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "meter/second",
     baseSISymbol: "m⋅s⁻¹",
     units: [
-      { id: "mps", name: "Meter/Second", symbol: "m⋅s⁻¹", factor: 1 },
+      { id: "mps", name: "Meter/Second", symbol: "m⋅s⁻¹", factor: 1, allowPrefixes: true },
       { id: "kmh", name: "Kilometer/Hour", symbol: "km⋅h⁻¹", factor: 0.277778 },
       { id: "mph", name: "Mile/Hour", symbol: "mph", factor: 0.44704 },
       { id: "kn", name: "Knot", symbol: "kn", factor: 0.514444 },
@@ -386,7 +386,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "meter/sq second",
     baseSISymbol: "m⋅s⁻²",
     units: [
-      { id: "mps2", name: "Meter/sq sec", symbol: "m⋅s⁻²", factor: 1 },
+      { id: "mps2", name: "Meter/sq sec", symbol: "m⋅s⁻²", factor: 1, allowPrefixes: true },
       { id: "gal", name: "Gal", symbol: "Gal", factor: 0.01 },
       { id: "ftps2", name: "Foot/sq sec", symbol: "ft⋅s⁻²", factor: 0.3048 },
       { id: "g", name: "g-force", symbol: "g", factor: 9.80665 },
@@ -740,7 +740,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "radian/second",
     baseSISymbol: "rad⋅s⁻¹",
     units: [
-      { id: "rad_s", name: "Radian/Second", symbol: "rad⋅s⁻¹", factor: 1 },
+      { id: "rad_s", name: "Radian/Second", symbol: "rad⋅s⁻¹", factor: 1, allowPrefixes: true },
       { id: "deg_s", name: "Degree/Second", symbol: "°⋅s⁻¹", factor: 0.0174533 },
       { id: "rpm", name: "Revolutions/Minute", symbol: "rpm", factor: 0.10472 },
       { id: "rps", name: "Revolutions/Second", symbol: "rps", factor: 6.28319 },
@@ -752,7 +752,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "kilogram meter/second",
     baseSISymbol: "kg⋅m⋅s⁻¹",
     units: [
-      { id: "kgms", name: "kg⋅m/s", symbol: "kg⋅m⋅s⁻¹", factor: 1 },
+      { id: "kgms", name: "kg⋅m/s", symbol: "kg⋅m⋅s⁻¹", factor: 1, allowPrefixes: true },
       { id: "lbfts", name: "lb⋅ft/s", symbol: "lb⋅ft⋅s⁻¹", factor: 0.138255 },
       { id: "ns", name: "Newton-second", symbol: "N⋅s", factor: 1 },
       { id: "slugfts", name: "slug⋅ft/s", symbol: "slug⋅ft⋅s⁻¹", factor: 4.44822 },
@@ -766,7 +766,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "kg/m³",
     baseSISymbol: "kg⋅m⁻³",
     units: [
-      { id: "kgm3", name: "kg/m³", symbol: "kg⋅m⁻³", factor: 1 },
+      { id: "kgm3", name: "kg/m³", symbol: "kg⋅m⁻³", factor: 1, allowPrefixes: true },
       { id: "lbft3", name: "lb/ft³", symbol: "lb⋅ft⁻³", factor: 16.0185 },
       { id: "gcm3", name: "g/cm³", symbol: "g⋅cm⁻³", factor: 1000 },
     ],
@@ -777,7 +777,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "pascal-second",
     baseSISymbol: "kg⋅m⁻¹⋅s⁻¹",
     units: [
-      { id: "pas", name: "Pascal-second", symbol: "Pa·s", factor: 1 },
+      { id: "pas", name: "Pascal-second", symbol: "Pa·s", factor: 1, allowPrefixes: true },
       { id: "cp", name: "Centipoise", symbol: "cP", factor: 0.001 },
       { id: "poise", name: "Poise", symbol: "P", factor: 0.1, allowPrefixes: true },
     ],
@@ -788,7 +788,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "newton/meter",
     baseSISymbol: "kg⋅s⁻²",
     units: [
-      { id: "nm", name: "Newton/meter", symbol: "N⋅m⁻¹", factor: 1 },
+      { id: "nm", name: "Newton/meter", symbol: "N⋅m⁻¹", factor: 1, allowPrefixes: true },
       {
         id: "dynecm",
         name: "Dyne/centimeter",
@@ -803,7 +803,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "watt/meter-kelvin",
     baseSISymbol: "W⋅m⁻¹⋅K⁻¹",
     units: [
-      { id: "wmk", name: "W/(m⋅K)", symbol: "W⋅m⁻¹⋅K⁻¹", factor: 1 },
+      { id: "wmk", name: "W/(m⋅K)", symbol: "W⋅m⁻¹⋅K⁻¹", factor: 1, allowPrefixes: true },
       { id: "btu_hftf", name: "BTU/(h⋅ft⋅°F)", symbol: "BTU⋅h⁻¹⋅ft⁻¹⋅°F⁻¹", factor: 1.73073 },
       { id: "cal_scmC", name: "cal/(s⋅cm⋅°C)", symbol: "cal⋅s⁻¹⋅cm⁻¹⋅°C⁻¹", factor: 418.4 },
     ],
@@ -814,7 +814,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "joule/kilogram-kelvin",
     baseSISymbol: "J⋅kg⁻¹⋅K⁻¹",
     units: [
-      { id: "jkgk", name: "J/(kg⋅K)", symbol: "J⋅kg⁻¹⋅K⁻¹", factor: 1 },
+      { id: "jkgk", name: "J/(kg⋅K)", symbol: "J⋅kg⁻¹⋅K⁻¹", factor: 1, allowPrefixes: true },
       { id: "kjkgk", name: "kJ/(kg⋅K)", symbol: "kJ⋅kg⁻¹⋅K⁻¹", factor: 1000 },
       { id: "cal_gC", name: "cal/(g⋅°C)", symbol: "cal⋅g⁻¹⋅°C⁻¹", factor: 4184 },
       { id: "btu_lbF", name: "BTU/(lb⋅°F)", symbol: "BTU⋅lb⁻¹⋅°F⁻¹", factor: 4186.8 },
@@ -826,7 +826,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "joule/kelvin",
     baseSISymbol: "J⋅K⁻¹",
     units: [
-      { id: "jk", name: "Joule/Kelvin", symbol: "J⋅K⁻¹", factor: 1 },
+      { id: "jk", name: "Joule/Kelvin", symbol: "J⋅K⁻¹", factor: 1, allowPrefixes: true },
       { id: "calk", name: "Calorie/Kelvin", symbol: "cal⋅K⁻¹", factor: 4.184 },
       { id: "kjk", name: "Kilojoule/Kelvin", symbol: "kJ⋅K⁻¹", factor: 1000 },
       { id: "kcalk", name: "Kilocalorie/Kelvin", symbol: "kcal⋅K⁻¹", factor: 4184 },
