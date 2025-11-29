@@ -3070,36 +3070,38 @@ export default function UnitConverter() {
 
             {/* Output Section */}
             <div className="grid gap-4">
-              <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
-                <Label className="text-xs font-mono uppercase text-muted-foreground">{t('To')}</Label>
-                <div className="flex items-center gap-2">
-                  <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
-                  <Select 
-                    value={precision.toString()} 
-                    onValueChange={(val) => { setPrecision(parseInt(val)); refocusInput(); }}
-                    onOpenChange={(open) => { if (!open) refocusInput(); }}
-                  >
-                    <SelectTrigger tabIndex={4} className="h-10 w-[70px] text-xs">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent align="end">
-                      {[0,1,2,3,4,5,6,7,8].map(n => (
-                        <SelectItem key={n} value={n.toString()} className="text-xs">
-                          {numberFormat === 'arabic' ? toArabicNumerals(n.toString()) : n}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant={comparisonMode ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setComparisonMode(!comparisonMode)}
-                    className={`h-6 px-2 text-[10px] font-mono uppercase ${comparisonMode ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                    data-testid="button-comparison-mode"
-                  >
-                    Compare All
-                  </Button>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
+                  <Label className="text-xs font-mono uppercase text-muted-foreground">{t('To')}</Label>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
+                    <Select 
+                      value={precision.toString()} 
+                      onValueChange={(val) => { setPrecision(parseInt(val)); refocusInput(); }}
+                      onOpenChange={(open) => { if (!open) refocusInput(); }}
+                    >
+                      <SelectTrigger tabIndex={4} className="h-10 w-[70px] text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent align="end">
+                        {[0,1,2,3,4,5,6,7,8].map(n => (
+                          <SelectItem key={n} value={n.toString()} className="text-xs">
+                            {numberFormat === 'arabic' ? toArabicNumerals(n.toString()) : n}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
+                <Button
+                  variant={comparisonMode ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setComparisonMode(!comparisonMode)}
+                  className={`h-6 px-2 text-[10px] font-mono uppercase ${comparisonMode ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                  data-testid="button-comparison-mode"
+                >
+                  Compare All
+                </Button>
               </div>
               <div className="flex flex-col gap-2">
                 {/* Row 1: Result, Prefix, Unit Selector */}
