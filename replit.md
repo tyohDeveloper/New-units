@@ -4,7 +4,7 @@
 
 OmniUnit is a comprehensive unit conversion web application that enables conversions across a wide range of measurement systems including SI units, Imperial, US Customary, Archaic, and specialized industrial units. The application is built as a frontend-only TypeScript project with React, designed with a "scientific archival" aesthetic theme. Production builds create a single standalone HTML file for easy distribution.
 
-**Current Version:** v2.17.0
+**Current Version:** v2.18.0
 
 ## User Preferences
 
@@ -141,6 +141,9 @@ client/
 
 ## Recent Changes
 
+- v2.18.0: Changed unit ordering from descending to ascending order (smallest to largest factor) across all 40+ categories
+- v2.18.0: Unit ordering rule: SI base unit (factor=1) first, then remaining units sorted by ascending factor
+- v2.18.0: Special ordering preserved for temperature (offsets), photon/radioactive_decay (inverse units), math/data (non-linear functions)
 - v2.16.0: Added 7 new physics/engineering categories: Radioactive Decay, Cross-Section, Kinematic Viscosity, Electric Field Strength, Magnetic Field Strength (H), Sound Intensity, Acoustic Impedance
 - v2.16.0: Radioactive Decay category with half-life ↔ decay constant ↔ mean lifetime conversions using inverse relationships (t½ = ln(2)/λ, τ = 1/λ)
 - v2.16.0: Cross-Section category with barn (10⁻²⁸ m²), femtobarn, and square meter units for particle physics
