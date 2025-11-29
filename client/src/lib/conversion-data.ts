@@ -458,10 +458,9 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "s⁻¹",
     units: [
       { id: "hz", name: "Hertz", symbol: "Hz", factor: 1, allowPrefixes: true },
-      { id: "vph", name: "Vibrations/Hour", symbol: "vph", factor: 0.000277778 },
-      { id: "bph", name: "Beats/Hour", symbol: "bph", factor: 0.000277778 },
+      { id: "per_hour", name: "Per Hour", symbol: "h⁻¹", factor: 0.000277778 },
+      { id: "per_min", name: "Per Minute", symbol: "min⁻¹", factor: 0.0166667 },
       { id: "rpm", name: "Revolutions/Minute", symbol: "rpm", factor: 0.0166667 },
-      { id: "bpm", name: "Beats/Minute", symbol: "BPM", factor: 0.0166667 },
       { id: "rad_s", name: "Radians/Second", symbol: "rad⋅s⁻¹", factor: 0.159155 },
       { id: "rps", name: "Revolutions/Second", symbol: "rps", factor: 1 },
     ],
