@@ -4,7 +4,7 @@
 
 OmniUnit is a comprehensive unit conversion web application that enables conversions across a wide range of measurement systems including SI units, Imperial, US Customary, Archaic, and specialized industrial units. The application is built as a frontend-only TypeScript project with React, designed with a "scientific archival" aesthetic theme. Production builds create a single standalone HTML file for easy distribution.
 
-**Current Version:** v2.13.0
+**Current Version:** v2.14.0
 
 ## User Preferences
 
@@ -141,6 +141,11 @@ client/
 
 ## Recent Changes
 
+- v2.14.0: Added Glass (Wine) unit to Beer & Wine category (150ml = 0.00015 m³)
+- v2.14.0: Moved Lightbulb Efficiency and Fuel Economy from Human Response group to Other group
+- v2.14.0: Normalize & Copy now selects optimal SI prefix to minimize digit count (e.g., 1500000 J → 1.5 MJ)
+- v2.14.0: Added findOptimalPrefix helper that keeps values in [1, 1000) range for minimal digits
+- v2.14.0: Production build size: 684KB standalone HTML file (205KB gzipped)
 - v2.13.0: Greedy normalization algorithm decomposes complex dimensional formulas using SI derived units (e.g., kg·m³·s⁻² → m²·N)
 - v2.13.0: Normalization outputs formatted as positive_base·derived·negative_base (derived units between positive and negative base units)
 - v2.13.0: NORMALIZABLE_DERIVED_UNITS catalog with 17 SI derived units sorted by complexity (F, Ω, S, V, H, Wb, W, J, lx, Gy, Pa, N, T, C, kat, lm, Hz)

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES } from '@/lib/conversion-data';
+import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES, Prefix } from '@/lib/conversion-data';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -1319,11 +1319,11 @@ export default function UnitConverter() {
     },
     {
       name: "Human Response",
-      categories: ['luminous_flux', 'illuminance', 'refractive_power', 'lightbulb', 'fuel_economy']
+      categories: ['luminous_flux', 'illuminance', 'refractive_power']
     },
     {
       name: "Other",
-      categories: ['math', 'data', 'rack_geometry', 'shipping', 'beer_wine_volume']
+      categories: ['math', 'data', 'rack_geometry', 'shipping', 'beer_wine_volume', 'lightbulb', 'fuel_economy']
     }
   ];
 
@@ -1756,6 +1756,46 @@ export default function UnitConverter() {
     }
     
     return parts.join('⋅') || formatDimensions(dims);
+  };
+
+  // Helper: Find optimal prefix to minimize digit count
+  // Returns the prefix that keeps the value closest to the range [1, 1000)
+  const findOptimalPrefix = (value: number, unitSymbol: string): { prefix: Prefix; adjustedValue: number } => {
+    // If unit contains 'kg', can't use prefixes (kg is already prefixed)
+    if (unitSymbol.includes('kg')) {
+      return { prefix: PREFIXES.find(p => p.id === 'none')!, adjustedValue: value };
+    }
+    
+    const absValue = Math.abs(value);
+    if (absValue === 0 || !isFinite(absValue)) {
+      return { prefix: PREFIXES.find(p => p.id === 'none')!, adjustedValue: value };
+    }
+    
+    // Find the prefix that results in a value closest to 1-1000 range
+    // This minimizes the number of digits before the decimal point
+    let bestPrefix = PREFIXES.find(p => p.id === 'none')!;
+    let bestScore = Math.abs(Math.log10(absValue)); // Score: distance from 1
+    
+    for (const prefix of PREFIXES) {
+      if (prefix.id === 'none') continue;
+      
+      const adjustedAbs = absValue / prefix.factor;
+      
+      // Ideal range is [1, 1000) - gives 1-3 digits before decimal
+      if (adjustedAbs >= 1 && adjustedAbs < 1000) {
+        // Score based on closeness to 1 (lower is better)
+        const score = Math.abs(Math.log10(adjustedAbs));
+        if (score < bestScore) {
+          bestScore = score;
+          bestPrefix = prefix;
+        }
+      }
+    }
+    
+    return { 
+      prefix: bestPrefix, 
+      adjustedValue: value / bestPrefix.factor 
+    };
   };
 
   // Helper: Get derived unit symbol from dimensions (for exact matches only)
@@ -2549,6 +2589,7 @@ export default function UnitConverter() {
   };
 
   const normalizeAndCopy = () => {
+    // Use the canonical calculator result (already computed by useEffect)
     if (calcValues[3] == null) return;
     
     const val = calcValues[3];
@@ -2557,29 +2598,50 @@ export default function UnitConverter() {
     // Apply precision to the value
     const precisionAppliedValue = fixPrecision(parseFloat(cleanNumber(val.value, calculatorPrecision)));
     
-    // Create the new value with precision applied (normalized in SI base units)
+    // Get the normalized unit symbol using greedy decomposition
+    // This converts kg·m³·s⁻² → m²·N, kg·m²·s⁻² → J, etc.
+    const unitSymbol = normalizeDimensions(dims);
+    
+    // Determine if prefix can be applied to normalized SI output:
+    // - Dimensionless values: no prefix (empty dims or empty symbol)
+    // - Units containing 'kg': no prefix (kg is already SI-prefixed with 'kilo')
+    // - All other SI derived units (N, J, W, Pa, Hz, V, F, Ω, S, H, Wb, T, C, etc.) accept SI prefixes
+    // Note: This is for SI normalization output, not for arbitrary catalog units
+    const canUsePrefix = unitSymbol.length > 0 && !unitSymbol.includes('kg') && Object.keys(dims).length > 0;
+    
+    // Find optimal prefix to minimize digit count (only if prefixes allowed)
+    let optimalPrefix = PREFIXES.find(p => p.id === 'none')!;
+    let adjustedValue = precisionAppliedValue;
+    
+    if (canUsePrefix) {
+      const result = findOptimalPrefix(precisionAppliedValue, unitSymbol);
+      optimalPrefix = result.prefix;
+      adjustedValue = result.adjustedValue;
+    }
+    
+    // Create the new value with precision applied and optimal prefix
     const newValue: CalcValue = {
       value: precisionAppliedValue,
       dimensions: dims,
-      prefix: 'none'
+      prefix: optimalPrefix.id
     };
     
-    // Update calculator field with normalized, precision-applied value
+    // Update calculator result field with normalized value
     setCalcValues(prev => {
       const newValues = [...prev];
       newValues[3] = newValue;
       return newValues;
     });
     
-    // Get the normalized unit symbol using greedy decomposition
-    // This converts kg·m³·s⁻² → m²·N, kg·m²·s⁻² → J, etc.
-    const unitSymbol = normalizeDimensions(dims);
+    // Update result prefix to match optimal prefix
+    setResultPrefix(optimalPrefix.id);
     
-    // Copy the precision-applied, normalized value
+    // Copy the precision-applied, normalized value with optimal prefix
     const format = NUMBER_FORMATS[numberFormat];
-    const valueStr = cleanNumber(precisionAppliedValue, calculatorPrecision);
+    const valueStr = cleanNumber(adjustedValue, calculatorPrecision);
     const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
-    const textToCopy = unitSymbol ? `${formattedStr} ${unitSymbol}` : formattedStr;
+    const prefixSymbol = optimalPrefix.symbol || '';
+    const textToCopy = unitSymbol ? `${formattedStr} ${prefixSymbol}${unitSymbol}` : formattedStr;
     
     navigator.clipboard.writeText(textToCopy);
     

@@ -876,6 +876,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "bu", name: "Bushel", symbol: "bu", factor: 0.0352391 },
       { id: "ac_ft", name: "Acre-foot", symbol: "ac⋅ft", factor: 1233.48184 },
       { id: "mi3", name: "Cubic Mile", symbol: "mi³", factor: 4.16818e9 },
+      { id: "glass_wine", name: "Glass (Wine)", symbol: "glass", factor: 0.00015 },
       { id: "bottle_wine", name: "Bottle (Wine)", symbol: "btl", factor: 0.00075 },
       { id: "magnum_wine", name: "Magnum (Wine)", symbol: "mag", factor: 0.0015 },
       { id: "bottle_beer_small", name: "Bottle (Beer, small)", symbol: "btl", factor: 0.00035 },
