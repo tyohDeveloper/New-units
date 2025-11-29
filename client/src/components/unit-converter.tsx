@@ -3303,7 +3303,7 @@ export default function UnitConverter() {
               variant="ghost" 
               size="sm" 
               onClick={clearCalculator}
-              className="text-xs justify-self-start"
+              className="text-xs hover:text-accent justify-self-start"
             >
               {t('Clear')} {t('Calculator')}
             </Button>
@@ -3602,37 +3602,131 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {calcValues[3] && (
-                <React.Fragment>
-                  {resultCategory ? (
+              {/* Prefix and unit selectors - always visible, ghosted when no result */}
+              {calcValues[3] && resultCategory ? (
+                <>
+                  <Select 
+                    value={resultPrefix} 
+                    onValueChange={setResultPrefix}
+                    disabled={(() => {
+                      const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+                      const unit = cat?.units.find(u => u.id === resultUnit);
+                      
+                      // If using base SI unit (resultUnit === null), check if it contains "kg"
+                      if (resultUnit === null) {
+                        // If the base SI symbol contains "kg", disable prefixes
+                        if (cat?.baseSISymbol?.includes('kg')) {
+                          return true;
+                        }
+                        // Find the primary SI unit for this category (the one with factor=1 and allowPrefixes)
+                        const primarySI = cat?.units.find(u => u.factor === 1 && u.allowPrefixes);
+                        // If there's a primary SI unit with allowPrefixes, enable prefixes
+                        // Otherwise, disable (e.g., mass base is kg which doesn't have allowPrefixes)
+                        return primarySI ? false : true;
+                      }
+                      
+                      // If the unit symbol contains "kg", disable prefixes
+                      if (unit?.symbol?.includes('kg')) {
+                        return true;
+                      }
+                      
+                      return !unit?.allowPrefixes;
+                    })()}
+                  >
+                    <SelectTrigger className="h-10 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                      <SelectValue placeholder={t('Prefix')} />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[70vh]">
+                      {PREFIXES.map((p) => (
+                        <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
+                          {p.symbol || '-'}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
+                    <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
+                      <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(() => {
+                        const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+                        if (!cat) return null;
+                        
+                        const units = cat.units;
+                        
+                        // Check if base SI unit exists in units array with same symbol
+                        const baseUnitExists = units.some(u => u.symbol === cat.baseSISymbol);
+                        
+                        return (
+                          <>
+                            {!baseUnitExists && (
+                              <SelectItem value="base" className="text-xs font-mono">
+                                <span className="font-bold mr-2">{cat.baseSISymbol}</span>
+                                <span className="opacity-70">{t(applyRegionalSpelling(toTitleCase(cat.baseUnit)))}</span>
+                              </SelectItem>
+                            )}
+                            {units.map(unit => (
+                              <SelectItem key={unit.id} value={unit.id} className="text-xs font-mono">
+                                {unit.symbol === unit.name ? (
+                                  <span className="font-bold">{unit.symbol}</span>
+                                ) : (
+                                  <>
+                                    <span className="font-bold mr-2">{unit.symbol}</span>
+                                    <span className="opacity-70">{translateUnitName(unit.name)}</span>
+                                  </>
+                                )}
+                              </SelectItem>
+                            ))}
+                          </>
+                        );
+                      })()}
+                    </SelectContent>
+                  </Select>
+                </>
+              ) : calcValues[3] && !resultCategory ? (
+                (() => {
+                  // For complex dimensions that don't match a category, show alternative representations
+                  const val = calcValues[3];
+                  if (!val || Object.keys(val.dimensions).length === 0) {
+                    // Dimensionless - show ghosted empty selectors
+                    return (
+                      <>
+                        <Select value="none" disabled>
+                          <SelectTrigger className="h-10 w-[50px] text-xs opacity-50 cursor-not-allowed shrink-0">
+                            <SelectValue placeholder="-" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none" className="text-xs">-</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select value="unitless" disabled>
+                          <SelectTrigger className="h-10 flex-1 min-w-0 text-xs opacity-50 cursor-not-allowed">
+                            <SelectValue placeholder="" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="unitless" className="text-xs"></SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </>
+                    );
+                  }
+                  
+                  // Generate alternative representations
+                  const alternatives = generateAlternativeRepresentations(val.dimensions);
+                  
+                  // Check if current alternative display contains "kg" - if so, disable prefix
+                  const currentAltSymbol = selectedAlternative < alternatives.length 
+                    ? alternatives[selectedAlternative].displaySymbol 
+                    : formatDimensions(val.dimensions);
+                  const containsKg = currentAltSymbol.includes('kg');
+                  
+                  return (
                     <>
                       <Select 
                         value={resultPrefix} 
                         onValueChange={setResultPrefix}
-                        disabled={(() => {
-                          const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                          const unit = cat?.units.find(u => u.id === resultUnit);
-                          
-                          // If using base SI unit (resultUnit === null), check if it contains "kg"
-                          if (resultUnit === null) {
-                            // If the base SI symbol contains "kg", disable prefixes
-                            if (cat?.baseSISymbol?.includes('kg')) {
-                              return true;
-                            }
-                            // Find the primary SI unit for this category (the one with factor=1 and allowPrefixes)
-                            const primarySI = cat?.units.find(u => u.factor === 1 && u.allowPrefixes);
-                            // If there's a primary SI unit with allowPrefixes, enable prefixes
-                            // Otherwise, disable (e.g., mass base is kg which doesn't have allowPrefixes)
-                            return primarySI ? false : true;
-                          }
-                          
-                          // If the unit symbol contains "kg", disable prefixes
-                          if (unit?.symbol?.includes('kg')) {
-                            return true;
-                          }
-                          
-                          return !unit?.allowPrefixes;
-                        })()}
+                        disabled={containsKg}
                       >
                         <SelectTrigger className="h-10 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                           <SelectValue placeholder={t('Prefix')} />
@@ -3645,111 +3739,44 @@ export default function UnitConverter() {
                           ))}
                         </SelectContent>
                       </Select>
-                      <Select value={resultUnit || 'base'} onValueChange={(val) => setResultUnit(val === 'base' ? null : val)}>
+                      <Select 
+                        value={selectedAlternative.toString()} 
+                        onValueChange={(val) => setSelectedAlternative(parseInt(val))}
+                      >
                         <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
-                          <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
+                          <SelectValue placeholder="Select representation" />
                         </SelectTrigger>
                         <SelectContent>
-                          {(() => {
-                            const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                            if (!cat) return null;
-                            
-                            const units = cat.units;
-                            
-                            // Check if base SI unit exists in units array with same symbol
-                            const baseUnitExists = units.some(u => u.symbol === cat.baseSISymbol);
-                            
-                            return (
-                              <>
-                                {!baseUnitExists && (
-                                  <SelectItem value="base" className="text-xs font-mono">
-                                    <span className="font-bold mr-2">{cat.baseSISymbol}</span>
-                                    <span className="opacity-70">{t(applyRegionalSpelling(toTitleCase(cat.baseUnit)))}</span>
-                                  </SelectItem>
-                                )}
-                                {units.map(unit => (
-                                  <SelectItem key={unit.id} value={unit.id} className="text-xs font-mono">
-                                    {unit.symbol === unit.name ? (
-                                      <span className="font-bold">{unit.symbol}</span>
-                                    ) : (
-                                      <>
-                                        <span className="font-bold mr-2">{unit.symbol}</span>
-                                        <span className="opacity-70">{translateUnitName(unit.name)}</span>
-                                      </>
-                                    )}
-                                  </SelectItem>
-                                ))}
-                              </>
-                            );
-                          })()}
+                          {alternatives.map((alt, index) => (
+                            <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
+                              <span className="font-bold">{alt.displaySymbol}</span>
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </>
-                  ) : (
-                    (() => {
-                      // For complex dimensions that don't match a category, show alternative representations
-                      const val = calcValues[3];
-                      if (!val || Object.keys(val.dimensions).length === 0) {
-                        // Dimensionless
-                        return (
-                          <Select value="unitless" disabled>
-                            <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
-                              <SelectValue placeholder="" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="unitless" className="text-xs"></SelectItem>
-                            </SelectContent>
-                          </Select>
-                        );
-                      }
-                      
-                      // Generate alternative representations
-                      const alternatives = generateAlternativeRepresentations(val.dimensions);
-                      
-                      // Check if current alternative display contains "kg" - if so, disable prefix
-                      const currentAltSymbol = selectedAlternative < alternatives.length 
-                        ? alternatives[selectedAlternative].displaySymbol 
-                        : formatDimensions(val.dimensions);
-                      const containsKg = currentAltSymbol.includes('kg');
-                      
-                      return (
-                        <>
-                          <Select 
-                            value={resultPrefix} 
-                            onValueChange={setResultPrefix}
-                            disabled={containsKg}
-                          >
-                            <SelectTrigger className="h-10 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
-                              <SelectValue placeholder={t('Prefix')} />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-[70vh]">
-                              {PREFIXES.map((p) => (
-                                <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
-                                  {p.symbol || '-'}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <Select 
-                            value={selectedAlternative.toString()} 
-                            onValueChange={(val) => setSelectedAlternative(parseInt(val))}
-                          >
-                            <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
-                              <SelectValue placeholder="Select representation" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {alternatives.map((alt, index) => (
-                                <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
-                                  <span className="font-bold">{alt.displaySymbol}</span>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </>
-                      );
-                    })()
-                  )}
-                </React.Fragment>
+                  );
+                })()
+              ) : (
+                /* No result - show ghosted empty selectors for UI consistency */
+                <>
+                  <Select value="none" disabled>
+                    <SelectTrigger className="h-10 w-[50px] text-xs opacity-50 cursor-not-allowed shrink-0">
+                      <SelectValue placeholder="-" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none" className="text-xs">-</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value="empty" disabled>
+                    <SelectTrigger className="h-10 flex-1 min-w-0 text-xs opacity-50 cursor-not-allowed">
+                      <SelectValue placeholder="" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="empty" className="text-xs"></SelectItem>
+                    </SelectContent>
+                  </Select>
+                </>
               )}
             </div>
 
@@ -3762,7 +3789,7 @@ export default function UnitConverter() {
                   size="sm" 
                   onClick={normalizeAndCopy}
                   disabled={!calcValues[3]}
-                  className="text-xs hover:text-accent gap-1 shrink-0"
+                  className="text-xs hover:text-accent gap-2 shrink-0"
                 >
                   <motion.span
                     animate={{
@@ -3783,7 +3810,7 @@ export default function UnitConverter() {
                 size="sm" 
                 onClick={copyCalcResult}
                 disabled={!calcValues[3]}
-                className="text-xs hover:text-accent gap-1 shrink-0"
+                className="text-xs hover:text-accent gap-2 shrink-0"
               >
                 <Copy className="w-3 h-3" />
                 <motion.span
