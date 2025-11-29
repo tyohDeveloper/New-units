@@ -42,7 +42,7 @@ export default function UnitConverter() {
   const [comparisonMode, setComparisonMode] = useState<boolean>(false);
   
   // Tab state
-  const [activeTab, setActiveTab] = useState<string>('main');
+  const [activeTab, setActiveTab] = useState<string>('converter');
   
   // Direct tab state - exponents for each SI base unit
   // Values: 0 = not used, 1-5 = positive exponents, -1 to -5 = negative exponents
@@ -991,7 +991,7 @@ export default function UnitConverter() {
       pt: 'Para', ru: 'В', zh: '到', ja: 'へ'
     },
     'Compare All': {
-      en: 'Compare All', 'en-us': 'Compare All', ar: 'مقارنة الكل', de: 'Alle vergleichen',
+      en: 'Compare All', ar: 'مقارنة الكل', de: 'Alle vergleichen',
       es: 'Comparar Todo', fr: 'Comparer Tout', it: 'Confronta Tutto', ko: '모두 비교',
       pt: 'Comparar Tudo', ru: 'Сравнить Все', zh: '比较全部', ja: 'すべて比較'
     },
@@ -3187,6 +3187,33 @@ export default function UnitConverter() {
     return parts.join('·') || '';
   };
 
+  // Helper to build dimensional formula from Custom tab exponents
+  const buildDirectDimensions = (): DimensionalFormula => {
+    const dims: DimensionalFormula = {};
+    
+    // Map exponent keys to DimensionalFormula keys
+    const keyMap: Record<string, keyof DimensionalFormula> = {
+      'm': 'length',
+      'kg': 'mass',
+      's': 'time',
+      'A': 'current',
+      'K': 'temperature',
+      'mol': 'amount',
+      'cd': 'intensity',
+      'rad': 'angle',
+      'sr': 'solid_angle'
+    };
+    
+    for (const [unit, dimKey] of Object.entries(keyMap)) {
+      const exp = directExponents[unit];
+      if (exp !== 0) {
+        dims[dimKey] = exp;
+      }
+    }
+    
+    return dims;
+  };
+
   // Helper to handle keyboard navigation for category switching
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
@@ -3214,7 +3241,7 @@ export default function UnitConverter() {
     <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:pb-8 md:pt-1 grid md:grid-cols-[260px_1fr] gap-8">
       
       {/* Sidebar */}
-      <nav className="space-y-2 h-fit sticky top-0 pr-2 -mt-1">
+      <nav className={`space-y-2 h-fit sticky top-0 pr-2 -mt-1 transition-opacity ${activeTab === 'custom' ? 'opacity-40 pointer-events-none' : ''}`}>
         {CATEGORY_GROUPS.map((group) => (
           <div key={group.name} className="space-y-1">
             <h2 className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80 px-2 font-bold">{t(group.name)}</h2>
@@ -3222,18 +3249,20 @@ export default function UnitConverter() {
               {group.categories.map((catId) => {
                 const cat = CONVERSION_DATA.find(c => c.id === catId);
                 if (!cat) return null;
+                const isSelected = activeTab === 'converter' && activeCategory === cat.id;
                 return (
                   <button
                     key={cat.id}
                     onClick={() => { setActiveCategory(cat.id as UnitCategory); setInputValue('1'); }}
+                    disabled={activeTab === 'custom'}
                     className={`w-full text-left px-3 py-[1px] rounded-sm text-xs font-medium transition-all duration-200 border-l-2 flex items-center justify-between group ${
-                      activeCategory === cat.id 
+                      isSelected 
                         ? 'border-accent text-accent' 
                         : 'hover:bg-muted/50 border-transparent text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     {t(cat.name)}
-                    {activeCategory === cat.id && (
+                    {isSelected && (
                       <motion.div layoutId="active-indicator" className="w-1 h-1 rounded-full bg-accent" />
                     )}
                   </button>
@@ -3251,8 +3280,8 @@ export default function UnitConverter() {
           <div className="flex items-center justify-between">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
               <TabsList className="h-9">
-                <TabsTrigger value="main" className="text-sm px-4">{t('Main')}</TabsTrigger>
-                <TabsTrigger value="direct" className="text-sm px-4">{t('Direct')}</TabsTrigger>
+                <TabsTrigger value="converter" className="text-sm px-4">{t('Converter')}</TabsTrigger>
+                <TabsTrigger value="custom" className="text-sm px-4">{t('Custom')}</TabsTrigger>
               </TabsList>
             </Tabs>
             <div className="flex items-center gap-3">
@@ -3304,7 +3333,7 @@ export default function UnitConverter() {
               </Select>
             </div>
           </div>
-          {activeTab === 'main' && (
+          {activeTab === 'converter' && (
             <div className="mt-2">
               <h1 className="text-3xl font-bold text-foreground tracking-tight">{t(applyRegionalSpelling(categoryData.name))}</h1>
               <p className="text-muted-foreground text-sm font-mono mt-1">
@@ -3312,9 +3341,9 @@ export default function UnitConverter() {
               </p>
             </div>
           )}
-          {activeTab === 'direct' && (
+          {activeTab === 'custom' && (
             <div className="mt-2">
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">{t('Direct Entry')}</h1>
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">{t('Custom Entry')}</h1>
               <p className="text-muted-foreground text-sm font-mono mt-1">
                 {t('Build dimensional units from SI base units')}
               </p>
@@ -3322,9 +3351,8 @@ export default function UnitConverter() {
           )}
         </div>
 
-        {/* Main Tab Content */}
-        {activeTab === 'main' && (
-        <>
+        {/* Converter Tab Content */}
+        {activeTab === 'converter' && (
         <Card className="p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
@@ -3735,6 +3763,179 @@ export default function UnitConverter() {
 
           </div>
         </Card>
+        )}
+
+        {/* Custom Tab Content */}
+        {activeTab === 'custom' && (
+        <Card className="p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+          
+          <div className="flex flex-col gap-6 relative z-10">
+            {/* Top row: Value input, Result display, and Copy button */}
+            <div className="flex items-end gap-4">
+              <div className="flex flex-col gap-2">
+                <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Value')}</Label>
+                <Input 
+                  type="text"
+                  inputMode="decimal"
+                  value={directValue}
+                  onChange={(e) => {
+                    const format = NUMBER_FORMATS[numberFormat];
+                    const decimalSep = format.decimal === '.' ? '\\.' : format.decimal === "'" ? "\\'" : format.decimal;
+                    const thousandsSep = format.thousands ? (format.thousands === ' ' ? '\\s' : format.thousands === "'" ? "\\'" : format.thousands) : '';
+                    const isArabicFormat = numberFormat === 'arabic';
+                    const digitPattern = isArabicFormat ? '0-9٠-٩' : '0-9';
+                    const pattern = new RegExp(`[^${digitPattern}\\-${decimalSep}${thousandsSep}eE\\+]`, 'g');
+                    setDirectValue(e.target.value.replace(pattern, ''));
+                  }}
+                  className="font-mono px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left"
+                  style={{ height: FIELD_HEIGHT, fontSize: '0.875rem', width: CommonFieldWidth }}
+                  placeholder="0"
+                  {...testId('custom-input-value')}
+                />
+              </div>
+              
+              {/* Result display */}
+              <div className="flex flex-col gap-2">
+                <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Result')}</Label>
+                <motion.div 
+                  className="px-4 bg-background/50 border border-border rounded-md font-mono text-primary cursor-pointer hover:bg-background/70 flex items-center justify-between gap-4"
+                  style={{ height: FIELD_HEIGHT, minWidth: CommonFieldWidth }}
+                  onClick={() => {
+                    const numValue = parseNumberWithFormat(directValue);
+                    if (isNaN(numValue)) return;
+                    const unitSymbol = buildDirectUnitSymbol();
+                    if (!unitSymbol) return;
+                    const valueStr = formatForClipboard(numValue, precision);
+                    const textToCopy = `${valueStr} ${unitSymbol}`;
+                    navigator.clipboard.writeText(textToCopy);
+                    setFlashDirectCopy(true);
+                    setTimeout(() => setFlashDirectCopy(false), 300);
+                  }}
+                  animate={{
+                    opacity: flashDirectCopy ? [1, 0.3, 1] : 1,
+                    scale: flashDirectCopy ? [1, 1.02, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {(() => {
+                    const numValue = parseNumberWithFormat(directValue);
+                    const unitSymbol = buildDirectUnitSymbol();
+                    if (isNaN(numValue) || !directValue) return <span>...</span>;
+                    return (
+                      <>
+                        <span>{formatResultValue(numValue, precision)}</span>
+                        <span className="text-muted-foreground">{unitSymbol}</span>
+                      </>
+                    );
+                  })()}
+                </motion.div>
+              </div>
+              
+              {/* Copy button aligned far right */}
+              <div className="flex-1 flex justify-end">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => {
+                    const numValue = parseNumberWithFormat(directValue);
+                    if (isNaN(numValue)) return;
+                    const unitSymbol = buildDirectUnitSymbol();
+                    if (!unitSymbol) return;
+                    const valueStr = formatForClipboard(numValue, precision);
+                    const textToCopy = `${valueStr} ${unitSymbol}`;
+                    navigator.clipboard.writeText(textToCopy);
+                    setFlashDirectCopy(true);
+                    setTimeout(() => setFlashDirectCopy(false), 300);
+                    
+                    // Add to calculator (first three fields only)
+                    const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
+                    if (firstEmptyIndex !== -1) {
+                      const dims = buildDirectDimensions();
+                      const newCalcValues = [...calcValues];
+                      newCalcValues[firstEmptyIndex] = {
+                        value: numValue,
+                        dimensions: dims,
+                        prefix: 'none'
+                      };
+                      setCalcValues(newCalcValues);
+                    }
+                  }}
+                  className="text-xs hover:text-accent gap-2"
+                  style={{ height: FIELD_HEIGHT }}
+                >
+                  <Copy className="w-3 h-3" />
+                  <motion.span
+                    animate={{
+                      opacity: flashDirectCopy ? [1, 0.3, 1] : 1,
+                      scale: flashDirectCopy ? [1, 1.1, 1] : 1
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {t('Copy')}
+                  </motion.span>
+                </Button>
+              </div>
+            </div>
+            
+            {/* Unit selector grid */}
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-between mb-2">
+                <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Dimensions')}</Label>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setDirectExponents({
+                    m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
+                  })}
+                  className="text-xs hover:text-accent"
+                >
+                  {t('Clear')}
+                </Button>
+              </div>
+              {([
+                { unit: 'm', quantity: 'Length' },
+                { unit: 'kg', quantity: 'Mass' },
+                { unit: 's', quantity: 'Time' },
+                { unit: 'A', quantity: 'Electric Current' },
+                { unit: 'K', quantity: 'Temperature' },
+                { unit: 'mol', quantity: 'Amount of Substance' },
+                { unit: 'cd', quantity: 'Luminous Intensity' },
+                { unit: 'rad', quantity: 'Plane Angle' },
+                { unit: 'sr', quantity: 'Solid Angle' }
+              ] as const).map(({ unit, quantity }) => (
+                <div key={unit} className="flex items-center gap-2">
+                  <span className="text-xs w-32 text-right text-muted-foreground truncate" title={t(quantity)}>{t(quantity)}</span>
+                  <div className="flex gap-0">
+                    {[0, 1, 2, 3, 4, 5, -1, -2, -3, -4, -5].map((exp) => {
+                      const superscripts: Record<number, string> = {
+                        1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵',
+                        [-1]: '⁻¹', [-2]: '⁻²', [-3]: '⁻³', [-4]: '⁻⁴', [-5]: '⁻⁵'
+                      };
+                      const label = exp === 0 ? '-' : `${unit}${superscripts[exp] || ''}`;
+                      const isSelected = directExponents[unit] === exp;
+                      return (
+                        <button
+                          key={exp}
+                          onClick={() => setDirectExponents(prev => ({ ...prev, [unit]: exp }))}
+                          className={`w-12 h-7 text-xs font-mono border transition-all text-center shrink-0 ${
+                            isSelected 
+                              ? 'bg-accent text-accent-foreground border-accent' 
+                              : 'bg-background/30 border-border/50 hover:bg-muted/50 text-muted-foreground'
+                          } ${exp === 0 ? 'rounded-l' : ''} ${exp === -5 ? 'rounded-r' : ''}`}
+                          {...testId(`custom-exp-${unit}-${exp}`)}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
+        )}
 
         {/* Mini Calculator */}
         <Card className="p-6 bg-card border-border/50">
@@ -4315,167 +4516,6 @@ export default function UnitConverter() {
             </div>
           </div>
         </Card>
-        </>
-        )}
-
-        {/* Direct Tab Content */}
-        {activeTab === 'direct' && (
-        <Card className="p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
-          
-          <div className="flex flex-col gap-6 relative z-10">
-            {/* Top row: Value input, Result display, and Copy button */}
-            <div className="flex items-end gap-4">
-              <div className="flex flex-col gap-2">
-                <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Value')}</Label>
-                <Input 
-                  type="text"
-                  inputMode="decimal"
-                  value={directValue}
-                  onChange={(e) => {
-                    const format = NUMBER_FORMATS[numberFormat];
-                    const decimalSep = format.decimal === '.' ? '\\.' : format.decimal === "'" ? "\\'" : format.decimal;
-                    const thousandsSep = format.thousands ? (format.thousands === ' ' ? '\\s' : format.thousands === "'" ? "\\'" : format.thousands) : '';
-                    const isArabicFormat = numberFormat === 'arabic';
-                    const digitPattern = isArabicFormat ? '0-9٠-٩' : '0-9';
-                    const pattern = new RegExp(`[^${digitPattern}\\-${decimalSep}${thousandsSep}eE\\+]`, 'g');
-                    setDirectValue(e.target.value.replace(pattern, ''));
-                  }}
-                  className="font-mono px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left"
-                  style={{ height: FIELD_HEIGHT, fontSize: '0.875rem', width: CommonFieldWidth }}
-                  placeholder="0"
-                  {...testId('direct-input-value')}
-                />
-              </div>
-              
-              {/* Result display */}
-              <div className="flex flex-col gap-2">
-                <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Result')}</Label>
-                <motion.div 
-                  className="px-4 bg-background/50 border border-border rounded-md font-mono text-primary cursor-pointer hover:bg-background/70 flex items-center justify-between gap-4"
-                  style={{ height: FIELD_HEIGHT, minWidth: CommonFieldWidth }}
-                  onClick={() => {
-                    const numValue = parseNumberWithFormat(directValue);
-                    if (isNaN(numValue)) return;
-                    const unitSymbol = buildDirectUnitSymbol();
-                    if (!unitSymbol) return;
-                    const valueStr = formatForClipboard(numValue, precision);
-                    const textToCopy = `${valueStr} ${unitSymbol}`;
-                    navigator.clipboard.writeText(textToCopy);
-                    setFlashDirectCopy(true);
-                    setTimeout(() => setFlashDirectCopy(false), 300);
-                  }}
-                  animate={{
-                    opacity: flashDirectCopy ? [1, 0.3, 1] : 1,
-                    scale: flashDirectCopy ? [1, 1.02, 1] : 1
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {(() => {
-                    const numValue = parseNumberWithFormat(directValue);
-                    const unitSymbol = buildDirectUnitSymbol();
-                    if (isNaN(numValue) || !directValue) return <span>...</span>;
-                    return (
-                      <>
-                        <span>{formatResultValue(numValue, precision)}</span>
-                        <span className="text-muted-foreground">{unitSymbol}</span>
-                      </>
-                    );
-                  })()}
-                </motion.div>
-              </div>
-              
-              {/* Copy button aligned far right */}
-              <div className="flex-1 flex justify-end">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => {
-                    const numValue = parseNumberWithFormat(directValue);
-                    if (isNaN(numValue)) return;
-                    const unitSymbol = buildDirectUnitSymbol();
-                    if (!unitSymbol) return;
-                    const valueStr = formatForClipboard(numValue, precision);
-                    const textToCopy = `${valueStr} ${unitSymbol}`;
-                    navigator.clipboard.writeText(textToCopy);
-                    setFlashDirectCopy(true);
-                    setTimeout(() => setFlashDirectCopy(false), 300);
-                  }}
-                  className="text-xs hover:text-accent gap-2"
-                  style={{ height: FIELD_HEIGHT }}
-                >
-                  <Copy className="w-3 h-3" />
-                  <motion.span
-                    animate={{
-                      opacity: flashDirectCopy ? [1, 0.3, 1] : 1,
-                      scale: flashDirectCopy ? [1, 1.1, 1] : 1
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {t('Copy')}
-                  </motion.span>
-                </Button>
-              </div>
-            </div>
-            
-            {/* Unit selector grid */}
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center justify-between mb-2">
-                <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Dimensions')}</Label>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setDirectExponents({
-                    m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
-                  })}
-                  className="text-xs hover:text-accent"
-                >
-                  {t('Clear')}
-                </Button>
-              </div>
-              {([
-                { unit: 'm', quantity: 'Length' },
-                { unit: 'kg', quantity: 'Mass' },
-                { unit: 's', quantity: 'Time' },
-                { unit: 'A', quantity: 'Electric Current' },
-                { unit: 'K', quantity: 'Temperature' },
-                { unit: 'mol', quantity: 'Amount of Substance' },
-                { unit: 'cd', quantity: 'Luminous Intensity' },
-                { unit: 'rad', quantity: 'Plane Angle' },
-                { unit: 'sr', quantity: 'Solid Angle' }
-              ] as const).map(({ unit, quantity }) => (
-                <div key={unit} className="flex items-center gap-2">
-                  <span className="text-xs w-32 text-right text-muted-foreground truncate" title={t(quantity)}>{t(quantity)}</span>
-                  <div className="flex gap-0">
-                    {[0, 1, 2, 3, 4, 5, -1, -2, -3, -4, -5].map((exp) => {
-                      const superscripts: Record<number, string> = {
-                        1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵',
-                        [-1]: '⁻¹', [-2]: '⁻²', [-3]: '⁻³', [-4]: '⁻⁴', [-5]: '⁻⁵'
-                      };
-                      const label = exp === 0 ? '-' : `${unit}${superscripts[exp] || ''}`;
-                      const isSelected = directExponents[unit] === exp;
-                      return (
-                        <button
-                          key={exp}
-                          onClick={() => setDirectExponents(prev => ({ ...prev, [unit]: exp }))}
-                          className={`w-12 h-7 text-xs font-mono border transition-all text-center shrink-0 ${
-                            isSelected 
-                              ? 'bg-accent text-accent-foreground border-accent' 
-                              : 'bg-background/30 border-border/50 hover:bg-muted/50 text-muted-foreground'
-                          } ${exp === 0 ? 'rounded-l' : ''} ${exp === -5 ? 'rounded-r' : ''}`}
-                          {...testId(`direct-exp-${unit}-${exp}`)}
-                        >
-                          {label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Card>
-        )}
       </div>
     </div>
   );

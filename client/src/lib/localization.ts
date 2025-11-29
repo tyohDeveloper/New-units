@@ -395,6 +395,21 @@ export const UI_TRANSLATIONS: Record<string, Translation> = {
     es: 'Potencia Arcaica', fr: 'Puissance Archaïque', it: 'Potenza Arcaica',
     pt: 'Potência Arcaica', ru: 'Архаичная Мощность', zh: '古代功率', ja: '古代の仕事率', ko: '고대 일률'
   },
+  'Converter': {
+    en: 'Converter', ar: 'محول', de: 'Konverter',
+    es: 'Convertidor', fr: 'Convertisseur', it: 'Convertitore',
+    pt: 'Conversor', ru: 'Конвертер', zh: '转换器', ja: 'コンバーター', ko: '변환기'
+  },
+  'Custom': {
+    en: 'Custom', ar: 'مخصص', de: 'Benutzerdefiniert',
+    es: 'Personalizado', fr: 'Personnalisé', it: 'Personalizzato',
+    pt: 'Personalizado', ru: 'Пользовательский', zh: '自定义', ja: 'カスタム', ko: '사용자 정의'
+  },
+  'Custom Entry': {
+    en: 'Custom Entry', ar: 'إدخال مخصص', de: 'Benutzerdefinierte Eingabe',
+    es: 'Entrada Personalizada', fr: 'Entrée Personnalisée', it: 'Inserimento Personalizzato',
+    pt: 'Entrada Personalizada', ru: 'Пользовательский Ввод', zh: '自定义输入', ja: 'カスタム入力', ko: '사용자 정의 입력'
+  },
 };
 
 export const UNIT_NAME_TRANSLATIONS: Record<string, Translation> = {
