@@ -12,7 +12,7 @@ import {
   NUMBER_FORMATS,
   type NumberFormat
 } from '../client/src/lib/formatting';
-import { findOptimalPrefix, PREFIXES, CONVERSION_DATA } from '../client/src/lib/conversion-data';
+import { findOptimalPrefix, PREFIXES, CONVERSION_DATA, convert } from '../client/src/lib/conversion-data';
 
 describe('Banker Rounding (roundToNearestEven)', () => {
   describe('standard rounding cases', () => {
@@ -482,6 +482,43 @@ describe('Photon/Light Category', () => {
   it('should have nanometer with correct factor', () => {
     const photonNm = photonCategory?.units.find((u) => u.id === 'nm_wave');
     expect(photonNm?.factor).toBeCloseTo(1239.841984, 3);
+  });
+});
+
+describe('Photon Conversion Function', () => {
+  it('should convert 500 nm wavelength to approximately 2.48 eV', () => {
+    const result = convert(500, 'nm_wave', 'eV', 'photon');
+    expect(result).toBeCloseTo(2.48, 1);
+  });
+
+  it('should convert 1 eV to approximately 1240 nm wavelength', () => {
+    const result = convert(1, 'eV', 'nm_wave', 'photon');
+    expect(result).toBeCloseTo(1240, 0);
+  });
+
+  it('should convert wavelength 500 nm to frequency ~6e14 Hz', () => {
+    const wavelength_m = 500e-9;
+    const c = 299792458;
+    const expectedHz = c / wavelength_m;
+    const result = convert(500, 'nm_wave', 'Hz', 'photon');
+    expect(result).toBeCloseTo(expectedHz, -10);
+  });
+
+  it('should be reversible: eV → nm → eV', () => {
+    const original = 2.5;
+    const nm = convert(original, 'eV', 'nm_wave', 'photon');
+    const backToEv = convert(nm, 'nm_wave', 'eV', 'photon');
+    expect(backToEv).toBeCloseTo(original, 6);
+  });
+
+  it('should convert visible light (red ~700nm) correctly', () => {
+    const result = convert(700, 'nm_wave', 'eV', 'photon');
+    expect(result).toBeCloseTo(1.77, 1);
+  });
+
+  it('should convert visible light (blue ~450nm) correctly', () => {
+    const result = convert(450, 'nm_wave', 'eV', 'photon');
+    expect(result).toBeCloseTo(2.76, 1);
   });
 });
 
