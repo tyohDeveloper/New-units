@@ -3070,7 +3070,7 @@ export default function UnitConverter() {
 
             {/* Output Section */}
             <div className="grid gap-4">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
                 <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
                   <Label className="text-xs font-mono uppercase text-muted-foreground">{t('To')}</Label>
                   <div className="flex items-center gap-2">
@@ -3093,15 +3093,18 @@ export default function UnitConverter() {
                     </Select>
                   </div>
                 </div>
-                <Button
-                  variant={comparisonMode ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setComparisonMode(!comparisonMode)}
-                  className={`h-6 px-2 text-[10px] font-mono uppercase ${comparisonMode ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                  data-testid="button-comparison-mode"
-                >
-                  Compare All
-                </Button>
+                <div className="w-[50px] shrink-0" />
+                <div className="flex-1 min-w-0 flex justify-end">
+                  <Button
+                    variant={comparisonMode ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setComparisonMode(!comparisonMode)}
+                    className={`h-6 px-2 text-[10px] font-mono uppercase ${comparisonMode ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                    data-testid="button-comparison-mode"
+                  >
+                    Compare All
+                  </Button>
+                </div>
               </div>
               <div className="flex flex-col gap-2">
                 {/* Row 1: Result, Prefix, Unit Selector */}
