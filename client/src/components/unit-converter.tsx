@@ -149,8 +149,6 @@ export default function UnitConverter() {
     'zh', // Chinese (920M+)
   ];
   
-  const [includeBeerWine, setIncludeBeerWine] = useState<boolean>(false);
-
   const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string; useArabicNumerals?: boolean; myriad?: boolean }> = {
     'uk': { name: 'English', thousands: ',', decimal: '.' },
     'south-asian': { name: 'South Asian (Indian)', thousands: ',', decimal: '.' },
@@ -1305,7 +1303,7 @@ export default function UnitConverter() {
     },
     {
       name: "Mechanics",
-      categories: ['area', 'volume', 'speed', 'acceleration', 'force', 'pressure', 'energy', 'power', 'torque', 'flow', 'density', 'viscosity', 'surface_tension', 'frequency', 'angular_velocity', 'momentum']
+      categories: ['area', 'volume', 'beer_wine_volume', 'speed', 'acceleration', 'force', 'pressure', 'energy', 'power', 'torque', 'flow', 'density', 'viscosity', 'surface_tension', 'frequency', 'angular_velocity', 'momentum']
     },
     {
       name: "Thermodynamics & Chemistry",
@@ -1344,6 +1342,7 @@ export default function UnitConverter() {
       'intensity': ['cd'],
       'area': ['m2', 'ha'],
       'volume': ['l'],
+      'beer_wine_volume': ['l'],
       'speed': ['mps', 'kmh'],
       'acceleration': ['mps2'],
       'force': ['n'],
@@ -1378,14 +1377,11 @@ export default function UnitConverter() {
   };
   
   // Helper to get filtered and sorted units
-  const getFilteredSortedUnits = (category: string, includeBeer: boolean) => {
+  const getFilteredSortedUnits = (category: string) => {
     const catData = CONVERSION_DATA.find(c => c.id === category);
     if (!catData) return [];
     
-    // Filter based on beer/wine checkbox
-    let units = category === 'volume' && !includeBeer 
-      ? catData.units.filter(u => !u.beerWine)
-      : catData.units;
+    const units = catData.units;
     
     // For lightbulb category, preserve original order from data
     if (category === 'lightbulb') {
@@ -1414,11 +1410,11 @@ export default function UnitConverter() {
     });
   };
   
-  const filteredUnits = getFilteredSortedUnits(activeCategory, includeBeerWine);
+  const filteredUnits = getFilteredSortedUnits(activeCategory);
 
   // Reset units when category changes
   useEffect(() => {
-    const sorted = getFilteredSortedUnits(activeCategory, includeBeerWine);
+    const sorted = getFilteredSortedUnits(activeCategory);
     if (sorted.length > 0) {
       // Special case: temperature defaults to Kelvin
       if (activeCategory === 'temperature') {
@@ -1436,7 +1432,7 @@ export default function UnitConverter() {
       setFromPrefix('none');
       setToPrefix('none');
     }
-  }, [activeCategory, includeBeerWine]);
+  }, [activeCategory]);
 
   // Focus input field on mount and keep it focused
   useEffect(() => {
@@ -1506,6 +1502,7 @@ export default function UnitConverter() {
       data: {},
       rack_geometry: { length: 1 },
       shipping: { length: 1 },
+      beer_wine_volume: { length: 3 },
       math: {},
       refractive_power: { length: -1 },
       sound_pressure: { mass: 1, length: -1, time: -2 },
@@ -2704,17 +2701,6 @@ export default function UnitConverter() {
               {t('Base unit:')} <span className="text-primary">{t(applyRegionalSpelling(toTitleCase(categoryData.baseUnit)))}</span>
             </p>
             <div className="flex items-center gap-3">
-              {activeCategory === 'volume' && (
-                <label className="flex items-center gap-2 cursor-pointer hover:text-foreground transition-colors">
-                  <input
-                    type="checkbox"
-                    checked={includeBeerWine}
-                    onChange={(e) => setIncludeBeerWine(e.target.checked)}
-                    className="w-4 h-4 cursor-pointer accent-accent rounded border-border"
-                  />
-                  <span className="text-xs text-foreground">{t('Include Beer/Wine')}</span>
-                </label>
-              )}
               <Select 
                 value={numberFormat} 
                 onValueChange={(val) => { 
@@ -3468,10 +3454,7 @@ export default function UnitConverter() {
                             const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                             if (!cat) return null;
                             
-                            // Filter based on beer/wine checkbox
-                            let units = resultCategory === 'volume' && !includeBeerWine 
-                              ? cat.units.filter(u => !u.beerWine)
-                              : cat.units;
+                            const units = cat.units;
                             
                             // Check if base SI unit exists in units array with same symbol
                             const baseUnitExists = units.some(u => u.symbol === cat.baseSISymbol);
@@ -3570,8 +3553,8 @@ export default function UnitConverter() {
               )}
             </div>
 
-            {/* Normalize & Copy row - right justified below result field */}
-            <div className="flex justify-end" style={{ width: CommonFieldWidth }}>
+            {/* Action buttons row - Normalize & Copy | Evaluate & Copy | Copy - right justified */}
+            <div className="flex justify-end gap-2" style={{ width: CommonFieldWidth }}>
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -3589,10 +3572,6 @@ export default function UnitConverter() {
                   {t('Normalize & Copy')}
                 </motion.span>
               </Button>
-            </div>
-
-            {/* Execute & Copy, Copy row - right justified */}
-            <div className="flex justify-end gap-2" style={{ width: CommonFieldWidth }}>
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -3607,7 +3586,7 @@ export default function UnitConverter() {
                   }}
                   transition={{ duration: 0.3 }}
                 >
-                  {t('Execute & Copy')}
+                  {t('Evaluate & Copy')}
                 </motion.span>
               </Button>
               <Button 

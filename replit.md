@@ -4,7 +4,7 @@
 
 OmniUnit is a comprehensive unit conversion web application that enables conversions across a wide range of measurement systems including SI units, Imperial, US Customary, Archaic, and specialized industrial units. The application is built as a frontend-only TypeScript project with React, designed with a "scientific archival" aesthetic theme. Production builds create a single standalone HTML file for easy distribution.
 
-**Current Version:** v2.10.0
+**Current Version:** v2.11.0
 
 ## User Preferences
 
@@ -50,7 +50,7 @@ OmniUnit is a comprehensive unit conversion web application that enables convers
 
 **Clipboard Copying**
 - Respects precision settings when copying values
-- Execute & Copy: evaluates calculation, copies result, clears fields, moves result to field 1 for chained calculations
+- Evaluate & Copy: evaluates calculation, copies result, clears fields, moves result to field 1 for chained calculations
 
 **Math Category**
 - Positioned at top of "Other" group for easy access
@@ -141,11 +141,16 @@ client/
 
 ## Recent Changes
 
+- v2.11.0: Created separate "Beer & Wine Volume" category with all volume units plus beer/wine-specific units
+- v2.11.0: Removed beer/wine checkbox from Volume category (now a dedicated category)
+- v2.11.0: Rack Geometry and Shipping Containers now include all standard length units plus specialized units
+- v2.11.0: All 3 action buttons (Normalize & Copy, Evaluate & Copy, Copy) consolidated to single row below result
+- v2.11.0: Renamed "Execute & Copy" to "Evaluate & Copy"
 - v2.10.0: Calculator action buttons (Copy, Normalize & Copy, Execute & Copy) moved to dedicated row below result field
 - v2.10.0: Added "Normalize & Copy" button that simplifies complex dimensions to SI derived units (e.g., kg·m·s⁻² → N)
 - v2.9.0: Calculator operators reordered to × / + − (multiplication/division first, then addition/subtraction)
 - v2.9.0: Math category now at top of "Other" group with math functions (sin, cos, tan, sqrt, log, ln, exp, abs) and constants (π, e, √2)
-- v2.9.0: Execute & Copy button: evaluates calculator, copies result, clears fields, moves result to field 1
+- v2.9.0: Evaluate & Copy button: evaluates calculator, copies result, clears fields, moves result to field 1
 - v2.9.0: Rack Geometry and Shipping Containers show only specialized units (TEU, DEU, U, 2U, 4U, etc.); base units removed from dropdowns
 - v2.9.0: Fixed executeAndCopy to handle zero-valued results and reset stale result metadata
 - v2.8.0: Added addition (+) and subtraction (−) operators to calculator
