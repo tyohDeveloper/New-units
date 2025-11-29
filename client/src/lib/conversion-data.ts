@@ -191,7 +191,7 @@ export interface UnitDefinition {
   offset?: number; // For temperature (e.g. Celsius to Kelvin)
   description?: string;
   allowPrefixes?: boolean;
-  mathFunction?: 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan' | 'sqrt' | 'log10' | 'ln' | 'exp' | 'abs'; // For math function units
+  mathFunction?: 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan' | 'sqrt' | 'cbrt' | 'root4' | 'log10' | 'log2' | 'ln' | 'exp' | 'abs' | 'sinh' | 'cosh' | 'tanh' | 'asinh' | 'acosh' | 'atanh' | 'floor' | 'ceil' | 'round' | 'trunc' | 'sign'; // For math function units
   isInverse?: boolean; // For photon wavelength: E = constant/λ (inverse relationship)
 }
 
@@ -1171,11 +1171,25 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "asin", name: "Arc Sine", symbol: "asin", factor: 1, mathFunction: 'asin' },
       { id: "acos", name: "Arc Cosine", symbol: "acos", factor: 1, mathFunction: 'acos' },
       { id: "atan", name: "Arc Tangent", symbol: "atan", factor: 1, mathFunction: 'atan' },
+      { id: "sinh", name: "Hyperbolic Sine", symbol: "sinh", factor: 1, mathFunction: 'sinh' },
+      { id: "cosh", name: "Hyperbolic Cosine", symbol: "cosh", factor: 1, mathFunction: 'cosh' },
+      { id: "tanh", name: "Hyperbolic Tangent", symbol: "tanh", factor: 1, mathFunction: 'tanh' },
+      { id: "asinh", name: "Inverse Hyperbolic Sine", symbol: "asinh", factor: 1, mathFunction: 'asinh' },
+      { id: "acosh", name: "Inverse Hyperbolic Cosine", symbol: "acosh", factor: 1, mathFunction: 'acosh' },
+      { id: "atanh", name: "Inverse Hyperbolic Tangent", symbol: "atanh", factor: 1, mathFunction: 'atanh' },
       { id: "sqrt", name: "Square Root", symbol: "√", factor: 1, mathFunction: 'sqrt' },
+      { id: "cbrt", name: "Cube Root", symbol: "∛", factor: 1, mathFunction: 'cbrt' },
+      { id: "root4", name: "Fourth Root", symbol: "∜", factor: 1, mathFunction: 'root4' },
       { id: "log10", name: "Log Base 10", symbol: "log₁₀", factor: 1, mathFunction: 'log10' },
+      { id: "log2", name: "Log Base 2", symbol: "log₂", factor: 1, mathFunction: 'log2' },
       { id: "ln", name: "Natural Log", symbol: "ln", factor: 1, mathFunction: 'ln' },
       { id: "exp", name: "Exponential (eˣ)", symbol: "exp", factor: 1, mathFunction: 'exp' },
       { id: "abs", name: "Absolute Value", symbol: "|x|", factor: 1, mathFunction: 'abs' },
+      { id: "sign", name: "Sign", symbol: "sgn", factor: 1, mathFunction: 'sign' },
+      { id: "floor", name: "Floor", symbol: "⌊x⌋", factor: 1, mathFunction: 'floor' },
+      { id: "ceil", name: "Ceiling", symbol: "⌈x⌉", factor: 1, mathFunction: 'ceil' },
+      { id: "round", name: "Round", symbol: "round", factor: 1, mathFunction: 'round' },
+      { id: "trunc", name: "Truncate", symbol: "trunc", factor: 1, mathFunction: 'trunc' },
     ],
   },
 
@@ -1414,11 +1428,25 @@ export function applyMathFunction(value: number, func: UnitDefinition['mathFunct
     case 'asin': return Math.asin(value);
     case 'acos': return Math.acos(value);
     case 'atan': return Math.atan(value);
+    case 'sinh': return Math.sinh(value);
+    case 'cosh': return Math.cosh(value);
+    case 'tanh': return Math.tanh(value);
+    case 'asinh': return Math.asinh(value);
+    case 'acosh': return Math.acosh(value);
+    case 'atanh': return Math.atanh(value);
     case 'sqrt': return Math.sqrt(value);
+    case 'cbrt': return Math.cbrt(value);
+    case 'root4': return Math.pow(value, 0.25);
     case 'log10': return Math.log10(value);
+    case 'log2': return Math.log2(value);
     case 'ln': return Math.log(value);
     case 'exp': return Math.exp(value);
     case 'abs': return Math.abs(value);
+    case 'sign': return Math.sign(value);
+    case 'floor': return Math.floor(value);
+    case 'ceil': return Math.ceil(value);
+    case 'round': return Math.round(value);
+    case 'trunc': return Math.trunc(value);
     default: return value;
   }
 }

@@ -1048,6 +1048,76 @@ export const UNIT_NAME_TRANSLATIONS: Record<string, Translation> = {
     es: 'Cuchara de Postre', fr: 'Cuillère à Dessert', it: 'Cucchiaio da Dessert',
     pt: 'Colher de Sobremesa', ru: 'Десертная Ложка', zh: '甜品匙', ja: 'デザートスプーン', ko: '디저트 스푼'
   },
+  'Cube Root': { 
+    en: 'Cube Root', ar: 'الجذر التكعيبي', de: 'Kubikwurzel',
+    es: 'Raíz Cúbica', fr: 'Racine Cubique', it: 'Radice Cubica',
+    pt: 'Raiz Cúbica', ru: 'Кубический Корень', zh: '立方根', ja: '立方根', ko: '세제곱근'
+  },
+  'Fourth Root': { 
+    en: 'Fourth Root', ar: 'الجذر الرابع', de: 'Vierte Wurzel',
+    es: 'Raíz Cuarta', fr: 'Racine Quatrième', it: 'Radice Quarta',
+    pt: 'Raiz Quarta', ru: 'Корень Четвёртой Степени', zh: '四次方根', ja: '四乗根', ko: '네제곱근'
+  },
+  'Hyperbolic Sine': { 
+    en: 'Hyperbolic Sine', ar: 'الجيب الزائدي', de: 'Hyperbelsinus',
+    es: 'Seno Hiperbólico', fr: 'Sinus Hyperbolique', it: 'Seno Iperbolico',
+    pt: 'Seno Hiperbólico', ru: 'Гиперболический Синус', zh: '双曲正弦', ja: '双曲線正弦', ko: '쌍곡 사인'
+  },
+  'Hyperbolic Cosine': { 
+    en: 'Hyperbolic Cosine', ar: 'جيب التمام الزائدي', de: 'Hyperbelkosinus',
+    es: 'Coseno Hiperbólico', fr: 'Cosinus Hyperbolique', it: 'Coseno Iperbolico',
+    pt: 'Cosseno Hiperbólico', ru: 'Гиперболический Косинус', zh: '双曲余弦', ja: '双曲線余弦', ko: '쌍곡 코사인'
+  },
+  'Hyperbolic Tangent': { 
+    en: 'Hyperbolic Tangent', ar: 'الظل الزائدي', de: 'Hyperbeltangens',
+    es: 'Tangente Hiperbólica', fr: 'Tangente Hyperbolique', it: 'Tangente Iperbolica',
+    pt: 'Tangente Hiperbólica', ru: 'Гиперболический Тангенс', zh: '双曲正切', ja: '双曲線正接', ko: '쌍곡 탄젠트'
+  },
+  'Inverse Hyperbolic Sine': { 
+    en: 'Inverse Hyperbolic Sine', ar: 'معكوس الجيب الزائدي', de: 'Areahyperbelsinus',
+    es: 'Arcoseno Hiperbólico', fr: 'Argument Sinus Hyperbolique', it: 'Arcoseno Iperbolico',
+    pt: 'Arcosseno Hiperbólico', ru: 'Обратный Гиперболический Синус', zh: '反双曲正弦', ja: '逆双曲線正弦', ko: '역쌍곡 사인'
+  },
+  'Inverse Hyperbolic Cosine': { 
+    en: 'Inverse Hyperbolic Cosine', ar: 'معكوس جيب التمام الزائدي', de: 'Areahyperbelkosinus',
+    es: 'Arcocoseno Hiperbólico', fr: 'Argument Cosinus Hyperbolique', it: 'Arcocoseno Iperbolico',
+    pt: 'Arcocosseno Hiperbólico', ru: 'Обратный Гиперболический Косинус', zh: '反双曲余弦', ja: '逆双曲線余弦', ko: '역쌍곡 코사인'
+  },
+  'Inverse Hyperbolic Tangent': { 
+    en: 'Inverse Hyperbolic Tangent', ar: 'معكوس الظل الزائدي', de: 'Areahyperbeltangens',
+    es: 'Arcotangente Hiperbólica', fr: 'Argument Tangente Hyperbolique', it: 'Arcotangente Iperbolica',
+    pt: 'Arcotangente Hiperbólica', ru: 'Обратный Гиперболический Тангенс', zh: '反双曲正切', ja: '逆双曲線正接', ko: '역쌍곡 탄젠트'
+  },
+  'Log Base 2': { 
+    en: 'Log Base 2', ar: 'اللوغاريتم للأساس 2', de: 'Logarithmus Basis 2',
+    es: 'Logaritmo Base 2', fr: 'Logarithme Base 2', it: 'Logaritmo Base 2',
+    pt: 'Logaritmo Base 2', ru: 'Логарифм по Основанию 2', zh: '以2为底的对数', ja: '底2の対数', ko: '밑이 2인 로그'
+  },
+  'Sign': { 
+    en: 'Sign', ar: 'الإشارة', de: 'Vorzeichen',
+    es: 'Signo', fr: 'Signe', it: 'Segno',
+    pt: 'Sinal', ru: 'Знак', zh: '符号', ja: '符号', ko: '부호'
+  },
+  'Floor': { 
+    en: 'Floor', ar: 'دالة الأرضية', de: 'Abrunden',
+    es: 'Piso', fr: 'Partie Entière Inférieure', it: 'Arrotondamento per Difetto',
+    pt: 'Piso', ru: 'Округление Вниз', zh: '向下取整', ja: '床関数', ko: '내림'
+  },
+  'Ceiling': { 
+    en: 'Ceiling', ar: 'دالة السقف', de: 'Aufrunden',
+    es: 'Techo', fr: 'Partie Entière Supérieure', it: 'Arrotondamento per Eccesso',
+    pt: 'Teto', ru: 'Округление Вверх', zh: '向上取整', ja: '天井関数', ko: '올림'
+  },
+  'Round': { 
+    en: 'Round', ar: 'تقريب', de: 'Runden',
+    es: 'Redondear', fr: 'Arrondir', it: 'Arrotondare',
+    pt: 'Arredondar', ru: 'Округление', zh: '四舍五入', ja: '四捨五入', ko: '반올림'
+  },
+  'Truncate': { 
+    en: 'Truncate', ar: 'اقتطاع', de: 'Abschneiden',
+    es: 'Truncar', fr: 'Tronquer', it: 'Troncare',
+    pt: 'Truncar', ru: 'Отсечение', zh: '截断', ja: '切り捨て', ko: '버림'
+  },
 };
 
 export const SI_SYMBOLS = [
