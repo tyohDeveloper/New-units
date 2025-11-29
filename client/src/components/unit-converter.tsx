@@ -1325,7 +1325,7 @@ export default function UnitConverter() {
     },
     {
       name: "Other",
-      categories: ['data', 'rack_geometry', 'shipping', 'math']
+      categories: ['math', 'data', 'rack_geometry', 'shipping']
     }
   ];
 
@@ -2374,6 +2374,21 @@ export default function UnitConverter() {
     setResultPrefix('none');
   };
 
+  const executeAndCopy = () => {
+    if (calcValues[3] == null) return;
+    
+    copyCalcResult();
+    
+    const resultValue = calcValues[3];
+    
+    setCalcValues([resultValue, null, null, null]);
+    setCalcOp1(null);
+    setCalcOp2(null);
+    setResultUnit(null);
+    setResultCategory(null);
+    setResultPrefix('none');
+  };
+
   const clearField1 = () => {
     setCalcValues(prev => {
       const newValues = [...prev];
@@ -2630,7 +2645,7 @@ export default function UnitConverter() {
     <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:pb-8 md:pt-1 grid md:grid-cols-[260px_1fr] gap-8">
       
       {/* Sidebar */}
-      <nav className="space-y-2 h-fit sticky top-0 overflow-y-auto max-h-[calc(100vh-2rem)] pr-2 -mt-1">
+      <nav className="space-y-2 h-fit sticky top-0 pr-2 -mt-1">
         {CATEGORY_GROUPS.map((group) => (
           <div key={group.name} className="space-y-1">
             <h2 className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80 px-2 font-bold">{t(group.name)}</h2>
@@ -3121,10 +3136,10 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for + column */}
-              <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for - column */}
               <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for × column */}
               <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for / column */}
+              <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for + column */}
+              <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for - column */}
               <Button 
                 variant="ghost" 
                 size="sm"
@@ -3172,6 +3187,22 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm"
+                onClick={() => setCalcOp1('*')}
+                className={`text-sm w-full ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
+              >
+                ×
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setCalcOp1('/')}
+                className={`text-sm w-full ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
+              >
+                /
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
                 onClick={() => setCalcOp1('+')}
                 disabled={!canAddSubtract(calcValues[0], calcValues[1])}
                 className={`text-sm w-full ${calcOp1 === '+' ? 'text-accent font-bold' : ''}`}
@@ -3186,22 +3217,6 @@ export default function UnitConverter() {
                 className={`text-sm w-full ${calcOp1 === '-' ? 'text-accent font-bold' : ''}`}
               >
                 −
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setCalcOp1('*')}
-                className={`text-sm w-full ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
-              >
-                ×
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setCalcOp1('/')}
-                className={`text-sm w-full ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
-              >
-                /
               </Button>
               <Button 
                 variant="ghost" 
@@ -3250,6 +3265,22 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm"
+                onClick={() => setCalcOp2('*')}
+                className={`text-sm w-full ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
+              >
+                ×
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setCalcOp2('/')}
+                className={`text-sm w-full ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
+              >
+                /
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
                 onClick={() => setCalcOp2('+')}
                 disabled={!canAddSubtract(calcValues[1], calcValues[2])}
                 className={`text-sm w-full ${calcOp2 === '+' ? 'text-accent font-bold' : ''}`}
@@ -3264,22 +3295,6 @@ export default function UnitConverter() {
                 className={`text-sm w-full ${calcOp2 === '-' ? 'text-accent font-bold' : ''}`}
               >
                 −
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setCalcOp2('*')}
-                className={`text-sm w-full ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
-              >
-                ×
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setCalcOp2('/')}
-                className={`text-sm w-full ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
-              >
-                /
               </Button>
               <Button 
                 variant="ghost" 
@@ -3536,10 +3551,27 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
+                onClick={executeAndCopy}
+                disabled={!calcValues[3]}
+                className="text-xs hover:text-accent gap-1 shrink-0"
+              >
+                <motion.span
+                  animate={{
+                    opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                    scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {t('Execute & Copy')}
+                </motion.span>
+              </Button>
+              <div className="flex-1" />
+              <Button 
+                variant="ghost" 
+                size="sm" 
                 onClick={copyCalcResult}
                 disabled={!calcValues[3]}
                 className="text-xs hover:text-accent gap-1 shrink-0"
-                style={{ width: ClearBtnWidth }}
               >
                 <Copy className="w-3 h-3" />
                 <motion.span

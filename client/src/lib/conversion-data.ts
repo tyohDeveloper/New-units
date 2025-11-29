@@ -101,6 +101,7 @@ export interface UnitDefinition {
   description?: string;
   allowPrefixes?: boolean;
   beerWine?: boolean; // For beer/wine units that are conditionally shown
+  mathFunction?: 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan' | 'sqrt' | 'log10' | 'ln' | 'exp' | 'abs'; // For math function units
 }
 
 export interface CategoryDefinition {
@@ -798,19 +799,16 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
   {
     id: "rack_geometry",
     name: "Rack Geometry",
-    baseUnit: "rack unit",
-    baseSISymbol: "U",
+    baseUnit: "foot",
+    baseSISymbol: "ft",
     units: [
-      { id: "u", name: "Rack Unit", symbol: "U", factor: 1 },
-      { id: "u2", name: "2U (Double)", symbol: "2U", factor: 2 },
-      { id: "u4", name: "4U (Quad)", symbol: "4U", factor: 4 },
-      { id: "m", name: "Meter", symbol: "m", factor: 22.4972 },
-      { id: "in", name: "Inch", symbol: "in", factor: 0.5714 },
-      { id: "ft", name: "Foot", symbol: "ft", factor: 6.8571 },
-      { id: "ft_in", name: "Foot:Inch", symbol: "ft:in", factor: 6.8571 },
-      { id: "rack_42u", name: "Full Rack (42U)", symbol: "42U", factor: 42 },
-      { id: "rack_24u", name: "Half Rack (24U)", symbol: "24U", factor: 24 },
-      { id: "rack_12u", name: "Quarter Rack (12U)", symbol: "12U", factor: 12 },
+      { id: "u", name: "Rack Unit Height", symbol: "U", factor: 1.75 / 12 },
+      { id: "u2", name: "2U Height", symbol: "2U", factor: 3.5 / 12 },
+      { id: "u4", name: "4U Height", symbol: "4U", factor: 7 / 12 },
+      { id: "rack_width", name: "Rack Width (19\")", symbol: "W", factor: 19 / 12 },
+      { id: "rack_42u", name: "Full Rack (42U)", symbol: "42U", factor: 42 * 1.75 / 12 },
+      { id: "rack_24u", name: "Half Rack (24U)", symbol: "24U", factor: 24 * 1.75 / 12 },
+      { id: "rack_12u", name: "Quarter Rack (12U)", symbol: "12U", factor: 12 * 1.75 / 12 },
     ],
   },
   {
@@ -819,11 +817,10 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "foot",
     baseSISymbol: "ft",
     units: [
-      { id: "ft", name: "Foot", symbol: "ft", factor: 1 },
-      { id: "teu_l", name: "TEU Length", symbol: "TEU-L", factor: 20 },
+      { id: "teu", name: "TEU (20ft Container)", symbol: "TEU", factor: 20 },
       { id: "teu_w", name: "TEU Width", symbol: "TEU-W", factor: 8 },
       { id: "teu_h", name: "TEU Height", symbol: "TEU-H", factor: 8.5 },
-      { id: "deu_l", name: "DEU Length", symbol: "DEU-L", factor: 40 },
+      { id: "deu", name: "DEU (40ft Container)", symbol: "DEU", factor: 40 },
       { id: "deu_w", name: "DEU Width", symbol: "DEU-W", factor: 8 },
       { id: "deu_h", name: "DEU Height", symbol: "DEU-H", factor: 8.5 },
     ],
@@ -835,9 +832,40 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "1",
     units: [
       { id: "num", name: "Number", symbol: "1", factor: 1 },
+      { id: "pi", name: "Pi (π)", symbol: "π", factor: Math.PI },
+      { id: "e", name: "Euler's Number (e)", symbol: "e", factor: Math.E },
+      { id: "sqrt2", name: "Square Root of 2", symbol: "√2", factor: Math.SQRT2 },
+      { id: "sin", name: "Sine", symbol: "sin", factor: 1, mathFunction: 'sin' },
+      { id: "cos", name: "Cosine", symbol: "cos", factor: 1, mathFunction: 'cos' },
+      { id: "tan", name: "Tangent", symbol: "tan", factor: 1, mathFunction: 'tan' },
+      { id: "asin", name: "Arc Sine", symbol: "asin", factor: 1, mathFunction: 'asin' },
+      { id: "acos", name: "Arc Cosine", symbol: "acos", factor: 1, mathFunction: 'acos' },
+      { id: "atan", name: "Arc Tangent", symbol: "atan", factor: 1, mathFunction: 'atan' },
+      { id: "sqrt", name: "Square Root", symbol: "√", factor: 1, mathFunction: 'sqrt' },
+      { id: "log10", name: "Log Base 10", symbol: "log₁₀", factor: 1, mathFunction: 'log10' },
+      { id: "ln", name: "Natural Log", symbol: "ln", factor: 1, mathFunction: 'ln' },
+      { id: "exp", name: "Exponential (eˣ)", symbol: "exp", factor: 1, mathFunction: 'exp' },
+      { id: "abs", name: "Absolute Value", symbol: "|x|", factor: 1, mathFunction: 'abs' },
     ],
   },
 ];
+
+export function applyMathFunction(value: number, func: UnitDefinition['mathFunction']): number {
+  switch (func) {
+    case 'sin': return Math.sin(value);
+    case 'cos': return Math.cos(value);
+    case 'tan': return Math.tan(value);
+    case 'asin': return Math.asin(value);
+    case 'acos': return Math.acos(value);
+    case 'atan': return Math.atan(value);
+    case 'sqrt': return Math.sqrt(value);
+    case 'log10': return Math.log10(value);
+    case 'ln': return Math.log(value);
+    case 'exp': return Math.exp(value);
+    case 'abs': return Math.abs(value);
+    default: return value;
+  }
+}
 
 export function convert(
   value: number,
@@ -854,6 +882,11 @@ export function convert(
   const toUnit = category.units.find((u) => u.id === toId);
 
   if (!fromUnit || !toUnit) return 0;
+
+  // Handle math functions specially
+  if (categoryId === 'math' && fromUnit.mathFunction) {
+    return applyMathFunction(value * fromPrefixFactor, fromUnit.mathFunction);
+  }
 
   // Apply prefixes to the value directly for the input
   const val = value * fromPrefixFactor;

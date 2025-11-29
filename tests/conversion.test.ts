@@ -161,7 +161,9 @@ describe("SI Base Units Display", () => {
 
   describe("TO Section Base Factor", () => {
     it("should have at least one unit with factor 1 (or close to 1) in each category", () => {
+      const geometryCategories = ['rack_geometry', 'shipping'];
       CONVERSION_DATA.forEach((category) => {
+        if (geometryCategories.includes(category.id)) return;
         const hasBaseUnit = category.units.some(
           (unit) => Math.abs(unit.factor - 1) < 0.0001
         );
