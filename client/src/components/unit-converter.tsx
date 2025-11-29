@@ -1411,6 +1411,11 @@ export default function UnitConverter() {
   };
   
   const filteredUnits = getFilteredSortedUnits(activeCategory);
+  
+  // For Math category, the "to" dropdown should only show "Number"
+  const toFilteredUnits = activeCategory === 'math' 
+    ? filteredUnits.filter(u => u.id === 'num')
+    : filteredUnits;
 
   // Reset units when category changes
   useEffect(() => {
@@ -1424,6 +1429,10 @@ export default function UnitConverter() {
         // Capacitance defaults to Farad
         setFromUnit('f');
         setToUnit('f');
+      } else if (activeCategory === 'math') {
+        // Math category: from defaults to Number, to always Number
+        setFromUnit('num');
+        setToUnit('num');
       } else {
         // Default to first unit in sorted list (SI units are sorted first)
         setFromUnit(sorted[0].id);
@@ -2374,16 +2383,39 @@ export default function UnitConverter() {
   const executeAndCopy = () => {
     if (calcValues[3] == null) return;
     
-    copyCalcResult();
+    // Get the current result value
+    const val = calcValues[3];
     
-    const resultValue = calcValues[3];
+    // Apply precision to the result value - this becomes the new field 1 value
+    // The precision is applied in SI base units (val.value is already in base units)
+    const precisionAppliedValue = fixPrecision(parseFloat(cleanNumber(val.value, calculatorPrecision)));
     
-    setCalcValues([resultValue, null, null, null]);
+    // Create the new value with precision applied
+    const newValue: CalcValue = {
+      value: precisionAppliedValue,
+      dimensions: val.dimensions,
+      prefix: 'none'
+    };
+    
+    // Update calculator field first (put precision-applied result in field 1)
+    setCalcValues([newValue, null, null, null]);
     setCalcOp1(null);
     setCalcOp2(null);
     setResultUnit(null);
     setResultCategory(null);
     setResultPrefix('none');
+    
+    // Now copy the precision-applied value
+    const format = NUMBER_FORMATS[numberFormat];
+    const valueStr = cleanNumber(precisionAppliedValue, calculatorPrecision);
+    const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
+    const unitSymbol = formatDimensions(val.dimensions);
+    const textToCopy = unitSymbol ? `${formattedStr} ${unitSymbol}` : formattedStr;
+    navigator.clipboard.writeText(textToCopy);
+    
+    // Trigger flash animation
+    setFlashCopyCalc(true);
+    setTimeout(() => setFlashCopyCalc(false), 300);
   };
 
   const normalizeAndCopy = () => {
@@ -2392,11 +2424,30 @@ export default function UnitConverter() {
     const val = calcValues[3];
     const dims = val.dimensions;
     
+    // Apply precision to the value
+    const precisionAppliedValue = fixPrecision(parseFloat(cleanNumber(val.value, calculatorPrecision)));
+    
+    // Create the new value with precision applied (normalized in SI base units)
+    const newValue: CalcValue = {
+      value: precisionAppliedValue,
+      dimensions: dims,
+      prefix: 'none'
+    };
+    
+    // Update calculator field with normalized, precision-applied value
+    setCalcValues(prev => {
+      const newValues = [...prev];
+      newValues[3] = newValue;
+      return newValues;
+    });
+    
+    // Get the derived unit symbol for the normalized representation
     const derivedUnit = getDerivedUnit(dims);
     const unitSymbol = derivedUnit || formatDimensions(dims);
     
+    // Copy the precision-applied, normalized value
     const format = NUMBER_FORMATS[numberFormat];
-    const valueStr = cleanNumber(val.value, calculatorPrecision);
+    const valueStr = cleanNumber(precisionAppliedValue, calculatorPrecision);
     const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
     const textToCopy = unitSymbol ? `${formattedStr} ${unitSymbol}` : formattedStr;
     
@@ -2957,7 +3008,7 @@ export default function UnitConverter() {
                       <SelectValue placeholder={t('Unit')} />
                     </SelectTrigger>
                     <SelectContent className="max-h-[70vh]">
-                      {filteredUnits.map((u) => (
+                      {toFilteredUnits.map((u) => (
                         <SelectItem key={u.id} value={u.id} className="font-mono text-sm">
                           {u.symbol === u.name ? (
                             <span className="font-bold">{u.symbol}</span>
@@ -3553,60 +3604,68 @@ export default function UnitConverter() {
               )}
             </div>
 
-            {/* Action buttons row - Normalize & Copy | Evaluate & Copy | Copy - right justified */}
-            <div className="flex justify-end gap-2" style={{ width: CommonFieldWidth }}>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={normalizeAndCopy}
-                disabled={!calcValues[3]}
-                className="text-xs hover:text-accent gap-1 shrink-0"
-              >
-                <motion.span
-                  animate={{
-                    opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
-                    scale: flashCopyCalc ? [1, 1.1, 1] : 1
-                  }}
-                  transition={{ duration: 0.3 }}
+            {/* Action buttons row - Normalize & Copy aligned to calculator field, Evaluate & Copy and Copy at far right of page */}
+            <div className="flex items-center">
+              {/* Normalize & Copy - right-aligned within calculator field width */}
+              <div className="flex justify-end" style={{ width: CommonFieldWidth }}>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={normalizeAndCopy}
+                  disabled={!calcValues[3]}
+                  className="text-xs hover:text-accent gap-1 shrink-0"
                 >
-                  {t('Normalize & Copy')}
-                </motion.span>
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={executeAndCopy}
-                disabled={!calcValues[3]}
-                className="text-xs hover:text-accent gap-1 shrink-0"
-              >
-                <motion.span
-                  animate={{
-                    opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
-                    scale: flashCopyCalc ? [1, 1.1, 1] : 1
-                  }}
-                  transition={{ duration: 0.3 }}
+                  <motion.span
+                    animate={{
+                      opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                      scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {t('Normalize & Copy')}
+                  </motion.span>
+                </Button>
+              </div>
+              {/* Spacer */}
+              <div className="flex-1" />
+              {/* Evaluate & Copy and Copy - at far right of page */}
+              <div className="flex gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={executeAndCopy}
+                  disabled={!calcValues[3]}
+                  className="text-xs hover:text-accent gap-1 shrink-0"
                 >
-                  {t('Evaluate & Copy')}
-                </motion.span>
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={copyCalcResult}
-                disabled={!calcValues[3]}
-                className="text-xs hover:text-accent gap-1 shrink-0"
-              >
-                <Copy className="w-3 h-3" />
-                <motion.span
-                  animate={{
-                    opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
-                    scale: flashCopyCalc ? [1, 1.1, 1] : 1
-                  }}
-                  transition={{ duration: 0.3 }}
+                  <motion.span
+                    animate={{
+                      opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                      scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {t('Evaluate & Copy')}
+                  </motion.span>
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={copyCalcResult}
+                  disabled={!calcValues[3]}
+                  className="text-xs hover:text-accent gap-1 shrink-0"
                 >
-                  {t('Copy')}
-                </motion.span>
-              </Button>
+                  <Copy className="w-3 h-3" />
+                  <motion.span
+                    animate={{
+                      opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                      scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {t('Copy')}
+                  </motion.span>
+                </Button>
+              </div>
             </div>
           </div>
         </Card>
