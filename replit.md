@@ -20,7 +20,7 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 - **Clipboard Copying**: Supports precision settings and "Normalize & Copy" for normalizing to SI units with optimal prefixing.
 - **Math Category**: Includes functions (sin, cos, tan, sqrt, log, ln, exp, abs) and constants (π, e, √2), all producing dimensionless outputs.
 - **Fuel Energy Category**: Converts between fuel volumes, masses, and energy units for 8 fuel types (Gasoline, Diesel, Jet Fuel, Kerosene, Ethanol, E-85, Propane, LNG) plus explosive equivalents (TNT, Dynamite). Uses Joule as base unit with Wh (with prefixes for kWh/MWh/GWh), BTU, Therm, and tce/toe.
-- **Archaic & Regional Categories**: Three specialized categories for historical and regional units: Archaic Length (cubits, furlongs, Chinese chi/zhang/li, Japanese shaku/ken/ri, Korean ja/ri), Archaic Mass (grains, troy ounce, Chinese jin/tael, Japanese momme/kan, Korean geun), Archaic Volume (US kitchen units, bushels, Chinese sheng/dou, Japanese go/sho/koku, Korean doe/mal).
+- **Archaic & Regional Categories**: Four specialized categories for historical and regional units: Archaic Length (cubits, furlongs, Chinese chi/zhang/li, Japanese shaku/ken/ri, Korean ja/ri), Archaic Mass (grains, troy ounce, carat, tola, don, Chinese jin/tael, Japanese momme/kan, Korean geun), Archaic Volume (apothecary units, US kitchen units, bushels, Chinese sheng/dou, Japanese go/sho/koku, Korean doe/mal), Archaic Area (Japanese tatami variants, Korean pyeong, Chinese mu/qing, Israeli dunam, Egyptian feddan/qirat).
 - **Type Safety**: End-to-end TypeScript coverage with strict mode and Zod for schema validation.
 - **Modularity**: Component-based UI, client-side conversion logic, and plugin-based Vite configuration.
 

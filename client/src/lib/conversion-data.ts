@@ -64,7 +64,8 @@ export type UnitCategory =
   | "fuel"
   | "archaic_length"
   | "archaic_mass"
-  | "archaic_volume";
+  | "archaic_volume"
+  | "archaic_area";
 
 export interface Prefix {
   id: string;
@@ -1194,12 +1195,16 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "kg", name: "Kilogram", symbol: "kg", factor: 1, allowPrefixes: true },
       { id: "g", name: "Gram", symbol: "g", factor: 0.001, allowPrefixes: true },
       { id: "grain", name: "Grain", symbol: "gr", factor: 0.00006479891 },
+      { id: "carat", name: "Carat (Metric)", symbol: "ct", factor: 0.0002 },
       { id: "pennyweight", name: "Pennyweight", symbol: "dwt", factor: 0.00155517 },
       { id: "dram", name: "Dram", symbol: "dr", factor: 0.001771845 },
       { id: "momme_jp", name: "Momme (Japan)", symbol: "momme", factor: 0.00375 },
+      { id: "don_kr", name: "Don (Korea)", symbol: "don", factor: 0.00375 },
       { id: "mace_cn", name: "Mace (China, PRC)", symbol: "mace", factor: 0.005 },
+      { id: "tola", name: "Tola (South Asia)", symbol: "tola", factor: 0.0116638 },
       { id: "troy_oz", name: "Troy Ounce", symbol: "oz t", factor: 0.0311035 },
       { id: "tael_cn", name: "Tael (China, PRC)", symbol: "tael", factor: 0.05 },
+      { id: "troy_lb", name: "Troy Pound", symbol: "lb t", factor: 0.3732417 },
       { id: "jin_cn", name: "Jin (China, PRC)", symbol: "jin", factor: 0.5 },
       { id: "geun_kr", name: "Geun (Korea)", symbol: "geun", factor: 0.6 },
       { id: "catty_hk", name: "Catty (HK/Traditional)", symbol: "catty", factor: 0.60478982 },
@@ -1215,9 +1220,13 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "L",
     units: [
       { id: "l", name: "Litre", symbol: "L", factor: 1, allowPrefixes: true },
+      { id: "minim", name: "Minim (US)", symbol: "min", factor: 0.0000616115 },
       { id: "ml", name: "Millilitre", symbol: "mL", factor: 0.001 },
+      { id: "fl_scruple", name: "Fluid Scruple", symbol: "fl s", factor: 0.00123223 },
+      { id: "fl_dram", name: "Fluid Dram", symbol: "fl dr", factor: 0.00369669 },
       { id: "teaspoon", name: "Teaspoon (US)", symbol: "tsp", factor: 0.00492892 },
       { id: "tablespoon", name: "Tablespoon (US)", symbol: "tbsp", factor: 0.0147868 },
+      { id: "apoth_oz", name: "Apothecary Ounce", symbol: "fl oz ap", factor: 0.0295735 },
       { id: "jigger", name: "Jigger", symbol: "jigger", factor: 0.044355 },
       { id: "gill_us", name: "Gill (US)", symbol: "gi", factor: 0.118294 },
       { id: "go_jp", name: "Go (Japan)", symbol: "go", factor: 0.18039 },
@@ -1232,6 +1241,27 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "bushel_us", name: "Bushel (US)", symbol: "bu", factor: 35.2391 },
       { id: "dan_vol_cn", name: "Dan (China volume)", symbol: "dan-v", factor: 103.55 },
       { id: "koku_jp", name: "Koku (Japan)", symbol: "koku", factor: 180.39 },
+      { id: "m3", name: "Cubic Metre", symbol: "m³", factor: 1000, allowPrefixes: true },
+    ],
+  },
+  {
+    id: "archaic_area",
+    name: "Archaic Area",
+    baseUnit: "square metre",
+    baseSISymbol: "m²",
+    units: [
+      { id: "m2", name: "Square Metre", symbol: "m²", factor: 1, allowPrefixes: true },
+      { id: "danchi_ma", name: "Danchi-ma (Japan)", symbol: "danchi", factor: 1.445 },
+      { id: "edoma", name: "Edoma/Kantō-ma (Japan)", symbol: "edoma", factor: 1.5488 },
+      { id: "chukyoma", name: "Chūkyō-ma (Japan)", symbol: "chukyoma", factor: 1.6562 },
+      { id: "kyoma", name: "Kyōma (Japan)", symbol: "kyoma", factor: 1.8241 },
+      { id: "pyeong_kr", name: "Pyeong (Korea)", symbol: "pyeong", factor: 3.3058 },
+      { id: "tsubo_jp", name: "Tsubo (Japan)", symbol: "tsubo", factor: 3.306 },
+      { id: "qirat_eg", name: "Qirat (Egypt)", symbol: "qirat", factor: 175.03 },
+      { id: "mu_cn", name: "Mu (China)", symbol: "mu", factor: 666.67 },
+      { id: "dunam_il", name: "Dunam (Israel)", symbol: "dunam", factor: 1000 },
+      { id: "feddan_eg", name: "Feddan (Egypt)", symbol: "feddan", factor: 4200.833 },
+      { id: "qing_cn", name: "Qing (China)", symbol: "qing", factor: 66666.67 },
     ],
   },
 ];

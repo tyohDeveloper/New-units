@@ -307,3 +307,93 @@ describe("Base Quantity Selection", () => {
     });
   });
 });
+
+describe("Archaic & Regional Units", () => {
+  describe("Archaic Area Category", () => {
+    const areaCategory = CONVERSION_DATA.find((c) => c.id === "archaic_area");
+
+    it("should exist with square metre as base unit", () => {
+      expect(areaCategory).toBeDefined();
+      expect(areaCategory?.baseUnit).toBe("square metre");
+      expect(areaCategory?.baseSISymbol).toBe("m²");
+    });
+
+    it("should have Japanese tatami variants with correct factors", () => {
+      const kyoma = areaCategory?.units.find((u) => u.id === "kyoma");
+      const edoma = areaCategory?.units.find((u) => u.id === "edoma");
+      const danchi = areaCategory?.units.find((u) => u.id === "danchi_ma");
+      expect(kyoma?.factor).toBeCloseTo(1.8241, 3);
+      expect(edoma?.factor).toBeCloseTo(1.5488, 3);
+      expect(danchi?.factor).toBeCloseTo(1.445, 3);
+    });
+
+    it("should have Korean pyeong with correct factor", () => {
+      const pyeong = areaCategory?.units.find((u) => u.id === "pyeong_kr");
+      expect(pyeong?.factor).toBeCloseTo(3.3058, 3);
+    });
+
+    it("should have Chinese mu with correct factor", () => {
+      const mu = areaCategory?.units.find((u) => u.id === "mu_cn");
+      expect(mu?.factor).toBeCloseTo(666.67, 1);
+    });
+
+    it("should have Israeli dunam with correct factor", () => {
+      const dunam = areaCategory?.units.find((u) => u.id === "dunam_il");
+      expect(dunam?.factor).toBe(1000);
+    });
+
+    it("should have Egyptian feddan with correct factor", () => {
+      const feddan = areaCategory?.units.find((u) => u.id === "feddan_eg");
+      expect(feddan?.factor).toBeCloseTo(4200.833, 1);
+    });
+  });
+
+  describe("Archaic Mass Precious Metal Units", () => {
+    const massCategory = CONVERSION_DATA.find((c) => c.id === "archaic_mass");
+
+    it("should have metric carat with correct factor (0.2g)", () => {
+      const carat = massCategory?.units.find((u) => u.id === "carat");
+      expect(carat?.factor).toBe(0.0002);
+    });
+
+    it("should have tola with correct factor", () => {
+      const tola = massCategory?.units.find((u) => u.id === "tola");
+      expect(tola?.factor).toBeCloseTo(0.0116638, 5);
+    });
+
+    it("should have Korean don with correct factor", () => {
+      const don = massCategory?.units.find((u) => u.id === "don_kr");
+      expect(don?.factor).toBe(0.00375);
+    });
+
+    it("should have troy pound with correct factor", () => {
+      const troyLb = massCategory?.units.find((u) => u.id === "troy_lb");
+      expect(troyLb?.factor).toBeCloseTo(0.3732417, 5);
+    });
+  });
+
+  describe("Archaic Volume Apothecary Units", () => {
+    const volumeCategory = CONVERSION_DATA.find((c) => c.id === "archaic_volume");
+
+    it("should have minim with correct factor", () => {
+      const minim = volumeCategory?.units.find((u) => u.id === "minim");
+      expect(minim?.factor).toBeCloseTo(0.0000616115, 7);
+    });
+
+    it("should have fluid scruple with correct factor", () => {
+      const flScruple = volumeCategory?.units.find((u) => u.id === "fl_scruple");
+      expect(flScruple?.factor).toBeCloseTo(0.00123223, 6);
+    });
+
+    it("should have fluid dram with correct factor", () => {
+      const flDram = volumeCategory?.units.find((u) => u.id === "fl_dram");
+      expect(flDram?.factor).toBeCloseTo(0.00369669, 6);
+    });
+
+    it("should have cubic metre for SI conversion", () => {
+      const m3 = volumeCategory?.units.find((u) => u.id === "m3");
+      expect(m3?.factor).toBe(1000);
+      expect(m3?.allowPrefixes).toBe(true);
+    });
+  });
+});

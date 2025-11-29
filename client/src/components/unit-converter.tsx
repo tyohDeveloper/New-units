@@ -1323,11 +1323,11 @@ export default function UnitConverter() {
     },
     {
       name: "Other",
-      categories: ['math', 'fuel', 'data', 'rack_geometry', 'shipping', 'beer_wine_volume', 'lightbulb', 'fuel_economy']
+      categories: ['math', 'data', 'fuel', 'fuel_economy', 'rack_geometry', 'shipping', 'beer_wine_volume', 'lightbulb']
     },
     {
       name: "Archaic & Regional",
-      categories: ['archaic_length', 'archaic_mass', 'archaic_volume']
+      categories: ['archaic_length', 'archaic_mass', 'archaic_volume', 'archaic_area']
     }
   ];
 
@@ -1533,7 +1533,8 @@ export default function UnitConverter() {
       fuel: { mass: 1, length: 2, time: -2 },  // Energy (J) = kg⋅m²⋅s⁻²
       archaic_length: { length: 1 },
       archaic_mass: { mass: 1 },
-      archaic_volume: { length: 3 }
+      archaic_volume: { length: 3 },
+      archaic_area: { length: 2 }
     };
     return dimensionMap[category] || {};
   };
