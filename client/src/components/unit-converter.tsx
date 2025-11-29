@@ -1698,7 +1698,6 @@ export default function UnitConverter() {
       }
       setFromPrefix('none');
       setToPrefix('none');
-      setAutoSelectPrefix(true); // Enable auto-prefix when category changes
     }
   }, [activeCategory]);
 
@@ -2227,10 +2226,7 @@ export default function UnitConverter() {
     return val;
   };
 
-  // Track whether we should auto-select prefix (true when unit changes, false when user manually selects)
-  const [autoSelectPrefix, setAutoSelectPrefix] = useState(true);
-  
-  // Calculate result
+  // Calculate result - never auto-select prefixes, user must choose manually
   useEffect(() => {
     if (!inputValue || !fromUnit || !toUnit) {
       setResult(null);
@@ -2255,26 +2251,11 @@ export default function UnitConverter() {
     const isSpecialTo = toUnit === 'deg_dms' || toUnit === 'ft_in';
 
     const fromFactor = (fromUnitData?.allowPrefixes && fromPrefixData && !isSpecialFrom) ? fromPrefixData.factor : 1;
+    const toFactor = (toUnitData?.allowPrefixes && toPrefixData && !isSpecialTo) ? toPrefixData.factor : 1;
     
-    // Auto-select optimal prefix for "to" unit if enabled
-    if (autoSelectPrefix && toUnitData?.allowPrefixes && !isSpecialTo) {
-      // Calculate result with no prefix first to find optimal prefix
-      const rawResult = convert(val, fromUnit, toUnit, activeCategory, fromFactor, 1);
-      const { prefix: optimalPrefix } = findOptimalPrefix(rawResult, toUnitData.symbol || '', precision);
-      
-      // Set the optimal prefix and calculate final result
-      if (optimalPrefix.id !== toPrefix) {
-        setToPrefix(optimalPrefix.id);
-      }
-      const res = rawResult / optimalPrefix.factor;
-      setResult(res);
-    } else {
-      // Use user-selected prefix
-      const toFactor = (toUnitData?.allowPrefixes && toPrefixData && !isSpecialTo) ? toPrefixData.factor : 1;
-      const res = convert(val, fromUnit, toUnit, activeCategory, fromFactor, toFactor);
-      setResult(res);
-    }
-  }, [inputValue, fromUnit, toUnit, activeCategory, fromPrefix, toPrefix, fromUnitData, toUnitData, autoSelectPrefix, precision]);
+    const res = convert(val, fromUnit, toUnit, activeCategory, fromFactor, toFactor);
+    setResult(res);
+  }, [inputValue, fromUnit, toUnit, activeCategory, fromPrefix, toPrefix, fromUnitData, toUnitData, precision]);
 
   const swapUnits = () => {
     const tempUnit = fromUnit;
@@ -3108,9 +3089,9 @@ export default function UnitConverter() {
       return;
     }
     
-    // For regular numeric input, allow: digits, current decimal separator, current thousands separator, minus
-    // Build regex pattern: digits, minus sign, decimal separator, thousands separator
-    const pattern = new RegExp(`[^${digitPattern}\\-${decimalSep}${thousandsSep}]`, 'g');
+    // For regular numeric input, allow: digits, current decimal separator, current thousands separator, minus, e/E for scientific notation
+    // Build regex pattern: digits, minus sign, decimal separator, thousands separator, plus e/E and + for exponent
+    const pattern = new RegExp(`[^${digitPattern}\\-${decimalSep}${thousandsSep}eE\\+]`, 'g');
     const filtered = value.replace(pattern, '');
     setInputValue(filtered);
   };
@@ -3431,7 +3412,6 @@ export default function UnitConverter() {
                       const normalized = normalizeMassUnit(toUnit, val);
                       setToUnit(normalized.unit);
                       setToPrefix(normalized.prefix);
-                      setAutoSelectPrefix(false); // User manually selected, disable auto-selection
                     }}
                     disabled={!toUnitData?.allowPrefixes}
                   >
@@ -3447,7 +3427,7 @@ export default function UnitConverter() {
                     </SelectContent>
                   </Select>
 
-                  <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); setAutoSelectPrefix(false); }}>
+                  <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); }}>
                     <SelectTrigger className="flex-1 min-w-0 bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
                       <SelectValue placeholder={t('Unit')} />
                     </SelectTrigger>
