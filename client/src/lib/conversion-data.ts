@@ -752,7 +752,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "kilogram meter/second",
     baseSISymbol: "kg⋅m⋅s⁻¹",
     units: [
-      { id: "kgms", name: "kg⋅m/s", symbol: "kg⋅m⋅s⁻¹", factor: 1, allowPrefixes: true },
+      { id: "kgms", name: "kg⋅m/s", symbol: "kg⋅m⋅s⁻¹", factor: 1 },
       { id: "lbfts", name: "lb⋅ft/s", symbol: "lb⋅ft⋅s⁻¹", factor: 0.138255 },
       { id: "ns", name: "Newton-second", symbol: "N⋅s", factor: 1 },
       { id: "slugfts", name: "slug⋅ft/s", symbol: "slug⋅ft⋅s⁻¹", factor: 4.44822 },
@@ -766,7 +766,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "kg/m³",
     baseSISymbol: "kg⋅m⁻³",
     units: [
-      { id: "kgm3", name: "kg/m³", symbol: "kg⋅m⁻³", factor: 1, allowPrefixes: true },
+      { id: "kgm3", name: "kg/m³", symbol: "kg⋅m⁻³", factor: 1 },
       { id: "lbft3", name: "lb/ft³", symbol: "lb⋅ft⁻³", factor: 16.0185 },
       { id: "gcm3", name: "g/cm³", symbol: "g⋅cm⁻³", factor: 1000 },
     ],
@@ -814,7 +814,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "joule/kilogram-kelvin",
     baseSISymbol: "J⋅kg⁻¹⋅K⁻¹",
     units: [
-      { id: "jkgk", name: "J/(kg⋅K)", symbol: "J⋅kg⁻¹⋅K⁻¹", factor: 1, allowPrefixes: true },
+      { id: "jkgk", name: "J/(kg⋅K)", symbol: "J⋅kg⁻¹⋅K⁻¹", factor: 1 },
       { id: "kjkgk", name: "kJ/(kg⋅K)", symbol: "kJ⋅kg⁻¹⋅K⁻¹", factor: 1000 },
       { id: "cal_gC", name: "cal/(g⋅°C)", symbol: "cal⋅g⁻¹⋅°C⁻¹", factor: 4184 },
       { id: "btu_lbF", name: "BTU/(lb⋅°F)", symbol: "BTU⋅lb⁻¹⋅°F⁻¹", factor: 4186.8 },
@@ -1206,7 +1206,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "kilogram",
     baseSISymbol: "kg",
     units: [
-      { id: "kg", name: "Kilogram", symbol: "kg", factor: 1, allowPrefixes: true },
+      { id: "kg", name: "Kilogram", symbol: "kg", factor: 1 },
       { id: "grain", name: "Grain", symbol: "gr", factor: 0.00006479891 },
       { id: "ratti", name: "Ratti (South Asia)", symbol: "ratti", factor: 0.0001215 },
       { id: "carat", name: "Carat (Metric)", symbol: "ct", factor: 0.0002 },

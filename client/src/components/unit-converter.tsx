@@ -3277,8 +3277,8 @@ export default function UnitConverter() {
                     data-testid="comparison-panel"
                   >
                     <div className="mt-4 p-3 rounded-lg bg-muted/10 border border-border/30">
-                      <div className="text-[10px] font-mono uppercase text-muted-foreground mb-2">
-                        {t('Compare')} {inputValue} {fromPrefixData.id !== 'none' ? fromPrefixData.symbol : ''}{fromUnitData.symbol}
+                      <div className="text-[10px] font-mono text-muted-foreground mb-2">
+                        <span className="uppercase">{t('Compare')}</span> {inputValue} {fromPrefixData.id !== 'none' ? fromPrefixData.symbol : ''}{fromUnitData.symbol}
                       </div>
                       <div className="grid gap-1">
                         {(() => {
