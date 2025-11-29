@@ -266,31 +266,24 @@ export default function UnitConverter() {
     [-15]: 'femto', [-18]: 'atto', [-21]: 'zepto', [-24]: 'yocto'
   };
 
-  // Helper: Normalize mass units (kg should display as gram with appropriate prefix)
-  // When kg with a prefix OTHER than 'none' or 'kilo' is selected, convert to gram with combined prefix
-  // When g with prefix "k" is selected, convert to kg with no prefix
-  // 'none' and 'kilo' for kg are the base representation (kilo-gram)
+  // Mapping of gram-based units to their kg-based counterparts
+  // Used to auto-switch when kilo prefix is selected on g-based unit
+  const GRAM_TO_KG_UNIT_PAIRS: Record<string, string> = {
+    'g': 'kg',           // Mass
+    'gm3': 'kgm3',       // Density: g⋅m⁻³ → kg⋅m⁻³
+    'gms': 'kgms',       // Momentum: g⋅m⋅s⁻¹ → kg⋅m⋅s⁻¹
+    'jgk': 'jkgk',       // Specific Heat: J⋅g⁻¹⋅K⁻¹ → J⋅kg⁻¹⋅K⁻¹
+  };
+  
+  // Helper: Normalize kg/g unit pairs across all categories
+  // When g-based unit + kilo prefix is selected → switch to kg-based unit with no prefix
+  // This prevents prefix stacking and follows the Mass category pattern
   const normalizeMassUnit = (unit: string, prefix: string): { unit: string; prefix: string } => {
-    if (activeCategory !== 'mass') return { unit, prefix };
-    
-    // If unit is kg and a prefix other than 'none' or 'kilo' is selected
-    // 'none' and 'kilo' are the base representations for kg
-    if (unit === 'kg' && prefix !== 'none' && prefix !== 'kilo') {
-      const prefixExp = PREFIX_EXPONENTS[prefix] || 0;
-      const combinedExp = prefixExp + 3; // kg = 10^3 g
-      
-      // Find the matching prefix for the combined exponent
-      const newPrefix = EXPONENT_TO_PREFIX[combinedExp];
-      if (newPrefix) {
-        return { unit: 'g', prefix: newPrefix };
-      }
-      // If no matching prefix exists, keep as is
-      return { unit, prefix };
-    }
-    
-    // If unit is g and prefix is 'kilo', convert to kg with no prefix
-    if (unit === 'g' && prefix === 'kilo') {
-      return { unit: 'kg', prefix: 'none' };
+    // Check if this is a gram-based unit that can be converted to kg-based
+    const kgEquivalent = GRAM_TO_KG_UNIT_PAIRS[unit];
+    if (kgEquivalent && prefix === 'kilo') {
+      // g-based + kilo → kg-based with no prefix
+      return { unit: kgEquivalent, prefix: 'none' };
     }
     
     return { unit, prefix };
