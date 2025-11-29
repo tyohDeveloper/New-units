@@ -1118,6 +1118,21 @@ export const UNIT_NAME_TRANSLATIONS: Record<string, Translation> = {
     es: 'Truncar', fr: 'Tronquer', it: 'Troncare',
     pt: 'Truncar', ru: 'Отсечение', zh: '截断', ja: '切り捨て', ko: '버림'
   },
+  'Square': { 
+    en: 'Square', ar: 'مربع', de: 'Quadrat',
+    es: 'Cuadrado', fr: 'Carré', it: 'Quadrato',
+    pt: 'Quadrado', ru: 'Квадрат', zh: '平方', ja: '二乗', ko: '제곱'
+  },
+  'Cube': { 
+    en: 'Cube', ar: 'مكعب', de: 'Kubik',
+    es: 'Cubo', fr: 'Cube', it: 'Cubo',
+    pt: 'Cubo', ru: 'Куб', zh: '立方', ja: '三乗', ko: '세제곱'
+  },
+  'Fourth Power': { 
+    en: 'Fourth Power', ar: 'القوة الرابعة', de: 'Vierte Potenz',
+    es: 'Cuarta Potencia', fr: 'Puissance Quatrième', it: 'Quarta Potenza',
+    pt: 'Quarta Potência', ru: 'Четвёртая Степень', zh: '四次方', ja: '四乗', ko: '네제곱'
+  },
 };
 
 export const SI_SYMBOLS = [

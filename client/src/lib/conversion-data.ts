@@ -191,7 +191,7 @@ export interface UnitDefinition {
   offset?: number; // For temperature (e.g. Celsius to Kelvin)
   description?: string;
   allowPrefixes?: boolean;
-  mathFunction?: 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan' | 'sqrt' | 'cbrt' | 'root4' | 'log10' | 'log2' | 'ln' | 'exp' | 'abs' | 'sinh' | 'cosh' | 'tanh' | 'asinh' | 'acosh' | 'atanh' | 'floor' | 'ceil' | 'round' | 'trunc' | 'sign'; // For math function units
+  mathFunction?: 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan' | 'sqrt' | 'cbrt' | 'root4' | 'log10' | 'log2' | 'ln' | 'exp' | 'abs' | 'sinh' | 'cosh' | 'tanh' | 'asinh' | 'acosh' | 'atanh' | 'floor' | 'ceil' | 'round' | 'trunc' | 'sign' | 'square' | 'cube' | 'pow4'; // For math function units
   isInverse?: boolean; // For photon wavelength: E = constant/λ (inverse relationship)
 }
 
@@ -1190,6 +1190,9 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "ceil", name: "Ceiling", symbol: "⌈x⌉", factor: 1, mathFunction: 'ceil' },
       { id: "round", name: "Round", symbol: "round", factor: 1, mathFunction: 'round' },
       { id: "trunc", name: "Truncate", symbol: "trunc", factor: 1, mathFunction: 'trunc' },
+      { id: "square", name: "Square", symbol: "x²", factor: 1, mathFunction: 'square' },
+      { id: "cube", name: "Cube", symbol: "x³", factor: 1, mathFunction: 'cube' },
+      { id: "pow4", name: "Fourth Power", symbol: "x⁴", factor: 1, mathFunction: 'pow4' },
     ],
   },
 
@@ -1447,6 +1450,9 @@ export function applyMathFunction(value: number, func: UnitDefinition['mathFunct
     case 'ceil': return Math.ceil(value);
     case 'round': return Math.round(value);
     case 'trunc': return Math.trunc(value);
+    case 'square': return value * value;
+    case 'cube': return value * value * value;
+    case 'pow4': return Math.pow(value, 4);
     default: return value;
   }
 }
