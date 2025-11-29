@@ -2389,6 +2389,26 @@ export default function UnitConverter() {
     setResultPrefix('none');
   };
 
+  const normalizeAndCopy = () => {
+    if (calcValues[3] == null) return;
+    
+    const val = calcValues[3];
+    const dims = val.dimensions;
+    
+    const derivedUnit = getDerivedUnit(dims);
+    const unitSymbol = derivedUnit || formatDimensions(dims);
+    
+    const format = NUMBER_FORMATS[numberFormat];
+    const valueStr = cleanNumber(val.value, calculatorPrecision);
+    const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
+    const textToCopy = unitSymbol ? `${formattedStr} ${unitSymbol}` : formattedStr;
+    
+    navigator.clipboard.writeText(textToCopy);
+    
+    setFlashCopyCalc(true);
+    setTimeout(() => setFlashCopyCalc(false), 300);
+  };
+
   const clearField1 = () => {
     setCalcValues(prev => {
       const newValues = [...prev];
@@ -3548,24 +3568,10 @@ export default function UnitConverter() {
                   )}
                 </React.Fragment>
               )}
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={executeAndCopy}
-                disabled={!calcValues[3]}
-                className="text-xs hover:text-accent gap-1 shrink-0"
-              >
-                <motion.span
-                  animate={{
-                    opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
-                    scale: flashCopyCalc ? [1, 1.1, 1] : 1
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {t('Execute & Copy')}
-                </motion.span>
-              </Button>
-              <div className="flex-1" />
+            </div>
+
+            {/* Button row below result - right justified */}
+            <div className="flex justify-end gap-2" style={{ width: '100%' }}>
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -3582,6 +3588,40 @@ export default function UnitConverter() {
                   transition={{ duration: 0.3 }}
                 >
                   {t('Copy')}
+                </motion.span>
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={normalizeAndCopy}
+                disabled={!calcValues[3]}
+                className="text-xs hover:text-accent gap-1 shrink-0"
+              >
+                <motion.span
+                  animate={{
+                    opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                    scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {t('Normalize & Copy')}
+                </motion.span>
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={executeAndCopy}
+                disabled={!calcValues[3]}
+                className="text-xs hover:text-accent gap-1 shrink-0"
+              >
+                <motion.span
+                  animate={{
+                    opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
+                    scale: flashCopyCalc ? [1, 1.1, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {t('Execute & Copy')}
                 </motion.span>
               </Button>
             </div>
