@@ -24,16 +24,6 @@ export default function Home() {
       <main className="py-8 md:py-12">
         <UnitConverter />
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-border mt-12 py-8 bg-card/30">
-        <div className="max-w-7xl mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p className="font-mono mb-2">Designed for Precision & History</p>
-          <p className="opacity-50">
-            Supports SI, Imperial, US Customary, Archaic, and specialized industrial units.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }
