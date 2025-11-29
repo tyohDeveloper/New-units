@@ -141,6 +141,10 @@ client/
 
 ## Recent Changes
 
+- v2.12.0: Calculator action buttons split layout - Normalize & Copy aligned to calculator field width, Evaluate & Copy and Copy at far right of page
+- v2.12.0: Copy handlers (executeAndCopy, normalizeAndCopy) now apply precision and update calculator field before copying
+- v2.12.0: Math category "to" dropdown now only shows "Number" (other math functions only in "from" dropdown)
+- v2.12.0: Removed footer section ("Designed for Precision & History")
 - v2.11.0: Created separate "Beer & Wine" category with all volume units plus beer/wine-specific units (under Other group)
 - v2.11.0: Removed beer/wine checkbox from Volume category (now a dedicated category)
 - v2.11.0: Rack Geometry and Shipping Containers now include all standard length units plus specialized units
