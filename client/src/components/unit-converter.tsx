@@ -738,6 +738,11 @@ export default function UnitConverter() {
       es: 'Momento', fr: 'Quantité de Mouvement', it: 'Momento', ko: '운동량',
       pt: 'Momento', ru: 'Импульс', zh: '动量', ja: '運動量'
     },
+    'Angular Momentum': { 
+      en: 'Angular Momentum', ar: 'الزخم الزاوي', de: 'Drehimpuls',
+      es: 'Momento Angular', fr: 'Moment Cinétique', it: 'Momento Angolare', ko: '각운동량',
+      pt: 'Momento Angular', ru: 'Момент Импульса', zh: '角动量', ja: '角運動量'
+    },
     'Thermal Conductivity': { 
       en: 'Thermal Conductivity', ar: 'التوصيل الحراري', de: 'Wärmeleitfähigkeit',
       es: 'Conductividad Térmica', fr: 'Conductivité Thermique', it: 'Conducibilità Termica', ko: '열전도율',
@@ -1430,6 +1435,14 @@ export default function UnitConverter() {
     'Newton/meter': { en: 'Newton/meter', ar: 'نيوتن/متر', de: 'Newton/Meter', es: 'Newton/metro', fr: 'Newton/mètre', it: 'Newton/metro', ko: '뉴턴/미터', pt: 'Newton/metro', ru: 'Ньютон/метр', zh: '牛顿/米', ja: 'ニュートン/メートル' },
     'Newton/metre': { en: 'Newton/metre', ar: 'نيوتن/متر', de: 'Newton/Meter', es: 'Newton/metro', fr: 'Newton/mètre', it: 'Newton/metro', ko: '뉴턴/미터', pt: 'Newton/metro', ru: 'Ньютон/метр', zh: '牛顿/米', ja: 'ニュートン/メートル' },
     'Dyne/centimeter': { en: 'Dyne/centimeter', ar: 'داين/سنتيمتر', de: 'Dyn/Zentimeter', es: 'Dina/centímetro', fr: 'Dyne/centimètre', it: 'Dina/centimetro', ko: '다인/센티미터', pt: 'Dina/centímetro', ru: 'Дин/сантиметр', zh: '达因/厘米', ja: 'ダイン/センチメートル' },
+    'kg⋅m²/s': { en: 'kg⋅m²/s', ar: 'كغ⋅م²/ث', de: 'kg⋅m²/s', es: 'kg⋅m²/s', fr: 'kg⋅m²/s', it: 'kg⋅m²/s', ko: 'kg⋅m²/s', pt: 'kg⋅m²/s', ru: 'кг⋅м²/с', zh: 'kg⋅m²/s', ja: 'kg⋅m²/s' },
+    'Joule-second': { en: 'Joule-second', ar: 'جول ثانية', de: 'Joulesekunde', es: 'Julio-segundo', fr: 'Joule-seconde', it: 'Joule-secondo', ko: '줄초', pt: 'Joule-segundo', ru: 'Джоуль-секунда', zh: '焦耳秒', ja: 'ジュール秒' },
+    'g⋅m²/s': { en: 'g⋅m²/s', ar: 'غ⋅م²/ث', de: 'g⋅m²/s', es: 'g⋅m²/s', fr: 'g⋅m²/s', it: 'g⋅m²/s', ko: 'g⋅m²/s', pt: 'g⋅m²/s', ru: 'г⋅м²/с', zh: 'g⋅m²/s', ja: 'g⋅m²/s' },
+    'g⋅cm²/s': { en: 'g⋅cm²/s', ar: 'غ⋅سم²/ث', de: 'g⋅cm²/s', es: 'g⋅cm²/s', fr: 'g⋅cm²/s', it: 'g⋅cm²/s', ko: 'g⋅cm²/s', pt: 'g⋅cm²/s', ru: 'г⋅см²/с', zh: 'g⋅cm²/s', ja: 'g⋅cm²/s' },
+    'lb⋅ft²/s': { en: 'lb⋅ft²/s', ar: 'رطل⋅قدم²/ث', de: 'lb⋅ft²/s', es: 'lb⋅ft²/s', fr: 'lb⋅ft²/s', it: 'lb⋅ft²/s', ko: 'lb⋅ft²/s', pt: 'lb⋅ft²/s', ru: 'фунт⋅фут²/с', zh: 'lb⋅ft²/s', ja: 'lb⋅ft²/s' },
+    'slug⋅ft²/s': { en: 'slug⋅ft²/s', ar: 'سلغ⋅قدم²/ث', de: 'slug⋅ft²/s', es: 'slug⋅ft²/s', fr: 'slug⋅ft²/s', it: 'slug⋅ft²/s', ko: 'slug⋅ft²/s', pt: 'slug⋅ft²/s', ru: 'слаг⋅фут²/с', zh: 'slug⋅ft²/s', ja: 'slug⋅ft²/s' },
+    'oz⋅in²/s': { en: 'oz⋅in²/s', ar: 'أونصة⋅بوصة²/ث', de: 'oz⋅in²/s', es: 'oz⋅in²/s', fr: 'oz⋅in²/s', it: 'oz⋅in²/s', ko: 'oz⋅in²/s', pt: 'oz⋅in²/s', ru: 'унция⋅дюйм²/с', zh: 'oz⋅in²/s', ja: 'oz⋅in²/s' },
+    'Reduced Planck constant': { en: 'Reduced Planck constant', ar: 'ثابت بلانك المختزل', de: 'Reduziertes Plancksches Wirkungsquantum', es: 'Constante de Planck reducida', fr: 'Constante de Planck réduite', it: 'Costante di Planck ridotta', ko: '환원 플랑크 상수', pt: 'Constante de Planck reduzida', ru: 'Приведённая постоянная Планка', zh: '约化普朗克常数', ja: '換算プランク定数' },
     'LED Bulb (watts)': { en: 'LED Bulb (watts)', ar: 'مصباح LED (واط)', de: 'LED-Lampe (Watt)', es: 'Bombilla LED (vatios)', fr: 'Ampoule LED (watts)', it: 'Lampadina LED (watt)', ko: 'LED 전구 (와트)', pt: 'Lâmpada LED (watts)', ru: 'Светодиодная лампа (ватт)', zh: 'LED灯泡（瓦特）', ja: 'LED電球（ワット）' },
     'Fluorescent Bulb (watts)': { en: 'Fluorescent Bulb (watts)', ar: 'مصباح فلورسنت (واط)', de: 'Leuchtstofflampe (Watt)', es: 'Bombilla fluorescente (vatios)', fr: 'Ampoule fluorescente (watts)', it: 'Lampadina fluorescente (watt)', ko: '형광등 (와트)', pt: 'Lâmpada fluorescente (watts)', ru: 'Люминесцентная лампа (ватт)', zh: '荧光灯（瓦特）', ja: '蛍光灯（ワット）' },
     'Incandescent Bulb (watts)': { en: 'Incandescent Bulb (watts)', ar: 'مصباح متوهج (واط)', de: 'Glühlampe (Watt)', es: 'Bombilla incandescente (vatios)', fr: 'Ampoule à incandescence (watts)', it: 'Lampadina a incandescenza (watt)', ko: '백열등 (와트)', pt: 'Lâmpada incandescente (watts)', ru: 'Лампа накаливания (ватт)', zh: '白炽灯（瓦特）', ja: '白熱電球（ワット）' },
@@ -1533,7 +1546,7 @@ export default function UnitConverter() {
     },
     {
       name: "Mechanics",
-      categories: ['area', 'volume', 'speed', 'acceleration', 'force', 'pressure', 'energy', 'power', 'torque', 'flow', 'density', 'viscosity', 'kinematic_viscosity', 'surface_tension', 'frequency', 'angular_velocity', 'momentum']
+      categories: ['area', 'volume', 'speed', 'acceleration', 'force', 'pressure', 'energy', 'power', 'torque', 'flow', 'density', 'viscosity', 'kinematic_viscosity', 'surface_tension', 'frequency', 'angular_velocity', 'momentum', 'angular_momentum']
     },
     {
       name: "Thermodynamics & Chemistry",
@@ -1711,6 +1724,7 @@ export default function UnitConverter() {
       solid_angle: { solid_angle: 1 },
       angular_velocity: { angle: 1, time: -1 },
       momentum: { mass: 1, length: 1, time: -1 },
+      angular_momentum: { mass: 1, length: 2, time: -1 },
       luminous_flux: { intensity: 1, solid_angle: 1 },
       illuminance: { intensity: 1, solid_angle: 1, length: -2 },
       luminous_exitance: { intensity: 1, solid_angle: 1, length: -2 },
@@ -3017,6 +3031,19 @@ export default function UnitConverter() {
     return `×${formatted}`;
   };
 
+  // Helper to format result with scientific notation for extreme values
+  const formatResultValue = (num: number, precisionValue: number): string => {
+    if (num === 0) return "0";
+    const absNum = Math.abs(num);
+    // Use scientific notation for very small (<1e-6) or very large (>=1e12) values
+    if (absNum < 1e-6 || absNum >= 1e12) {
+      // Use precision for significant figures in exponential notation
+      const expStr = num.toExponential(Math.min(precisionValue, 10));
+      return expStr;
+    }
+    return formatNumberWithSeparators(num, precisionValue);
+  };
+
   // Helper to determine input placeholder
   const getPlaceholder = () => {
     if (fromUnit === 'deg_dms') return "dd:mm:ss";
@@ -3354,7 +3381,7 @@ export default function UnitConverter() {
                             ? formatDMS(result) 
                             : toUnit === 'ft_in'
                               ? formatFtIn(result)
-                              : formatNumberWithSeparators(result, precision)) 
+                              : formatResultValue(result, precision)) 
                         : '...'}
                     </span>
                   </motion.div>
@@ -3466,7 +3493,7 @@ export default function UnitConverter() {
                             ? formatDMS(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor))
                             : toUnit === 'ft_in'
                               ? formatFtIn(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor))
-                              : `${formatNumberWithSeparators(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor), precision)} ${toPrefixData.id !== 'none' ? toPrefixData.symbol : ''}${toUnitData.symbol}`}
+                              : `${formatResultValue(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor), precision)} ${toPrefixData.id !== 'none' ? toPrefixData.symbol : ''}${toUnitData.symbol}`}
                         </span>
                       </div>
                     </motion.div>

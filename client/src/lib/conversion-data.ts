@@ -31,6 +31,7 @@ export type UnitCategory =
   | "solid_angle"
   | "angular_velocity"
   | "momentum"
+  | "angular_momentum"
   | "luminous_flux"
   | "illuminance"
   | "luminous_exitance"
@@ -757,6 +758,22 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "slugfts", name: "slug⋅ft/s", symbol: "slug⋅ft⋅s⁻¹", factor: 4.44822 },
       { id: "lbfts", name: "lb⋅ft/s", symbol: "lb⋅ft⋅s⁻¹", factor: 0.138255 },
       { id: "gms", name: "g⋅m/s", symbol: "g⋅m⋅s⁻¹", factor: 0.001, allowPrefixes: true },
+    ],
+  },
+  {
+    id: "angular_momentum",
+    name: "Angular Momentum",
+    baseUnit: "kilogram meter²/second",
+    baseSISymbol: "kg⋅m²⋅s⁻¹",
+    units: [
+      { id: "kgm2s", name: "kg⋅m²/s", symbol: "kg⋅m²⋅s⁻¹", factor: 1 },
+      { id: "js", name: "Joule-second", symbol: "J⋅s", factor: 1 },
+      { id: "gm2s", name: "g⋅m²/s", symbol: "g⋅m²⋅s⁻¹", factor: 0.001, allowPrefixes: true },
+      { id: "gcm2s", name: "g⋅cm²/s", symbol: "g⋅cm²⋅s⁻¹", factor: 1e-7 },
+      { id: "lbft2s", name: "lb⋅ft²/s", symbol: "lb⋅ft²⋅s⁻¹", factor: 0.0421401 },
+      { id: "slugft2s", name: "slug⋅ft²/s", symbol: "slug⋅ft²⋅s⁻¹", factor: 1.35582 },
+      { id: "ozin2s", name: "oz⋅in²/s", symbol: "oz⋅in²⋅s⁻¹", factor: 1.829e-5 },
+      { id: "hbar", name: "Reduced Planck constant", symbol: "ℏ", factor: 1.054571817e-34 },
     ],
   },
 
