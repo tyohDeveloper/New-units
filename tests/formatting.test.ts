@@ -462,16 +462,13 @@ describe('Photon/Light Category', () => {
 
   it('should have wavelength, frequency, and energy units', () => {
     expect(photonCategory?.units.some((u) => u.id === 'm_wave')).toBe(true);
-    expect(photonCategory?.units.some((u) => u.id === 'nm_wave')).toBe(true);
     expect(photonCategory?.units.some((u) => u.id === 'Hz')).toBe(true);
     expect(photonCategory?.units.some((u) => u.id === 'eV')).toBe(true);
   });
 
-  it('should have inverse conversion for wavelength units', () => {
+  it('should have inverse conversion for wavelength unit', () => {
     const photonM = photonCategory?.units.find((u) => u.id === 'm_wave');
-    const photonNm = photonCategory?.units.find((u) => u.id === 'nm_wave');
     expect(photonM?.isInverse).toBe(true);
-    expect(photonNm?.isInverse).toBe(true);
   });
 
   it('should use correct conversion constants (hc = 1.239841984e-6 eV·m)', () => {
@@ -479,46 +476,169 @@ describe('Photon/Light Category', () => {
     expect(photonM?.factor).toBeCloseTo(1.239841984e-6, 12);
   });
 
-  it('should have nanometer with correct factor', () => {
-    const photonNm = photonCategory?.units.find((u) => u.id === 'nm_wave');
-    expect(photonNm?.factor).toBeCloseTo(1239.841984, 3);
+  it('should allow prefixes on meter wavelength (use nano prefix for nm)', () => {
+    const photonM = photonCategory?.units.find((u) => u.id === 'm_wave');
+    expect(photonM?.allowPrefixes).toBe(true);
   });
 });
 
 describe('Photon Conversion Function', () => {
-  it('should convert 500 nm wavelength to approximately 2.48 eV', () => {
-    const result = convert(500, 'nm_wave', 'eV', 'photon');
+  it('should convert 500e-9 m wavelength to approximately 2.48 eV', () => {
+    // 500 nm = 500e-9 m
+    const result = convert(500e-9, 'm_wave', 'eV', 'photon');
     expect(result).toBeCloseTo(2.48, 1);
   });
 
-  it('should convert 1 eV to approximately 1240 nm wavelength', () => {
-    const result = convert(1, 'eV', 'nm_wave', 'photon');
-    expect(result).toBeCloseTo(1240, 0);
+  it('should convert 1 eV to approximately 1.24e-6 m wavelength', () => {
+    const result = convert(1, 'eV', 'm_wave', 'photon');
+    expect(result).toBeCloseTo(1.24e-6, 8);
   });
 
-  it('should convert wavelength 500 nm to frequency ~6e14 Hz', () => {
+  it('should convert wavelength 500e-9 m to frequency ~6e14 Hz', () => {
     const wavelength_m = 500e-9;
     const c = 299792458;
     const expectedHz = c / wavelength_m;
-    const result = convert(500, 'nm_wave', 'Hz', 'photon');
+    const result = convert(500e-9, 'm_wave', 'Hz', 'photon');
     expect(result).toBeCloseTo(expectedHz, -10);
   });
 
-  it('should be reversible: eV → nm → eV', () => {
+  it('should be reversible: eV → m → eV', () => {
     const original = 2.5;
-    const nm = convert(original, 'eV', 'nm_wave', 'photon');
-    const backToEv = convert(nm, 'nm_wave', 'eV', 'photon');
+    const meters = convert(original, 'eV', 'm_wave', 'photon');
+    const backToEv = convert(meters, 'm_wave', 'eV', 'photon');
     expect(backToEv).toBeCloseTo(original, 6);
   });
 
   it('should convert visible light (red ~700nm) correctly', () => {
-    const result = convert(700, 'nm_wave', 'eV', 'photon');
+    // 700 nm = 700e-9 m
+    const result = convert(700e-9, 'm_wave', 'eV', 'photon');
     expect(result).toBeCloseTo(1.77, 1);
   });
 
   it('should convert visible light (blue ~450nm) correctly', () => {
-    const result = convert(450, 'nm_wave', 'eV', 'photon');
+    // 450 nm = 450e-9 m
+    const result = convert(450e-9, 'm_wave', 'eV', 'photon');
     expect(result).toBeCloseTo(2.76, 1);
+  });
+});
+
+describe('Radioactive Decay Category', () => {
+  const decayCategory = CONVERSION_DATA.find((c) => c.id === 'radioactive_decay');
+
+  it('should exist as a category', () => {
+    expect(decayCategory).toBeDefined();
+  });
+
+  it('should have decay constant, half-life, and mean lifetime units', () => {
+    expect(decayCategory?.units.some((u) => u.id === 'per_s')).toBe(true);
+    expect(decayCategory?.units.some((u) => u.id === 'half_s')).toBe(true);
+    expect(decayCategory?.units.some((u) => u.id === 'tau_s')).toBe(true);
+  });
+
+  it('should convert decay constant to half-life correctly (t½ = ln(2)/λ)', () => {
+    // λ = 1 s⁻¹ → t½ = ln(2) ≈ 0.693 s
+    const result = convert(1, 'per_s', 'half_s', 'radioactive_decay');
+    expect(result).toBeCloseTo(0.693147, 4);
+  });
+
+  it('should convert decay constant to mean lifetime correctly (τ = 1/λ)', () => {
+    // λ = 1 s⁻¹ → τ = 1 s
+    const result = convert(1, 'per_s', 'tau_s', 'radioactive_decay');
+    expect(result).toBeCloseTo(1, 6);
+  });
+
+  it('should convert half-life to decay constant correctly', () => {
+    // t½ = 1 s → λ = ln(2) ≈ 0.693 s⁻¹
+    const result = convert(1, 'half_s', 'per_s', 'radioactive_decay');
+    expect(result).toBeCloseTo(0.693147, 4);
+  });
+});
+
+describe('Cross-Section Category', () => {
+  const csCategory = CONVERSION_DATA.find((c) => c.id === 'cross_section');
+
+  it('should exist as a category', () => {
+    expect(csCategory).toBeDefined();
+  });
+
+  it('should have barn and square meter units', () => {
+    expect(csCategory?.units.some((u) => u.id === 'barn')).toBe(true);
+    expect(csCategory?.units.some((u) => u.id === 'm2_cs')).toBe(true);
+  });
+
+  it('should convert 1 barn to 1e-28 m²', () => {
+    const result = convert(1, 'barn', 'm2_cs', 'cross_section');
+    expect(result).toBeCloseTo(1e-28, 35);
+  });
+});
+
+describe('Kinematic Viscosity Category', () => {
+  const kvCategory = CONVERSION_DATA.find((c) => c.id === 'kinematic_viscosity');
+
+  it('should exist as a category', () => {
+    expect(kvCategory).toBeDefined();
+  });
+
+  it('should convert 1 Stokes to 1e-4 m²/s', () => {
+    const result = convert(1, 'stokes', 'm2_per_s', 'kinematic_viscosity');
+    expect(result).toBeCloseTo(1e-4, 10);
+  });
+
+  it('should convert 1 centistokes to 1e-6 m²/s', () => {
+    const result = convert(1, 'centistokes', 'm2_per_s', 'kinematic_viscosity');
+    expect(result).toBeCloseTo(1e-6, 12);
+  });
+});
+
+describe('Electric Field Strength Category', () => {
+  const efCategory = CONVERSION_DATA.find((c) => c.id === 'electric_field');
+
+  it('should exist as a category', () => {
+    expect(efCategory).toBeDefined();
+  });
+
+  it('should convert 1 kV/m to 1000 V/m', () => {
+    const result = convert(1, 'kv_per_m', 'v_per_m', 'electric_field');
+    expect(result).toBeCloseTo(1000, 6);
+  });
+});
+
+describe('Magnetic Field Strength (H) Category', () => {
+  const mfhCategory = CONVERSION_DATA.find((c) => c.id === 'magnetic_field_h');
+
+  it('should exist as a category', () => {
+    expect(mfhCategory).toBeDefined();
+  });
+
+  it('should convert 1 Oersted to approximately 79.58 A/m', () => {
+    const result = convert(1, 'oersted', 'a_per_m', 'magnetic_field_h');
+    expect(result).toBeCloseTo(79.5774715, 4);
+  });
+});
+
+describe('Sound Intensity Category', () => {
+  const siCategory = CONVERSION_DATA.find((c) => c.id === 'sound_intensity');
+
+  it('should exist as a category', () => {
+    expect(siCategory).toBeDefined();
+  });
+
+  it('should have reference intensity I₀ = 10⁻¹² W/m²', () => {
+    const result = convert(1, 'i0', 'w_per_m2', 'sound_intensity');
+    expect(result).toBeCloseTo(1e-12, 18);
+  });
+});
+
+describe('Acoustic Impedance Category', () => {
+  const aiCategory = CONVERSION_DATA.find((c) => c.id === 'acoustic_impedance');
+
+  it('should exist as a category', () => {
+    expect(aiCategory).toBeDefined();
+  });
+
+  it('should convert 1 MRayl to 1e6 Rayl', () => {
+    const result = convert(1, 'mrayl', 'rayl', 'acoustic_impedance');
+    expect(result).toBeCloseTo(1e6, 0);
   });
 });
 

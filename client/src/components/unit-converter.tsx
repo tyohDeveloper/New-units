@@ -1303,7 +1303,7 @@ export default function UnitConverter() {
     },
     {
       name: "Mechanics",
-      categories: ['area', 'volume', 'speed', 'acceleration', 'force', 'pressure', 'energy', 'power', 'torque', 'flow', 'density', 'viscosity', 'surface_tension', 'frequency', 'angular_velocity', 'momentum']
+      categories: ['area', 'volume', 'speed', 'acceleration', 'force', 'pressure', 'energy', 'power', 'torque', 'flow', 'density', 'viscosity', 'kinematic_viscosity', 'surface_tension', 'frequency', 'angular_velocity', 'momentum']
     },
     {
       name: "Thermodynamics & Chemistry",
@@ -1311,11 +1311,11 @@ export default function UnitConverter() {
     },
     {
       name: "Electricity & Magnetism",
-      categories: ['charge', 'potential', 'capacitance', 'resistance', 'conductance', 'inductance', 'magnetic_flux', 'magnetic_density']
+      categories: ['charge', 'potential', 'capacitance', 'resistance', 'conductance', 'inductance', 'magnetic_flux', 'magnetic_density', 'electric_field', 'magnetic_field_h']
     },
     {
       name: "Radiation & Physics",
-      categories: ['radioactivity', 'radiation_dose', 'equivalent_dose', 'photon', 'catalytic', 'angle', 'solid_angle', 'sound_pressure']
+      categories: ['radioactivity', 'radiation_dose', 'equivalent_dose', 'radioactive_decay', 'cross_section', 'photon', 'catalytic', 'angle', 'solid_angle', 'sound_pressure', 'sound_intensity', 'acoustic_impedance']
     },
     {
       name: "Human Response",
@@ -1518,7 +1518,14 @@ export default function UnitConverter() {
       sound_pressure: { mass: 1, length: -1, time: -2 },
       fuel_economy: { length: -2 },
       lightbulb: { intensity: 1, solid_angle: 1 },
-      photon: { mass: 1, length: 2, time: -2 }  // Energy dimensions (eV is base unit)
+      photon: { mass: 1, length: 2, time: -2 },  // Energy dimensions (eV is base unit)
+      radioactive_decay: { time: -1 },  // Decay constant λ has dimensions of 1/time
+      cross_section: { length: 2 },  // Area (barn = 10^-28 m²)
+      kinematic_viscosity: { length: 2, time: -1 },  // m²/s
+      electric_field: { mass: 1, length: 1, time: -3, current: -1 },  // V/m = kg⋅m⋅s⁻³⋅A⁻¹
+      magnetic_field_h: { current: 1, length: -1 },  // A/m
+      sound_intensity: { mass: 1, time: -3 },  // W/m² = kg⋅s⁻³
+      acoustic_impedance: { mass: 1, length: -2, time: -1 }  // Pa⋅s/m = kg⋅m⁻²⋅s⁻¹
     };
     return dimensionMap[category] || {};
   };

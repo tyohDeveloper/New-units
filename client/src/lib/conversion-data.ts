@@ -53,7 +53,14 @@ export type UnitCategory =
   | "sound_pressure"
   | "fuel_economy"
   | "lightbulb"
-  | "photon";
+  | "photon"
+  | "radioactive_decay"
+  | "cross_section"
+  | "kinematic_viscosity"
+  | "electric_field"
+  | "magnetic_field_h"
+  | "sound_intensity"
+  | "acoustic_impedance";
 
 export interface Prefix {
   id: string;
@@ -591,9 +598,107 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "Hz", name: "Hertz", symbol: "Hz", factor: 4.135667696e-15, allowPrefixes: true },
       // Wavelength - INVERSE relationship: E = hc/λ, so λ = hc/E
       // hc = 1.239841984e-6 eV·m
-      // 1 eV photon has wavelength = 1.239841984e-6 m = 1239.841984 nm
+      // Use nano prefix for nm (no separate nm unit to avoid prefix stacking)
       { id: "m_wave", name: "Meter (wavelength)", symbol: "m", factor: 1.239841984e-6, allowPrefixes: true, isInverse: true },
-      { id: "nm_wave", name: "Nanometer (wavelength)", symbol: "nm", factor: 1239.841984, allowPrefixes: true, isInverse: true },
+    ],
+  },
+  {
+    id: "radioactive_decay",
+    name: "Radioactive Decay",
+    baseUnit: "per_second",
+    baseSISymbol: "s⁻¹",
+    units: [
+      // Decay constant λ (base unit) - probability of decay per unit time
+      { id: "per_s", name: "Per Second (λ)", symbol: "s⁻¹", factor: 1, allowPrefixes: true },
+      { id: "per_min", name: "Per Minute (λ)", symbol: "min⁻¹", factor: 1/60 },
+      { id: "per_hr", name: "Per Hour (λ)", symbol: "h⁻¹", factor: 1/3600 },
+      { id: "per_day", name: "Per Day (λ)", symbol: "d⁻¹", factor: 1/86400 },
+      { id: "per_year", name: "Per Year (λ)", symbol: "y⁻¹", factor: 1/31557600 },
+      // Half-life t½ = ln(2)/λ - INVERSE relationship
+      { id: "half_s", name: "Half-life (seconds)", symbol: "s", factor: 0.693147180559945, isInverse: true },
+      { id: "half_min", name: "Half-life (minutes)", symbol: "min", factor: 0.693147180559945 * 60, isInverse: true },
+      { id: "half_hr", name: "Half-life (hours)", symbol: "h", factor: 0.693147180559945 * 3600, isInverse: true },
+      { id: "half_day", name: "Half-life (days)", symbol: "d", factor: 0.693147180559945 * 86400, isInverse: true },
+      { id: "half_year", name: "Half-life (years)", symbol: "y", factor: 0.693147180559945 * 31557600, isInverse: true },
+      // Mean lifetime τ = 1/λ - INVERSE relationship
+      { id: "tau_s", name: "Mean Lifetime (seconds)", symbol: "τ (s)", factor: 1, isInverse: true },
+      { id: "tau_min", name: "Mean Lifetime (minutes)", symbol: "τ (min)", factor: 60, isInverse: true },
+      { id: "tau_hr", name: "Mean Lifetime (hours)", symbol: "τ (h)", factor: 3600, isInverse: true },
+      { id: "tau_day", name: "Mean Lifetime (days)", symbol: "τ (d)", factor: 86400, isInverse: true },
+      { id: "tau_year", name: "Mean Lifetime (years)", symbol: "τ (y)", factor: 31557600, isInverse: true },
+    ],
+  },
+  {
+    id: "cross_section",
+    name: "Cross-Section",
+    baseUnit: "barn",
+    baseSISymbol: "m²",
+    units: [
+      // 1 barn = 10^-28 m² (but we use barn as base for convenience)
+      { id: "barn", name: "Barn", symbol: "b", factor: 1, allowPrefixes: true },
+      { id: "m2_cs", name: "Square Meter", symbol: "m²", factor: 1e28 },
+      { id: "cm2_cs", name: "Square Centimeter", symbol: "cm²", factor: 1e24 },
+      { id: "fm2", name: "Square Femtometer", symbol: "fm²", factor: 0.01 },
+    ],
+  },
+  {
+    id: "kinematic_viscosity",
+    name: "Kinematic Viscosity",
+    baseUnit: "m2_per_s",
+    baseSISymbol: "m²⋅s⁻¹",
+    units: [
+      { id: "m2_per_s", name: "Square Meter per Second", symbol: "m²/s", factor: 1, allowPrefixes: true },
+      { id: "stokes", name: "Stokes", symbol: "St", factor: 1e-4 },
+      { id: "centistokes", name: "Centistokes", symbol: "cSt", factor: 1e-6 },
+      { id: "ft2_per_s", name: "Square Foot per Second", symbol: "ft²/s", factor: 0.09290304 },
+    ],
+  },
+  {
+    id: "electric_field",
+    name: "Electric Field Strength",
+    baseUnit: "v_per_m",
+    baseSISymbol: "V⋅m⁻¹",
+    units: [
+      { id: "v_per_m", name: "Volt per Meter", symbol: "V/m", factor: 1, allowPrefixes: true },
+      { id: "kv_per_m", name: "Kilovolt per Meter", symbol: "kV/m", factor: 1000 },
+      { id: "v_per_cm", name: "Volt per Centimeter", symbol: "V/cm", factor: 100 },
+      { id: "kv_per_cm", name: "Kilovolt per Centimeter", symbol: "kV/cm", factor: 100000 },
+      { id: "statv_per_cm", name: "Statvolt per Centimeter", symbol: "statV/cm", factor: 29979.2458 },
+    ],
+  },
+  {
+    id: "magnetic_field_h",
+    name: "Magnetic Field Strength (H)",
+    baseUnit: "a_per_m",
+    baseSISymbol: "A⋅m⁻¹",
+    units: [
+      { id: "a_per_m", name: "Ampere per Meter", symbol: "A/m", factor: 1, allowPrefixes: true },
+      { id: "oersted", name: "Oersted", symbol: "Oe", factor: 79.5774715 },
+      { id: "ka_per_m", name: "Kiloampere per Meter", symbol: "kA/m", factor: 1000 },
+    ],
+  },
+  {
+    id: "sound_intensity",
+    name: "Sound Intensity",
+    baseUnit: "w_per_m2",
+    baseSISymbol: "W⋅m⁻²",
+    units: [
+      { id: "w_per_m2", name: "Watt per Square Meter", symbol: "W/m²", factor: 1, allowPrefixes: true },
+      { id: "w_per_cm2", name: "Watt per Square Centimeter", symbol: "W/cm²", factor: 10000 },
+      // Reference intensity for 0 dB SPL (threshold of hearing)
+      { id: "i0", name: "Reference Intensity (I₀)", symbol: "I₀", factor: 1e-12 },
+    ],
+  },
+  {
+    id: "acoustic_impedance",
+    name: "Acoustic Impedance",
+    baseUnit: "rayl",
+    baseSISymbol: "Pa⋅s⋅m⁻¹",
+    units: [
+      { id: "rayl", name: "Rayl", symbol: "rayl", factor: 1, allowPrefixes: true },
+      { id: "mrayl", name: "Megarayl", symbol: "MRayl", factor: 1e6 },
+      // Pa·s/m is same as rayl
+      { id: "pa_s_per_m", name: "Pascal-second per Meter", symbol: "Pa·s/m", factor: 1 },
     ],
   },
 
