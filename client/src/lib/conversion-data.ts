@@ -458,10 +458,10 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "s⁻¹",
     units: [
       { id: "hz", name: "Hertz", symbol: "Hz", factor: 1, allowPrefixes: true },
-      { id: "per_hour", name: "Per Hour", symbol: "h⁻¹", factor: 0.000277778 },
-      { id: "per_min", name: "Per Minute", symbol: "min⁻¹", factor: 0.0166667 },
-      { id: "rpm", name: "Revolutions/Minute", symbol: "rpm", factor: 0.0166667 },
-      { id: "rad_s", name: "Radians/Second", symbol: "rad⋅s⁻¹", factor: 0.159155 },
+      { id: "per_hour", name: "Per Hour", symbol: "h⁻¹", factor: 1/3600 },
+      { id: "per_min", name: "Per Minute", symbol: "min⁻¹", factor: 1/60 },
+      { id: "rpm", name: "Revolutions/Minute", symbol: "rpm", factor: 1/60 },
+      { id: "rad_s", name: "Radians/Second", symbol: "rad⋅s⁻¹", factor: 1/(2*Math.PI) },
       { id: "rps", name: "Revolutions/Second", symbol: "rps", factor: 1 },
     ],
   },
@@ -741,9 +741,9 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "rad⋅s⁻¹",
     units: [
       { id: "rad_s", name: "Radian/Second", symbol: "rad⋅s⁻¹", factor: 1, allowPrefixes: true },
-      { id: "deg_s", name: "Degree/Second", symbol: "°⋅s⁻¹", factor: 0.0174533 },
-      { id: "rpm", name: "Revolutions/Minute", symbol: "rpm", factor: 0.10472 },
-      { id: "rps", name: "Revolutions/Second", symbol: "rps", factor: 6.28319 },
+      { id: "deg_s", name: "Degree/Second", symbol: "°⋅s⁻¹", factor: Math.PI/180 },
+      { id: "rpm", name: "Revolutions/Minute", symbol: "rpm", factor: 2*Math.PI/60 },
+      { id: "rps", name: "Revolutions/Second", symbol: "rps", factor: 2*Math.PI },
     ],
   },
   {
