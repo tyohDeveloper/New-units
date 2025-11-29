@@ -2886,6 +2886,7 @@ export default function UnitConverter() {
               {t('Base unit:')} <span className="text-primary">{t(applyRegionalSpelling(toTitleCase(categoryData.baseUnit)))}</span>
             </p>
             <div className="flex items-center gap-3">
+              <Label className="text-xs text-muted-foreground">{t('Number formatting')}</Label>
               <Select 
                 value={numberFormat} 
                 onValueChange={(val) => { 
