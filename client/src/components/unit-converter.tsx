@@ -3394,6 +3394,7 @@ export default function UnitConverter() {
                 variant="ghost" 
                 size="sm"
                 onClick={() => setCalcOp1('*')}
+                disabled={!calcValues[0] || !calcValues[1]}
                 className={`text-sm w-full ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
               >
                 ×
@@ -3402,6 +3403,7 @@ export default function UnitConverter() {
                 variant="ghost" 
                 size="sm"
                 onClick={() => setCalcOp1('/')}
+                disabled={!calcValues[0] || !calcValues[1]}
                 className={`text-sm w-full ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
               >
                 /
@@ -3472,6 +3474,7 @@ export default function UnitConverter() {
                 variant="ghost" 
                 size="sm"
                 onClick={() => setCalcOp2('*')}
+                disabled={!calcValues[1] || !calcValues[2]}
                 className={`text-sm w-full ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
               >
                 ×
@@ -3480,6 +3483,7 @@ export default function UnitConverter() {
                 variant="ghost" 
                 size="sm"
                 onClick={() => setCalcOp2('/')}
+                disabled={!calcValues[1] || !calcValues[2]}
                 className={`text-sm w-full ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
               >
                 /
