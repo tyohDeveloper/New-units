@@ -1163,7 +1163,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     units: [
       { id: "num", name: "Number", symbol: "1", factor: 1 },
       { id: "pi", name: "Pi (π)", symbol: "π", factor: Math.PI },
-      { id: "e", name: "Euler's Number (e)", symbol: "e", factor: Math.E },
+      { id: "e", name: "Euler's Number (ℯ)", symbol: "ℯ", factor: Math.E },
       { id: "sqrt2", name: "Square Root of 2", symbol: "√2", factor: Math.SQRT2 },
       { id: "sin", name: "Sine", symbol: "sin", factor: 1, mathFunction: 'sin' },
       { id: "cos", name: "Cosine", symbol: "cos", factor: 1, mathFunction: 'cos' },

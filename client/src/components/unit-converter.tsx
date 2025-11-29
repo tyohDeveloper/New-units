@@ -128,7 +128,7 @@ export default function UnitConverter() {
   const [selectedAlternative, setSelectedAlternative] = useState<number>(0); // Index of selected alternative representation
 
   // Number format state
-  type NumberFormat = 'uk' | 'south-asian' | 'europe-latin' | 'swiss' | 'arabic' | 'arabic-latin' | 'east-asian' | 'period' | 'comma';
+  type NumberFormat = 'uk' | 'south-asian' | 'europe-latin' | 'swiss' | 'arabic' | 'east-asian' | 'period' | 'comma';
   const [numberFormat, setNumberFormat] = useState<NumberFormat>('uk');
   
   // Language state (ISO 639-1 codes)
@@ -157,7 +157,6 @@ export default function UnitConverter() {
     'europe-latin': { name: 'World', thousands: ' ', decimal: ',' },
     'swiss': { name: 'Swiss', thousands: "'", decimal: '.' },
     'arabic': { name: 'Arabic', thousands: ',', decimal: '.', useArabicNumerals: true },
-    'arabic-latin': { name: 'Arabic (Latin)', thousands: ',', decimal: '.' },
     'east-asian': { name: 'East Asian', thousands: ',', decimal: '.', myriad: true },
     'period': { name: 'Period', thousands: '', decimal: '.' },
     'comma': { name: 'Comma', thousands: '', decimal: ',' },
@@ -969,6 +968,11 @@ export default function UnitConverter() {
       es: 'A', fr: 'À', it: 'A', ko: '로',
       pt: 'Para', ru: 'В', zh: '到', ja: 'へ'
     },
+    'Compare All': {
+      en: 'Compare All', 'en-us': 'Compare All', ar: 'مقارنة الكل', de: 'Alle vergleichen',
+      es: 'Comparar Todo', fr: 'Comparer Tout', it: 'Confronta Tutto', ko: '모두 비교',
+      pt: 'Comparar Tudo', ru: 'Сравнить Все', zh: '比较全部', ja: 'すべて比較'
+    },
     'Compare': { 
       en: 'Compare', ar: 'قارن', de: 'Vergleichen',
       es: 'Comparar', fr: 'Comparer', it: 'Confronta', ko: '비교',
@@ -1544,7 +1548,7 @@ export default function UnitConverter() {
 
   // Auto-set language to Arabic when Arabic number formats are selected
   React.useEffect(() => {
-    if (numberFormat === 'arabic' || numberFormat === 'arabic-latin') {
+    if (numberFormat === 'arabic') {
       setLanguage('ar');
     }
   }, [numberFormat]);
@@ -2140,6 +2144,23 @@ export default function UnitConverter() {
     if (!isNaN(numericValue) && isFinite(numericValue)) {
       // Format with new format
       const reformatted = formatNumberWithSpecificFormat(numericValue, newFormat);
+      setInputValue(reformatted);
+    }
+  };
+
+  // Reformat input value on blur (when leaving the input field)
+  const handleInputBlur = (): void => {
+    if (!inputValue || inputValue === '') return;
+    
+    // Skip reformatting for special formats (DMS, ft'in")
+    if (fromUnit === 'deg_dms' || fromUnit === 'ft_in') return;
+    
+    // Parse with current format
+    const numericValue = parseNumberWithFormat(inputValue);
+    
+    if (!isNaN(numericValue) && isFinite(numericValue)) {
+      // Reformat with current format to add separators and convert numerals
+      const reformatted = formatNumberWithSpecificFormat(numericValue, numberFormat);
       setInputValue(reformatted);
     }
   };
@@ -3079,7 +3100,7 @@ export default function UnitConverter() {
     const thousandsSep = format.thousands ? (format.thousands === ' ' ? '\\s' : format.thousands === "'" ? "\\'" : format.thousands) : '';
     
     // For Arabic formats, allow both Latin and Arabic numerals
-    const isArabicFormat = numberFormat === 'arabic' || numberFormat === 'arabic-latin';
+    const isArabicFormat = numberFormat === 'arabic';
     const digitPattern = isArabicFormat ? '0-9٠-٩' : '0-9';
     
     // For special formats (DMS/FtIn), allow: digits, colon, decimal separator, thousands separator, minus, quotes
@@ -3169,9 +3190,8 @@ export default function UnitConverter() {
                 onValueChange={(val) => { 
                   const newFormat = val as NumberFormat;
                   const oldFormat = numberFormat;
-                  // If switching away from Arabic formats, set language to English
-                  if ((oldFormat === 'arabic' || oldFormat === 'arabic-latin') && 
-                      newFormat !== 'arabic' && newFormat !== 'arabic-latin') {
+                  // If switching away from Arabic format, set language to English
+                  if (oldFormat === 'arabic' && newFormat !== 'arabic') {
                     setLanguage('en');
                   }
                   // Reformat input value with new format
@@ -3190,17 +3210,16 @@ export default function UnitConverter() {
                   <SelectItem value="period" className="text-xs">Period</SelectItem>
                   <SelectItem value="comma" className="text-xs">Comma</SelectItem>
                   <SelectItem value="arabic" className="text-xs">العربية</SelectItem>
-                  <SelectItem value="arabic-latin" className="text-xs">العربية (Latin)</SelectItem>
                   <SelectItem value="east-asian" className="text-xs">East Asian</SelectItem>
                   <SelectItem value="south-asian" className="text-xs">South Asian (Indian)</SelectItem>
                   <SelectItem value="swiss" className="text-xs">Swiss</SelectItem>
                 </SelectContent>
               </Select>
               <Select 
-                value={numberFormat === 'arabic' || numberFormat === 'arabic-latin' ? '' : language} 
+                value={numberFormat === 'arabic' ? '' : language} 
                 onValueChange={(val) => { setLanguage(val); refocusInput(); }}
                 onOpenChange={(open) => { if (!open) refocusInput(); }}
-                disabled={numberFormat === 'arabic' || numberFormat === 'arabic-latin'}
+                disabled={numberFormat === 'arabic'}
               >
                 <SelectTrigger tabIndex={7} className="h-10 w-[75px] text-xs">
                   <SelectValue placeholder="" />
@@ -3234,6 +3253,7 @@ export default function UnitConverter() {
                     value={inputValue}
                     onChange={(e) => handleInputChange(e.target.value)}
                     onKeyDown={handleInputKeyDown}
+                    onBlur={handleInputBlur}
                     tabIndex={1}
                     className="font-mono px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left"
                     style={{ height: FIELD_HEIGHT, fontSize: '0.875rem', width: CommonFieldWidth }}
@@ -3379,7 +3399,7 @@ export default function UnitConverter() {
                     className={`h-6 px-2 text-[10px] font-mono uppercase ${comparisonMode ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                     data-testid="button-comparison-mode"
                   >
-                    Compare All
+                    {t('Compare All')}
                   </Button>
                 </div>
               </div>
