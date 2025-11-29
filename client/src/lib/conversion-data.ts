@@ -544,27 +544,8 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "h", name: "Henry", symbol: "H", factor: 1, allowPrefixes: true },
     ],
   },
-  {
-    id: "photon",
-    name: "Photon/Light",
-    baseUnit: "electronvolt",
-    baseSISymbol: "eV",
-    units: [
-      // Energy (base unit) - direct relationship
-      { id: "eV", name: "Electronvolt", symbol: "eV", factor: 1, allowPrefixes: true },
-      // Frequency - direct relationship: E = hν, so ν = E/h
-      // 1 eV photon has frequency = 1 eV / (4.135667696e-15 eV·s) = 2.417989242e14 Hz
-      // factor = h in eV·s = 4.135667696e-15 (multiply eV by this to get Hz)
-      { id: "Hz", name: "Hertz", symbol: "Hz", factor: 4.135667696e-15, allowPrefixes: true },
-      // Wavelength - INVERSE relationship: E = hc/λ, so λ = hc/E
-      // hc = 1.239841984e-6 eV·m
-      // 1 eV photon has wavelength = 1.239841984e-6 m = 1239.841984 nm
-      { id: "m_wave", name: "Meter (wavelength)", symbol: "m", factor: 1.239841984e-6, allowPrefixes: true, isInverse: true },
-      { id: "nm_wave", name: "Nanometer (wavelength)", symbol: "nm", factor: 1239.841984, allowPrefixes: true, isInverse: true },
-    ],
-  },
 
-  // --- RADIATION & CHEMISTRY ---
+  // --- RADIATION & PHYSICS ---
   {
     id: "radioactivity",
     name: "Radioactivity",
@@ -596,6 +577,27 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "rem", name: "Rem", symbol: "rem", factor: 0.01 },
     ],
   },
+  {
+    id: "photon",
+    name: "Photon/Light",
+    baseUnit: "electronvolt",
+    baseSISymbol: "eV",
+    units: [
+      // Energy (base unit) - direct relationship
+      { id: "eV", name: "Electronvolt", symbol: "eV", factor: 1, allowPrefixes: true },
+      // Frequency - direct relationship: E = hν, so ν = E/h
+      // 1 eV photon has frequency = 1 eV / (4.135667696e-15 eV·s) = 2.417989242e14 Hz
+      // factor = h in eV·s = 4.135667696e-15 (multiply eV by this to get Hz)
+      { id: "Hz", name: "Hertz", symbol: "Hz", factor: 4.135667696e-15, allowPrefixes: true },
+      // Wavelength - INVERSE relationship: E = hc/λ, so λ = hc/E
+      // hc = 1.239841984e-6 eV·m
+      // 1 eV photon has wavelength = 1.239841984e-6 m = 1239.841984 nm
+      { id: "m_wave", name: "Meter (wavelength)", symbol: "m", factor: 1.239841984e-6, allowPrefixes: true, isInverse: true },
+      { id: "nm_wave", name: "Nanometer (wavelength)", symbol: "nm", factor: 1239.841984, allowPrefixes: true, isInverse: true },
+    ],
+  },
+
+  // --- CHEMISTRY ---
   {
     id: "catalytic",
     name: "Catalytic Activity",

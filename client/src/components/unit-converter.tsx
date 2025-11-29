@@ -1311,11 +1311,11 @@ export default function UnitConverter() {
     },
     {
       name: "Electricity & Magnetism",
-      categories: ['charge', 'potential', 'capacitance', 'resistance', 'conductance', 'inductance', 'magnetic_flux', 'magnetic_density', 'photon']
+      categories: ['charge', 'potential', 'capacitance', 'resistance', 'conductance', 'inductance', 'magnetic_flux', 'magnetic_density']
     },
     {
       name: "Radiation & Physics",
-      categories: ['radioactivity', 'radiation_dose', 'equivalent_dose', 'catalytic', 'angle', 'solid_angle', 'sound_pressure']
+      categories: ['radioactivity', 'radiation_dose', 'equivalent_dose', 'photon', 'catalytic', 'angle', 'solid_angle', 'sound_pressure']
     },
     {
       name: "Human Response",
