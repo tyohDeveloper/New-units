@@ -2568,22 +2568,12 @@ export default function UnitConverter() {
       adjustedValue = result.adjustedValue;
     }
     
-    // Create the new value with precision applied and optimal prefix
-    const newValue: CalcValue = {
+    // Create the normalized value with precision applied and optimal prefix
+    const normalizedValue: CalcValue = {
       value: precisionAppliedValue,
       dimensions: dims,
       prefix: optimalPrefix.id
     };
-    
-    // Update calculator result field with normalized value
-    setCalcValues(prev => {
-      const newValues = [...prev];
-      newValues[3] = newValue;
-      return newValues;
-    });
-    
-    // Update result prefix to match optimal prefix
-    setResultPrefix(optimalPrefix.id);
     
     // Copy the precision-applied, normalized value with optimal prefix
     const format = NUMBER_FORMATS[numberFormat];
@@ -2593,6 +2583,14 @@ export default function UnitConverter() {
     const textToCopy = unitSymbol ? `${formattedStr} ${prefixSymbol}${unitSymbol}` : formattedStr;
     
     navigator.clipboard.writeText(textToCopy);
+    
+    // Clear calculator and put normalized result into first field
+    setCalcValues([normalizedValue, null, null, null]);
+    setCalcOp1(null);
+    setCalcOp2(null);
+    setResultUnit(null);
+    setResultCategory(null);
+    setResultPrefix('none');
     
     setFlashCopyCalc(true);
     setTimeout(() => setFlashCopyCalc(false), 300);
