@@ -2267,13 +2267,30 @@ export default function UnitConverter() {
   };
 
   // Helper to format number for copying with precision (no thousands separator)
+  // Uses scientific notation for extreme values to match display format
   const formatForClipboard = (num: number, precisionValue: number): string => {
     const format = NUMBER_FORMATS[numberFormat];
     // Apply fixPrecision to remove floating-point artifacts
     const fixed = Math.abs(num) < 1e-15 ? 0 : num;
     const cleanedNum = fixed === 0 ? 0 : parseFloat(num.toPrecision(12));
+    
+    if (cleanedNum === 0) {
+      return format.useArabicNumerals ? '٠' : '0';
+    }
+    
+    const absNum = Math.abs(cleanedNum);
+    
+    // Check if value would round to 0 at current precision
+    const wouldRoundToZero = absNum > 0 && absNum < Math.pow(10, -(precisionValue + 1));
+    
+    // Use scientific notation for extreme values (same thresholds as display)
+    if (absNum < 1e-6 || wouldRoundToZero || absNum >= 1e8) {
+      const expStr = cleanedNum.toExponential(Math.min(precisionValue, 10));
+      return format.useArabicNumerals ? toArabicNumerals(expStr) : expStr;
+    }
+    
     // Limit precision based on magnitude
-    const magnitude = cleanedNum === 0 ? 0 : Math.floor(Math.log10(Math.abs(cleanedNum)));
+    const magnitude = Math.floor(Math.log10(absNum));
     const maxDecimals = Math.max(0, Math.min(precisionValue, 14 - magnitude));
     const formatted = toFixedBanker(cleanedNum, maxDecimals);
     // Remove trailing zeros after decimal point
@@ -2985,8 +3002,26 @@ export default function UnitConverter() {
   };
 
   // Helper to format number with separators based on selected format
+  // Uses scientific notation for extreme values (same thresholds as formatResultValue)
   const formatNumberWithSeparators = (num: number, precision: number): string => {
     const format = NUMBER_FORMATS[numberFormat];
+    
+    // Handle zero
+    if (num === 0) {
+      return format.useArabicNumerals ? '٠' : '0';
+    }
+    
+    const absNum = Math.abs(num);
+    
+    // Check if value would round to 0 at current precision
+    const wouldRoundToZero = absNum > 0 && absNum < Math.pow(10, -(precision + 1));
+    
+    // Use scientific notation for extreme values
+    if (absNum < 1e-6 || wouldRoundToZero || absNum >= 1e8) {
+      const expStr = num.toExponential(Math.min(precision, 10));
+      return format.useArabicNumerals ? toArabicNumerals(expStr) : expStr;
+    }
+    
     // cleanNumber already applies fixPrecision internally
     const cleaned = cleanNumber(num, precision);
     const [integer, decimal] = cleaned.split('.');
@@ -3047,6 +3082,9 @@ export default function UnitConverter() {
   };
 
   // Helper to format result with scientific notation for extreme values
+  // Uses scientific notation when:
+  // 1. Value is very small (< 1e-6) or would round to 0 at current precision
+  // 2. Value is very large (>= 1e8, i.e., 8+ digits in integer part)
   const formatResultValue = (num: number, precisionValue: number): string => {
     const format = NUMBER_FORMATS[numberFormat];
     if (num === 0) {
@@ -3054,8 +3092,16 @@ export default function UnitConverter() {
       return format.useArabicNumerals ? '٠' : '0';
     }
     const absNum = Math.abs(num);
-    // Use scientific notation for very small (<1e-6) or very large (>=1e12) values
-    if (absNum < 1e-6 || absNum >= 1e12) {
+    
+    // Check if value would round to 0 at current precision
+    // This happens when absNum < 10^-(precision+1) due to rounding
+    const wouldRoundToZero = absNum > 0 && absNum < Math.pow(10, -(precisionValue + 1));
+    
+    // Use scientific notation for:
+    // - Very small values (< 1e-6) 
+    // - Values that would round to 0 at current precision
+    // - Very large values (>= 1e8, meaning 8+ digits in integer part)
+    if (absNum < 1e-6 || wouldRoundToZero || absNum >= 1e8) {
       // Use precision for significant figures in exponential notation
       const expStr = num.toExponential(Math.min(precisionValue, 10));
       // Apply Arabic numerals to scientific notation if needed
