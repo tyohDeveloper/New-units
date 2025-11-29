@@ -3000,7 +3000,9 @@ export default function UnitConverter() {
     
     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
     const displayValue = fixPrecision(val.value / prefix.factor);
-    const unitSymbol = `${prefix.symbol}${formatDimensions(val.dimensions)}`;
+    // Use normalizeDimensions to get derived units (like J, N, W) instead of raw base units
+    // This prevents prefix stacking with kg (e.g., "mkg" instead of "mJ")
+    const unitSymbol = `${prefix.symbol}${normalizeDimensions(val.dimensions)}`;
     
     // Copy with only decimal separator, no thousands separator
     const format = NUMBER_FORMATS[numberFormat];
@@ -3732,7 +3734,7 @@ export default function UnitConverter() {
                     const val = calcValues[0];
                     if (!val) return '';
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
+                    return `${prefix.symbol}${normalizeDimensions(val.dimensions)}`;
                   })() : ''}
                 </span>
               </motion.div>
@@ -3780,7 +3782,7 @@ export default function UnitConverter() {
                     const val = calcValues[1];
                     if (!val) return '';
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
+                    return `${prefix.symbol}${normalizeDimensions(val.dimensions)}`;
                   })() : ''}
                 </span>
               </motion.div>
@@ -3860,7 +3862,7 @@ export default function UnitConverter() {
                     const val = calcValues[2];
                     if (!val) return '';
                     const prefix = PREFIXES.find(p => p.id === val.prefix) || PREFIXES.find(p => p.id === 'none')!;
-                    return `${prefix.symbol}${formatDimensions(val.dimensions)}`;
+                    return `${prefix.symbol}${normalizeDimensions(val.dimensions)}`;
                   })() : ''}
                 </span>
               </motion.div>
