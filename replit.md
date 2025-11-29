@@ -30,7 +30,11 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
   - Gram (g) has `allowPrefixes: true` enabling mg, cg, µg, etc. via prefix dropdown
   - Binary prefixes (Ki, Mi, Gi) apply ONLY to Data/Information category
   - All other categories use decimal SI prefixes only (k, M, G, m, µ, etc.)
-  - **Complex kg-based units** (kg⋅m⁻³, kg⋅m⋅s⁻¹, J⋅kg⁻¹⋅K⁻¹) have NO `allowPrefixes` to prevent stacking
+  - **Dual kg/g unit pattern**: Complex kg-based SI units have gram-based companions with allowPrefixes=true:
+    - Density: kg⋅m⁻³ (no prefix) + g⋅m⁻³ (with prefixes, factor=0.001)
+    - Momentum: kg⋅m⋅s⁻¹ (no prefix) + g⋅m⋅s⁻¹ (with prefixes, factor=0.001)
+    - Specific Heat: J⋅kg⁻¹⋅K⁻¹ (no prefix) + J⋅g⁻¹⋅K⁻¹ (with prefixes, factor=1000 - inverted denominator)
+    - When g-based unit + kilo prefix is selected → auto-switches to kg-based unit with no prefix
 - **Unit Change Behavior**: When changing From or To unit, prefix resets to 'none' automatically
 - **CGS Unit Prefixes**: All CGS base units support prefixes (dyne, erg, poise, stokes, gauss, maxwell, oersted, statampere, statvolt, etc.) but pre-prefixed units (centipoise, centistokes) do NOT allow additional prefixes
 - **Comparison Mode**: Toggle button ("Compare All") next to the "To" label shows input value converted to up to 8 units simultaneously with optimal prefix display and click-to-copy functionality

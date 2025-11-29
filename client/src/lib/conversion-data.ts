@@ -753,10 +753,10 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "kg⋅m⋅s⁻¹",
     units: [
       { id: "kgms", name: "kg⋅m/s", symbol: "kg⋅m⋅s⁻¹", factor: 1 },
-      { id: "gms", name: "g⋅m/s", symbol: "g⋅m⋅s⁻¹", factor: 0.001, allowPrefixes: true },
-      { id: "lbfts", name: "lb⋅ft/s", symbol: "lb⋅ft⋅s⁻¹", factor: 0.138255 },
       { id: "ns", name: "Newton-second", symbol: "N⋅s", factor: 1 },
       { id: "slugfts", name: "slug⋅ft/s", symbol: "slug⋅ft⋅s⁻¹", factor: 4.44822 },
+      { id: "lbfts", name: "lb⋅ft/s", symbol: "lb⋅ft⋅s⁻¹", factor: 0.138255 },
+      { id: "gms", name: "g⋅m/s", symbol: "g⋅m⋅s⁻¹", factor: 0.001, allowPrefixes: true },
     ],
   },
 
@@ -768,9 +768,9 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "kg⋅m⁻³",
     units: [
       { id: "kgm3", name: "kg/m³", symbol: "kg⋅m⁻³", factor: 1 },
-      { id: "gm3", name: "g/m³", symbol: "g⋅m⁻³", factor: 0.001, allowPrefixes: true },
       { id: "lbft3", name: "lb/ft³", symbol: "lb⋅ft⁻³", factor: 16.0185 },
       { id: "gcm3", name: "g/cm³", symbol: "g⋅cm⁻³", factor: 1000 },
+      { id: "gm3", name: "g/m³", symbol: "g⋅m⁻³", factor: 0.001, allowPrefixes: true },
     ],
   },
   {
