@@ -1569,6 +1569,17 @@ export default function UnitConverter() {
     return result;
   };
 
+  // Helper: Convert number to superscript
+  const superscripts: Record<string, string> = {
+    '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+    '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+    '-': '⁻'
+  };
+
+  const toSuperscript = (num: number): string => {
+    return num.toString().split('').map(c => superscripts[c] || c).join('');
+  };
+
   // Helper: Format dimensional formula as unit string
   // Order: time, length, mass, electric current, thermodynamic temperature, amount of substance, luminous intensity, angle, solid angle
   const formatDimensions = (dims: DimensionalFormula): string => {
@@ -1589,16 +1600,6 @@ export default function UnitConverter() {
     const dimensionOrder: (keyof DimensionalFormula)[] = [
       'mass', 'length', 'current', 'temperature', 'amount', 'intensity', 'time', 'angle', 'solid_angle'
     ];
-
-    const superscripts: Record<string, string> = {
-      '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
-      '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
-      '-': '⁻'
-    };
-
-    const toSuperscript = (num: number): string => {
-      return num.toString().split('').map(c => superscripts[c] || c).join('');
-    };
 
     const positiveParts: string[] = [];
     const negativeParts: string[] = [];
@@ -1628,7 +1629,136 @@ export default function UnitConverter() {
   // Alias for backward compatibility with factorization code
   const dimensionsToSymbol = formatDimensions;
 
-  // Helper: Get derived unit symbol from dimensions
+  // Standard SI derived units catalog for normalization (sorted by complexity - more base units consumed first)
+  // Only includes the 22 named SI derived units, NOT combinations like Wh
+  interface NormalizableDerivedUnit {
+    symbol: string;
+    dimensions: DimensionalFormula;
+    exponentSum: number; // Sum of absolute values of exponents (complexity score)
+  }
+  
+  const NORMALIZABLE_DERIVED_UNITS: NormalizableDerivedUnit[] = [
+    // Sorted by exponentSum descending (most complex first)
+    // Note: Hz and Bq both have { time: -1 }, using Hz as it's the general SI unit for frequency
+    // Gy and Sv both have { length: 2, time: -2 }, using Gy as it's the base radiation unit
+    { symbol: 'F', dimensions: { mass: -1, length: -2, time: 4, current: 2 }, exponentSum: 9 },
+    { symbol: 'Ω', dimensions: { mass: 1, length: 2, time: -3, current: -2 }, exponentSum: 8 },
+    { symbol: 'S', dimensions: { mass: -1, length: -2, time: 3, current: 2 }, exponentSum: 8 },
+    { symbol: 'V', dimensions: { mass: 1, length: 2, time: -3, current: -1 }, exponentSum: 7 },
+    { symbol: 'H', dimensions: { mass: 1, length: 2, time: -2, current: -2 }, exponentSum: 7 },
+    { symbol: 'Wb', dimensions: { mass: 1, length: 2, time: -2, current: -1 }, exponentSum: 6 },
+    { symbol: 'W', dimensions: { mass: 1, length: 2, time: -3 }, exponentSum: 6 },
+    { symbol: 'J', dimensions: { mass: 1, length: 2, time: -2 }, exponentSum: 5 },
+    { symbol: 'lx', dimensions: { intensity: 1, solid_angle: 1, length: -2 }, exponentSum: 4 },
+    { symbol: 'Gy', dimensions: { length: 2, time: -2 }, exponentSum: 4 },
+    { symbol: 'Pa', dimensions: { mass: 1, length: -1, time: -2 }, exponentSum: 4 },
+    { symbol: 'N', dimensions: { mass: 1, length: 1, time: -2 }, exponentSum: 4 },
+    { symbol: 'T', dimensions: { mass: 1, time: -2, current: -1 }, exponentSum: 4 },
+    { symbol: 'C', dimensions: { current: 1, time: 1 }, exponentSum: 2 },
+    { symbol: 'kat', dimensions: { amount: 1, time: -1 }, exponentSum: 2 },
+    { symbol: 'lm', dimensions: { intensity: 1, solid_angle: 1 }, exponentSum: 2 },
+    { symbol: 'Hz', dimensions: { time: -1 }, exponentSum: 1 },
+  ].sort((a, b) => b.exponentSum - a.exponentSum);
+
+  // Helper: Check if a derived unit can be factored out from remaining dimensions
+  const canApplyDerivedUnit = (remaining: DimensionalFormula, derived: DimensionalFormula): boolean => {
+    for (const [dim, derivedExp] of Object.entries(derived)) {
+      const remainingExp = remaining[dim as keyof DimensionalFormula] || 0;
+      // The derived unit's exponent must have the same sign and not exceed the remaining magnitude
+      if (derivedExp > 0) {
+        if (remainingExp < derivedExp) return false;
+      } else if (derivedExp < 0) {
+        if (remainingExp > derivedExp) return false;
+      }
+    }
+    return true;
+  };
+
+  // Helper: Subtract derived unit dimensions from remaining
+  const subtractDerivedUnit = (remaining: DimensionalFormula, derived: DimensionalFormula): DimensionalFormula => {
+    const result: DimensionalFormula = { ...remaining };
+    for (const [dim, derivedExp] of Object.entries(derived)) {
+      const key = dim as keyof DimensionalFormula;
+      result[key] = (result[key] || 0) - derivedExp;
+      if (result[key] === 0) delete result[key];
+    }
+    return result;
+  };
+
+  // Helper: Check if dimensions are empty (all zeros or undefined)
+  const isDimensionEmpty = (dims: DimensionalFormula): boolean => {
+    return Object.values(dims).every(v => v === 0 || v === undefined);
+  };
+
+  // Greedy normalization: decompose dimensions into derived units + base units
+  const normalizeDimensions = (dims: DimensionalFormula): string => {
+    if (isDimensionEmpty(dims)) return '';
+    
+    let remaining = { ...dims };
+    const usedUnits: Map<string, number> = new Map(); // symbol -> exponent count
+    
+    // Greedy loop: keep finding derived units that consume the most exponents
+    let foundMatch = true;
+    while (foundMatch && !isDimensionEmpty(remaining)) {
+      foundMatch = false;
+      
+      // Find the best derived unit (first one that fits, since list is sorted by complexity)
+      for (const derivedUnit of NORMALIZABLE_DERIVED_UNITS) {
+        if (canApplyDerivedUnit(remaining, derivedUnit.dimensions)) {
+          // Apply this derived unit
+          remaining = subtractDerivedUnit(remaining, derivedUnit.dimensions);
+          usedUnits.set(derivedUnit.symbol, (usedUnits.get(derivedUnit.symbol) || 0) + 1);
+          foundMatch = true;
+          break; // Restart the loop to find the next best match
+        }
+      }
+    }
+    
+    // Build the result symbol
+    const parts: string[] = [];
+    
+    // Add remaining base unit dimensions (positive exponents first)
+    const remainingSymbol = formatDimensions(remaining);
+    if (remainingSymbol) {
+      // Split positive and negative parts
+      const positiveDims: DimensionalFormula = {};
+      const negativeDims: DimensionalFormula = {};
+      for (const [dim, exp] of Object.entries(remaining)) {
+        if (exp > 0) positiveDims[dim as keyof DimensionalFormula] = exp;
+        else if (exp < 0) negativeDims[dim as keyof DimensionalFormula] = exp;
+      }
+      
+      // Add positive base units first
+      const positiveSymbol = formatDimensions(positiveDims);
+      if (positiveSymbol) parts.push(positiveSymbol);
+      
+      // Add derived units
+      Array.from(usedUnits.entries()).forEach(([symbol, count]) => {
+        if (count === 1) {
+          parts.push(symbol);
+        } else {
+          parts.push(symbol + toSuperscript(count));
+        }
+      });
+      
+      // Add negative base units last
+      const negativeSymbol = formatDimensions(negativeDims);
+      if (negativeSymbol) parts.push(negativeSymbol);
+    } else {
+      // Only derived units
+      Array.from(usedUnits.entries()).forEach(([symbol, count]) => {
+        if (count === 1) {
+          parts.push(symbol);
+        } else {
+          parts.push(symbol + toSuperscript(count));
+        }
+      });
+    }
+    
+    return parts.join('⋅') || formatDimensions(dims);
+  };
+
+  // Helper: Get derived unit symbol from dimensions (for exact matches only)
   const getDerivedUnit = (dims: DimensionalFormula): string => {
     const dimsStr = JSON.stringify(dims);
     
@@ -2441,9 +2571,9 @@ export default function UnitConverter() {
       return newValues;
     });
     
-    // Get the derived unit symbol for the normalized representation
-    const derivedUnit = getDerivedUnit(dims);
-    const unitSymbol = derivedUnit || formatDimensions(dims);
+    // Get the normalized unit symbol using greedy decomposition
+    // This converts kg·m³·s⁻² → m²·N, kg·m²·s⁻² → J, etc.
+    const unitSymbol = normalizeDimensions(dims);
     
     // Copy the precision-applied, normalized value
     const format = NUMBER_FORMATS[numberFormat];
