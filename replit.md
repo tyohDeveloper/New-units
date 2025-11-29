@@ -148,7 +148,7 @@ client/
 - v2.15.0: Added electron volt mass equivalent (eV/c²) to Mass category (1.78266192e-36 kg, SI prefixes enabled)
 - v2.15.0: Removed "Evaluate & Copy" button from calculator (Normalize & Copy and Copy buttons remain)
 - v2.15.0: User can override auto-prefix by manually selecting a different prefix; auto-selection re-enabled on unit change
-- v2.15.0: Unit tests expanded to 160 tests (added findOptimalPrefix, photon conversions, eV conversions)
+- v2.15.0: Unit tests expanded to 166 tests (added findOptimalPrefix, photon conversions, eV conversions)
 - v2.14.0: Added Glass (Wine) unit to Beer & Wine category (150ml = 0.00015 m³)
 - v2.14.0: Moved Lightbulb Efficiency and Fuel Economy from Human Response group to Other group
 - v2.14.0: Normalize & Copy now selects optimal SI prefix to minimize digit count (e.g., 1500000 J → 1.5 MJ)
