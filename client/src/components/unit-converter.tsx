@@ -127,6 +127,37 @@ export default function UnitConverter() {
     { symbol: 'lm', category: 'luminous_flux', unitId: 'lm', dimensions: { intensity: 1, solid_angle: 1 }, allowPrefixes: true },
   ];
 
+  // Non-SI units catalog (CGS, Imperial, specialized) for dropdown alternatives
+  const NON_SI_UNITS_CATALOG: DerivedUnitInfo[] = [
+    // Force (CGS)
+    { symbol: 'dyn', category: 'force', unitId: 'dyn', dimensions: { mass: 1, length: 1, time: -2 }, allowPrefixes: true },
+    // Energy (CGS, Imperial)
+    { symbol: 'erg', category: 'energy', unitId: 'erg', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
+    { symbol: 'cal', category: 'energy', unitId: 'cal', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
+    { symbol: 'BTU', category: 'energy', unitId: 'btu', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: false },
+    // Pressure (CGS, Imperial)
+    { symbol: 'Ba', category: 'pressure', unitId: 'barye', dimensions: { mass: 1, length: -1, time: -2 }, allowPrefixes: true },
+    { symbol: 'atm', category: 'pressure', unitId: 'atm', dimensions: { mass: 1, length: -1, time: -2 }, allowPrefixes: false },
+    { symbol: 'bar', category: 'pressure', unitId: 'bar', dimensions: { mass: 1, length: -1, time: -2 }, allowPrefixes: true },
+    { symbol: 'psi', category: 'pressure', unitId: 'psi', dimensions: { mass: 1, length: -1, time: -2 }, allowPrefixes: false },
+    // Power (CGS)
+    { symbol: 'erg⋅s⁻¹', category: 'power', unitId: 'erg_per_s', dimensions: { mass: 1, length: 2, time: -3 }, allowPrefixes: false },
+    { symbol: 'hp', category: 'power', unitId: 'hp', dimensions: { mass: 1, length: 2, time: -3 }, allowPrefixes: false },
+    // Viscosity (CGS)
+    { symbol: 'P', category: 'dynamic_viscosity', unitId: 'poise', dimensions: { mass: 1, length: -1, time: -1 }, allowPrefixes: true },
+    { symbol: 'St', category: 'kinematic_viscosity', unitId: 'stokes', dimensions: { length: 2, time: -1 }, allowPrefixes: true },
+    // Magnetic (CGS)
+    { symbol: 'G', category: 'magnetic_density', unitId: 'gauss', dimensions: { mass: 1, time: -2, current: -1 }, allowPrefixes: true },
+    { symbol: 'Mx', category: 'magnetic_flux', unitId: 'maxwell', dimensions: { mass: 1, length: 2, time: -2, current: -1 }, allowPrefixes: true },
+    { symbol: 'Oe', category: 'magnetic_field_h', unitId: 'oersted', dimensions: { current: 1, length: -1 }, allowPrefixes: true },
+    // Area (Imperial)
+    { symbol: 'ft²', category: 'area', unitId: 'ft2', dimensions: { length: 2 }, allowPrefixes: false },
+    { symbol: 'ac', category: 'area', unitId: 'acre', dimensions: { length: 2 }, allowPrefixes: false },
+    // Volume (Imperial)
+    { symbol: 'gal', category: 'volume', unitId: 'gal', dimensions: { length: 3 }, allowPrefixes: false },
+    { symbol: 'ft³', category: 'volume', unitId: 'ft3', dimensions: { length: 3 }, allowPrefixes: false },
+  ];
+
   // Alternative unit representation
   interface AlternativeRepresentation {
     displaySymbol: string;         // How to display, e.g., "m⋅J" or "kg⋅m³⋅s⁻²"
@@ -2640,45 +2671,69 @@ export default function UnitConverter() {
   };
 
   // Helper: Generate alternative representations for complex dimensions
+  // Ordering: (1) Normalized SI unit, (2) Bare base units, (3) SI units alphabetically, (4) Non-SI units alphabetically
+  // SI and non-SI units are never mixed in the same expression
   const generateAlternativeRepresentations = (dimensions: DimensionalFormula): AlternativeRepresentation[] => {
     const alternatives: AlternativeRepresentation[] = [];
+    const seenSymbols = new Set<string>();
     
-    // First, add the raw SI base units representation
-    const rawSymbol = dimensionsToSymbol(dimensions);
-    alternatives.push({
-      displaySymbol: rawSymbol,
-      category: null,
-      unitId: null,
-      isHybrid: false,
-      components: {}
-    });
-    
-    // Check if dimensions exactly match any single derived unit
-    const exactMatch = DERIVED_UNITS_CATALOG.find(du => dimensionsEqual(du.dimensions, dimensions));
-    if (exactMatch) {
+    // 1. First: Normalized SI unit (using greedy decomposition into derived units)
+    const normalizedSymbol = normalizeDimensions(dimensions);
+    if (normalizedSymbol) {
       alternatives.push({
-        displaySymbol: exactMatch.symbol,
-        category: exactMatch.category,
-        unitId: exactMatch.unitId,
+        displaySymbol: normalizedSymbol,
+        category: null,
+        unitId: null,
         isHybrid: false,
-        components: { derivedUnit: exactMatch }
+        components: {}
       });
-      return alternatives; // If exact match, return only base and derived
+      seenSymbols.add(normalizedSymbol);
     }
     
-    // Try to factor out each derived unit and generate hybrid representations
+    // 2. Second: Bare base units representation (if different from normalized)
+    const rawSymbol = dimensionsToSymbol(dimensions);
+    if (rawSymbol && !seenSymbols.has(rawSymbol)) {
+      alternatives.push({
+        displaySymbol: rawSymbol,
+        category: null,
+        unitId: null,
+        isHybrid: false,
+        components: {}
+      });
+      seenSymbols.add(rawSymbol);
+    }
+    
+    // 3. Third: SI derived units that exactly match, sorted alphabetically
+    const siExactMatches: AlternativeRepresentation[] = [];
+    for (const derivedUnit of DERIVED_UNITS_CATALOG) {
+      if (dimensionsEqual(derivedUnit.dimensions, dimensions) && !seenSymbols.has(derivedUnit.symbol)) {
+        siExactMatches.push({
+          displaySymbol: derivedUnit.symbol,
+          category: derivedUnit.category,
+          unitId: derivedUnit.unitId,
+          isHybrid: false,
+          components: { derivedUnit }
+        });
+        seenSymbols.add(derivedUnit.symbol);
+      }
+    }
+    // Sort SI matches alphabetically
+    siExactMatches.sort((a, b) => a.displaySymbol.localeCompare(b.displaySymbol));
+    alternatives.push(...siExactMatches);
+    
+    // 4. Fourth: SI hybrid representations (derived unit + base units), sorted alphabetically
+    const siHybrids: AlternativeRepresentation[] = [];
     for (const derivedUnit of DERIVED_UNITS_CATALOG) {
       if (canFactorOut(dimensions, derivedUnit)) {
         const remaining = subtractDimensions(dimensions, derivedUnit.dimensions);
         
         // Verify remaining dimensions don't introduce new dimensional types
         if (!hasOnlyOriginalDimensions(dimensions, remaining)) {
-          continue; // Skip this factorization
+          continue;
         }
         
         // Only create hybrid if there's something remaining
         if (Object.keys(remaining).length > 0) {
-          // Separate remaining dimensions into positive and negative exponents
           const positiveRemaining: DimensionalFormula = {};
           const negativeRemaining: DimensionalFormula = {};
           
@@ -2692,32 +2747,54 @@ export default function UnitConverter() {
           
           // Build hybrid symbol: positive_remaining, derived_unit, negative_remaining
           const parts: string[] = [];
-          
           if (Object.keys(positiveRemaining).length > 0) {
             parts.push(dimensionsToSymbol(positiveRemaining));
           }
-          
           parts.push(derivedUnit.symbol);
-          
           if (Object.keys(negativeRemaining).length > 0) {
             parts.push(dimensionsToSymbol(negativeRemaining));
           }
           
           const hybridSymbol = parts.join('⋅');
           
-          alternatives.push({
-            displaySymbol: hybridSymbol,
-            category: null,
-            unitId: null,
-            isHybrid: true,
-            components: {
-              derivedUnit,
-              remainingDimensions: remaining
-            }
-          });
+          if (!seenSymbols.has(hybridSymbol)) {
+            siHybrids.push({
+              displaySymbol: hybridSymbol,
+              category: null,
+              unitId: null,
+              isHybrid: true,
+              components: {
+                derivedUnit,
+                remainingDimensions: remaining
+              }
+            });
+            seenSymbols.add(hybridSymbol);
+          }
         }
       }
     }
+    // Sort SI hybrids alphabetically
+    siHybrids.sort((a, b) => a.displaySymbol.localeCompare(b.displaySymbol));
+    alternatives.push(...siHybrids);
+    
+    // 5. Fifth: Non-SI units that exactly match, sorted alphabetically
+    // Note: Non-SI units are never mixed with SI in hybrid representations
+    const nonSIExactMatches: AlternativeRepresentation[] = [];
+    for (const nonSIUnit of NON_SI_UNITS_CATALOG) {
+      if (dimensionsEqual(nonSIUnit.dimensions, dimensions) && !seenSymbols.has(nonSIUnit.symbol)) {
+        nonSIExactMatches.push({
+          displaySymbol: nonSIUnit.symbol,
+          category: nonSIUnit.category,
+          unitId: nonSIUnit.unitId,
+          isHybrid: false,
+          components: { derivedUnit: nonSIUnit }
+        });
+        seenSymbols.add(nonSIUnit.symbol);
+      }
+    }
+    // Sort non-SI matches alphabetically
+    nonSIExactMatches.sort((a, b) => a.displaySymbol.localeCompare(b.displaySymbol));
+    alternatives.push(...nonSIExactMatches);
     
     return alternatives;
   };
