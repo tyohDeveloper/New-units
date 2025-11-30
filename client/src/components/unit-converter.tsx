@@ -81,51 +81,42 @@ export default function UnitConverter() {
   // Derived unit catalog for alternative representations
   interface DerivedUnitInfo {
     symbol: string;
-    category: UnitCategory;
+    category: UnitCategory | string; // Allow extended categories for SI derived units
     unitId: string;
     dimensions: DimensionalFormula;
     allowPrefixes: boolean;
   }
 
-  // Catalog of all known derived units with their dimensional formulas
-  const DERIVED_UNITS_CATALOG: DerivedUnitInfo[] = [
-    // Force
+  // Catalog of SI derived units with their dimensional formulas
+  // Used for generating all possible SI representations in calculator dropdown
+  const SI_DERIVED_UNITS: DerivedUnitInfo[] = [
+    // Named SI derived units (22 total)
+    { symbol: 'Hz', category: 'frequency', unitId: 'hz', dimensions: { time: -1 }, allowPrefixes: true },
     { symbol: 'N', category: 'force', unitId: 'n', dimensions: { mass: 1, length: 1, time: -2 }, allowPrefixes: true },
-    // Pressure
     { symbol: 'Pa', category: 'pressure', unitId: 'pa', dimensions: { mass: 1, length: -1, time: -2 }, allowPrefixes: true },
-    // Energy / Work
     { symbol: 'J', category: 'energy', unitId: 'j', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
-    // Power
     { symbol: 'W', category: 'power', unitId: 'w', dimensions: { mass: 1, length: 2, time: -3 }, allowPrefixes: true },
-    // Electric charge
-    { symbol: 'C', category: 'charge', unitId: 'c', dimensions: { current: 1, time: 1 }, allowPrefixes: false },
-    // Voltage
+    { symbol: 'C', category: 'charge', unitId: 'c', dimensions: { current: 1, time: 1 }, allowPrefixes: true },
     { symbol: 'V', category: 'potential', unitId: 'v', dimensions: { mass: 1, length: 2, time: -3, current: -1 }, allowPrefixes: true },
-    // Capacitance
     { symbol: 'F', category: 'capacitance', unitId: 'f', dimensions: { mass: -1, length: -2, time: 4, current: 2 }, allowPrefixes: true },
-    // Resistance
     { symbol: 'Ω', category: 'resistance', unitId: 'ohm', dimensions: { mass: 1, length: 2, time: -3, current: -2 }, allowPrefixes: true },
-    // Conductance
-    { symbol: 'S', category: 'conductance', unitId: 's', dimensions: { mass: -1, length: -2, time: 3, current: 2 }, allowPrefixes: false },
-    // Magnetic flux
-    { symbol: 'Wb', category: 'magnetic_flux', unitId: 'wb', dimensions: { mass: 1, length: 2, time: -2, current: -1 }, allowPrefixes: false },
-    // Magnetic flux density
-    { symbol: 'T', category: 'magnetic_density', unitId: 't', dimensions: { mass: 1, time: -2, current: -1 }, allowPrefixes: false },
-    // Inductance
+    { symbol: 'S', category: 'conductance', unitId: 's', dimensions: { mass: -1, length: -2, time: 3, current: 2 }, allowPrefixes: true },
+    { symbol: 'Wb', category: 'magnetic_flux', unitId: 'wb', dimensions: { mass: 1, length: 2, time: -2, current: -1 }, allowPrefixes: true },
+    { symbol: 'T', category: 'magnetic_density', unitId: 't', dimensions: { mass: 1, time: -2, current: -1 }, allowPrefixes: true },
     { symbol: 'H', category: 'inductance', unitId: 'h', dimensions: { mass: 1, length: 2, time: -2, current: -2 }, allowPrefixes: true },
-    // Catalytic activity
-    { symbol: 'kat', category: 'catalytic', unitId: 'kat', dimensions: { amount: 1, time: -1 }, allowPrefixes: false },
-    // Area (m²)
-    { symbol: 'm²', category: 'area', unitId: 'm2', dimensions: { length: 2 }, allowPrefixes: true },
-    // Volume (L)
-    { symbol: 'L', category: 'volume', unitId: 'l', dimensions: { length: 3 }, allowPrefixes: true },
-    // Plane angle (rad)
-    { symbol: 'rad', category: 'angle', unitId: 'rad', dimensions: { angle: 1 }, allowPrefixes: true },
-    // Solid angle (sr)
-    { symbol: 'sr', category: 'solid_angle', unitId: 'sr', dimensions: { solid_angle: 1 }, allowPrefixes: true },
-    // Luminous flux (lm = cd⋅sr)
     { symbol: 'lm', category: 'luminous_flux', unitId: 'lm', dimensions: { intensity: 1, solid_angle: 1 }, allowPrefixes: true },
+    { symbol: 'lx', category: 'illuminance', unitId: 'lx', dimensions: { intensity: 1, solid_angle: 1, length: -2 }, allowPrefixes: true },
+    { symbol: 'Bq', category: 'radioactivity', unitId: 'bq', dimensions: { time: -1 }, allowPrefixes: true },
+    { symbol: 'Gy', category: 'absorbed_dose', unitId: 'gy', dimensions: { length: 2, time: -2 }, allowPrefixes: true },
+    { symbol: 'Sv', category: 'equivalent_dose', unitId: 'sv', dimensions: { length: 2, time: -2 }, allowPrefixes: true },
+    { symbol: 'kat', category: 'catalytic', unitId: 'kat', dimensions: { amount: 1, time: -1 }, allowPrefixes: true },
+    // Geometric SI derived units
+    { symbol: 'rad', category: 'angle', unitId: 'rad', dimensions: { angle: 1 }, allowPrefixes: true },
+    { symbol: 'sr', category: 'solid_angle', unitId: 'sr', dimensions: { solid_angle: 1 }, allowPrefixes: true },
   ];
+  
+  // Backward compatibility alias
+  const DERIVED_UNITS_CATALOG = SI_DERIVED_UNITS;
 
   // Non-SI units catalog (CGS, Imperial, specialized) for dropdown alternatives
   const NON_SI_UNITS_CATALOG: DerivedUnitInfo[] = [
@@ -161,7 +152,7 @@ export default function UnitConverter() {
   // Alternative unit representation
   interface AlternativeRepresentation {
     displaySymbol: string;         // How to display, e.g., "m⋅J" or "kg⋅m³⋅s⁻²"
-    category: UnitCategory | null; // Category if single unit, null if hybrid
+    category: UnitCategory | string | null; // Category if single unit, null if hybrid
     unitId: string | null;         // Unit ID if single unit, null if hybrid
     isHybrid: boolean;             // True if combination of derived+base units
     components: {                  // For hybrid representations
@@ -2829,6 +2820,137 @@ export default function UnitConverter() {
     return alternatives;
   };
 
+  // SI-only representation for calculator dropdown
+  // Generates all possible SI unit compositions for given dimensions
+  interface SIRepresentation {
+    displaySymbol: string;      // How to display, e.g., "W", "J⋅s⁻¹", "kg⋅m²⋅s⁻³"
+    derivedUnits: string[];     // List of derived unit symbols used (e.g., ["J", "s⁻¹"])
+    depth: number;              // Number of derived units used (0 = raw base units)
+  }
+
+  // Sort SI derived units by complexity (most base dimensions consumed first)
+  const SI_UNITS_BY_COMPLEXITY = [...SI_DERIVED_UNITS].sort((a, b) => {
+    const aSum = Object.values(a.dimensions).reduce((sum, exp) => sum + Math.abs(exp || 0), 0);
+    const bSum = Object.values(b.dimensions).reduce((sum, exp) => sum + Math.abs(exp || 0), 0);
+    return bSum - aSum; // Most complex first
+  });
+
+  // Helper: Check if composition is valid (remaining dimensions don't introduce new dimension types)
+  const isValidSIComposition = (target: DimensionalFormula, derived: DimensionalFormula): boolean => {
+    const remaining = subtractSI(target, derived);
+    
+    // Check: remaining dimensions must not introduce NEW dimension types
+    // that weren't in the original target
+    for (const [dim, exp] of Object.entries(remaining)) {
+      if (exp !== 0 && target[dim as keyof DimensionalFormula] === undefined) {
+        return false; // New dimension type introduced
+      }
+    }
+    return true;
+  };
+
+  // Helper: Subtract derived unit dimensions
+  const subtractSI = (dims: DimensionalFormula, derived: DimensionalFormula): DimensionalFormula => {
+    const result: DimensionalFormula = { ...dims };
+    for (const [dim, derivedExp] of Object.entries(derived)) {
+      const key = dim as keyof DimensionalFormula;
+      result[key] = (result[key] || 0) - derivedExp;
+      if (result[key] === 0) delete result[key];
+    }
+    return result;
+  };
+
+  // Helper: Format dimensions with derived unit + remaining base units
+  const formatSIComposition = (derivedSymbols: string[], remainingDims: DimensionalFormula): string => {
+    const parts: string[] = [];
+    
+    // Add remaining positive base dimensions first
+    const positiveDims: DimensionalFormula = {};
+    const negativeDims: DimensionalFormula = {};
+    for (const [dim, exp] of Object.entries(remainingDims)) {
+      if (exp > 0) positiveDims[dim as keyof DimensionalFormula] = exp;
+      else if (exp < 0) negativeDims[dim as keyof DimensionalFormula] = exp;
+    }
+    
+    const positiveBase = formatDimensions(positiveDims);
+    if (positiveBase) parts.push(positiveBase);
+    
+    // Add derived units in order
+    parts.push(...derivedSymbols);
+    
+    // Add remaining negative base dimensions last
+    const negativeBase = formatDimensions(negativeDims);
+    if (negativeBase) parts.push(negativeBase);
+    
+    return parts.join('⋅');
+  };
+
+  // Core SI derived units for general purpose compositions
+  // Excludes specialized units: Bq, Gy, Sv (radiation), Hz (prefer s⁻¹ for compositions)
+  const GENERAL_SI_DERIVED: DerivedUnitInfo[] = SI_UNITS_BY_COMPLEXITY.filter(u => 
+    !['Hz', 'Bq', 'Gy', 'Sv', 'lm', 'lx', 'kat'].includes(u.symbol)
+  );
+
+  // Generate all SI representations for given dimensions
+  // Key constraint: Only ONE derived unit per composition (plus base units)
+  // This prevents nonsensical combinations like Hz×Hz or kg⋅Gy for energy
+  const generateSIRepresentations = (dimensions: DimensionalFormula): SIRepresentation[] => {
+    if (isDimensionEmpty(dimensions)) {
+      return [{ displaySymbol: '1', derivedUnits: [], depth: 0 }];
+    }
+    
+    const representations: SIRepresentation[] = [];
+    const seenSymbols = new Set<string>();
+    
+    // 1. Try each general-purpose derived unit that can form a valid composition
+    for (const derivedUnit of GENERAL_SI_DERIVED) {
+      if (isValidSIComposition(dimensions, derivedUnit.dimensions)) {
+        const remaining = subtractSI(dimensions, derivedUnit.dimensions);
+        
+        // Build symbol: remaining positive base units + derived unit + remaining negative base units
+        const compositionSymbol = formatSIComposition([derivedUnit.symbol], remaining);
+        
+        if (!seenSymbols.has(compositionSymbol)) {
+          seenSymbols.add(compositionSymbol);
+          representations.push({
+            displaySymbol: compositionSymbol,
+            derivedUnits: [derivedUnit.symbol],
+            depth: 1
+          });
+        }
+      }
+    }
+    
+    // 2. Always add raw base unit representation
+    const rawSymbol = formatDimensions(dimensions);
+    if (rawSymbol && !seenSymbols.has(rawSymbol)) {
+      representations.push({
+        displaySymbol: rawSymbol,
+        derivedUnits: [],
+        depth: 0
+      });
+    }
+    
+    // Sort: exact derived units first (no ⋅), then by symbol length, then alphabetically
+    representations.sort((a, b) => {
+      // Exact derived unit matches (single symbol with no ⋅) first
+      const aIsExact = a.depth === 1 && !a.displaySymbol.includes('⋅');
+      const bIsExact = b.depth === 1 && !b.displaySymbol.includes('⋅');
+      if (aIsExact && !bIsExact) return -1;
+      if (!aIsExact && bIsExact) return 1;
+      
+      // Then by symbol length ascending (shorter = more compact)
+      if (a.displaySymbol.length !== b.displaySymbol.length) {
+        return a.displaySymbol.length - b.displaySymbol.length;
+      }
+      
+      // Finally alphabetically
+      return a.displaySymbol.localeCompare(b.displaySymbol);
+    });
+    
+    return representations;
+  };
+
   // Auto-select multiplication operator when values are entered
   useEffect(() => {
     if (calcValues[0] && calcValues[1] && !calcOp1) {
@@ -2920,52 +3042,13 @@ export default function UnitConverter() {
         return newValues;
       });
 
-      // Find matching category and auto-select default unit with best prefix
-      if (resultIsDimensionless) {
-        // For dimensionless results, clear unit selection
-        setResultCategory(null);
-        setResultUnit(null);
-        setResultPrefix('none');
-        setSelectedAlternative(0);
-      } else {
-        const matchingCategory = findCategoryForDimensions(resultDimensions);
-        setResultCategory(matchingCategory);
-        if (matchingCategory) {
-          // Find the category data
-          const cat = CONVERSION_DATA.find(c => c.id === matchingCategory);
-          
-          // For kg-based categories, find the kg unit (factor=1, symbol contains 'kg')
-          // This ensures kg is the default, not eV or gram
-          const isKgBased = cat?.baseSISymbol?.includes('kg');
-          if (isKgBased) {
-            // Find the kg-based unit with factor=1 (e.g., 'kg', 'kgm3', 'kgms')
-            const kgUnit = cat?.units.find(u => u.factor === 1 && u.symbol?.includes('kg'));
-            if (kgUnit) {
-              setResultUnit(kgUnit.id);
-              setResultPrefix('none');
-            } else {
-              setResultUnit(null);
-              setResultPrefix('none');
-            }
-          } else {
-            // For non-kg categories, find primary SI unit (factor=1 with allowPrefixes)
-            const primaryUnit = cat?.units.find(u => u.factor === 1 && u.allowPrefixes);
-            if (primaryUnit) {
-              setResultUnit(primaryUnit.id);
-              setResultPrefix('none');
-            } else {
-              setResultUnit(null);
-              setResultPrefix('none');
-            }
-          }
-          setSelectedAlternative(0); // Reset for category-matched results
-        } else {
-          // For complex dimensions with no matching category, generate alternatives
-          const alternatives = generateAlternativeRepresentations(resultDimensions);
-          // Default to derived unit representation (index 1) if exact match exists, else raw SI (index 0)
-          setSelectedAlternative(alternatives.length > 1 && !alternatives[1].isHybrid ? 1 : 0);
-        }
-      }
+      // Reset to SI base representation (index 0) and no prefix
+      // The SI representation dropdown will show all SI compositions
+      setResultPrefix('none');
+      setSelectedAlternative(0);
+      // Keep resultCategory/resultUnit for potential future use, but not used in SI-only mode
+      setResultCategory(null);
+      setResultUnit(null);
     } else if (calcValues[3] !== null) {
       setCalcValues(prev => {
         const newValues = [...prev];
@@ -4402,225 +4485,59 @@ export default function UnitConverter() {
                 transition={{ duration: 0.3 }}
               >
                 <span className="text-sm font-mono text-primary font-bold truncate">
-                  {calcValues[3] && resultUnit && resultCategory ? (() => {
-                    const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                    const unit = cat?.units.find(u => u.id === resultUnit);
-                    if (unit) {
-                      // Apply kg prefix handoff if unit contains kg
-                      const kgResult = applyPrefixToKgUnit(unit.symbol || '', resultPrefix);
-                      const prefixFactor = unit.allowPrefixes ? kgResult.effectivePrefixFactor : 1;
-                      let convertedValue = calcValues[3].value / (unit.factor * prefixFactor);
-                      
-                      return formatNumberWithSeparators(convertedValue, calculatorPrecision);
-                    }
-                    return formatNumberWithSeparators(calcValues[3].value, calculatorPrecision);
-                  })() : calcValues[3] && resultCategory ? (() => {
+                  {calcValues[3] ? (() => {
                     const val = calcValues[3];
                     if (!val) return '';
-                    const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                     
-                    // Apply kg prefix handoff for base SI unit
-                    const kgResult = applyPrefixToKgUnit(cat?.baseSISymbol || '', resultPrefix);
-                    const displayValue = val.value / kgResult.effectivePrefixFactor;
-                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
-                  })() : calcValues[3] ? (() => {
-                    const val = calcValues[3];
-                    if (!val) return '';
-                    // For complex dimensions, use selected alternative representation
-                    const alternatives = generateAlternativeRepresentations(val.dimensions);
-                    const currentAltSymbol = selectedAlternative < alternatives.length 
-                      ? alternatives[selectedAlternative].displaySymbol 
-                      : formatDimensions(val.dimensions);
+                    // Get SI representation for display
+                    const siReps = generateSIRepresentations(val.dimensions);
+                    const currentSymbol = siReps[selectedAlternative]?.displaySymbol || formatDimensions(val.dimensions);
                     
-                    // Apply kg prefix handoff
-                    const kgResult = applyPrefixToKgUnit(currentAltSymbol, resultPrefix);
+                    // Apply kg prefix handoff for value calculation
+                    const kgResult = applyPrefixToKgUnit(currentSymbol, resultPrefix);
                     const displayValue = val.value / kgResult.effectivePrefixFactor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : ''}
                 </span>
                 <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[3] && resultUnit && resultCategory ? (() => {
+                  {calcValues[3] ? (() => {
                     const val = calcValues[3];
                     if (!val) return '';
-                    const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                    const unit = cat?.units.find(u => u.id === resultUnit);
-                    if (!unit) return formatDimensions(val.dimensions);
                     
-                    // Apply kg prefix handoff for unit symbol display
-                    if (unit.allowPrefixes) {
-                      const kgResult = applyPrefixToKgUnit(unit.symbol || '', resultPrefix);
-                      return kgResult.displaySymbol;
-                    }
-                    return unit.symbol;
-                  })() : calcValues[3] && resultCategory ? (() => {
-                    const val = calcValues[3];
-                    if (!val) return '';
-                    const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                    if (!cat) return formatDimensions(val.dimensions);
+                    // Get SI representation for display
+                    const siReps = generateSIRepresentations(val.dimensions);
+                    const currentSymbol = siReps[selectedAlternative]?.displaySymbol || formatDimensions(val.dimensions);
                     
-                    // Apply kg prefix handoff for base SI symbol display
-                    const kgResult = applyPrefixToKgUnit(cat.baseSISymbol || '', resultPrefix);
-                    return kgResult.displaySymbol;
-                  })() : calcValues[3] ? (() => {
-                    const val = calcValues[3];
-                    if (!val) return '';
-                    // For complex dimensions, use selected alternative representation
-                    const alternatives = generateAlternativeRepresentations(val.dimensions);
-                    const currentAltSymbol = selectedAlternative < alternatives.length 
-                      ? alternatives[selectedAlternative].displaySymbol 
-                      : formatDimensions(val.dimensions);
-                    
-                    // Apply kg prefix handoff
-                    const kgResult = applyPrefixToKgUnit(currentAltSymbol, resultPrefix);
+                    // Apply kg prefix handoff for symbol display
+                    const kgResult = applyPrefixToKgUnit(currentSymbol, resultPrefix);
                     return kgResult.displaySymbol;
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Prefix and unit selectors - always visible, ghosted when no result */}
-              {calcValues[3] && resultCategory ? (
-                <>
-                  <Select 
-                    value={resultPrefix} 
-                    onValueChange={(val) => {
-                      // Get current unit ID - if null, find the kg-based unit in this category
-                      const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                      let effectiveUnitId = resultUnit;
-                      
-                      // If using base SI (resultUnit === null), find the kg-based unit in this category
-                      if (resultUnit === null && cat) {
-                        // Look for a unit whose ID is in KG_TO_GRAM_UNIT_PAIRS
-                        const kgUnit = cat.units.find(u => KG_TO_GRAM_UNIT_PAIRS[u.id]);
-                        if (kgUnit) {
-                          effectiveUnitId = kgUnit.id;
-                        }
-                      }
-                      
-                      if (effectiveUnitId && KG_TO_GRAM_UNIT_PAIRS[effectiveUnitId]) {
-                        // Apply normalizeMassUnit for kg-based units
-                        const normalized = normalizeMassUnit(effectiveUnitId, val);
-                        setResultUnit(normalized.unit);
-                        setResultPrefix(normalized.prefix);
-                      } else if (effectiveUnitId && GRAM_TO_KG_UNIT_PAIRS[effectiveUnitId]) {
-                        // Apply normalizeMassUnit for g-based units
-                        const normalized = normalizeMassUnit(effectiveUnitId, val);
-                        setResultUnit(normalized.unit);
-                        setResultPrefix(normalized.prefix);
-                      } else {
-                        // For non-kg units, just set the prefix directly
-                        setResultPrefix(val);
-                      }
-                    }}
-                    disabled={(() => {
-                      const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                      const unit = cat?.units.find(u => u.id === resultUnit);
-                      
-                      // If using base SI unit (resultUnit === null)
-                      if (resultUnit === null) {
-                        // kg-containing symbols now support prefixes via handoff
-                        // Find the primary SI unit for this category (the one with factor=1 and allowPrefixes)
-                        const primarySI = cat?.units.find(u => u.factor === 1 && u.allowPrefixes);
-                        // Enable prefixes for kg-containing base SI or primary SI with allowPrefixes
-                        return !(cat?.baseSISymbol?.includes('kg') || primarySI);
-                      }
-                      
-                      // kg-containing units now support prefixes via handoff
-                      if (unit?.symbol?.includes('kg')) {
-                        return false; // Enable prefixes for kg units
-                      }
-                      
-                      return !unit?.allowPrefixes;
-                    })()}
-                  >
-                    <SelectTrigger className="h-10 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
-                      <SelectValue placeholder={t('Prefix')} />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[70vh]">
-                      {PREFIXES.map((p) => (
-                        <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
-                          {p.symbol || '-'}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={resultUnit || 'base'} onValueChange={(val) => { setResultUnit(val === 'base' ? null : val); setResultPrefix('none'); }}>
-                    <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
-                      <SelectValue placeholder={CONVERSION_DATA.find(c => c.id === resultCategory)?.baseSISymbol || "SI Units"} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(() => {
-                        const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-                        if (!cat) return null;
-                        
-                        const units = cat.units;
-                        
-                        // Check if base SI unit exists in units array with same symbol
-                        const baseUnitExists = units.some(u => u.symbol === cat.baseSISymbol);
-                        
-                        return (
-                          <>
-                            {!baseUnitExists && (
-                              <SelectItem value="base" className="text-xs font-mono">
-                                <span className="font-bold mr-2">{cat.baseSISymbol}</span>
-                                <span className="opacity-70">{t(applyRegionalSpelling(toTitleCase(cat.baseUnit)))}</span>
-                              </SelectItem>
-                            )}
-                            {units.map(unit => (
-                              <SelectItem key={unit.id} value={unit.id} className="text-xs font-mono">
-                                {unit.symbol === unit.name ? (
-                                  <span className="font-bold">{unit.symbol}</span>
-                                ) : (
-                                  <>
-                                    <span className="font-bold mr-2">{unit.symbol}</span>
-                                    <span className="opacity-70">{translateUnitName(unit.name)}</span>
-                                  </>
-                                )}
-                              </SelectItem>
-                            ))}
-                          </>
-                        );
-                      })()}
-                    </SelectContent>
-                  </Select>
-                </>
-              ) : calcValues[3] && !resultCategory ? (
+              {/* Prefix and unit selectors - SI-only representations */}
+              {calcValues[3] && !isDimensionEmpty(calcValues[3].dimensions) ? (
                 (() => {
-                  // For complex dimensions that don't match a category, show alternative representations
-                  const val = calcValues[3];
-                  if (!val || Object.keys(val.dimensions).length === 0) {
-                    // Dimensionless - show ghosted empty selectors
-                    return (
-                      <>
-                        <Select value="none" disabled>
-                          <SelectTrigger className="h-10 w-[50px] text-xs opacity-50 cursor-not-allowed shrink-0">
-                            <SelectValue placeholder="-" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="none" className="text-xs">-</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Select value="unitless" disabled>
-                          <SelectTrigger className="h-10 flex-1 min-w-0 text-xs opacity-50 cursor-not-allowed">
-                            <SelectValue placeholder="" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="unitless" className="text-xs"></SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </>
-                    );
-                  }
+                  // Generate SI-only representations for the result dimensions
+                  const siReps = generateSIRepresentations(calcValues[3]!.dimensions);
+                  const currentSymbol = siReps[selectedAlternative]?.displaySymbol || formatDimensions(calcValues[3]!.dimensions);
                   
-                  // Generate alternative representations
-                  const alternatives = generateAlternativeRepresentations(val.dimensions);
-                  
-                  // kg-containing units now support prefixes via handoff
                   return (
                     <>
                       <Select 
                         value={resultPrefix} 
-                        onValueChange={setResultPrefix}
+                        onValueChange={(val) => {
+                          // Apply kg prefix handoff if current symbol contains kg
+                          if (currentSymbol.includes('kg')) {
+                            const normalized = normalizeMassUnit('kg', val);
+                            // For SI representations, we just update the prefix
+                            // The symbol display will handle kg→g switching via applyPrefixToKgUnit
+                            setResultPrefix(val);
+                          } else {
+                            setResultPrefix(val);
+                          }
+                        }}
                       >
-                        <SelectTrigger className="h-10 w-[50px] text-xs disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                        <SelectTrigger className="h-10 w-[50px] text-xs shrink-0">
                           <SelectValue placeholder={t('Prefix')} />
                         </SelectTrigger>
                         <SelectContent className="max-h-[70vh]">
@@ -4636,12 +4553,12 @@ export default function UnitConverter() {
                         onValueChange={(val) => { setSelectedAlternative(parseInt(val)); setResultPrefix('none'); }}
                       >
                         <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
-                          <SelectValue placeholder="Select representation" />
+                          <SelectValue placeholder="Select SI representation" />
                         </SelectTrigger>
                         <SelectContent>
-                          {alternatives.map((alt, index) => (
+                          {siReps.map((rep, index) => (
                             <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
-                              <span className="font-bold">{alt.displaySymbol}</span>
+                              <span className="font-bold">{rep.displaySymbol}</span>
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -4649,6 +4566,26 @@ export default function UnitConverter() {
                     </>
                   );
                 })()
+              ) : calcValues[3] ? (
+                /* Dimensionless result - show ghosted empty selectors */
+                <>
+                  <Select value="none" disabled>
+                    <SelectTrigger className="h-10 w-[50px] text-xs opacity-50 cursor-not-allowed shrink-0">
+                      <SelectValue placeholder="-" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none" className="text-xs">-</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value="unitless" disabled>
+                    <SelectTrigger className="h-10 flex-1 min-w-0 text-xs opacity-50 cursor-not-allowed">
+                      <SelectValue placeholder="" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="unitless" className="text-xs"></SelectItem>
+                    </SelectContent>
+                  </Select>
+                </>
               ) : (
                 /* No result - show ghosted empty selectors for UI consistency */
                 <>
