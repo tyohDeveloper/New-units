@@ -4467,7 +4467,35 @@ export default function UnitConverter() {
                 <>
                   <Select 
                     value={resultPrefix} 
-                    onValueChange={setResultPrefix}
+                    onValueChange={(val) => {
+                      // Get current unit ID - if null, find the kg-based unit in this category
+                      const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
+                      let effectiveUnitId = resultUnit;
+                      
+                      // If using base SI (resultUnit === null), find the kg-based unit in this category
+                      if (resultUnit === null && cat) {
+                        // Look for a unit whose ID is in KG_TO_GRAM_UNIT_PAIRS
+                        const kgUnit = cat.units.find(u => KG_TO_GRAM_UNIT_PAIRS[u.id]);
+                        if (kgUnit) {
+                          effectiveUnitId = kgUnit.id;
+                        }
+                      }
+                      
+                      if (effectiveUnitId && KG_TO_GRAM_UNIT_PAIRS[effectiveUnitId]) {
+                        // Apply normalizeMassUnit for kg-based units
+                        const normalized = normalizeMassUnit(effectiveUnitId, val);
+                        setResultUnit(normalized.unit);
+                        setResultPrefix(normalized.prefix);
+                      } else if (effectiveUnitId && GRAM_TO_KG_UNIT_PAIRS[effectiveUnitId]) {
+                        // Apply normalizeMassUnit for g-based units
+                        const normalized = normalizeMassUnit(effectiveUnitId, val);
+                        setResultUnit(normalized.unit);
+                        setResultPrefix(normalized.prefix);
+                      } else {
+                        // For non-kg units, just set the prefix directly
+                        setResultPrefix(val);
+                      }
+                    }}
                     disabled={(() => {
                       const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
                       const unit = cat?.units.find(u => u.id === resultUnit);
