@@ -144,7 +144,7 @@ export default function UnitConverter() {
     { symbol: 'erg⋅s⁻¹', category: 'power', unitId: 'erg_per_s', dimensions: { mass: 1, length: 2, time: -3 }, allowPrefixes: false },
     { symbol: 'hp', category: 'power', unitId: 'hp', dimensions: { mass: 1, length: 2, time: -3 }, allowPrefixes: false },
     // Viscosity (CGS)
-    { symbol: 'P', category: 'dynamic_viscosity', unitId: 'poise', dimensions: { mass: 1, length: -1, time: -1 }, allowPrefixes: true },
+    { symbol: 'P', category: 'viscosity', unitId: 'poise', dimensions: { mass: 1, length: -1, time: -1 }, allowPrefixes: true },
     { symbol: 'St', category: 'kinematic_viscosity', unitId: 'stokes', dimensions: { length: 2, time: -1 }, allowPrefixes: true },
     // Magnetic (CGS)
     { symbol: 'G', category: 'magnetic_density', unitId: 'gauss', dimensions: { mass: 1, time: -2, current: -1 }, allowPrefixes: true },
@@ -337,10 +337,27 @@ export default function UnitConverter() {
     'jgk': 'jkgk',       // Specific Heat: J⋅g⁻¹⋅K⁻¹ → J⋅kg⁻¹⋅K⁻¹
   };
   
+  // Reverse mapping: kg-based units to their g-based counterparts
+  // Used to auto-switch when non-kilo prefix is selected on kg-based unit
+  const KG_TO_GRAM_UNIT_PAIRS: Record<string, string> = {
+    'kg': 'g',           // Mass
+    'kgm3': 'gm3',       // Density: kg⋅m⁻³ → g⋅m⁻³
+    'kgms': 'gms',       // Momentum: kg⋅m⋅s⁻¹ → g⋅m⋅s⁻¹
+    'jkgk': 'jgk',       // Specific Heat: J⋅kg⁻¹⋅K⁻¹ → J⋅g⁻¹⋅K⁻¹
+  };
+  
   // Helper: Normalize kg/g unit pairs across all categories
-  // When g-based unit + kilo prefix is selected → switch to kg-based unit with no prefix
+  // - When kg-based unit + prefix (not none/kilo) → switch to g-based unit with that prefix
+  // - When g-based unit + kilo prefix → switch to kg-based unit with no prefix
   // This prevents prefix stacking and follows the Mass category pattern
   const normalizeMassUnit = (unit: string, prefix: string): { unit: string; prefix: string } => {
+    // Check if this is a kg-based unit that should switch to g-based
+    const gEquivalent = KG_TO_GRAM_UNIT_PAIRS[unit];
+    if (gEquivalent && prefix !== 'none' && prefix !== 'kilo') {
+      // kg-based + non-kilo prefix → g-based with that prefix
+      return { unit: gEquivalent, prefix };
+    }
+    
     // Check if this is a gram-based unit that can be converted to kg-based
     const kgEquivalent = GRAM_TO_KG_UNIT_PAIRS[unit];
     if (kgEquivalent && prefix === 'kilo') {
@@ -2732,6 +2749,19 @@ export default function UnitConverter() {
           continue;
         }
         
+        // Skip if remaining has same dimension types as the derived unit
+        // This would create redundant hybrids like "m⋅m²" instead of "m³"
+        let hasOverlappingDimension = false;
+        for (const dim of Object.keys(derivedUnit.dimensions) as (keyof DimensionalFormula)[]) {
+          if (remaining[dim] !== undefined && remaining[dim] !== 0) {
+            hasOverlappingDimension = true;
+            break;
+          }
+        }
+        if (hasOverlappingDimension) {
+          continue;
+        }
+        
         // Only create hybrid if there's something remaining
         if (Object.keys(remaining).length > 0) {
           const positiveRemaining: DimensionalFormula = {};
@@ -3541,7 +3571,7 @@ export default function UnitConverter() {
                       refocusInput(); 
                     }}
                     onOpenChange={(open) => { if (!open) refocusInput(); }}
-                    disabled={!fromUnitData?.allowPrefixes}
+                    disabled={!fromUnitData?.allowPrefixes && !KG_TO_GRAM_UNIT_PAIRS[fromUnit]}
                   >
                     <SelectTrigger tabIndex={2} className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
                       <SelectValue placeholder={t('Prefix')} />
@@ -3705,7 +3735,7 @@ export default function UnitConverter() {
                       setToUnit(normalized.unit);
                       setToPrefix(normalized.prefix);
                     }}
-                    disabled={!toUnitData?.allowPrefixes}
+                    disabled={!toUnitData?.allowPrefixes && !KG_TO_GRAM_UNIT_PAIRS[toUnit]}
                   >
                     <SelectTrigger className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
                       <SelectValue placeholder={t('Prefix')} />
