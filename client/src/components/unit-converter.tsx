@@ -2904,6 +2904,19 @@ export default function UnitConverter() {
       if (isValidSIComposition(dimensions, derivedUnit.dimensions)) {
         const remaining = subtractSI(dimensions, derivedUnit.dimensions);
         
+        // Skip if remaining has same dimension types as the derived unit
+        // This prevents redundant hybrids like "rad⋅rad⁻²" instead of properly combined "rad⁻¹"
+        let hasOverlappingDimension = false;
+        for (const dim of Object.keys(derivedUnit.dimensions) as (keyof DimensionalFormula)[]) {
+          if (remaining[dim] !== undefined && remaining[dim] !== 0) {
+            hasOverlappingDimension = true;
+            break;
+          }
+        }
+        if (hasOverlappingDimension) {
+          continue;
+        }
+        
         // Build symbol: remaining positive base units + derived unit + remaining negative base units
         const compositionSymbol = formatSIComposition([derivedUnit.symbol], remaining);
         
