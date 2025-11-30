@@ -1088,11 +1088,6 @@ export default function UnitConverter() {
       es: 'Comparar', fr: 'Comparer', it: 'Confronta', ko: '비교',
       pt: 'Comparar', ru: 'Сравнить', zh: '比较', ja: '比較'
     },
-    'Normalize & Copy': { 
-      en: 'Normalize & Copy', ar: 'تطبيع ونسخ', de: 'Normalisieren & Kopieren',
-      es: 'Normalizar y Copiar', fr: 'Normaliser et Copier', it: 'Normalizza e Copia', ko: '정규화 및 복사',
-      pt: 'Normalizar e Copiar', ru: 'Нормализовать и Копировать', zh: '标准化并复制', ja: '正規化してコピー'
-    },
     'Swap': { 
       en: 'Swap', ar: 'تبديل', de: 'Tauschen',
       es: 'Intercambiar', fr: 'Échanger', it: 'Scambia', ko: '교환',
@@ -3077,66 +3072,6 @@ export default function UnitConverter() {
     setResultPrefix('none');
   };
 
-  const normalizeAndCopy = () => {
-    // Use the canonical calculator result (already computed by useEffect)
-    if (calcValues[3] == null) return;
-    
-    const val = calcValues[3];
-    const dims = val.dimensions;
-    
-    // Apply precision to the value
-    const precisionAppliedValue = fixPrecision(parseFloat(cleanNumber(val.value, calculatorPrecision)));
-    
-    // Get the normalized unit symbol using greedy decomposition
-    // This converts kg·m³·s⁻² → m²·N, kg·m²·s⁻² → J, etc.
-    const unitSymbol = normalizeDimensions(dims);
-    
-    // Determine if prefix can be applied to normalized SI output:
-    // - Dimensionless values: no prefix (empty dims or empty symbol)
-    // - All SI derived units (N, J, W, Pa, Hz, V, F, Ω, S, H, Wb, T, C, etc.) accept SI prefixes
-    // - kg-containing units use prefix handoff (kg → mg, Mg, etc.)
-    const canUsePrefix = unitSymbol.length > 0 && Object.keys(dims).length > 0;
-    
-    // Find optimal prefix to minimize digit count (only if prefixes allowed)
-    let optimalPrefix = PREFIXES.find(p => p.id === 'none')!;
-    let adjustedValue = precisionAppliedValue;
-    
-    if (canUsePrefix) {
-      const result = findOptimalPrefix(precisionAppliedValue, unitSymbol, calculatorPrecision);
-      optimalPrefix = result.prefix;
-      adjustedValue = result.adjustedValue;
-    }
-    
-    // Create the normalized value with precision applied and optimal prefix
-    const normalizedValue: CalcValue = {
-      value: precisionAppliedValue,
-      dimensions: dims,
-      prefix: optimalPrefix.id
-    };
-    
-    // Apply kg prefix handoff for the display symbol
-    const kgResult = applyPrefixToKgUnit(unitSymbol, optimalPrefix.id);
-    
-    // Copy the precision-applied, normalized value with optimal prefix
-    const format = NUMBER_FORMATS[numberFormat];
-    const valueStr = cleanNumber(adjustedValue, calculatorPrecision);
-    const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
-    const textToCopy = unitSymbol ? `${formattedStr} ${kgResult.displaySymbol}` : formattedStr;
-    
-    navigator.clipboard.writeText(textToCopy);
-    
-    // Clear calculator and put normalized result into first field
-    setCalcValues([normalizedValue, null, null, null]);
-    setCalcOp1(null);
-    setCalcOp2(null);
-    setResultUnit(null);
-    setResultCategory(null);
-    setResultPrefix('none');
-    
-    setFlashCopyCalc(true);
-    setTimeout(() => setFlashCopyCalc(false), 300);
-  };
-
   const clearField1 = () => {
     setCalcValues(prev => {
       const newValues = [...prev];
@@ -3175,56 +3110,42 @@ export default function UnitConverter() {
     return result;
   };
 
+  // Helper to get formatted calculator result display (shared by UI and copy function)
+  // Returns { formattedValue: string, unitSymbol: string } or null if no result
+  const getCalcResultDisplay = () => {
+    if (!calcValues[3]) return null;
+    const val = calcValues[3];
+    
+    // Get SI representation
+    const siReps = generateSIRepresentations(val.dimensions);
+    const currentSymbol = siReps[selectedAlternative]?.displaySymbol || formatDimensions(val.dimensions);
+    
+    // Apply kg prefix handoff
+    const kgResult = applyPrefixToKgUnit(currentSymbol, resultPrefix);
+    const displayValue = val.value / kgResult.effectivePrefixFactor;
+    
+    // Format value
+    const formattedValue = formatNumberWithSeparators(displayValue, calculatorPrecision);
+    
+    return {
+      formattedValue,
+      unitSymbol: kgResult.displaySymbol
+    };
+  };
+
   const copyCalcResult = () => {
-    if (calcValues[3]) {
-      let valueToCopy = calcValues[3].value;
-      let unitSymbol = '';
-      
-      // If user has selected a specific unit, convert to that unit
-      if (resultUnit && resultCategory) {
-        const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-        const unit = cat?.units.find(u => u.id === resultUnit);
-        
-        if (unit) {
-          // Apply kg prefix handoff
-          const kgResult = applyPrefixToKgUnit(unit.symbol || '', resultPrefix);
-          const prefixFactor = unit.allowPrefixes ? kgResult.effectivePrefixFactor : 1;
-          valueToCopy = fixPrecision(calcValues[3].value / (unit.factor * prefixFactor));
-          unitSymbol = kgResult.displaySymbol;
-        }
-      } else if (resultCategory) {
-        // If result has a category but no specific unit, use SI base unit
-        const cat = CONVERSION_DATA.find(c => c.id === resultCategory);
-        // Apply kg prefix handoff for base SI symbol
-        const kgResult = applyPrefixToKgUnit(cat?.baseSISymbol || '', resultPrefix);
-        valueToCopy = fixPrecision(calcValues[3].value / kgResult.effectivePrefixFactor);
-        unitSymbol = kgResult.displaySymbol;
-      } else {
-        // Use selected alternative representation if available, otherwise dimensional formula
-        const val = calcValues[3];
-        const alternatives = generateAlternativeRepresentations(val.dimensions);
-        const currentAltSymbol = selectedAlternative < alternatives.length 
-          ? alternatives[selectedAlternative].displaySymbol 
-          : formatDimensions(val.dimensions);
-        
-        // Apply kg prefix handoff
-        const kgResult = applyPrefixToKgUnit(currentAltSymbol, resultPrefix);
-        valueToCopy = fixPrecision(val.value / kgResult.effectivePrefixFactor);
-        unitSymbol = kgResult.displaySymbol;
-      }
-      
-      // Copy with only decimal separator, no thousands separator
-      const format = NUMBER_FORMATS[numberFormat];
-      const valueStr = cleanNumber(valueToCopy, calculatorPrecision);
-      // Replace period with format's decimal separator
-      const formattedStr = format.decimal !== '.' ? valueStr.replace('.', format.decimal) : valueStr;
-      const textToCopy = unitSymbol ? `${formattedStr} ${unitSymbol}` : formattedStr;
-      navigator.clipboard.writeText(textToCopy);
-      
-      // Trigger flash animation
-      setFlashCopyCalc(true);
-      setTimeout(() => setFlashCopyCalc(false), 300);
-    }
+    const display = getCalcResultDisplay();
+    if (!display) return;
+    
+    // Copy the exact text shown in the result field
+    const textToCopy = display.unitSymbol 
+      ? `${display.formattedValue} ${display.unitSymbol}` 
+      : display.formattedValue;
+    navigator.clipboard.writeText(textToCopy);
+    
+    // Trigger flash animation
+    setFlashCopyCalc(true);
+    setTimeout(() => setFlashCopyCalc(false), 300);
   };
 
   // Helper to clean up trailing zeros from decimal numbers
@@ -4484,35 +4405,19 @@ export default function UnitConverter() {
                 }}
                 transition={{ duration: 0.3 }}
               >
-                <span className="text-sm font-mono text-primary font-bold truncate">
-                  {calcValues[3] ? (() => {
-                    const val = calcValues[3];
-                    if (!val) return '';
-                    
-                    // Get SI representation for display
-                    const siReps = generateSIRepresentations(val.dimensions);
-                    const currentSymbol = siReps[selectedAlternative]?.displaySymbol || formatDimensions(val.dimensions);
-                    
-                    // Apply kg prefix handoff for value calculation
-                    const kgResult = applyPrefixToKgUnit(currentSymbol, resultPrefix);
-                    const displayValue = val.value / kgResult.effectivePrefixFactor;
-                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
-                  })() : ''}
-                </span>
-                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[3] ? (() => {
-                    const val = calcValues[3];
-                    if (!val) return '';
-                    
-                    // Get SI representation for display
-                    const siReps = generateSIRepresentations(val.dimensions);
-                    const currentSymbol = siReps[selectedAlternative]?.displaySymbol || formatDimensions(val.dimensions);
-                    
-                    // Apply kg prefix handoff for symbol display
-                    const kgResult = applyPrefixToKgUnit(currentSymbol, resultPrefix);
-                    return kgResult.displaySymbol;
-                  })() : ''}
-                </span>
+                {(() => {
+                  const display = getCalcResultDisplay();
+                  return (
+                    <>
+                      <span className="text-sm font-mono text-primary font-bold truncate">
+                        {display?.formattedValue || ''}
+                      </span>
+                      <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
+                        {display?.unitSymbol || ''}
+                      </span>
+                    </>
+                  );
+                })()}
               </motion.div>
               {/* Prefix and unit selectors - SI-only representations */}
               {calcValues[3] && !isDimensionEmpty(calcValues[3].dimensions) ? (
@@ -4609,31 +4514,8 @@ export default function UnitConverter() {
               )}
             </div>
 
-            {/* Action buttons row - Normalize & Copy aligned to calculator field, Copy at far right of page */}
-            <div className="flex items-center">
-              {/* Normalize & Copy - right-aligned within calculator field width */}
-              <div className="flex justify-end" style={{ width: CommonFieldWidth }}>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={normalizeAndCopy}
-                  disabled={!calcValues[3]}
-                  className="text-xs hover:text-accent gap-2 shrink-0"
-                >
-                  <motion.span
-                    animate={{
-                      opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
-                      scale: flashCopyCalc ? [1, 1.1, 1] : 1
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {t('Normalize & Copy')}
-                  </motion.span>
-                </Button>
-              </div>
-              {/* Spacer */}
-              <div className="flex-1" />
-              {/* Copy - at far right of page */}
+            {/* Copy button row - right-aligned */}
+            <div className="flex justify-end">
               <Button 
                 variant="ghost" 
                 size="sm" 
