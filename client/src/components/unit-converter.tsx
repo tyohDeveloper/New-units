@@ -1877,7 +1877,8 @@ export default function UnitConverter() {
   };
 
   // Helper: Format dimensional formula as unit string
-  // Order: time, length, mass, electric current, thermodynamic temperature, amount of substance, luminous intensity, angle, solid angle
+  // Order: mass, length, luminous intensity, electric current, temperature, amount of substance, time
+  // Positive exponents first, then negative exponents, both in the same order
   const formatDimensions = (dims: DimensionalFormula): string => {
     const dimSymbols: Record<keyof DimensionalFormula, string> = {
       time: 's',
@@ -1892,9 +1893,10 @@ export default function UnitConverter() {
     };
 
     // Define the standard order for base units
-    // Order: kg → m → A → K → mol → cd → s → rad → sr
+    // Order: kg → m → cd → A → K → mol → s → rad → sr
+    // (mass, length, luminous intensity, electric current, temperature, amount, time, then supplementary)
     const dimensionOrder: (keyof DimensionalFormula)[] = [
-      'mass', 'length', 'current', 'temperature', 'amount', 'intensity', 'time', 'angle', 'solid_angle'
+      'mass', 'length', 'intensity', 'current', 'temperature', 'amount', 'time', 'angle', 'solid_angle'
     ];
 
     const positiveParts: string[] = [];
@@ -2013,6 +2015,9 @@ export default function UnitConverter() {
     // Build the result symbol
     const parts: string[] = [];
     
+    // Sort derived units alphabetically by symbol
+    const sortedDerivedUnits = Array.from(usedUnits.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    
     // Add remaining base unit dimensions (positive exponents first)
     const remainingSymbol = formatDimensions(remaining);
     if (remainingSymbol) {
@@ -2028,8 +2033,8 @@ export default function UnitConverter() {
       const positiveSymbol = formatDimensions(positiveDims);
       if (positiveSymbol) parts.push(positiveSymbol);
       
-      // Add derived units
-      Array.from(usedUnits.entries()).forEach(([symbol, count]) => {
+      // Add derived units (sorted alphabetically)
+      sortedDerivedUnits.forEach(([symbol, count]) => {
         if (count === 1) {
           parts.push(symbol);
         } else {
@@ -2041,8 +2046,8 @@ export default function UnitConverter() {
       const negativeSymbol = formatDimensions(negativeDims);
       if (negativeSymbol) parts.push(negativeSymbol);
     } else {
-      // Only derived units
-      Array.from(usedUnits.entries()).forEach(([symbol, count]) => {
+      // Only derived units (sorted alphabetically)
+      sortedDerivedUnits.forEach(([symbol, count]) => {
         if (count === 1) {
           parts.push(symbol);
         } else {
