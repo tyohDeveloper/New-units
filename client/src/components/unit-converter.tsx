@@ -2934,14 +2934,19 @@ export default function UnitConverter() {
           // Find the category data
           const cat = CONVERSION_DATA.find(c => c.id === matchingCategory);
           
-          // Default to base SI unit (null) for kg-containing categories
+          // For kg-based categories, find the kg unit (factor=1, symbol contains 'kg')
           // This ensures kg is the default, not eV or gram
-          // For other categories, find the first unit with factor=1 and allowPrefixes
           const isKgBased = cat?.baseSISymbol?.includes('kg');
           if (isKgBased) {
-            // For kg-based categories, always use base SI (kg, kg⋅m⁻³, etc.)
-            setResultUnit(null);
-            setResultPrefix('none');
+            // Find the kg-based unit with factor=1 (e.g., 'kg', 'kgm3', 'kgms')
+            const kgUnit = cat?.units.find(u => u.factor === 1 && u.symbol?.includes('kg'));
+            if (kgUnit) {
+              setResultUnit(kgUnit.id);
+              setResultPrefix('none');
+            } else {
+              setResultUnit(null);
+              setResultPrefix('none');
+            }
           } else {
             // For non-kg categories, find primary SI unit (factor=1 with allowPrefixes)
             const primaryUnit = cat?.units.find(u => u.factor === 1 && u.allowPrefixes);
