@@ -2466,8 +2466,9 @@ export default function UnitConverter() {
   };
 
   const copyFromSIBase = () => {
-    if (categoryData?.baseSISymbol) {
-      navigator.clipboard.writeText(categoryData.baseSISymbol);
+    const siBaseUnits = formatDimensions(getCategoryDimensions(activeCategory));
+    if (siBaseUnits) {
+      navigator.clipboard.writeText(siBaseUnits);
       setFlashFromSIBase(true);
       setTimeout(() => setFlashFromSIBase(false), 300);
     }
@@ -2483,8 +2484,9 @@ export default function UnitConverter() {
   };
 
   const copyToSIBase = () => {
-    if (categoryData?.baseSISymbol) {
-      navigator.clipboard.writeText(categoryData.baseSISymbol);
+    const siBaseUnits = formatDimensions(getCategoryDimensions(activeCategory));
+    if (siBaseUnits) {
+      navigator.clipboard.writeText(siBaseUnits);
       setFlashToSIBase(true);
       setTimeout(() => setFlashToSIBase(false), 300);
     }
@@ -3647,7 +3649,7 @@ export default function UnitConverter() {
                   </motion.div>
                   <div className="w-[50px] shrink-0" />
                   <motion.div 
-                    className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center flex-1 min-w-0 ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                    className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center flex-1 min-w-0 ${formatDimensions(getCategoryDimensions(activeCategory)) ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
                     style={{ height: FIELD_HEIGHT }}
                     onClick={copyFromSIBase}
                     animate={{
@@ -3658,7 +3660,7 @@ export default function UnitConverter() {
                   >
                     <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('SI Base Units')}</div>
                     <div className="font-mono text-sm text-foreground/80 truncate">
-                      {categoryData.baseSISymbol || '-'}
+                      {formatDimensions(getCategoryDimensions(activeCategory)) || '-'}
                     </div>
                   </motion.div>
                 </div>
@@ -3807,7 +3809,7 @@ export default function UnitConverter() {
                   </motion.div>
                   <div className="w-[50px] shrink-0" />
                   <motion.div 
-                    className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center flex-1 min-w-0 ${categoryData?.baseSISymbol ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                    className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center flex-1 min-w-0 ${formatDimensions(getCategoryDimensions(activeCategory)) ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
                     style={{ height: FIELD_HEIGHT }}
                     onClick={copyToSIBase}
                     animate={{
@@ -3818,7 +3820,7 @@ export default function UnitConverter() {
                   >
                     <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('SI Base Units')}</div>
                     <div className="font-mono text-sm text-foreground/80 truncate">
-                      {categoryData.baseSISymbol || '-'}
+                      {formatDimensions(getCategoryDimensions(activeCategory)) || '-'}
                     </div>
                   </motion.div>
                 </div>
