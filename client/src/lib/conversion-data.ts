@@ -116,8 +116,12 @@ export const ALL_PREFIXES: Prefix[] = [...PREFIXES, ...BINARY_PREFIXES].sort((a,
  * The goal is to keep values in the range [1, 1000) when possible.
  * For example: 1500000 J → 1.5 MJ, 0.000001 m → 1 µm
  * 
+ * For kg-containing units, the prefix is applied via "handoff" where the 'k' in kg
+ * is replaced by the prefix (kg + milli → mg, kg + mega → Mg).
+ * This function treats kg values as if they were in grams for prefix calculation.
+ * 
  * @param value - The numeric value to find a prefix for
- * @param unitSymbol - The unit symbol (used to check for 'kg' which can't use prefixes)
+ * @param unitSymbol - The unit symbol (used to detect 'kg' for special handling)
  * @param precision - Optional precision setting to ensure value is displayable
  * @returns Object with the best prefix and the adjusted value
  */
@@ -127,13 +131,14 @@ export function findOptimalPrefix(
   precision: number = 8
 ): { prefix: Prefix; adjustedValue: number } {
   const nonePrefix = PREFIXES.find(p => p.id === 'none')!;
+  const kiloPrefix = PREFIXES.find(p => p.id === 'kilo')!;
   
-  // If unit contains 'kg', can't use prefixes (kg is already prefixed)
-  if (unitSymbol.includes('kg')) {
-    return { prefix: nonePrefix, adjustedValue: value };
-  }
+  // For kg-containing units, treat the value as if in grams for prefix calculation
+  // This enables proper prefix handoff (kg → mg, Mg, etc.)
+  const containsKg = unitSymbol.includes('kg');
+  const effectiveValue = containsKg ? value * 1000 : value; // Convert kg to g scale
   
-  const absValue = Math.abs(value);
+  const absValue = Math.abs(effectiveValue);
   if (absValue === 0 || !isFinite(absValue)) {
     return { prefix: nonePrefix, adjustedValue: value };
   }
@@ -161,10 +166,10 @@ export function findOptimalPrefix(
   
   // Precision-aware fallback: if the value with no prefix would round to 0,
   // find a prefix that makes it displayable at the given precision
-  const adjustedWithBest = value / bestPrefix.factor;
+  const adjustedWithBest = effectiveValue / bestPrefix.factor;
   const roundedWithBest = parseFloat(adjustedWithBest.toFixed(precision));
   
-  if (roundedWithBest === 0 && value !== 0) {
+  if (roundedWithBest === 0 && effectiveValue !== 0) {
     // Value would round to 0, try to find a smaller prefix
     for (const prefix of PREFIXES) {
       if (prefix.factor >= bestPrefix.factor) continue; // Only try smaller prefixes
@@ -177,9 +182,12 @@ export function findOptimalPrefix(
     }
   }
   
+  // For kg-containing units, the adjustedValue is based on the original kg value
+  // The prefix handoff happens at display time (kg + milli → mg)
+  // applyPrefixToKgUnit handles the factor calculation: 1000 / prefix.factor
   return { 
     prefix: bestPrefix, 
-    adjustedValue: value / bestPrefix.factor 
+    adjustedValue: effectiveValue / bestPrefix.factor 
   };
 }
 
