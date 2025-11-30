@@ -3176,10 +3176,10 @@ export default function UnitConverter() {
     const val = calcValues[fieldIndex];
     if (!val) return;
     
-    // Use normalizeDimensions to get derived units (like J, N, W) instead of raw base units
-    const normalizedSymbol = normalizeDimensions(val.dimensions);
+    // Use formatDimensions to get pure SI base units (kg, m, s, etc.) instead of derived units
+    const baseUnitSymbol = formatDimensions(val.dimensions);
     // Apply kg prefix handoff: kg + prefix → prefixed-g (e.g., kg + milli → mg)
-    const kgResult = applyPrefixToKgUnit(normalizedSymbol, val.prefix);
+    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
     const displayValue = fixPrecision(val.value / kgResult.effectivePrefixFactor);
     const unitSymbol = kgResult.displaySymbol;
     
@@ -4200,8 +4200,8 @@ export default function UnitConverter() {
                   {calcValues[0] ? (() => {
                     const val = calcValues[0];
                     if (!val) return '';
-                    const normalizedSymbol = normalizeDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(normalizedSymbol, val.prefix);
+                    const baseUnitSymbol = formatDimensions(val.dimensions);
+                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
                     const displayValue = val.value / kgResult.effectivePrefixFactor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : ''}
@@ -4210,8 +4210,8 @@ export default function UnitConverter() {
                   {calcValues[0] ? (() => {
                     const val = calcValues[0];
                     if (!val) return '';
-                    const normalizedSymbol = normalizeDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(normalizedSymbol, val.prefix);
+                    const baseUnitSymbol = formatDimensions(val.dimensions);
+                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
                     return kgResult.displaySymbol;
                   })() : ''}
                 </span>
@@ -4250,8 +4250,8 @@ export default function UnitConverter() {
                   {calcValues[1] ? (() => {
                     const val = calcValues[1];
                     if (!val) return '';
-                    const normalizedSymbol = normalizeDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(normalizedSymbol, val.prefix);
+                    const baseUnitSymbol = formatDimensions(val.dimensions);
+                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
                     const displayValue = val.value / kgResult.effectivePrefixFactor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : ''}
@@ -4260,8 +4260,8 @@ export default function UnitConverter() {
                   {calcValues[1] ? (() => {
                     const val = calcValues[1];
                     if (!val) return '';
-                    const normalizedSymbol = normalizeDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(normalizedSymbol, val.prefix);
+                    const baseUnitSymbol = formatDimensions(val.dimensions);
+                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
                     return kgResult.displaySymbol;
                   })() : ''}
                 </span>
@@ -4332,8 +4332,8 @@ export default function UnitConverter() {
                   {calcValues[2] ? (() => {
                     const val = calcValues[2];
                     if (!val) return '';
-                    const normalizedSymbol = normalizeDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(normalizedSymbol, val.prefix);
+                    const baseUnitSymbol = formatDimensions(val.dimensions);
+                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
                     const displayValue = val.value / kgResult.effectivePrefixFactor;
                     return formatNumberWithSeparators(displayValue, calculatorPrecision);
                   })() : ''}
@@ -4342,8 +4342,8 @@ export default function UnitConverter() {
                   {calcValues[2] ? (() => {
                     const val = calcValues[2];
                     if (!val) return '';
-                    const normalizedSymbol = normalizeDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(normalizedSymbol, val.prefix);
+                    const baseUnitSymbol = formatDimensions(val.dimensions);
+                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
                     return kgResult.displaySymbol;
                   })() : ''}
                 </span>
