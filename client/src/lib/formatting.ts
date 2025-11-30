@@ -73,18 +73,26 @@ export const fixPrecision = (num: number): number => {
   if (num === 0) return 0;
   if (!isFinite(num)) return num;
   
-  const precision = 12;
-  const result = parseFloat(num.toPrecision(precision));
+  // Use JavaScript's full 17 significant digit precision
+  // to preserve as much user-entered precision as possible
+  const result = parseFloat(num.toPrecision(17));
   return result;
 };
 
 export const cleanNumber = (num: number, precision: number): string => {
   const fixed = fixPrecision(num);
   
-  const magnitude = fixed === 0 ? 0 : Math.floor(Math.log10(Math.abs(fixed)));
-  const maxDecimals = Math.max(0, Math.min(precision, 14 - magnitude));
+  // For small values, extend precision to show meaningful digits
+  let effectivePrecision = precision;
+  const absNum = Math.abs(fixed);
+  if (absNum > 0 && absNum < 1) {
+    const magnitude = Math.floor(Math.log10(absNum));
+    const neededDecimals = Math.abs(magnitude) + precision;
+    effectivePrecision = Math.min(neededDecimals, 12);
+  }
   
-  const formatted = toFixedBanker(fixed, maxDecimals);
+  // Use precision directly - no magnitude-based limiting for large numbers
+  const formatted = toFixedBanker(fixed, effectivePrecision);
   const cleaned = formatted.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
   return cleaned;
 };

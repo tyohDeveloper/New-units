@@ -2291,18 +2291,17 @@ export default function UnitConverter() {
   const formatForClipboard = (num: number, precisionValue: number): string => {
     const format = NUMBER_FORMATS[numberFormat];
     // Apply fixPrecision to remove floating-point artifacts
-    const fixed = Math.abs(num) < 1e-15 ? 0 : num;
-    const cleanedNum = fixed === 0 ? 0 : parseFloat(num.toPrecision(12));
+    const fixed = fixPrecision(num);
     
-    if (cleanedNum === 0) {
+    if (fixed === 0) {
       return format.useArabicNumerals ? '٠' : '0';
     }
     
-    const absNum = Math.abs(cleanedNum);
+    const absNum = Math.abs(fixed);
     
     // Only use scientific notation for truly extreme values
     if (absNum < 1e-12 || absNum >= 1e15) {
-      const expStr = cleanedNum.toExponential(Math.min(precisionValue, 10));
+      const expStr = fixed.toExponential(Math.min(precisionValue, 10));
       return format.useArabicNumerals ? toArabicNumerals(expStr) : expStr;
     }
     
@@ -2314,10 +2313,8 @@ export default function UnitConverter() {
       effectivePrecision = Math.min(neededDecimals, 12);
     }
     
-    // Limit precision based on magnitude
-    const magnitude = Math.floor(Math.log10(absNum));
-    const maxDecimals = Math.max(0, Math.min(effectivePrecision, 14 - magnitude));
-    const formatted = toFixedBanker(cleanedNum, maxDecimals);
+    // Use precision directly - no magnitude-based limiting
+    const formatted = toFixedBanker(fixed, effectivePrecision);
     // Remove trailing zeros after decimal point
     const cleaned = formatted.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
     // Replace period with format's decimal separator
@@ -2907,15 +2904,14 @@ export default function UnitConverter() {
   };
 
   // Helper to fix floating-point precision artifacts
-  // This rounds to 12 significant figures to remove errors like 999999999999.9998 -> 1000000000000
+  // Only cleans up obvious artifacts, doesn't truncate valid precision
   const fixPrecision = (num: number): number => {
     if (num === 0) return 0;
     if (!isFinite(num)) return num;
     
-    // Use toPrecision to round to 12 significant figures, then parse back
-    // This is more robust than manual multiplication which can overflow for large numbers
-    const precision = 12;
-    const result = parseFloat(num.toPrecision(precision));
+    // Use JavaScript's full 17 significant digit precision 
+    // to preserve as much user-entered precision as possible
+    const result = parseFloat(num.toPrecision(17));
     return result;
   };
 
@@ -2980,13 +2976,17 @@ export default function UnitConverter() {
     // First apply fixPrecision to remove floating-point artifacts
     const fixed = fixPrecision(num);
     
-    // Limit precision based on magnitude to avoid floating-point overflow
-    // JavaScript has ~15-17 significant digits precision
-    // For large numbers, we can only show fewer decimal places
-    const magnitude = fixed === 0 ? 0 : Math.floor(Math.log10(Math.abs(fixed)));
-    const maxDecimals = Math.max(0, Math.min(precision, 14 - magnitude));
+    // For small values, extend precision to show meaningful digits
+    let effectivePrecision = precision;
+    const absNum = Math.abs(fixed);
+    if (absNum > 0 && absNum < 1) {
+      const magnitude = Math.floor(Math.log10(absNum));
+      const neededDecimals = Math.abs(magnitude) + precision;
+      effectivePrecision = Math.min(neededDecimals, 12);
+    }
     
-    const formatted = toFixedBanker(fixed, maxDecimals);
+    // Use precision directly - no magnitude-based limiting for large numbers
+    const formatted = toFixedBanker(fixed, effectivePrecision);
     // Remove trailing zeros after decimal point
     const cleaned = formatted.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '');
     return cleaned;
@@ -3372,10 +3372,10 @@ export default function UnitConverter() {
 
         {/* Fixed-height content container - both tabs rendered, only active one visible */}
         <div className="grid">
-          {/* Converter Tab Content - always rendered, visibility controlled */}
+          {/* Converter Tab Content - always rendered, visibility controlled with opacity transition */}
           <Card 
-            className={`p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden col-start-1 row-start-1 ${
-              activeTab === 'converter' ? '' : 'invisible'
+            className={`p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden col-start-1 row-start-1 transition-opacity duration-150 ${
+              activeTab === 'converter' ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
           >
             {/* Background decoration */}
@@ -3383,8 +3383,8 @@ export default function UnitConverter() {
 
           <div className="grid gap-8 relative z-10">
             
-            {/* Input Section */}
-            <div className="grid gap-4">
+            {/* Input Section - gap-2 to align with Custom tab's Value label spacing */}
+            <div className="grid gap-2">
               <Label className="text-xs font-mono uppercase text-muted-foreground">{t('From')}</Label>
               <div className="flex flex-col gap-2">
                 {/* Row 1: Input, Prefix, Unit Selector */}
@@ -3788,10 +3788,10 @@ export default function UnitConverter() {
             </div>
           </Card>
 
-          {/* Custom Tab Content - always rendered, visibility controlled */}
+          {/* Custom Tab Content - always rendered, visibility controlled with opacity transition */}
           <Card 
-            className={`p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden col-start-1 row-start-1 ${
-              activeTab === 'custom' ? '' : 'invisible'
+            className={`p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden col-start-1 row-start-1 transition-opacity duration-150 ${
+              activeTab === 'custom' ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
