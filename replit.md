@@ -53,6 +53,13 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 - **Scientific Notation Input**: Input field accepts scientific notation (e.g., 12e35, 1.5e-10, 3E8, 2.998e+8)
 - **CGS Unit Prefixes**: All CGS base units support prefixes (dyne, erg, poise, stokes, gauss, maxwell, oersted, statampere, statvolt, etc.) but pre-prefixed units (centipoise, centistokes) do NOT allow additional prefixes
 - **Comparison Mode**: Toggle button ("Compare All") next to the "To" label shows input value converted to up to 8 units simultaneously with optimal prefix display and click-to-copy functionality
+- **Cross-Domain Dimensional Analysis**: Calculator result dropdown shows related quantity categories that share the same dimensions:
+  - Energy ↔ Torque, Photon Energy, Fuel Energy, Archaic Energy (all have kg⋅m²⋅s⁻²)
+  - Frequency ↔ Radioactivity, Radioactive Decay (all have s⁻¹)
+  - Pressure ↔ Sound Pressure (all have kg⋅m⁻¹⋅s⁻²)
+  - Absorbed Dose ↔ Equivalent Dose, Radiation Dose, Specific Heat (all have m²⋅s⁻²)
+  - Self-filtering: Each dropdown option excludes its own category (e.g., "J" won't show "Energy" since J already implies Energy)
+  - CATEGORY_DIMENSIONS maps 50+ categories to their dimensions for cross-domain matching
 - **Typography Category**: 11 units for print/design measurements including point (1/72 inch), pica (12 points), pixel (96 PPI ref), em, twip, cicero, with meter as SI base
 - **Cooking Measures Category**: 24 units for kitchen measurements covering US/UK/Metric/Japan variants including teaspoons, tablespoons, cups, fluid ounces, pints, quarts, gallons, with mL as base unit
 - **Multilingual Support**: 12 languages with complete translations:
