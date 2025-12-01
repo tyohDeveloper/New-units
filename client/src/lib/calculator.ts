@@ -45,6 +45,9 @@ export const SI_DERIVED_UNITS: DerivedUnitInfo[] = [
   { symbol: 'kat', category: 'catalytic', unitId: 'kat', dimensions: { amount: 1, time: -1 }, allowPrefixes: true },
   { symbol: 'rad', category: 'angle', unitId: 'rad', dimensions: { angle: 1 }, allowPrefixes: true },
   { symbol: 'sr', category: 'solid_angle', unitId: 'sr', dimensions: { solid_angle: 1 }, allowPrefixes: true },
+  // Photon energy-equivalents (via Planck relations E = hν and E = hc/λ)
+  { symbol: 'ν', category: 'photon', unitId: 'photon_freq', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
+  { symbol: 'λ', category: 'photon', unitId: 'photon_wavelength', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
 ];
 
 export const CATEGORY_DIMENSIONS: Record<string, CategoryDimensionInfo> = {
@@ -98,7 +101,7 @@ export const CATEGORY_DIMENSIONS: Record<string, CategoryDimensionInfo> = {
   absorbed_dose: { name: 'Absorbed Dose', dimensions: { length: 2, time: -2 }, isBase: false },
   equivalent_dose: { name: 'Equivalent Dose', dimensions: { length: 2, time: -2 }, isBase: false },
   cross_section: { name: 'Cross-Section', dimensions: { length: 2 }, isBase: false },
-  photon: { name: 'Photon Energy', dimensions: { mass: 1, length: 2, time: -2 }, isBase: false },
+  photon: { name: 'Photon', dimensions: { mass: 1, length: 2, time: -2 }, isBase: false },
   
   luminous_flux: { name: 'Luminous Flux', dimensions: { intensity: 1, solid_angle: 1 }, isBase: false },
   illuminance: { name: 'Illuminance', dimensions: { intensity: 1, solid_angle: 1, length: -2 }, isBase: false },

@@ -113,6 +113,9 @@ export default function UnitConverter() {
     // Geometric SI derived units
     { symbol: 'rad', category: 'angle', unitId: 'rad', dimensions: { angle: 1 }, allowPrefixes: true },
     { symbol: 'sr', category: 'solid_angle', unitId: 'sr', dimensions: { solid_angle: 1 }, allowPrefixes: true },
+    // Photon energy-equivalents (via Planck relations E = hν and E = hc/λ)
+    { symbol: 'ν', category: 'photon', unitId: 'photon_freq', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
+    { symbol: 'λ', category: 'photon', unitId: 'photon_wavelength', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
   ];
   
   // Backward compatibility alias
@@ -216,7 +219,7 @@ export default function UnitConverter() {
     absorbed_dose: { name: 'Absorbed Dose', dimensions: { length: 2, time: -2 }, isBase: false },
     equivalent_dose: { name: 'Equivalent Dose', dimensions: { length: 2, time: -2 }, isBase: false },
     cross_section: { name: 'Cross-Section', dimensions: { length: 2 }, isBase: false },
-    photon: { name: 'Photon Energy', dimensions: { mass: 1, length: 2, time: -2 }, isBase: false },
+    photon: { name: 'Photon', dimensions: { mass: 1, length: 2, time: -2 }, isBase: false },
     
     // Human Response & Acoustics/Optics
     luminous_flux: { name: 'Luminous Flux', dimensions: { intensity: 1, solid_angle: 1 }, isBase: false },
