@@ -113,10 +113,6 @@ export default function UnitConverter() {
     // Geometric SI derived units
     { symbol: 'rad', category: 'angle', unitId: 'rad', dimensions: { angle: 1 }, allowPrefixes: true },
     { symbol: 'sr', category: 'solid_angle', unitId: 'sr', dimensions: { solid_angle: 1 }, allowPrefixes: true },
-    // Category base units (non-SI but accepted for use with SI)
-    // Only multi-dimension units included; single-dimension units (b, D, eV) excluded
-    { symbol: 'St', category: 'kinematic_viscosity', unitId: 'stokes', dimensions: { length: 2, time: -1 }, allowPrefixes: true },
-    { symbol: 'rayl', category: 'acoustic_impedance', unitId: 'rayl', dimensions: { mass: 1, length: -2, time: -1 }, allowPrefixes: true },
   ];
   
   // Backward compatibility alias
@@ -141,6 +137,8 @@ export default function UnitConverter() {
     // Viscosity (CGS)
     { symbol: 'P', category: 'viscosity', unitId: 'poise', dimensions: { mass: 1, length: -1, time: -1 }, allowPrefixes: true },
     { symbol: 'St', category: 'kinematic_viscosity', unitId: 'stokes', dimensions: { length: 2, time: -1 }, allowPrefixes: true },
+    // Acoustic (CGS-derived)
+    { symbol: 'rayl', category: 'acoustic_impedance', unitId: 'rayl', dimensions: { mass: 1, length: -2, time: -1 }, allowPrefixes: true },
     // Magnetic (CGS)
     { symbol: 'G', category: 'magnetic_density', unitId: 'gauss', dimensions: { mass: 1, time: -2, current: -1 }, allowPrefixes: true },
     { symbol: 'Mx', category: 'magnetic_flux', unitId: 'maxwell', dimensions: { mass: 1, length: 2, time: -2, current: -1 }, allowPrefixes: true },
@@ -3195,6 +3193,24 @@ export default function UnitConverter() {
       return a.displaySymbol.localeCompare(b.displaySymbol);
     });
     
+    // Promote "perfect match" SI derived unit to index 0
+    // A perfect match is when: (1) exactly one derived unit, (2) displaySymbol = just that unit,
+    // (3) the unit is in SI_DERIVED_UNITS catalog (not CGS/non-SI)
+    const perfectMatchIndex = filteredRepresentations.findIndex(rep => {
+      if (rep.derivedUnits.length !== 1) return false;
+      // Check if displaySymbol is just the derived unit (no additional base units)
+      if (rep.displaySymbol !== rep.derivedUnits[0]) return false;
+      // Verify it's in the SI_DERIVED_UNITS catalog (not NON_SI_UNITS_CATALOG)
+      const siUnit = SI_DERIVED_UNITS.find(u => u.symbol === rep.derivedUnits[0]);
+      return siUnit !== undefined;
+    });
+    
+    if (perfectMatchIndex > 0) {
+      // Move perfect match to index 0
+      const [perfectMatch] = filteredRepresentations.splice(perfectMatchIndex, 1);
+      filteredRepresentations.unshift(perfectMatch);
+    }
+    
     // 3. Add cross-domain matches to each representation, excluding its own category
     // For each representation, filter out the category that the primary derived unit belongs to
     // This prevents redundant labeling like "J (Energy)" since J already implies Energy
@@ -3793,7 +3809,7 @@ export default function UnitConverter() {
                 <SelectTrigger tabIndex={7} className="h-10 w-[75px] text-xs">
                   <SelectValue placeholder="" />
                 </SelectTrigger>
-                <SelectContent className="max-h-[70vh]">
+                <SelectContent className="max-h-[50vh]">
                   {ISO_LANGUAGES.map((lang) => (
                     <SelectItem key={lang} value={lang} className="text-xs">{lang}</SelectItem>
                   ))}
@@ -3868,7 +3884,7 @@ export default function UnitConverter() {
                     <SelectTrigger tabIndex={2} className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
                       <SelectValue placeholder={t('Prefix')} />
                     </SelectTrigger>
-                    <SelectContent className="max-h-[70vh]">
+                    <SelectContent className="max-h-[50vh]">
                       {(activeCategory === 'data' ? ALL_PREFIXES : PREFIXES).map((p) => (
                         <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
                           {p.symbol || '-'}
@@ -3885,7 +3901,7 @@ export default function UnitConverter() {
                     <SelectTrigger tabIndex={3} className="flex-1 min-w-0 bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
                       <SelectValue placeholder={t('Unit')} />
                     </SelectTrigger>
-                    <SelectContent className="max-h-[70vh]">
+                    <SelectContent className="max-h-[50vh]">
                       {filteredUnits.map((u) => (
                         <SelectItem key={u.id} value={u.id} className="font-mono text-sm">
                           {u.symbol === u.name ? (
@@ -4032,7 +4048,7 @@ export default function UnitConverter() {
                     <SelectTrigger className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
                       <SelectValue placeholder={t('Prefix')} />
                     </SelectTrigger>
-                    <SelectContent className="max-h-[70vh]">
+                    <SelectContent className="max-h-[50vh]">
                       {(activeCategory === 'data' ? ALL_PREFIXES : PREFIXES).map((p) => (
                         <SelectItem key={p.id} value={p.id} className="font-mono text-sm">
                           {p.symbol || '-'}
@@ -4045,7 +4061,7 @@ export default function UnitConverter() {
                     <SelectTrigger className="flex-1 min-w-0 bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
                       <SelectValue placeholder={t('Unit')} />
                     </SelectTrigger>
-                    <SelectContent className="max-h-[70vh]">
+                    <SelectContent className="max-h-[50vh]">
                       {toFilteredUnits.map((u) => (
                         <SelectItem key={u.id} value={u.id} className="font-mono text-sm">
                           {u.symbol === u.name ? (
@@ -4206,6 +4222,12 @@ export default function UnitConverter() {
                               displayValue = optimal.adjustedValue;
                             }
                             
+                            // Use applyPrefixToKgUnit for proper kg prefix handoff (kg → Mg, mg, etc.)
+                            const kgResult = applyPrefixToKgUnit(unit.symbol, displayPrefix.id);
+                            const displaySymbol = kgResult.showPrefix 
+                              ? `${displayPrefix.symbol}${kgResult.displaySymbol}`
+                              : kgResult.displaySymbol;
+                            
                             return (
                               <div 
                                 key={unit.id}
@@ -4218,7 +4240,7 @@ export default function UnitConverter() {
                                 data-testid={`comparison-row-${unit.id}`}
                               >
                                 <span className="text-xs text-muted-foreground font-mono">
-                                  {displayPrefix.id !== 'none' ? displayPrefix.symbol : ''}{unit.symbol}
+                                  {displaySymbol}
                                 </span>
                                 <span className="text-sm font-mono text-foreground">
                                   {formatNumberWithSeparators(displayValue, precision)}
@@ -4719,7 +4741,7 @@ export default function UnitConverter() {
                         <SelectTrigger className="h-10 w-[50px] text-xs shrink-0">
                           <SelectValue placeholder={t('Prefix')} />
                         </SelectTrigger>
-                        <SelectContent className="max-h-[70vh]">
+                        <SelectContent className="max-h-[50vh]">
                           {PREFIXES.map((p) => (
                             <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
                               {p.symbol || '-'}
@@ -4734,7 +4756,7 @@ export default function UnitConverter() {
                         <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
                           <SelectValue placeholder="Select SI representation" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-h-[50vh]">
                           {siReps.map((rep, index) => (
                             <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
                               <span className="font-bold">{rep.displaySymbol}</span>

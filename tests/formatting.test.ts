@@ -124,9 +124,9 @@ describe('fixPrecision', () => {
     expect(fixPrecision(-Infinity)).toBe(-Infinity);
   });
 
-  it('should round to 12 significant figures', () => {
+  it('should preserve up to 17 significant figures (JavaScript full precision)', () => {
     const result = fixPrecision(1.23456789012345);
-    expect(result).toBe(1.23456789012);
+    expect(result).toBe(1.23456789012345);
   });
 });
 
@@ -439,10 +439,10 @@ describe('findOptimalPrefix', () => {
       expect(result.adjustedValue).toBe(0);
     });
 
-    it('should return none prefix for units containing kg (already prefixed)', () => {
+    it('should apply prefix for kg units using gram scale (kg → Mg for 1500 kg)', () => {
       const result = findOptimalPrefix(1500, 'kg', 4);
-      expect(result.prefix.id).toBe('none');
-      expect(result.adjustedValue).toBe(1500);
+      expect(result.prefix.id).toBe('mega');
+      expect(result.adjustedValue).toBeCloseTo(1.5, 4);
     });
 
     it('should still find optimal prefix for any unit symbol (caller decides if applicable)', () => {

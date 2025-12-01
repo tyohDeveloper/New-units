@@ -379,6 +379,11 @@ describe('SI Derived Units Catalog', () => {
     }
   });
 
+  it('should NOT contain CGS units (St, rayl)', () => {
+    expect(SI_DERIVED_UNITS.find(u => u.symbol === 'St')).toBeUndefined();
+    expect(SI_DERIVED_UNITS.find(u => u.symbol === 'rayl')).toBeUndefined();
+  });
+
   it('should have correct dimensions for Joule', () => {
     const joule = SI_DERIVED_UNITS.find(u => u.symbol === 'J')!;
     expect(dimensionsEqual(joule.dimensions, { mass: 1, length: 2, time: -2 })).toBe(true);

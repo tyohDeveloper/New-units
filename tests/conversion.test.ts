@@ -837,3 +837,94 @@ describe("Unit Ordering - SI Base First, Then Ascending Factor", () => {
     });
   });
 });
+
+describe("US/Imperial Precision (NIST Standards)", () => {
+  describe("Mass Units - NIST Exact Values", () => {
+    const massCategory = CONVERSION_DATA.find((c) => c.id === "mass");
+    
+    it("pound should be exactly 0.45359237 kg (NIST definition)", () => {
+      const lb = massCategory?.units.find((u) => u.id === "lb");
+      expect(lb?.factor).toBe(0.45359237);
+    });
+
+    it("ounce should be exactly 0.028349523125 kg (lb/16)", () => {
+      const oz = massCategory?.units.find((u) => u.id === "oz");
+      expect(oz?.factor).toBe(0.028349523125);
+    });
+
+    it("stone should be exactly 6.35029318 kg (14 × lb)", () => {
+      const stone = massCategory?.units.find((u) => u.id === "st");
+      expect(stone?.factor).toBe(6.35029318);
+    });
+
+    it("pound should equal ounce × 16", () => {
+      const lb = massCategory?.units.find((u) => u.id === "lb");
+      const oz = massCategory?.units.find((u) => u.id === "oz");
+      expect(lb!.factor).toBeCloseTo(oz!.factor * 16, 15);
+    });
+
+    it("stone should equal pound × 14", () => {
+      const lb = massCategory?.units.find((u) => u.id === "lb");
+      const stone = massCategory?.units.find((u) => u.id === "st");
+      expect(stone!.factor).toBeCloseTo(lb!.factor * 14, 15);
+    });
+  });
+
+  describe("Troy Mass Units - NIST Exact Values", () => {
+    const archaicMass = CONVERSION_DATA.find((c) => c.id === "archaic_mass");
+    const mainMass = CONVERSION_DATA.find((c) => c.id === "mass");
+    
+    it("troy ounce (main mass) should be exactly 0.0311034768 kg (NIST definition)", () => {
+      const troyOz = mainMass?.units.find((u) => u.id === "oz_t");
+      expect(troyOz?.factor).toBe(0.0311034768);
+    });
+
+    it("grain should be exactly 64.79891e-6 kg (1/7000 lb)", () => {
+      const grain = archaicMass?.units.find((u) => u.id === "grain");
+      expect(grain?.factor).toBe(64.79891e-6);
+    });
+
+    it("troy ounce should equal 480 grains", () => {
+      const troyOz = mainMass?.units.find((u) => u.id === "oz_t");
+      const grain = archaicMass?.units.find((u) => u.id === "grain");
+      expect(troyOz!.factor).toBeCloseTo(grain!.factor * 480, 15);
+    });
+  });
+
+  describe("Volume Units - NIST Exact Values", () => {
+    const volumeCategory = CONVERSION_DATA.find((c) => c.id === "volume");
+    const cookingCategory = CONVERSION_DATA.find((c) => c.id === "cooking");
+    
+    it("US gallon should be exactly 0.003785411784 m³ (231 in³)", () => {
+      const gal = volumeCategory?.units.find((u) => u.id === "gal");
+      expect(gal?.factor).toBe(0.003785411784);
+    });
+
+    it("US gallon in cooking should be exactly 3785.411784 mL", () => {
+      const galCooking = cookingCategory?.units.find((u) => u.id === "gal_us");
+      expect(galCooking?.factor).toBe(3785.411784);
+    });
+
+    it("cooking gallon should be consistent with volume gallon (× 1e6 mL/m³)", () => {
+      const volGal = volumeCategory?.units.find((u) => u.id === "gal");
+      const cookGal = cookingCategory?.units.find((u) => u.id === "gal_us");
+      expect(cookGal!.factor).toBeCloseTo(volGal!.factor * 1e6, 6);
+    });
+  });
+
+  describe("Flow Rate Units - Derived from NIST", () => {
+    const flowCategory = CONVERSION_DATA.find((c) => c.id === "flow");
+    
+    it("gallons per minute should use exact NIST gallon value", () => {
+      const gpm = flowCategory?.units.find((u) => u.id === "gpm");
+      const exactGPM = 0.003785411784 / 60;
+      expect(gpm?.factor).toBeCloseTo(exactGPM, 15);
+    });
+
+    it("gallons per hour should use exact NIST gallon value", () => {
+      const gph = flowCategory?.units.find((u) => u.id === "galh");
+      const exactGPH = 0.003785411784 / 3600;
+      expect(gph?.factor).toBeCloseTo(exactGPH, 15);
+    });
+  });
+});
