@@ -2737,17 +2737,20 @@ export default function UnitConverter() {
           continue;
         }
         
-        // Skip if remaining has same dimension types as the derived unit
-        // This would create redundant hybrids like "m⋅m²" instead of "m³"
-        let hasOverlappingDimension = false;
-        for (const dim of Object.keys(derivedUnit.dimensions) as (keyof DimensionalFormula)[]) {
-          if (remaining[dim] !== undefined && remaining[dim] !== 0) {
-            hasOverlappingDimension = true;
-            break;
+        // For SINGLE-dimension derived units (rad, sr), skip if remaining has same dimension
+        // This prevents "rad⋅rad⁻²" instead of properly combined "rad⁻¹"
+        // Multi-dimension units (W, J, N) are fine since remaining produces different symbols
+        const derivedDimCount = Object.keys(derivedUnit.dimensions).filter(
+          k => derivedUnit.dimensions[k as keyof DimensionalFormula] !== 0
+        ).length;
+        
+        if (derivedDimCount === 1) {
+          const derivedDimKey = Object.keys(derivedUnit.dimensions).find(
+            k => derivedUnit.dimensions[k as keyof DimensionalFormula] !== 0
+          ) as keyof DimensionalFormula;
+          if (remaining[derivedDimKey] !== undefined && remaining[derivedDimKey] !== 0) {
+            continue; // Skip - would create duplicate like rad⋅rad⁻²
           }
-        }
-        if (hasOverlappingDimension) {
-          continue;
         }
         
         // Only create hybrid if there's something remaining
@@ -2775,7 +2778,8 @@ export default function UnitConverter() {
           
           const hybridSymbol = parts.join('⋅');
           
-          if (!seenSymbols.has(hybridSymbol)) {
+          // Validate: reject if duplicate base units detected
+          if (!seenSymbols.has(hybridSymbol) && isValidSymbolRepresentation(hybridSymbol)) {
             siHybrids.push({
               displaySymbol: hybridSymbol,
               category: null,
@@ -2888,6 +2892,38 @@ export default function UnitConverter() {
     !['Hz', 'Bq', 'Gy', 'Sv', 'lm', 'lx', 'kat'].includes(u.symbol)
   );
 
+  // Validation: Check if a symbol string has duplicate base units (e.g., "rad⋅rad⁻²")
+  // Returns true if valid (no duplicates), false if invalid
+  const isValidSymbolRepresentation = (symbol: string): boolean => {
+    if (!symbol || symbol === '1') return true;
+    
+    // Base unit patterns to detect (without exponents)
+    const baseUnitPatterns = ['kg', 'm', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr'];
+    
+    // Split by multiplication dot
+    const parts = symbol.split('⋅');
+    
+    // Extract base unit from each part (strip exponents)
+    const extractBaseUnit = (part: string): string => {
+      // Remove superscript characters (exponents)
+      return part.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]/g, '');
+    };
+    
+    const baseUnitsFound: string[] = [];
+    for (const part of parts) {
+      const baseUnit = extractBaseUnit(part);
+      // Only track base units (not derived units like W, J, N)
+      if (baseUnitPatterns.includes(baseUnit)) {
+        if (baseUnitsFound.includes(baseUnit)) {
+          return false; // Duplicate base unit found
+        }
+        baseUnitsFound.push(baseUnit);
+      }
+    }
+    
+    return true;
+  };
+
   // Generate all SI representations for given dimensions
   // Key constraint: Only ONE derived unit per composition (plus base units)
   // This prevents nonsensical combinations like Hz×Hz or kg⋅Gy for energy
@@ -2904,23 +2940,28 @@ export default function UnitConverter() {
       if (isValidSIComposition(dimensions, derivedUnit.dimensions)) {
         const remaining = subtractSI(dimensions, derivedUnit.dimensions);
         
-        // Skip if remaining has same dimension types as the derived unit
-        // This prevents redundant hybrids like "rad⋅rad⁻²" instead of properly combined "rad⁻¹"
-        let hasOverlappingDimension = false;
-        for (const dim of Object.keys(derivedUnit.dimensions) as (keyof DimensionalFormula)[]) {
-          if (remaining[dim] !== undefined && remaining[dim] !== 0) {
-            hasOverlappingDimension = true;
-            break;
+        // For SINGLE-dimension derived units (rad, sr), skip if remaining has same dimension
+        // This prevents "rad⋅rad⁻²" instead of properly combined "rad⁻¹"
+        // Multi-dimension units (W, J, N) don't have this problem since their remaining
+        // dimensions produce different base unit symbols (e.g., m² not W)
+        const derivedDimCount = Object.keys(derivedUnit.dimensions).filter(
+          k => derivedUnit.dimensions[k as keyof DimensionalFormula] !== 0
+        ).length;
+        
+        if (derivedDimCount === 1) {
+          const derivedDimKey = Object.keys(derivedUnit.dimensions).find(
+            k => derivedUnit.dimensions[k as keyof DimensionalFormula] !== 0
+          ) as keyof DimensionalFormula;
+          if (remaining[derivedDimKey] !== undefined && remaining[derivedDimKey] !== 0) {
+            continue; // Skip - would create duplicate like rad⋅rad⁻²
           }
-        }
-        if (hasOverlappingDimension) {
-          continue;
         }
         
         // Build symbol: remaining positive base units + derived unit + remaining negative base units
         const compositionSymbol = formatSIComposition([derivedUnit.symbol], remaining);
         
-        if (!seenSymbols.has(compositionSymbol)) {
+        // Validate: reject if duplicate base units detected
+        if (!seenSymbols.has(compositionSymbol) && isValidSymbolRepresentation(compositionSymbol)) {
           seenSymbols.add(compositionSymbol);
           representations.push({
             displaySymbol: compositionSymbol,
@@ -2933,7 +2974,7 @@ export default function UnitConverter() {
     
     // 2. Always add raw base unit representation
     const rawSymbol = formatDimensions(dimensions);
-    if (rawSymbol && !seenSymbols.has(rawSymbol)) {
+    if (rawSymbol && !seenSymbols.has(rawSymbol) && isValidSymbolRepresentation(rawSymbol)) {
       representations.push({
         displaySymbol: rawSymbol,
         derivedUnits: [],
