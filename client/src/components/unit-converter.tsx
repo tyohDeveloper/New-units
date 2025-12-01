@@ -3565,16 +3565,17 @@ export default function UnitConverter() {
 
   // Mode switching handlers with data transfer
   // RPN stack naming: x=stack[3] (bottom/result), y=stack[2], s2=stack[1], s3=stack[0] (top)
+  // Simple calculator: field1=calcValues[0] (top), field2=calcValues[1], field3=calcValues[2], result=calcValues[3]
   const switchToRpn = () => {
     // Transfer simple calculator fields to RPN stack:
     // result → x (stack[3])
-    // field1 → s3 (stack[0]) - reversed order
-    // field2 → s2 (stack[1]) - reversed order  
-    // field3 → y (stack[2]) - reversed order
+    // "The top field placed in y" → field1 → y (stack[2])
+    // "the second from the top to s2" → field2 → s2 (stack[1])
+    // "the one above the result to s3" → field3 → s3 (stack[0])
     const newRpnStack: typeof rpnStack = [
-      calcValues[0], // s3 = field1
-      calcValues[1], // s2 = field2
-      calcValues[2], // y = field3
+      calcValues[2], // s3 = field3 (one above result)
+      calcValues[1], // s2 = field2 (second from top)
+      calcValues[0], // y = field1 (top field)
       calcValues[3]  // x = result
     ];
     setRpnStack(newRpnStack);
