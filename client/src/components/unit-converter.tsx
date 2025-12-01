@@ -2982,18 +2982,54 @@ export default function UnitConverter() {
       });
     }
     
-    // Sort: exact derived units first (no ⋅), then by symbol length, then alphabetically
-    representations.sort((a, b) => {
-      // Exact derived unit matches (single symbol with no ⋅) first
-      const aIsExact = a.depth === 1 && !a.displaySymbol.includes('⋅');
-      const bIsExact = b.depth === 1 && !b.displaySymbol.includes('⋅');
-      if (aIsExact && !bIsExact) return -1;
-      if (!aIsExact && bIsExact) return 1;
-      
-      // Then by symbol length ascending (shorter = more compact)
-      if (a.displaySymbol.length !== b.displaySymbol.length) {
-        return a.displaySymbol.length - b.displaySymbol.length;
+    // Helper: Count units in expression (parts separated by ⋅)
+    const countUnits = (symbol: string): number => {
+      if (!symbol || symbol === '1') return 0;
+      return symbol.split('⋅').length;
+    };
+    
+    // Helper: Sum of absolute exponents in expression
+    const sumAbsExponents = (symbol: string): number => {
+      if (!symbol || symbol === '1') return 0;
+      let sum = 0;
+      const parts = symbol.split('⋅');
+      for (const part of parts) {
+        // Extract exponent - default to 1 if no superscript
+        const expMatch = part.match(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]+$/);
+        if (expMatch) {
+          // Convert superscript to number
+          const superscriptMap: Record<string, string> = {
+            '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
+            '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9',
+            '⁻': '-', '⁺': '+'
+          };
+          const expStr = expMatch[0].split('').map(c => superscriptMap[c] || c).join('');
+          const exp = parseInt(expStr, 10);
+          sum += Math.abs(isNaN(exp) ? 1 : exp);
+        } else {
+          sum += 1; // No exponent means exponent of 1
+        }
       }
+      return sum;
+    };
+    
+    // Sort: (1) pure base units last, (2) fewest units, (3) lowest sum of abs exponents, (4) alphabetically
+    representations.sort((a, b) => {
+      // Pure base units (depth=0) go LAST
+      const aIsRaw = a.depth === 0;
+      const bIsRaw = b.depth === 0;
+      if (aIsRaw && !bIsRaw) return 1;  // a is raw, goes after b
+      if (!aIsRaw && bIsRaw) return -1; // b is raw, goes after a
+      
+      // Fewest units in expression first
+      const aUnits = countUnits(a.displaySymbol);
+      const bUnits = countUnits(b.displaySymbol);
+      if (aUnits !== bUnits) return aUnits - bUnits;
+      
+      // Then by sum of absolute exponents (lower first)
+      const aExpSum = sumAbsExponents(a.displaySymbol);
+      const bExpSum = sumAbsExponents(b.displaySymbol);
+      if (aExpSum !== bExpSum) return aExpSum - bExpSum;
       
       // Finally alphabetically
       return a.displaySymbol.localeCompare(b.displaySymbol);
