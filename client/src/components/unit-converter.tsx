@@ -40,6 +40,18 @@ export default function UnitConverter() {
   const [flashConversionRatio, setFlashConversionRatio] = useState<boolean>(false);
   const [comparisonMode, setComparisonMode] = useState<boolean>(false);
   
+  // Calculator mode state ('simple' | 'rpn')
+  const [calculatorMode, setCalculatorMode] = useState<'simple' | 'rpn'>('simple');
+  
+  // RPN calculator state - independent from simple calculator
+  const [rpnStack, setRpnStack] = useState<Array<CalcValue | null>>([null, null, null, null]);
+  const [flashRpnField1, setFlashRpnField1] = useState<boolean>(false);
+  const [flashRpnField2, setFlashRpnField2] = useState<boolean>(false);
+  const [flashRpnField3, setFlashRpnField3] = useState<boolean>(false);
+  const [flashRpnResult, setFlashRpnResult] = useState<boolean>(false);
+  const [rpnResultPrefix, setRpnResultPrefix] = useState<string>('none');
+  const [rpnSelectedAlternative, setRpnSelectedAlternative] = useState<number>(0);
+  
   // Tab state
   const [activeTab, setActiveTab] = useState<string>('converter');
   
@@ -2615,20 +2627,29 @@ export default function UnitConverter() {
       setTimeout(() => setFlashCopyResult(false), 300);
       
       // Add to calculator (first three fields only) - convert to SI base units
-      const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
-      if (firstEmptyIndex !== -1) {
-        // Convert result to SI base units (which equals category base for most categories)
-        const siBaseValue = valueToCopy;
-        
-        const bestPrefix = 'none';
-        
-        const newCalcValues = [...calcValues];
-        newCalcValues[firstEmptyIndex] = {
-          value: siBaseValue,
-          dimensions: getCategoryDimensions(activeCategory),
-          prefix: bestPrefix
-        };
-        setCalcValues(newCalcValues);
+      // Use appropriate stack based on calculator mode
+      const siBaseValue = valueToCopy;
+      const bestPrefix = 'none';
+      const newEntry = {
+        value: siBaseValue,
+        dimensions: getCategoryDimensions(activeCategory),
+        prefix: bestPrefix
+      };
+      
+      if (calculatorMode === 'rpn') {
+        const firstEmptyIndex = rpnStack.findIndex((v, i) => i < 3 && v === null);
+        if (firstEmptyIndex !== -1) {
+          const newRpnStack = [...rpnStack];
+          newRpnStack[firstEmptyIndex] = newEntry;
+          setRpnStack(newRpnStack);
+        }
+      } else {
+        const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
+        if (firstEmptyIndex !== -1) {
+          const newCalcValues = [...calcValues];
+          newCalcValues[firstEmptyIndex] = newEntry;
+          setCalcValues(newCalcValues);
+        }
       }
     }
   };
@@ -3455,6 +3476,91 @@ export default function UnitConverter() {
       newValues[2] = null;
       return newValues;
     });
+  };
+
+  // RPN Calculator functions
+  const clearRpnStack = () => {
+    setRpnStack([null, null, null, null]);
+    setRpnResultPrefix('none');
+    setRpnSelectedAlternative(0);
+  };
+
+  const clearRpnTop = () => {
+    // Clear the top non-null entry in the stack
+    setRpnStack(prev => {
+      const newStack = [...prev];
+      // Find the last non-null entry (highest index with data)
+      for (let i = 2; i >= 0; i--) {
+        if (newStack[i] !== null) {
+          newStack[i] = null;
+          break;
+        }
+      }
+      return newStack;
+    });
+  };
+
+  const pushToRpnStack = () => {
+    // Push from clipboard/pending value to RPN stack
+    // For now, this will be handled by the copy-to-calculator logic
+    // which detects calculatorMode and pushes to rpnStack instead
+  };
+
+  // Get RPN result display (similar to getCalcResultDisplay but for RPN)
+  const getRpnResultDisplay = () => {
+    if (!rpnStack[3]) return null;
+    const val = rpnStack[3];
+    
+    const siReps = generateSIRepresentations(val.dimensions);
+    const currentSymbol = siReps[rpnSelectedAlternative]?.displaySymbol || formatDimensions(val.dimensions);
+    
+    const kgResult = applyPrefixToKgUnit(currentSymbol, rpnResultPrefix);
+    const displayValue = val.value / kgResult.effectivePrefixFactor;
+    
+    const formattedValue = formatNumberWithSeparators(displayValue, calculatorPrecision);
+    
+    return {
+      formattedValue,
+      unitSymbol: kgResult.displaySymbol
+    };
+  };
+
+  const copyRpnResult = () => {
+    const display = getRpnResultDisplay();
+    if (!display) return;
+    
+    // Clean up the formatted value for clipboard
+    const cleanValue = display.formattedValue.replace(/,/g, '');
+    const textToCopy = display.unitSymbol ? `${cleanValue} ${display.unitSymbol}` : cleanValue;
+    
+    navigator.clipboard.writeText(textToCopy);
+    setFlashRpnResult(true);
+    setTimeout(() => setFlashRpnResult(false), 300);
+  };
+
+  const copyRpnField = (index: number) => {
+    const val = rpnStack[index];
+    if (!val) return;
+    
+    const baseUnitSymbol = formatDimensions(val.dimensions);
+    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
+    const displayValue = val.value / kgResult.effectivePrefixFactor;
+    const formattedValue = formatNumberWithSeparators(displayValue, calculatorPrecision);
+    const cleanValue = formattedValue.replace(/,/g, '');
+    const textToCopy = kgResult.displaySymbol ? `${cleanValue} ${kgResult.displaySymbol}` : cleanValue;
+    
+    navigator.clipboard.writeText(textToCopy);
+    
+    if (index === 0) {
+      setFlashRpnField1(true);
+      setTimeout(() => setFlashRpnField1(false), 300);
+    } else if (index === 1) {
+      setFlashRpnField2(true);
+      setTimeout(() => setFlashRpnField2(false), 300);
+    } else if (index === 2) {
+      setFlashRpnField3(true);
+      setTimeout(() => setFlashRpnField3(false), 300);
+    }
   };
 
   // Helper to fix floating-point precision artifacts
@@ -4415,16 +4521,27 @@ export default function UnitConverter() {
                     setTimeout(() => setFlashDirectCopy(false), 300);
                     
                     // Add to calculator (first three fields only)
-                    const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
-                    if (firstEmptyIndex !== -1) {
-                      const dims = buildDirectDimensions();
-                      const newCalcValues = [...calcValues];
-                      newCalcValues[firstEmptyIndex] = {
-                        value: numValue,
-                        dimensions: dims,
-                        prefix: 'none'
-                      };
-                      setCalcValues(newCalcValues);
+                    const dims = buildDirectDimensions();
+                    const newEntry = {
+                      value: numValue,
+                      dimensions: dims,
+                      prefix: 'none'
+                    };
+                    
+                    if (calculatorMode === 'rpn') {
+                      const firstEmptyIndex = rpnStack.findIndex((v, i) => i < 3 && v === null);
+                      if (firstEmptyIndex !== -1) {
+                        const newRpnStack = [...rpnStack];
+                        newRpnStack[firstEmptyIndex] = newEntry;
+                        setRpnStack(newRpnStack);
+                      }
+                    } else {
+                      const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
+                      if (firstEmptyIndex !== -1) {
+                        const newCalcValues = [...calcValues];
+                        newCalcValues[firstEmptyIndex] = newEntry;
+                        setCalcValues(newCalcValues);
+                      }
                     }
                   }}
                   className="text-xs hover:text-accent gap-2"
@@ -4506,43 +4623,87 @@ export default function UnitConverter() {
         {/* Mini Calculator */}
         <Card className="p-6 bg-card border-border/50">
           <div 
-            className="grid gap-2 mb-4 items-center"
-            style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
+            className="flex gap-2 mb-4 items-center justify-between"
           >
-            <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
-              <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Calculator')}</Label>
-              <div className="flex items-center gap-2">
-                <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
-                <Select 
-                  value={calculatorPrecision.toString()} 
-                  onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
-                >
-                  <SelectTrigger className="h-10 w-[70px] text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent align="end">
-                    {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(p => (
-                      <SelectItem key={p} value={p.toString()} className="text-xs">
-                        {numberFormat === 'arabic' ? toArabicNumerals(p.toString()) : p}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
+                <Label className="text-xs font-mono uppercase text-muted-foreground">
+                  {calculatorMode === 'rpn' ? t('RPN Calculator') : t('Calculator')}
+                </Label>
+                <div className="flex items-center gap-2">
+                  <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
+                  <Select 
+                    value={calculatorPrecision.toString()} 
+                    onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
+                  >
+                    <SelectTrigger className="h-10 w-[70px] text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent align="end">
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(p => (
+                        <SelectItem key={p} value={p.toString()} className="text-xs">
+                          {numberFormat === 'arabic' ? toArabicNumerals(p.toString()) : p}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
+              {/* Left-side buttons - different per mode */}
+              {calculatorMode === 'simple' ? (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={clearCalculator}
+                  className="text-xs hover:text-accent"
+                >
+                  {t('Clear')} {t('Calculator')}
+                </Button>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={clearRpnTop}
+                    className="text-xs hover:text-accent"
+                  >
+                    CLR
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={pushToRpnStack}
+                    className="text-xs hover:text-accent"
+                    disabled
+                  >
+                    Push
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={copyRpnResult}
+                    disabled={!rpnStack[3]}
+                    className="text-xs hover:text-accent gap-1"
+                  >
+                    <Copy className="w-3 h-3" />
+                    {t('Copy')}
+                  </Button>
+                </div>
+              )}
             </div>
-            <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for + column */}
-            <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for - column */}
-            <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for × column */}
-            <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for / column */}
+            {/* Right-side mode toggle button */}
             <Button 
-              variant="ghost" 
+              variant="outline" 
               size="sm" 
-              onClick={clearCalculator}
-              className="text-xs hover:text-accent justify-self-start"
+              onClick={() => setCalculatorMode(calculatorMode === 'simple' ? 'rpn' : 'simple')}
+              className="text-xs font-mono"
             >
-              {t('Clear')} {t('Calculator')}
+              {calculatorMode === 'simple' ? 'RPN' : 'SIMPLE'}
             </Button>
           </div>
+          
+          {/* Simple Calculator Mode */}
+          {calculatorMode === 'simple' && (
           <div className="space-y-2">
             {/* Field 1 */}
             <div 
@@ -4906,6 +5067,225 @@ export default function UnitConverter() {
               </Button>
             </div>
           </div>
+          )}
+          
+          {/* RPN Calculator Mode */}
+          {calculatorMode === 'rpn' && (
+          <div className="space-y-2">
+            {/* RPN Field 1 */}
+            <div className="flex gap-2 items-center">
+              <motion.div 
+                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                onClick={() => rpnStack[0] && copyRpnField(0)}
+                style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
+                animate={{
+                  opacity: flashRpnField1 ? [1, 0.3, 1] : 1,
+                  scale: flashRpnField1 ? [1, 1.02, 1] : 1
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                <span className="text-sm font-mono text-foreground truncate">
+                  {rpnStack[0] ? (() => {
+                    const val = rpnStack[0];
+                    if (!val) return '';
+                    const baseUnitSymbol = formatDimensions(val.dimensions);
+                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
+                    const displayValue = val.value / kgResult.effectivePrefixFactor;
+                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
+                  })() : ''}
+                </span>
+                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
+                  {rpnStack[0] ? (() => {
+                    const val = rpnStack[0];
+                    if (!val) return '';
+                    const baseUnitSymbol = formatDimensions(val.dimensions);
+                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
+                    return kgResult.displaySymbol;
+                  })() : ''}
+                </span>
+              </motion.div>
+            </div>
+
+            {/* RPN Field 2 */}
+            <div className="flex gap-2 items-center">
+              <motion.div 
+                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                onClick={() => rpnStack[1] && copyRpnField(1)}
+                style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
+                animate={{
+                  opacity: flashRpnField2 ? [1, 0.3, 1] : 1,
+                  scale: flashRpnField2 ? [1, 1.02, 1] : 1
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                <span className="text-sm font-mono text-foreground truncate">
+                  {rpnStack[1] ? (() => {
+                    const val = rpnStack[1];
+                    if (!val) return '';
+                    const baseUnitSymbol = formatDimensions(val.dimensions);
+                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
+                    const displayValue = val.value / kgResult.effectivePrefixFactor;
+                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
+                  })() : ''}
+                </span>
+                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
+                  {rpnStack[1] ? (() => {
+                    const val = rpnStack[1];
+                    if (!val) return '';
+                    const baseUnitSymbol = formatDimensions(val.dimensions);
+                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
+                    return kgResult.displaySymbol;
+                  })() : ''}
+                </span>
+              </motion.div>
+            </div>
+
+            {/* RPN Field 3 */}
+            <div className="flex gap-2 items-center">
+              <motion.div 
+                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
+                onClick={() => rpnStack[2] && copyRpnField(2)}
+                style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
+                animate={{
+                  opacity: flashRpnField3 ? [1, 0.3, 1] : 1,
+                  scale: flashRpnField3 ? [1, 1.02, 1] : 1
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                <span className="text-sm font-mono text-foreground truncate">
+                  {rpnStack[2] ? (() => {
+                    const val = rpnStack[2];
+                    if (!val) return '';
+                    const baseUnitSymbol = formatDimensions(val.dimensions);
+                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
+                    const displayValue = val.value / kgResult.effectivePrefixFactor;
+                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
+                  })() : ''}
+                </span>
+                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
+                  {rpnStack[2] ? (() => {
+                    const val = rpnStack[2];
+                    if (!val) return '';
+                    const baseUnitSymbol = formatDimensions(val.dimensions);
+                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
+                    return kgResult.displaySymbol;
+                  })() : ''}
+                </span>
+              </motion.div>
+            </div>
+
+            {/* RPN Result Field */}
+            <div className="flex gap-2 items-center" style={{ width: '100%' }}>
+              <motion.div 
+                className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between select-none shrink-0 ${rpnStack[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
+                onClick={() => rpnStack[3] && copyRpnResult()}
+                animate={{
+                  opacity: flashRpnResult ? [1, 0.3, 1] : 1,
+                  scale: flashRpnResult ? [1, 1.02, 1] : 1
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                {(() => {
+                  const display = getRpnResultDisplay();
+                  return (
+                    <>
+                      <span className="text-sm font-mono text-primary font-bold truncate">
+                        {display?.formattedValue || ''}
+                      </span>
+                      <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
+                        {display?.unitSymbol || ''}
+                      </span>
+                    </>
+                  );
+                })()}
+              </motion.div>
+              {/* Prefix and unit selectors for RPN result */}
+              {rpnStack[3] && !isDimensionEmpty(rpnStack[3].dimensions) ? (
+                (() => {
+                  const siReps = generateSIRepresentations(rpnStack[3]!.dimensions);
+                  return (
+                    <>
+                      <Select 
+                        value={rpnResultPrefix} 
+                        onValueChange={(val) => setRpnResultPrefix(val)}
+                      >
+                        <SelectTrigger className="h-10 w-[50px] text-xs shrink-0">
+                          <SelectValue placeholder={t('Prefix')} />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[50vh]">
+                          {PREFIXES.map((p) => (
+                            <SelectItem key={p.id} value={p.id} className="text-xs font-mono">
+                              {p.symbol || '-'}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Select 
+                        value={rpnSelectedAlternative.toString()} 
+                        onValueChange={(val) => { setRpnSelectedAlternative(parseInt(val)); setRpnResultPrefix('none'); }}
+                      >
+                        <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
+                          <SelectValue placeholder="Select SI representation" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[50vh]">
+                          {siReps.map((rep, index) => (
+                            <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
+                              <span className="font-bold">{rep.displaySymbol}</span>
+                              {rep.crossDomainMatches && rep.crossDomainMatches.length > 0 && (
+                                <span className="ml-2 text-muted-foreground font-normal">
+                                  ({rep.crossDomainMatches.join(', ')})
+                                </span>
+                              )}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </>
+                  );
+                })()
+              ) : rpnStack[3] ? (
+                <>
+                  <Select value="none" disabled>
+                    <SelectTrigger className="h-10 w-[50px] text-xs opacity-50 cursor-not-allowed shrink-0">
+                      <SelectValue placeholder="-" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none" className="text-xs">-</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value="unitless" disabled>
+                    <SelectTrigger className="h-10 flex-1 min-w-0 text-xs opacity-50 cursor-not-allowed">
+                      <SelectValue placeholder="" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="unitless" className="text-xs"></SelectItem>
+                    </SelectContent>
+                  </Select>
+                </>
+              ) : (
+                <>
+                  <Select value="none" disabled>
+                    <SelectTrigger className="h-10 w-[50px] text-xs opacity-50 cursor-not-allowed shrink-0">
+                      <SelectValue placeholder="-" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none" className="text-xs">-</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value="empty" disabled>
+                    <SelectTrigger className="h-10 flex-1 min-w-0 text-xs opacity-50 cursor-not-allowed">
+                      <SelectValue placeholder="" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="empty" className="text-xs"></SelectItem>
+                    </SelectContent>
+                  </Select>
+                </>
+              )}
+            </div>
+          </div>
+          )}
         </Card>
       </div>
     </div>
