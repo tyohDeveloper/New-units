@@ -598,16 +598,20 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseUnit: "electronvolt",
     baseSISymbol: "eV",
     units: [
-      // Energy (base unit) - direct relationship
+      // Energy units - direct relationship
       { id: "eV", name: "Electronvolt", symbol: "eV", factor: 1, allowPrefixes: true },
+      // Joule: 1 J = 6.241509074e18 eV (CODATA 2018)
+      { id: "J_photon", name: "Joule", symbol: "J", factor: 6.241509074e18, allowPrefixes: true },
       // Frequency - direct relationship: E = hν, so ν = E/h
-      // 1 eV photon has frequency = 1 eV / (4.135667696e-15 eV·s) = 2.417989242e14 Hz
-      // factor = h in eV·s = 4.135667696e-15 (multiply eV by this to get Hz)
-      { id: "Hz", name: "Hertz", symbol: "Hz", factor: 4.135667696e-15, allowPrefixes: true },
+      // 1 eV photon has frequency = 1 eV / (4.135667696e-15 eV·s) = 2.417989242e14 s⁻¹
+      // factor = h in eV·s = 4.135667696e-15 (multiply eV by this to get s⁻¹)
+      { id: "freq", name: "Frequency", symbol: "s⁻¹", factor: 4.135667696e-15, allowPrefixes: true },
       // Wavelength - INVERSE relationship: E = hc/λ, so λ = hc/E
       // hc = 1.239841984e-6 eV·m
-      // Use nano prefix for nm (no separate nm unit to avoid prefix stacking)
       { id: "m_wave", name: "Meter (wavelength)", symbol: "m", factor: 1.239841984e-6, allowPrefixes: true, isInverse: true },
+      // Wavenumber - direct relationship: k = E/(hc) = 1/λ
+      // 1 eV = 8065.54393734 cm⁻¹ (CODATA 2018)
+      { id: "cm_inv", name: "Wavenumber", symbol: "cm⁻¹", factor: 1/8065.54393734 },
     ],
   },
   {

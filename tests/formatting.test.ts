@@ -460,10 +460,12 @@ describe('Photon/Light Category', () => {
     expect(photonCategory).toBeDefined();
   });
 
-  it('should have wavelength, frequency, and energy units', () => {
+  it('should have wavelength, frequency, energy, and wavenumber units', () => {
     expect(photonCategory?.units.some((u) => u.id === 'm_wave')).toBe(true);
-    expect(photonCategory?.units.some((u) => u.id === 'Hz')).toBe(true);
+    expect(photonCategory?.units.some((u) => u.id === 'freq')).toBe(true);
     expect(photonCategory?.units.some((u) => u.id === 'eV')).toBe(true);
+    expect(photonCategory?.units.some((u) => u.id === 'J_photon')).toBe(true);
+    expect(photonCategory?.units.some((u) => u.id === 'cm_inv')).toBe(true);
   });
 
   it('should have inverse conversion for wavelength unit', () => {
@@ -494,12 +496,12 @@ describe('Photon Conversion Function', () => {
     expect(result).toBeCloseTo(1.24e-6, 8);
   });
 
-  it('should convert wavelength 500e-9 m to frequency ~6e14 Hz', () => {
+  it('should convert wavelength 500e-9 m to frequency ~6e14 s⁻¹', () => {
     const wavelength_m = 500e-9;
     const c = 299792458;
-    const expectedHz = c / wavelength_m;
-    const result = convert(500e-9, 'm_wave', 'Hz', 'photon');
-    expect(result).toBeCloseTo(expectedHz, -10);
+    const expectedFreq = c / wavelength_m;
+    const result = convert(500e-9, 'm_wave', 'freq', 'photon');
+    expect(result).toBeCloseTo(expectedFreq, -10);
   });
 
   it('should be reversible: eV → m → eV', () => {

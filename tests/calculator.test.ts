@@ -57,10 +57,10 @@ describe('Dimensional Formula Operations', () => {
       expect(dimensionsEqual(energy, joule.dimensions)).toBe(true);
     });
 
-    it('should match Frequency dimensions (s⁻¹)', () => {
+    it('should match Frequency dimensions (s⁻¹) with Becquerel', () => {
       const frequency: DimensionalFormula = { time: -1 };
-      const hertz = SI_DERIVED_UNITS.find(u => u.symbol === 'Hz')!;
-      expect(dimensionsEqual(frequency, hertz.dimensions)).toBe(true);
+      const bq = SI_DERIVED_UNITS.find(u => u.symbol === 'Bq')!;
+      expect(dimensionsEqual(frequency, bq.dimensions)).toBe(true);
     });
   });
 
@@ -371,12 +371,15 @@ describe('Dimension Formatting', () => {
 });
 
 describe('SI Derived Units Catalog', () => {
-  it('should have all named SI derived units', () => {
-    const expectedSymbols = ['Hz', 'N', 'Pa', 'J', 'W', 'C', 'V', 'F', 'Ω', 'S', 
+  it('should have all named SI derived units (Hz excluded - use s⁻¹)', () => {
+    // Hz removed per user requirement: frequency always displays as s⁻¹
+    const expectedSymbols = ['N', 'Pa', 'J', 'W', 'C', 'V', 'F', 'Ω', 'S', 
                              'Wb', 'T', 'H', 'lm', 'lx', 'Bq', 'Gy', 'Sv', 'kat', 'rad', 'sr'];
     for (const symbol of expectedSymbols) {
       expect(SI_DERIVED_UNITS.find(u => u.symbol === symbol)).toBeDefined();
     }
+    // Verify Hz is NOT in SI_DERIVED_UNITS
+    expect(SI_DERIVED_UNITS.find(u => u.symbol === 'Hz')).toBeUndefined();
   });
 
   it('should NOT contain CGS units (St, rayl)', () => {
