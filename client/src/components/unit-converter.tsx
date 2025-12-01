@@ -114,8 +114,7 @@ export default function UnitConverter() {
     { symbol: 'rad', category: 'angle', unitId: 'rad', dimensions: { angle: 1 }, allowPrefixes: true },
     { symbol: 'sr', category: 'solid_angle', unitId: 'sr', dimensions: { solid_angle: 1 }, allowPrefixes: true },
     // Category base units (non-SI but accepted for use with SI)
-    // Only multi-dimension units included; single-dimension units (b, D) excluded
-    { symbol: 'eV', category: 'photon', unitId: 'ev', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
+    // Only multi-dimension units included; single-dimension units (b, D, eV) excluded
     { symbol: 'St', category: 'kinematic_viscosity', unitId: 'stokes', dimensions: { length: 2, time: -1 }, allowPrefixes: true },
     { symbol: 'rayl', category: 'acoustic_impedance', unitId: 'rayl', dimensions: { mass: 1, length: -2, time: -1 }, allowPrefixes: true },
   ];
@@ -3021,10 +3020,10 @@ export default function UnitConverter() {
   };
 
   // Core SI derived units for general purpose compositions
-  // Exclude single-dimension units (resolve to exactly one base unit type)
-  // Hz, Bq → s⁻¹; rad → angle; sr → solid angle; prefer base unit representation
+  // Exclude units that resolve to a single SI base unit (Hz, Bq → s⁻¹)
+  // rad and sr are coherent SI derived units and remain available
   const GENERAL_SI_DERIVED: DerivedUnitInfo[] = SI_UNITS_BY_COMPLEXITY.filter(u => 
-    !['Hz', 'Bq', 'rad', 'sr'].includes(u.symbol)
+    !['Hz', 'Bq'].includes(u.symbol)
   );
 
   // Validation: Check if a symbol string has duplicate base units (e.g., "rad⋅rad⁻²")
