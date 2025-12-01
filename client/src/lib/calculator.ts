@@ -142,6 +142,13 @@ export const isDimensionless = (d: DimensionalFormula): boolean => {
   return Object.keys(d).filter(k => d[k as keyof DimensionalFormula] !== 0).length === 0;
 };
 
+// Categories to exclude from cross-domain matching (archaic, specialty, other)
+const EXCLUDED_CROSS_DOMAIN_CATEGORIES = [
+  'archaic_length', 'archaic_mass', 'archaic_volume', 'archaic_area', 'archaic_energy', 'archaic_power',
+  'typography', 'cooking', 'beer_wine_volume', 'fuel_economy', 'lightbulb', 'rack_geometry', 'shipping',
+  'data', 'math'
+];
+
 export const findCrossDomainMatches = (
   dimensions: DimensionalFormula, 
   currentCategory?: string
@@ -152,6 +159,9 @@ export const findCrossDomainMatches = (
   
   for (const [catId, info] of Object.entries(CATEGORY_DIMENSIONS)) {
     if (catId === currentCategory || info.isBase) continue;
+    
+    // Skip archaic, specialty, and other excluded categories
+    if (EXCLUDED_CROSS_DOMAIN_CATEGORIES.includes(catId)) continue;
     
     if (isDimensionless(info.dimensions)) continue;
     

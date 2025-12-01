@@ -54,11 +54,12 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 - **CGS Unit Prefixes**: All CGS base units support prefixes (dyne, erg, poise, stokes, gauss, maxwell, oersted, statampere, statvolt, etc.) but pre-prefixed units (centipoise, centistokes) do NOT allow additional prefixes
 - **Comparison Mode**: Toggle button ("Compare All") next to the "To" label shows input value converted to up to 8 units simultaneously with optimal prefix display and click-to-copy functionality
 - **Cross-Domain Dimensional Analysis**: Calculator result dropdown shows related quantity categories that share the same dimensions:
-  - Energy ↔ Torque, Photon Energy, Fuel Energy, Archaic Energy (all have kg⋅m²⋅s⁻²)
+  - Energy ↔ Torque, Photon Energy, Fuel Energy (all have kg⋅m²⋅s⁻²)
   - Frequency ↔ Radioactivity, Radioactive Decay (all have s⁻¹)
   - Pressure ↔ Sound Pressure (all have kg⋅m⁻¹⋅s⁻²)
   - Absorbed Dose ↔ Equivalent Dose, Radiation Dose (all have m²⋅s⁻²)
   - Self-filtering: Each dropdown option excludes its own category (e.g., "J" won't show "Energy" since J already implies Energy)
+  - Excluded from cross-domain: Archaic categories, specialty categories (Typography, Cooking, Beer & Wine, etc.), Data, Math
   - CATEGORY_DIMENSIONS maps 50+ categories to their dimensions for cross-domain matching
 - **Calculator Module** (`client/src/lib/calculator.ts`): Extracted testable calculator logic:
   - `dimensionsEqual`: Compares dimensional formulas for equality

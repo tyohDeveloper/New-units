@@ -257,6 +257,13 @@ export default function UnitConverter() {
     math: { name: 'Math Functions', dimensions: {}, isBase: false },
   };
 
+  // Categories to exclude from cross-domain matching (archaic, specialty, other)
+  const EXCLUDED_CROSS_DOMAIN_CATEGORIES = [
+    'archaic_length', 'archaic_mass', 'archaic_volume', 'archaic_area', 'archaic_energy', 'archaic_power',
+    'typography', 'cooking', 'beer_wine_volume', 'fuel_economy', 'lightbulb', 'rack_geometry', 'shipping',
+    'data', 'math'
+  ];
+
   // Find all categories that have matching dimensions (cross-domain recognition)
   // Returns array of category names from other domains that share the same dimensions
   const findCrossDomainMatches = (dimensions: DimensionalFormula, currentCategory?: string): string[] => {
@@ -268,6 +275,9 @@ export default function UnitConverter() {
     for (const [catId, info] of Object.entries(CATEGORY_DIMENSIONS)) {
       // Skip the current category and base quantities (they can't cross-match)
       if (catId === currentCategory || info.isBase) continue;
+      
+      // Skip archaic, specialty, and other excluded categories
+      if (EXCLUDED_CROSS_DOMAIN_CATEGORIES.includes(catId)) continue;
       
       // Skip dimensionless categories
       if (Object.keys(info.dimensions).length === 0) continue;
