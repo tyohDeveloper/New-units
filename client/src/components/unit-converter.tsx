@@ -149,6 +149,133 @@ export default function UnitConverter() {
     { symbol: 'ft³', category: 'volume', unitId: 'ft3', dimensions: { length: 3 }, allowPrefixes: false },
   ];
 
+  // Cross-domain category dimensions for recognizing quantities across fields
+  // Maps category ID to name and dimensions for cross-domain matching in calculator
+  // isBase: true for SI base quantities that shouldn't appear in cross-domain matches
+  interface CategoryDimensionInfo {
+    name: string;
+    dimensions: DimensionalFormula;
+    isBase: boolean;
+  }
+  
+  const CATEGORY_DIMENSIONS: Record<string, CategoryDimensionInfo> = {
+    // Base SI Quantities (excluded from cross-domain - they ARE the base dimensions)
+    length: { name: 'Length', dimensions: { length: 1 }, isBase: true },
+    mass: { name: 'Mass', dimensions: { mass: 1 }, isBase: true },
+    time: { name: 'Time', dimensions: { time: 1 }, isBase: true },
+    current: { name: 'Electric Current', dimensions: { current: 1 }, isBase: true },
+    temperature: { name: 'Temperature', dimensions: { temperature: 1 }, isBase: true },
+    amount: { name: 'Amount of Substance', dimensions: { amount: 1 }, isBase: true },
+    intensity: { name: 'Luminous Intensity', dimensions: { intensity: 1 }, isBase: true },
+    angle: { name: 'Plane Angle', dimensions: { angle: 1 }, isBase: true },
+    solid_angle: { name: 'Solid Angle', dimensions: { solid_angle: 1 }, isBase: true },
+    
+    // Derived Mechanical Quantities
+    area: { name: 'Area', dimensions: { length: 2 }, isBase: false },
+    volume: { name: 'Volume', dimensions: { length: 3 }, isBase: false },
+    speed: { name: 'Speed', dimensions: { length: 1, time: -1 }, isBase: false },
+    acceleration: { name: 'Acceleration', dimensions: { length: 1, time: -2 }, isBase: false },
+    force: { name: 'Force', dimensions: { mass: 1, length: 1, time: -2 }, isBase: false },
+    pressure: { name: 'Pressure', dimensions: { mass: 1, length: -1, time: -2 }, isBase: false },
+    energy: { name: 'Energy', dimensions: { mass: 1, length: 2, time: -2 }, isBase: false },
+    power: { name: 'Power', dimensions: { mass: 1, length: 2, time: -3 }, isBase: false },
+    frequency: { name: 'Frequency', dimensions: { time: -1 }, isBase: false },
+    momentum: { name: 'Momentum', dimensions: { mass: 1, length: 1, time: -1 }, isBase: false },
+    angular_momentum: { name: 'Angular Momentum', dimensions: { mass: 1, length: 2, time: -1 }, isBase: false },
+    angular_velocity: { name: 'Angular Velocity', dimensions: { angle: 1, time: -1 }, isBase: false },
+    torque: { name: 'Torque', dimensions: { mass: 1, length: 2, time: -2 }, isBase: false },
+    density: { name: 'Density', dimensions: { mass: 1, length: -3 }, isBase: false },
+    flow: { name: 'Flow Rate', dimensions: { length: 3, time: -1 }, isBase: false },
+    viscosity: { name: 'Viscosity', dimensions: { mass: 1, length: -1, time: -1 }, isBase: false },
+    kinematic_viscosity: { name: 'Kinematic Viscosity', dimensions: { length: 2, time: -1 }, isBase: false },
+    surface_tension: { name: 'Surface Tension', dimensions: { mass: 1, time: -2 }, isBase: false },
+    
+    // Thermodynamics
+    thermal_conductivity: { name: 'Thermal Conductivity', dimensions: { mass: 1, length: 1, time: -3, temperature: -1 }, isBase: false },
+    specific_heat: { name: 'Specific Heat', dimensions: { length: 2, time: -2, temperature: -1 }, isBase: false },
+    entropy: { name: 'Entropy', dimensions: { mass: 1, length: 2, time: -2, temperature: -1 }, isBase: false },
+    
+    // Electricity & Magnetism
+    charge: { name: 'Electric Charge', dimensions: { current: 1, time: 1 }, isBase: false },
+    potential: { name: 'Electric Potential', dimensions: { mass: 1, length: 2, time: -3, current: -1 }, isBase: false },
+    capacitance: { name: 'Capacitance', dimensions: { mass: -1, length: -2, time: 4, current: 2 }, isBase: false },
+    resistance: { name: 'Resistance', dimensions: { mass: 1, length: 2, time: -3, current: -2 }, isBase: false },
+    conductance: { name: 'Conductance', dimensions: { mass: -1, length: -2, time: 3, current: 2 }, isBase: false },
+    magnetic_flux: { name: 'Magnetic Flux', dimensions: { mass: 1, length: 2, time: -2, current: -1 }, isBase: false },
+    magnetic_density: { name: 'Magnetic Flux Density', dimensions: { mass: 1, time: -2, current: -1 }, isBase: false },
+    inductance: { name: 'Inductance', dimensions: { mass: 1, length: 2, time: -2, current: -2 }, isBase: false },
+    electric_field: { name: 'Electric Field', dimensions: { mass: 1, length: 1, time: -3, current: -1 }, isBase: false },
+    magnetic_field_h: { name: 'Magnetic Field (H)', dimensions: { current: 1, length: -1 }, isBase: false },
+    
+    // Radiation & Nuclear Physics
+    radioactivity: { name: 'Radioactivity', dimensions: { time: -1 }, isBase: false },
+    radioactive_decay: { name: 'Radioactive Decay', dimensions: { time: -1 }, isBase: false },
+    radiation_dose: { name: 'Absorbed Dose', dimensions: { length: 2, time: -2 }, isBase: false },
+    equivalent_dose: { name: 'Equivalent Dose', dimensions: { length: 2, time: -2 }, isBase: false },
+    cross_section: { name: 'Cross-Section', dimensions: { length: 2 }, isBase: false },
+    photon: { name: 'Photon Energy', dimensions: { mass: 1, length: 2, time: -2 }, isBase: false },
+    
+    // Human Response & Acoustics/Optics
+    luminous_flux: { name: 'Luminous Flux', dimensions: { intensity: 1, solid_angle: 1 }, isBase: false },
+    illuminance: { name: 'Illuminance', dimensions: { intensity: 1, solid_angle: 1, length: -2 }, isBase: false },
+    sound_pressure: { name: 'Sound Pressure', dimensions: { mass: 1, length: -1, time: -2 }, isBase: false },
+    sound_intensity: { name: 'Sound Intensity', dimensions: { mass: 1, time: -3 }, isBase: false },
+    acoustic_impedance: { name: 'Acoustic Impedance', dimensions: { mass: 1, length: -2, time: -1 }, isBase: false },
+    refractive_power: { name: 'Refractive Power', dimensions: { length: -1 }, isBase: false },
+    
+    // Chemistry & Catalysis
+    catalytic: { name: 'Catalytic Activity', dimensions: { amount: 1, time: -1 }, isBase: false },
+    concentration: { name: 'Concentration', dimensions: { amount: 1, length: -3 }, isBase: false },
+    
+    // Fuel & Energy (specialty categories with same energy dimensions)
+    fuel: { name: 'Fuel Energy', dimensions: { mass: 1, length: 2, time: -2 }, isBase: false },
+    
+    // Archaic categories (mapped to their base dimensions)
+    archaic_length: { name: 'Archaic Length', dimensions: { length: 1 }, isBase: false },
+    archaic_mass: { name: 'Archaic Mass', dimensions: { mass: 1 }, isBase: false },
+    archaic_volume: { name: 'Archaic Volume', dimensions: { length: 3 }, isBase: false },
+    archaic_area: { name: 'Archaic Area', dimensions: { length: 2 }, isBase: false },
+    archaic_energy: { name: 'Archaic Energy', dimensions: { mass: 1, length: 2, time: -2 }, isBase: false },
+    archaic_power: { name: 'Archaic Power', dimensions: { mass: 1, length: 2, time: -3 }, isBase: false },
+    
+    // Specialty / Industrial categories
+    typography: { name: 'Typography', dimensions: { length: 1 }, isBase: false },
+    cooking: { name: 'Cooking Measures', dimensions: { length: 3 }, isBase: false },
+    beer_wine_volume: { name: 'Beer & Wine Volume', dimensions: { length: 3 }, isBase: false },
+    data: { name: 'Data/Information', dimensions: {}, isBase: false },
+    fuel_economy: { name: 'Fuel Economy', dimensions: { length: -2 }, isBase: false },
+    lightbulb: { name: 'Lightbulb Efficiency', dimensions: { intensity: 1, solid_angle: 1 }, isBase: false },
+    rack_geometry: { name: 'Rack Geometry', dimensions: { length: 1 }, isBase: false },
+    shipping: { name: 'Shipping Volume', dimensions: { length: 3 }, isBase: false },
+    
+    // Math category has no dimensions (dimensionless)
+    math: { name: 'Math Functions', dimensions: {}, isBase: false },
+  };
+
+  // Find all categories that have matching dimensions (cross-domain recognition)
+  // Returns array of category names from other domains that share the same dimensions
+  const findCrossDomainMatches = (dimensions: DimensionalFormula, currentCategory?: string): string[] => {
+    const matches: string[] = [];
+    
+    // Skip if dimensions are empty (dimensionless)
+    if (Object.keys(dimensions).length === 0) return matches;
+    
+    for (const [catId, info] of Object.entries(CATEGORY_DIMENSIONS)) {
+      // Skip the current category and base quantities (they can't cross-match)
+      if (catId === currentCategory || info.isBase) continue;
+      
+      // Skip dimensionless categories
+      if (Object.keys(info.dimensions).length === 0) continue;
+      
+      // Check if dimensions match exactly
+      if (dimensionsEqual(dimensions, info.dimensions)) {
+        matches.push(info.name);
+      }
+    }
+    
+    return matches;
+  };
+
   // Alternative unit representation
   interface AlternativeRepresentation {
     displaySymbol: string;         // How to display, e.g., "m⋅J" or "kg⋅m³⋅s⁻²"
@@ -2827,6 +2954,7 @@ export default function UnitConverter() {
     displaySymbol: string;      // How to display, e.g., "W", "J⋅s⁻¹", "kg⋅m²⋅s⁻³"
     derivedUnits: string[];     // List of derived unit symbols used (e.g., ["J", "s⁻¹"])
     depth: number;              // Number of derived units used (0 = raw base units)
+    crossDomainMatches?: string[]; // Categories from other domains with same dimensions (e.g., ["Torque"] for Energy)
   }
 
   // Sort SI derived units by complexity (most base dimensions consumed first)
@@ -3034,6 +3162,23 @@ export default function UnitConverter() {
       // Finally alphabetically
       return a.displaySymbol.localeCompare(b.displaySymbol);
     });
+    
+    // 3. Add cross-domain matches to each representation, excluding its own category
+    // For each representation, filter out the category that the primary derived unit belongs to
+    // This prevents redundant labeling like "J (Energy)" since J already implies Energy
+    for (const rep of representations) {
+      // Determine which category to exclude based on the representation's primary derived unit
+      let excludeCategory: string | undefined;
+      if (rep.derivedUnit) {
+        excludeCategory = rep.derivedUnit.category;
+      }
+      
+      // Find cross-domain matches, excluding the representation's own category
+      const crossMatches = findCrossDomainMatches(dimensions, excludeCategory);
+      if (crossMatches.length > 0) {
+        rep.crossDomainMatches = crossMatches;
+      }
+    }
     
     return representations;
   };
@@ -4556,6 +4701,11 @@ export default function UnitConverter() {
                           {siReps.map((rep, index) => (
                             <SelectItem key={index} value={index.toString()} className="text-xs font-mono">
                               <span className="font-bold">{rep.displaySymbol}</span>
+                              {rep.crossDomainMatches && rep.crossDomainMatches.length > 0 && (
+                                <span className="ml-2 text-muted-foreground font-normal">
+                                  ({rep.crossDomainMatches.join(', ')})
+                                </span>
+                              )}
                             </SelectItem>
                           ))}
                         </SelectContent>
