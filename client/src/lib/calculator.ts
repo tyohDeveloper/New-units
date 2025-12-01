@@ -47,10 +47,8 @@ export const SI_DERIVED_UNITS: DerivedUnitInfo[] = [
   { symbol: 'rad', category: 'angle', unitId: 'rad', dimensions: { angle: 1 }, allowPrefixes: true },
   { symbol: 'sr', category: 'solid_angle', unitId: 'sr', dimensions: { solid_angle: 1 }, allowPrefixes: true },
   { symbol: 'eV', category: 'photon', unitId: 'ev', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
-  { symbol: 'b', category: 'cross_section', unitId: 'barn', dimensions: { length: 2 }, allowPrefixes: true },
   { symbol: 'St', category: 'kinematic_viscosity', unitId: 'stokes', dimensions: { length: 2, time: -1 }, allowPrefixes: true },
   { symbol: 'rayl', category: 'acoustic_impedance', unitId: 'rayl', dimensions: { mass: 1, length: -2, time: -1 }, allowPrefixes: true },
-  { symbol: 'D', category: 'refractive_power', unitId: 'd', dimensions: { length: -1 }, allowPrefixes: false },
 ];
 
 export const CATEGORY_DIMENSIONS: Record<string, CategoryDimensionInfo> = {
