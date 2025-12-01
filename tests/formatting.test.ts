@@ -460,67 +460,80 @@ describe('Photon/Light Category', () => {
     expect(photonCategory).toBeDefined();
   });
 
-  it('should have wavelength, frequency, energy, and wavenumber units', () => {
-    expect(photonCategory?.units.some((u) => u.id === 'm_wave')).toBe(true);
-    expect(photonCategory?.units.some((u) => u.id === 'freq')).toBe(true);
+  it('should have wavelength (λ), frequency (ν), energy, and wavenumber units', () => {
+    expect(photonCategory?.units.some((u) => u.id === 'lambda')).toBe(true);
+    expect(photonCategory?.units.some((u) => u.id === 'nu')).toBe(true);
     expect(photonCategory?.units.some((u) => u.id === 'eV')).toBe(true);
     expect(photonCategory?.units.some((u) => u.id === 'J_photon')).toBe(true);
     expect(photonCategory?.units.some((u) => u.id === 'cm_inv')).toBe(true);
   });
 
-  it('should have inverse conversion for wavelength unit', () => {
-    const photonM = photonCategory?.units.find((u) => u.id === 'm_wave');
-    expect(photonM?.isInverse).toBe(true);
+  it('should have inverse conversion for wavelength (λ) unit', () => {
+    const lambda = photonCategory?.units.find((u) => u.id === 'lambda');
+    expect(lambda?.isInverse).toBe(true);
   });
 
   it('should use correct conversion constants (hc = 1.239841984e-6 eV·m)', () => {
-    const photonM = photonCategory?.units.find((u) => u.id === 'm_wave');
-    expect(photonM?.factor).toBeCloseTo(1.239841984e-6, 12);
+    const lambda = photonCategory?.units.find((u) => u.id === 'lambda');
+    expect(lambda?.factor).toBeCloseTo(1.239841984e-6, 12);
   });
 
-  it('should allow prefixes on meter wavelength (use nano prefix for nm)', () => {
-    const photonM = photonCategory?.units.find((u) => u.id === 'm_wave');
-    expect(photonM?.allowPrefixes).toBe(true);
+  it('should allow prefixes on wavelength λ (use nano prefix for nm)', () => {
+    const lambda = photonCategory?.units.find((u) => u.id === 'lambda');
+    expect(lambda?.allowPrefixes).toBe(true);
+  });
+
+  it('should use Greek symbols ν and λ', () => {
+    const nu = photonCategory?.units.find((u) => u.id === 'nu');
+    const lambda = photonCategory?.units.find((u) => u.id === 'lambda');
+    expect(nu?.symbol).toBe('ν');
+    expect(lambda?.symbol).toBe('λ');
   });
 });
 
 describe('Photon Conversion Function', () => {
-  it('should convert 500e-9 m wavelength to approximately 2.48 eV', () => {
-    // 500 nm = 500e-9 m
-    const result = convert(500e-9, 'm_wave', 'eV', 'photon');
+  it('should convert 500e-9 λ wavelength to approximately 2.48 eV', () => {
+    // 500 nm = 500e-9 in λ units (wavelength expressed in meters)
+    const result = convert(500e-9, 'lambda', 'eV', 'photon');
     expect(result).toBeCloseTo(2.48, 1);
   });
 
-  it('should convert 1 eV to approximately 1.24e-6 m wavelength', () => {
-    const result = convert(1, 'eV', 'm_wave', 'photon');
+  it('should convert 1 eV to approximately 1.24e-6 λ wavelength', () => {
+    const result = convert(1, 'eV', 'lambda', 'photon');
     expect(result).toBeCloseTo(1.24e-6, 8);
   });
 
-  it('should convert wavelength 500e-9 m to frequency ~6e14 s⁻¹', () => {
+  it('should convert wavelength 500e-9 λ to frequency ~6e14 ν', () => {
     const wavelength_m = 500e-9;
     const c = 299792458;
     const expectedFreq = c / wavelength_m;
-    const result = convert(500e-9, 'm_wave', 'freq', 'photon');
+    const result = convert(500e-9, 'lambda', 'nu', 'photon');
     expect(result).toBeCloseTo(expectedFreq, -10);
   });
 
-  it('should be reversible: eV → m → eV', () => {
+  it('should be reversible: eV → λ → eV', () => {
     const original = 2.5;
-    const meters = convert(original, 'eV', 'm_wave', 'photon');
-    const backToEv = convert(meters, 'm_wave', 'eV', 'photon');
+    const lambda = convert(original, 'eV', 'lambda', 'photon');
+    const backToEv = convert(lambda, 'lambda', 'eV', 'photon');
     expect(backToEv).toBeCloseTo(original, 6);
   });
 
   it('should convert visible light (red ~700nm) correctly', () => {
-    // 700 nm = 700e-9 m
-    const result = convert(700e-9, 'm_wave', 'eV', 'photon');
+    // 700 nm = 700e-9 in λ units
+    const result = convert(700e-9, 'lambda', 'eV', 'photon');
     expect(result).toBeCloseTo(1.77, 1);
   });
 
   it('should convert visible light (blue ~450nm) correctly', () => {
-    // 450 nm = 450e-9 m
-    const result = convert(450e-9, 'm_wave', 'eV', 'photon');
+    // 450 nm = 450e-9 in λ units
+    const result = convert(450e-9, 'lambda', 'eV', 'photon');
     expect(result).toBeCloseTo(2.76, 1);
+  });
+
+  it('should convert frequency ν to energy eV correctly', () => {
+    // 1e15 Hz photon has energy E = hν ≈ 4.136 eV
+    const result = convert(1e15, 'nu', 'eV', 'photon');
+    expect(result).toBeCloseTo(4.136, 2);
   });
 });
 
