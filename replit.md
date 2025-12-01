@@ -17,6 +17,7 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 
 ### Key Design Decisions
 - **Calculator Layout**: CSS Grid-based, six-column layout with four arithmetic operators (×, /, +, −). Addition and subtraction require dimensional compatibility.
+- **Calculator Input Method**: Calculator input fields are READ-ONLY. Data entry is ONLY via copy buttons in Converter or Custom tabs, which populate the next available calculator field. Direct typing in calculator fields is not supported.
 - **Clipboard Copying**: Supports precision settings and "Normalize & Copy" for normalizing to SI units with optimal prefixing. Uses `normalizeDimensions` to convert raw dimensional formulas to derived units (J, N, W, etc.) before applying prefixes, preventing prefix stacking with kg. Prefers base unit representation s⁻¹ over derived unit Hz for frequency.
 - **Math Category**: Includes 28 functions and 3 constants, all producing dimensionless outputs:
   - Trigonometric: sin, cos, tan, asin, acos, atan
