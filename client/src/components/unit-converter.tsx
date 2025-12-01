@@ -3016,10 +3016,10 @@ export default function UnitConverter() {
   };
 
   // Core SI derived units for general purpose compositions
-  // Excludes specialized units: Bq, Gy, Sv (radiation), Hz (prefer s⁻¹ for compositions)
-  // Also excludes rad and sr - keep angle/solid angle as-is, don't reduce them
+  // Only Hz is excluded (prefer s⁻¹ for frequency compositions)
+  // All other SI derived units (lm, lx, Bq, Gy, Sv, kat, rad, sr) are now available
   const GENERAL_SI_DERIVED: DerivedUnitInfo[] = SI_UNITS_BY_COMPLEXITY.filter(u => 
-    !['Hz', 'Bq', 'Gy', 'Sv', 'lm', 'lx', 'kat', 'rad', 'sr'].includes(u.symbol)
+    !['Hz'].includes(u.symbol)
   );
 
   // Validation: Check if a symbol string has duplicate base units (e.g., "rad⋅rad⁻²")
