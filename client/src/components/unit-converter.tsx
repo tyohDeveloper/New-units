@@ -17,7 +17,7 @@ const CommonFieldWidth = '285px'; // change this to adjust width of main value f
 const OperatorBtnWidth = '32px'; // width of +, -, × and / operator buttons in calculator
 const ClearBtnWidth = '100px'; // width of Clear buttons in calculator
 const RpnBtnWidth = '50px'; // width of RPN function buttons (sized for 'acosh')
-const RpnBtnCount = 5; // number of RPN buttons per row that fit in pane width
+const RpnBtnCount = 7; // number of RPN buttons per row that fit in pane width
 
 export default function UnitConverter() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -5119,7 +5119,7 @@ export default function UnitConverter() {
               {/* Placeholder buttons for s3 row */}
               {Array.from({ length: RpnBtnCount }).map((_, i) => (
                 <Button key={`s3-btn-${i}`} variant="ghost" size="sm" className="text-xs font-mono w-full">
-                  xxxxx
+                  s3.{i}
                 </Button>
               ))}
             </div>
@@ -5162,7 +5162,7 @@ export default function UnitConverter() {
               {/* Placeholder buttons for s2 row */}
               {Array.from({ length: RpnBtnCount }).map((_, i) => (
                 <Button key={`s2-btn-${i}`} variant="ghost" size="sm" className="text-xs font-mono w-full">
-                  xxxxx
+                  s2.{i}
                 </Button>
               ))}
             </div>
@@ -5205,7 +5205,7 @@ export default function UnitConverter() {
               {/* Placeholder buttons for y row */}
               {Array.from({ length: RpnBtnCount }).map((_, i) => (
                 <Button key={`y-btn-${i}`} variant="ghost" size="sm" className="text-xs font-mono w-full">
-                  xxxxx
+                  y{i}
                 </Button>
               ))}
             </div>
@@ -5324,16 +5324,29 @@ export default function UnitConverter() {
               )}
             </div>
 
-            {/* Bottom row: CLR left, Push+Copy right */}
-            <div className="flex justify-between items-center">
+            {/* Bottom row: CLR left, Shift in first button column, Push+Copy right */}
+            <div 
+              className="grid gap-2 items-center"
+              style={{ gridTemplateColumns: `${CommonFieldWidth} ${RpnBtnWidth} 1fr auto` }}
+            >
+              <div className="flex items-center">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={clearRpnStack}
+                  className="text-xs hover:text-accent"
+                >
+                  CLR
+                </Button>
+              </div>
               <Button 
                 variant="ghost" 
                 size="sm" 
-                onClick={clearRpnStack}
-                className="text-xs hover:text-accent"
+                className="text-xs font-mono w-full hover:text-accent"
               >
-                CLR
+                Shift
               </Button>
+              <div /> {/* Spacer */}
               <div className="flex items-center gap-1">
                 <Button 
                   variant="ghost" 
