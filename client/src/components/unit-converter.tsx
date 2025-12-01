@@ -3017,8 +3017,9 @@ export default function UnitConverter() {
 
   // Core SI derived units for general purpose compositions
   // Excludes specialized units: Bq, Gy, Sv (radiation), Hz (prefer s⁻¹ for compositions)
+  // Also excludes rad and sr - keep angle/solid angle as-is, don't reduce them
   const GENERAL_SI_DERIVED: DerivedUnitInfo[] = SI_UNITS_BY_COMPLEXITY.filter(u => 
-    !['Hz', 'Bq', 'Gy', 'Sv', 'lm', 'lx', 'kat'].includes(u.symbol)
+    !['Hz', 'Bq', 'Gy', 'Sv', 'lm', 'lx', 'kat', 'rad', 'sr'].includes(u.symbol)
   );
 
   // Validation: Check if a symbol string has duplicate base units (e.g., "rad⋅rad⁻²")
@@ -3142,8 +3143,24 @@ export default function UnitConverter() {
       return sum;
     };
     
+    // Get the base unit term count to use as the maximum complexity threshold
+    // This prevents showing representations more complex than the raw base units
+    const baseTermCount = rawSymbol ? countUnits(rawSymbol) : 0;
+    
+    // Filter out representations with more terms than the base unit expression
+    // This removes anything more complex than the raw base units
+    // Exception: If baseTermCount is 0 (dimensionless), keep all representations
+    const filteredRepresentations = baseTermCount === 0 
+      ? representations 
+      : representations.filter(rep => {
+          // Always keep the raw base unit representation
+          if (rep.depth === 0) return true;
+          // Filter out derived representations with more terms than base
+          return countUnits(rep.displaySymbol) <= baseTermCount;
+        });
+    
     // Sort: (1) pure base units last, (2) fewest units, (3) lowest sum of abs exponents, (4) alphabetically
-    representations.sort((a, b) => {
+    filteredRepresentations.sort((a, b) => {
       // Pure base units (depth=0) go LAST
       const aIsRaw = a.depth === 0;
       const bIsRaw = b.depth === 0;
@@ -3167,11 +3184,16 @@ export default function UnitConverter() {
     // 3. Add cross-domain matches to each representation, excluding its own category
     // For each representation, filter out the category that the primary derived unit belongs to
     // This prevents redundant labeling like "J (Energy)" since J already implies Energy
-    for (const rep of representations) {
+    for (const rep of filteredRepresentations) {
       // Determine which category to exclude based on the representation's primary derived unit
       let excludeCategory: string | undefined;
-      if (rep.derivedUnit) {
-        excludeCategory = rep.derivedUnit.category;
+      if (rep.derivedUnits && rep.derivedUnits.length > 0) {
+        // Look up the first derived unit's category from the catalog
+        const firstDerivedSymbol = rep.derivedUnits[0];
+        const derivedUnitInfo = SI_DERIVED_UNITS.find(u => u.symbol === firstDerivedSymbol);
+        if (derivedUnitInfo) {
+          excludeCategory = derivedUnitInfo.category;
+        }
       }
       
       // Find cross-domain matches, excluding the representation's own category
@@ -3181,7 +3203,7 @@ export default function UnitConverter() {
       }
     }
     
-    return representations;
+    return filteredRepresentations;
   };
 
   // Auto-select multiplication operator when values are entered

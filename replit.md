@@ -57,9 +57,21 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
   - Energy ↔ Torque, Photon Energy, Fuel Energy, Archaic Energy (all have kg⋅m²⋅s⁻²)
   - Frequency ↔ Radioactivity, Radioactive Decay (all have s⁻¹)
   - Pressure ↔ Sound Pressure (all have kg⋅m⁻¹⋅s⁻²)
-  - Absorbed Dose ↔ Equivalent Dose, Radiation Dose, Specific Heat (all have m²⋅s⁻²)
+  - Absorbed Dose ↔ Equivalent Dose, Radiation Dose (all have m²⋅s⁻²)
   - Self-filtering: Each dropdown option excludes its own category (e.g., "J" won't show "Energy" since J already implies Energy)
   - CATEGORY_DIMENSIONS maps 50+ categories to their dimensions for cross-domain matching
+- **Calculator Module** (`client/src/lib/calculator.ts`): Extracted testable calculator logic:
+  - `dimensionsEqual`: Compares dimensional formulas for equality
+  - `findCrossDomainMatches`: Finds related quantity categories with matching dimensions
+  - `isValidSymbolRepresentation`: Validates SI unit symbol compositions (no duplicate base units)
+  - `formatDimensions`: Converts dimensional formulas to SI base unit notation
+  - `multiplyDimensions`, `divideDimensions`: Dimensional arithmetic operations
+  - `CATEGORY_DIMENSIONS`: Mapping of categories to dimensions and isBase flags
+  - `SI_DERIVED_UNITS`: Catalog of named SI derived units with dimensions
+- **SI Representation Constraints**:
+  - Base unit expression always appears LAST in dropdown options
+  - Derived representations cannot have more terms than the base expression
+  - rad and sr are NOT reduced - angle/solid angle units remain as-is like Hz, Bq, Gy, Sv, lm, lx, kat
 - **Typography Category**: 11 units for print/design measurements including point (1/72 inch), pica (12 points), pixel (96 PPI ref), em, twip, cicero, with meter as SI base
 - **Cooking Measures Category**: 24 units for kitchen measurements covering US/UK/Metric/Japan variants including teaspoons, tablespoons, cups, fluid ounces, pints, quarts, gallons, with mL as base unit
 - **Multilingual Support**: 12 languages with complete translations:
