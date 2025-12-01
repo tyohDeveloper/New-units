@@ -210,7 +210,8 @@ export default function UnitConverter() {
     // Radiation & Nuclear Physics
     radioactivity: { name: 'Radioactivity', dimensions: { time: -1 }, isBase: false },
     radioactive_decay: { name: 'Radioactive Decay', dimensions: { time: -1 }, isBase: false },
-    radiation_dose: { name: 'Absorbed Dose', dimensions: { length: 2, time: -2 }, isBase: false },
+    radiation_dose: { name: 'Radiation Dose', dimensions: { length: 2, time: -2 }, isBase: false },
+    absorbed_dose: { name: 'Absorbed Dose', dimensions: { length: 2, time: -2 }, isBase: false },
     equivalent_dose: { name: 'Equivalent Dose', dimensions: { length: 2, time: -2 }, isBase: false },
     cross_section: { name: 'Cross-Section', dimensions: { length: 2 }, isBase: false },
     photon: { name: 'Photon Energy', dimensions: { mass: 1, length: 2, time: -2 }, isBase: false },
