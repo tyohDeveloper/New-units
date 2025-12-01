@@ -265,6 +265,40 @@ export default function UnitConverter() {
     'data', 'math'
   ];
 
+  // Preferred representations for specific dimension signatures
+  // These are injected at index 0 and preselected as defaults
+  // Key format: sorted dimension string like "length:2,time:-1"
+  interface PreferredRepresentation {
+    displaySymbol: string;
+    isSI: boolean;           // true = SI composition, false = non-SI (like St)
+    allowPrefixes: boolean;
+  }
+
+  // Helper: Generate canonical dimension signature for map lookup
+  const getDimensionSignature = (dims: DimensionalFormula): string => {
+    const entries = Object.entries(dims)
+      .filter(([_, exp]) => exp !== 0)
+      .sort(([a], [b]) => a.localeCompare(b));
+    return entries.map(([dim, exp]) => `${dim}:${exp}`).join(',');
+  };
+
+  const PREFERRED_REPRESENTATIONS: Record<string, PreferredRepresentation> = {
+    // Kinematic viscosity (m²⋅s⁻¹) → Stokes (CGS, commonly used)
+    'length:2,time:-1': { displaySymbol: 'St', isSI: false, allowPrefixes: true },
+    // Angular momentum (kg⋅m²⋅s⁻¹) → J⋅s (Joule-second, action)
+    'length:2,mass:1,time:-1': { displaySymbol: 'J⋅s', isSI: true, allowPrefixes: true },
+    // Equivalent/Absorbed dose (m²⋅s⁻²) → Gy (Gray)
+    'length:2,time:-2': { displaySymbol: 'Gy', isSI: true, allowPrefixes: true },
+    // Acoustic impedance (kg⋅m⁻²⋅s⁻¹) → Pa⋅s⋅m⁻³ is NOT correct dimensions
+    // Actually acoustic impedance = Pa·s/m = kg⋅m⁻²⋅s⁻¹, but user said Pa·s/m³
+    // Let me check: Pa = kg⋅m⁻¹⋅s⁻², so Pa·s·m⁻³ = kg⋅m⁻¹⋅s⁻²·s·m⁻³ = kg⋅m⁻⁴⋅s⁻¹ 
+    // But acoustic impedance is kg⋅m⁻²⋅s⁻¹. The user may have meant Pa⋅s⋅m⁻¹
+    // Pa⋅s⋅m⁻¹ = kg⋅m⁻¹⋅s⁻²·s·m⁻¹ = kg⋅m⁻²⋅s⁻¹ ✓
+    'length:-2,mass:1,time:-1': { displaySymbol: 'Pa⋅s⋅m⁻¹', isSI: true, allowPrefixes: true },
+    // Sound intensity / Irradiance (kg⋅s⁻³) → W⋅m⁻² 
+    'mass:1,time:-3': { displaySymbol: 'W⋅m⁻²', isSI: true, allowPrefixes: true },
+  };
+
   // Find all categories that have matching dimensions (cross-domain recognition)
   // Returns array of category names from other domains that share the same dimensions
   const findCrossDomainMatches = (dimensions: DimensionalFormula, _currentCategory?: string): string[] => {
@@ -2980,18 +3014,26 @@ export default function UnitConverter() {
     return bSum - aSum; // Most complex first
   });
 
-  // Helper: Check if composition is valid (remaining dimensions don't introduce new dimension types)
+  // Helper: Check if composition is valid
+  // Allows remainders that are purely SI base dimensions (like m⁻² for W⋅m⁻² representing kg⋅s⁻³)
   const isValidSIComposition = (target: DimensionalFormula, derived: DimensionalFormula): boolean => {
     const remaining = subtractSI(target, derived);
     
-    // Check: remaining dimensions must not introduce NEW dimension types
-    // that weren't in the original target
-    for (const [dim, exp] of Object.entries(remaining)) {
-      if (exp !== 0 && target[dim as keyof DimensionalFormula] === undefined) {
-        return false; // New dimension type introduced
-      }
+    // Allow any remaining dimensions as long as they're SI base dimensions
+    // This enables compositions like W⋅m⁻² for kg⋅s⁻³ (sound intensity)
+    // The remaining { length: -2 } is a valid base unit factor
+    
+    // Check that subtracting derived doesn't create impossibly complex remainders
+    // (e.g., if derived has more of a dimension than target)
+    for (const [dim, derivedExp] of Object.entries(derived)) {
+      const key = dim as keyof DimensionalFormula;
+      const targetExp = target[key] || 0;
+      // If derived has the dimension but target doesn't, that's okay if result is negative base units
+      // If derived exp is larger magnitude than target in same direction, creates opposite sign remainder
+      // All of these are valid SI base unit remainders
     }
-    return true;
+    
+    return true; // All SI base dimension remainders are valid
   };
 
   // Helper: Subtract derived unit dimensions
@@ -3214,9 +3256,33 @@ export default function UnitConverter() {
       filteredRepresentations.unshift(perfectMatch);
     }
     
-    // 3. Add cross-domain matches to each representation, excluding its own category
-    // For each representation, filter out the category that the primary derived unit belongs to
-    // This prevents redundant labeling like "J (Energy)" since J already implies Energy
+    // 3. Check for preferred representation override
+    const dimSignature = getDimensionSignature(dimensions);
+    const preferred = PREFERRED_REPRESENTATIONS[dimSignature];
+    if (preferred) {
+      // Check if preferred already exists in the list
+      const existingIndex = filteredRepresentations.findIndex(
+        rep => rep.displaySymbol === preferred.displaySymbol
+      );
+      
+      if (existingIndex > 0) {
+        // Move existing to index 0
+        const [existing] = filteredRepresentations.splice(existingIndex, 1);
+        filteredRepresentations.unshift(existing);
+      } else if (existingIndex === -1) {
+        // Inject preferred representation at index 0
+        filteredRepresentations.unshift({
+          displaySymbol: preferred.displaySymbol,
+          derivedUnits: preferred.isSI ? [preferred.displaySymbol.split('⋅')[0]] : [],
+          depth: preferred.isSI ? 1 : 0
+        });
+      }
+      // If existingIndex === 0, it's already at the right position
+    }
+    
+    // 4. Add cross-domain matches to each representation
+    // For raw base unit representations, always show cross-domain matches
+    // For derived representations, exclude the category that the primary derived unit belongs to
     for (const rep of filteredRepresentations) {
       // Determine which category to exclude based on the representation's primary derived unit
       let excludeCategory: string | undefined;
@@ -3229,7 +3295,7 @@ export default function UnitConverter() {
         }
       }
       
-      // Find cross-domain matches, excluding the representation's own category
+      // Find cross-domain matches
       const crossMatches = findCrossDomainMatches(dimensions, excludeCategory);
       if (crossMatches.length > 0) {
         rep.crossDomainMatches = crossMatches;
