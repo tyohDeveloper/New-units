@@ -16,6 +16,8 @@ const FIELD_HEIGHT = '2.5rem'; // 40px - change this to adjust all field heights
 const CommonFieldWidth = '285px'; // change this to adjust width of main value fields
 const OperatorBtnWidth = '32px'; // width of +, -, × and / operator buttons in calculator
 const ClearBtnWidth = '100px'; // width of Clear buttons in calculator
+const RpnBtnWidth = '50px'; // width of RPN function buttons (sized for 'acosh')
+const RpnBtnCount = 5; // number of RPN buttons per row that fit in pane width
 
 export default function UnitConverter() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -4686,8 +4688,8 @@ export default function UnitConverter() {
                   </Select>
                 </div>
               </div>
-              {/* Left-side buttons - different per mode */}
-              {calculatorMode === 'simple' ? (
+              {/* Left-side Clear button - simple mode only */}
+              {calculatorMode === 'simple' && (
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -4696,36 +4698,6 @@ export default function UnitConverter() {
                 >
                   {t('Clear')} {t('Calculator')}
                 </Button>
-              ) : (
-                <div className="flex items-center gap-1">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={clearRpnTop}
-                    className="text-xs hover:text-accent"
-                  >
-                    CLR
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={pushToRpnStack}
-                    className="text-xs hover:text-accent"
-                    disabled
-                  >
-                    Push
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={copyRpnResult}
-                    disabled={!rpnStack[3]}
-                    className="text-xs hover:text-accent gap-1"
-                  >
-                    <Copy className="w-3 h-3" />
-                    {t('Copy')}
-                  </Button>
-                </div>
               )}
             </div>
             {/* Right-side mode toggle button */}
@@ -5109,12 +5081,15 @@ export default function UnitConverter() {
           {/* RPN Calculator Mode */}
           {calculatorMode === 'rpn' && (
           <div className="space-y-2">
-            {/* RPN Field 1 */}
-            <div className="flex gap-2 items-center">
+            {/* s3 field (top) with button grid */}
+            <div 
+              className="grid gap-2 items-center"
+              style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(${RpnBtnCount}, ${RpnBtnWidth})` }}
+            >
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => rpnStack[0] && copyRpnField(0)}
-                style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
+                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashRpnField1 ? [1, 0.3, 1] : 1,
                   scale: flashRpnField1 ? [1, 1.02, 1] : 1
@@ -5141,14 +5116,23 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
+              {/* Placeholder buttons for s3 row */}
+              {Array.from({ length: RpnBtnCount }).map((_, i) => (
+                <Button key={`s3-btn-${i}`} variant="ghost" size="sm" className="text-xs font-mono w-full">
+                  xxxxx
+                </Button>
+              ))}
             </div>
 
-            {/* RPN Field 2 */}
-            <div className="flex gap-2 items-center">
+            {/* s2 field with button grid */}
+            <div 
+              className="grid gap-2 items-center"
+              style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(${RpnBtnCount}, ${RpnBtnWidth})` }}
+            >
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => rpnStack[1] && copyRpnField(1)}
-                style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
+                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashRpnField2 ? [1, 0.3, 1] : 1,
                   scale: flashRpnField2 ? [1, 1.02, 1] : 1
@@ -5175,14 +5159,23 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
+              {/* Placeholder buttons for s2 row */}
+              {Array.from({ length: RpnBtnCount }).map((_, i) => (
+                <Button key={`s2-btn-${i}`} variant="ghost" size="sm" className="text-xs font-mono w-full">
+                  xxxxx
+                </Button>
+              ))}
             </div>
 
-            {/* RPN Field 3 */}
-            <div className="flex gap-2 items-center">
+            {/* y field with button grid */}
+            <div 
+              className="grid gap-2 items-center"
+              style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(${RpnBtnCount}, ${RpnBtnWidth})` }}
+            >
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => rpnStack[2] && copyRpnField(2)}
-                style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
+                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
                 animate={{
                   opacity: flashRpnField3 ? [1, 0.3, 1] : 1,
                   scale: flashRpnField3 ? [1, 1.02, 1] : 1
@@ -5209,13 +5202,22 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
+              {/* Placeholder buttons for y row */}
+              {Array.from({ length: RpnBtnCount }).map((_, i) => (
+                <Button key={`y-btn-${i}`} variant="ghost" size="sm" className="text-xs font-mono w-full">
+                  xxxxx
+                </Button>
+              ))}
             </div>
 
-            {/* RPN Result Field */}
-            <div className="flex gap-2 items-center" style={{ width: '100%' }}>
+            {/* x field (result) with prefix and unit dropdowns */}
+            <div 
+              className="grid gap-2 items-center"
+              style={{ gridTemplateColumns: `${CommonFieldWidth} 50px 1fr` }}
+            >
               <motion.div 
-                className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between select-none shrink-0 ${rpnStack[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
+                className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between select-none ${rpnStack[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
                 onClick={() => rpnStack[3] && copyRpnResult()}
                 animate={{
                   opacity: flashRpnResult ? [1, 0.3, 1] : 1,
@@ -5247,7 +5249,7 @@ export default function UnitConverter() {
                         value={rpnResultPrefix} 
                         onValueChange={(val) => setRpnResultPrefix(val)}
                       >
-                        <SelectTrigger className="h-10 w-[50px] text-xs shrink-0">
+                        <SelectTrigger className="h-10 text-xs">
                           <SelectValue placeholder={t('Prefix')} />
                         </SelectTrigger>
                         <SelectContent className="max-h-[50vh]">
@@ -5262,7 +5264,7 @@ export default function UnitConverter() {
                         value={rpnSelectedAlternative.toString()} 
                         onValueChange={(val) => { setRpnSelectedAlternative(parseInt(val)); setRpnResultPrefix('none'); }}
                       >
-                        <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
+                        <SelectTrigger className="h-10 text-xs">
                           <SelectValue placeholder="Select SI representation" />
                         </SelectTrigger>
                         <SelectContent className="max-h-[50vh]">
@@ -5284,7 +5286,7 @@ export default function UnitConverter() {
               ) : rpnStack[3] ? (
                 <>
                   <Select value="none" disabled>
-                    <SelectTrigger className="h-10 w-[50px] text-xs opacity-50 cursor-not-allowed shrink-0">
+                    <SelectTrigger className="h-10 text-xs opacity-50 cursor-not-allowed">
                       <SelectValue placeholder="-" />
                     </SelectTrigger>
                     <SelectContent>
@@ -5292,7 +5294,7 @@ export default function UnitConverter() {
                     </SelectContent>
                   </Select>
                   <Select value="unitless" disabled>
-                    <SelectTrigger className="h-10 flex-1 min-w-0 text-xs opacity-50 cursor-not-allowed">
+                    <SelectTrigger className="h-10 text-xs opacity-50 cursor-not-allowed">
                       <SelectValue placeholder="" />
                     </SelectTrigger>
                     <SelectContent>
@@ -5303,7 +5305,7 @@ export default function UnitConverter() {
               ) : (
                 <>
                   <Select value="none" disabled>
-                    <SelectTrigger className="h-10 w-[50px] text-xs opacity-50 cursor-not-allowed shrink-0">
+                    <SelectTrigger className="h-10 text-xs opacity-50 cursor-not-allowed">
                       <SelectValue placeholder="-" />
                     </SelectTrigger>
                     <SelectContent>
@@ -5311,7 +5313,7 @@ export default function UnitConverter() {
                     </SelectContent>
                   </Select>
                   <Select value="empty" disabled>
-                    <SelectTrigger className="h-10 flex-1 min-w-0 text-xs opacity-50 cursor-not-allowed">
+                    <SelectTrigger className="h-10 text-xs opacity-50 cursor-not-allowed">
                       <SelectValue placeholder="" />
                     </SelectTrigger>
                     <SelectContent>
@@ -5320,6 +5322,39 @@ export default function UnitConverter() {
                   </Select>
                 </>
               )}
+            </div>
+
+            {/* Bottom row: CLR left, Push+Copy right */}
+            <div className="flex justify-between items-center">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={clearRpnStack}
+                className="text-xs hover:text-accent"
+              >
+                CLR
+              </Button>
+              <div className="flex items-center gap-1">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={pushToRpnStack}
+                  className="text-xs hover:text-accent"
+                  disabled
+                >
+                  Push
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={copyRpnResult}
+                  disabled={!rpnStack[3]}
+                  className="text-xs hover:text-accent gap-1"
+                >
+                  <Copy className="w-3 h-3" />
+                  {t('Copy')}
+                </Button>
+              </div>
             </div>
           </div>
           )}
