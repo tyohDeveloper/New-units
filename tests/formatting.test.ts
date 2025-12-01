@@ -535,21 +535,69 @@ describe('Photon Conversion Function', () => {
     expect(result).toBeCloseTo(4.136, 2);
   });
 
-  // Reference test: 550 nm green light conversions
-  // 550 nm = 545 THz = 2.25 eV = 0.36 fJ
-  it('should convert 550 nm wavelength to 545 THz frequency', () => {
-    const result = convert(550e-9, 'lambda', 'nu', 'photon');
-    expect(result / 1e12).toBeCloseTo(545, 0); // 545 THz
+  // ============================================================
+  // 550 nm Green Light - SI Prefix Reference Test
+  // ============================================================
+  // Wavelength: 550 nanometres (550 nm)
+  // Speed of light: ~300 megametres per second (300 Mm/s)
+  // Frequency = c/λ = (300 × 10⁶ m/s) / (550 × 10⁻⁹ m) = 545 × 10¹² Hz = 545 THz
+  // 
+  // Energy calculation via E = hν:
+  // Planck's constant h = 6.626 × 10⁻³⁴ J·s
+  // E = h × ν = 6.626 × 10⁻³⁴ × 545 × 10¹² = 3.61 × 10⁻¹⁹ J
+  //
+  // SI prefix representations:
+  // - 3.61 × 10⁻¹⁹ J = 361 zJ (zeptojoules, 10⁻²¹)
+  // - 3.61 × 10⁻¹⁹ J = 0.361 aJ (attojoules, 10⁻¹⁸)
+  // ============================================================
+
+  it('should convert 550 nm (nanometres) wavelength to 545 THz (terahertz) frequency', () => {
+    // ν = c/λ where c ≈ 300 Mm/s, λ = 550 nm
+    // (300 × 10⁶) / (550 × 10⁻⁹) = 545 × 10¹² = 545 THz
+    const wavelength_nm = 550;
+    const wavelength_m = wavelength_nm * 1e-9; // Convert nm to m
+    const result = convert(wavelength_m, 'lambda', 'nu', 'photon');
+    const frequency_THz = result / 1e12; // Convert Hz to THz
+    expect(frequency_THz).toBeCloseTo(545, 0);
   });
 
   it('should convert 550 nm wavelength to 2.25 eV energy', () => {
-    const result = convert(550e-9, 'lambda', 'eV', 'photon');
+    const wavelength_nm = 550;
+    const wavelength_m = wavelength_nm * 1e-9;
+    const result = convert(wavelength_m, 'lambda', 'eV', 'photon');
     expect(result).toBeCloseTo(2.25, 2);
   });
 
-  it('should convert 550 nm wavelength to 0.36 aJ (attojoules) energy', () => {
-    const result = convert(550e-9, 'lambda', 'J_photon', 'photon');
-    expect(result * 1e18).toBeCloseTo(0.36, 1); // 0.36 aJ (attojoules)
+  it('should convert 550 nm wavelength to ~361 zJ (zeptojoules) energy', () => {
+    // E = hν = 6.626 × 10⁻³⁴ J·s × 545 × 10¹² s⁻¹ = 3.61 × 10⁻¹⁹ J
+    // In zeptojoules (10⁻²¹): 3.61 × 10⁻¹⁹ J = 361 × 10⁻²¹ J = 361 zJ
+    const wavelength_nm = 550;
+    const wavelength_m = wavelength_nm * 1e-9;
+    const result_J = convert(wavelength_m, 'lambda', 'J_photon', 'photon');
+    const result_zJ = result_J * 1e21; // Convert J to zJ (zepto = 10⁻²¹)
+    expect(result_zJ).toBeCloseTo(361, 0);
+  });
+
+  it('should convert 550 nm wavelength to ~0.36 aJ (attojoules) energy', () => {
+    // In attojoules (10⁻¹⁸): 3.61 × 10⁻¹⁹ J = 0.361 × 10⁻¹⁸ J = 0.36 aJ
+    const wavelength_nm = 550;
+    const wavelength_m = wavelength_nm * 1e-9;
+    const result_J = convert(wavelength_m, 'lambda', 'J_photon', 'photon');
+    const result_aJ = result_J * 1e18; // Convert J to aJ (atto = 10⁻¹⁸)
+    expect(result_aJ).toBeCloseTo(0.36, 1);
+  });
+
+  it('should verify Planck constant relationship: E = hν', () => {
+    // Planck's constant h = 6.62607015 × 10⁻³⁴ J·s (exact, SI 2019)
+    // For 545 THz: E = h × ν = 6.626 × 10⁻³⁴ × 545 × 10¹² ≈ 3.61 × 10⁻¹⁹ J
+    const h = 6.62607015e-34; // J·s
+    const frequency_THz = 545;
+    const frequency_Hz = frequency_THz * 1e12;
+    const expected_E = h * frequency_Hz; // Should be ~3.61e-19 J
+    
+    // Convert from frequency in our photon system
+    const result_J = convert(frequency_Hz, 'nu', 'J_photon', 'photon');
+    expect(result_J).toBeCloseTo(expected_E, 22);
   });
 });
 
