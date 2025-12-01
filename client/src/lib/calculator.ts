@@ -151,14 +151,15 @@ const EXCLUDED_CROSS_DOMAIN_CATEGORIES = [
 
 export const findCrossDomainMatches = (
   dimensions: DimensionalFormula, 
-  currentCategory?: string
+  _currentCategory?: string
 ): string[] => {
   const matches: string[] = [];
   
   if (isDimensionless(dimensions)) return matches;
   
   for (const [catId, info] of Object.entries(CATEGORY_DIMENSIONS)) {
-    if (catId === currentCategory || info.isBase) continue;
+    // Skip base quantities (they ARE the base dimensions, not derived quantities)
+    if (info.isBase) continue;
     
     // Skip archaic, specialty, and other excluded categories
     if (EXCLUDED_CROSS_DOMAIN_CATEGORIES.includes(catId)) continue;

@@ -267,15 +267,15 @@ export default function UnitConverter() {
 
   // Find all categories that have matching dimensions (cross-domain recognition)
   // Returns array of category names from other domains that share the same dimensions
-  const findCrossDomainMatches = (dimensions: DimensionalFormula, currentCategory?: string): string[] => {
+  const findCrossDomainMatches = (dimensions: DimensionalFormula, _currentCategory?: string): string[] => {
     const matches: string[] = [];
     
     // Skip if dimensions are empty (dimensionless)
     if (Object.keys(dimensions).length === 0) return matches;
     
     for (const [catId, info] of Object.entries(CATEGORY_DIMENSIONS)) {
-      // Skip the current category and base quantities (they can't cross-match)
-      if (catId === currentCategory || info.isBase) continue;
+      // Skip base quantities (they ARE the base dimensions, not derived quantities)
+      if (info.isBase) continue;
       
       // Skip archaic, specialty, and other excluded categories
       if (EXCLUDED_CROSS_DOMAIN_CATEGORIES.includes(catId)) continue;

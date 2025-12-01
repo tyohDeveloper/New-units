@@ -138,58 +138,57 @@ describe('Dimensional Formula Operations', () => {
 
 describe('Cross-Domain Matching', () => {
   describe('findCrossDomainMatches', () => {
-    it('should find Torque as cross-domain match for Energy dimensions', () => {
+    it('should find all matching categories for Energy dimensions (including Energy)', () => {
       const energyDims: DimensionalFormula = { mass: 1, length: 2, time: -2 };
       const matches = findCrossDomainMatches(energyDims, 'energy');
+      expect(matches).toContain('Energy');
       expect(matches).toContain('Torque');
-      expect(matches).not.toContain('Energy');
+      expect(matches).toContain('Photon');
     });
 
-    it('should find Energy as cross-domain match for Torque dimensions', () => {
+    it('should find all matching categories for Torque dimensions (including Torque)', () => {
       const torqueDims: DimensionalFormula = { mass: 1, length: 2, time: -2 };
       const matches = findCrossDomainMatches(torqueDims, 'torque');
       expect(matches).toContain('Energy');
-      expect(matches).not.toContain('Torque');
+      expect(matches).toContain('Torque');
+      expect(matches).toContain('Photon');
     });
 
-    it('should find Radioactivity matches for Frequency dimensions', () => {
+    it('should find all matching categories for Frequency dimensions (including Frequency)', () => {
       const frequencyDims: DimensionalFormula = { time: -1 };
       const matches = findCrossDomainMatches(frequencyDims, 'frequency');
+      expect(matches).toContain('Frequency');
       expect(matches).toContain('Radioactivity');
       expect(matches).toContain('Radioactive Decay');
-      expect(matches).not.toContain('Frequency');
     });
 
-    it('should find Sound Pressure as cross-domain match for Pressure dimensions', () => {
+    it('should find all matching categories for Pressure dimensions (including Pressure)', () => {
       const pressureDims: DimensionalFormula = { mass: 1, length: -1, time: -2 };
       const matches = findCrossDomainMatches(pressureDims, 'pressure');
+      expect(matches).toContain('Pressure');
       expect(matches).toContain('Sound Pressure');
-      expect(matches).not.toContain('Pressure');
     });
 
-    it('should find multiple matches for Absorbed Dose dimensions', () => {
+    it('should find all matching categories for Absorbed Dose dimensions (including Absorbed Dose)', () => {
       const doseDims: DimensionalFormula = { length: 2, time: -2 };
       const matches = findCrossDomainMatches(doseDims, 'absorbed_dose');
+      expect(matches).toContain('Absorbed Dose');
       expect(matches).toContain('Radiation Dose');
       expect(matches).toContain('Equivalent Dose');
-      expect(matches).not.toContain('Absorbed Dose');
     });
 
-    it('should return empty array for base quantity dimensions', () => {
+    it('should return empty array for base quantity dimensions (no derived categories exist)', () => {
       const lengthDims: DimensionalFormula = { length: 1 };
       const matches = findCrossDomainMatches(lengthDims, 'length');
-      expect(matches.filter(m => m !== 'Length')).toHaveLength(0);
+      // Length is a base quantity (isBase: true), so it's excluded
+      // No other derived category has pure { length: 1 } dimensions
+      expect(matches).toHaveLength(0);
+      expect(matches).not.toContain('Length');
     });
 
     it('should return empty array for dimensionless quantities', () => {
       const matches = findCrossDomainMatches({}, 'math');
       expect(matches).toHaveLength(0);
-    });
-
-    it('should find Photon as cross-domain match for Energy', () => {
-      const energyDims: DimensionalFormula = { mass: 1, length: 2, time: -2 };
-      const matches = findCrossDomainMatches(energyDims, 'energy');
-      expect(matches).toContain('Photon');
     });
 
     it('should NOT include Fuel Energy in cross-domain matches (excluded category)', () => {
