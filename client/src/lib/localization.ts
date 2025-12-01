@@ -220,6 +220,21 @@ export const UI_TRANSLATIONS: Record<string, Translation> = {
     es: 'Dosis Equivalente', fr: 'Dose Équivalente', it: 'Dose Equivalente',
     pt: 'Dose Equivalente', ru: 'Эквивалентная Доза', zh: '等效剂量', ja: '等価線量', ko: '등가선량'
   },
+  'Photon/Light': {
+    en: 'Photon/Light', ar: 'الفوتون/الضوء', de: 'Photon/Licht',
+    es: 'Fotón/Luz', fr: 'Photon/Lumière', it: 'Fotone/Luce',
+    pt: 'Fóton/Luz', ru: 'Фотон/Свет', zh: '光子/光', ja: '光子/光', ko: '광자/빛'
+  },
+  'Radioactive Decay': {
+    en: 'Radioactive Decay', ar: 'الاضمحلال الإشعاعي', de: 'Radioaktiver Zerfall',
+    es: 'Desintegración Radiactiva', fr: 'Désintégration Radioactive', it: 'Decadimento Radioattivo',
+    pt: 'Decaimento Radioativo', ru: 'Радиоактивный Распад', zh: '放射性衰变', ja: '放射性崩壊', ko: '방사성 붕괴'
+  },
+  'Cross-Section': {
+    en: 'Cross-Section', ar: 'المقطع العرضي', de: 'Wirkungsquerschnitt',
+    es: 'Sección Eficaz', fr: 'Section Efficace', it: 'Sezione d\'Urto',
+    pt: 'Secção Transversal', ru: 'Сечение', zh: '截面', ja: '断面積', ko: '단면적'
+  },
   'Catalytic Activity': {
     en: 'Catalytic Activity', ar: 'النشاط التحفيزي', de: 'Katalytische Aktivität',
     es: 'Actividad Catalítica', fr: 'Activité Catalytique', it: 'Attività Catalitica',
@@ -472,6 +487,21 @@ export const UNIT_NAME_TRANSLATIONS: Record<string, Translation> = {
     en: 'Joule', ar: 'جول', de: 'Joule',
     es: 'Julio', fr: 'Joule', it: 'Joule',
     pt: 'Joule', ru: 'Джоуль', zh: '焦耳', ja: 'ジュール', ko: '줄'
+  },
+  'Electronvolt': { 
+    en: 'Electronvolt', ar: 'إلكترون فولت', de: 'Elektronenvolt',
+    es: 'Electronvoltio', fr: 'Électron-volt', it: 'Elettronvolt',
+    pt: 'Elétron-volt', ru: 'Электронвольт', zh: '电子伏特', ja: '電子ボルト', ko: '전자볼트'
+  },
+  'Frequency (ν)': { 
+    en: 'Frequency (ν)', ar: 'التردد (ν)', de: 'Frequenz (ν)',
+    es: 'Frecuencia (ν)', fr: 'Fréquence (ν)', it: 'Frequenza (ν)',
+    pt: 'Frequência (ν)', ru: 'Частота (ν)', zh: '频率 (ν)', ja: '周波数 (ν)', ko: '주파수 (ν)'
+  },
+  'Wavelength (λ)': { 
+    en: 'Wavelength (λ)', ar: 'الطول الموجي (λ)', de: 'Wellenlänge (λ)',
+    es: 'Longitud de Onda (λ)', fr: 'Longueur d\'Onde (λ)', it: 'Lunghezza d\'Onda (λ)',
+    pt: 'Comprimento de Onda (λ)', ru: 'Длина Волны (λ)', zh: '波长 (λ)', ja: '波長 (λ)', ko: '파장 (λ)'
   },
   'Watt': { 
     en: 'Watt', ar: 'واط', de: 'Watt',
