@@ -76,11 +76,12 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
   - Bq (Becquerel) remains for radioactivity but shares s⁻¹ dimensions
   - Coherent SI derived units rad (plane angle) and sr (solid angle) ARE available
   - Multi-dimension SI derived units (lm, lx, Gy, Sv, kat) are available in calculator dropdowns
-- **Photon/Light Category**: Specialized category for photon physics conversions:
+- **Photon/Light Category**: Specialized category for photon physics conversions using energy-equivalent representations:
   - Energy: eV (base, with prefixes), J (Joule, 1 J = 6.241509074e18 eV)
-  - Frequency: s⁻¹ (NOT Hz, factor = Planck constant h = 4.135667696e-15 eV·s)
-  - Wavelength: m (inverse relationship, hc = 1.239841984e-6 eV·m, with prefixes for nm)
+  - Frequency: **ν** (Greek nu) - energy-equivalent via E = hν (h = 4.135667696e-15 eV·s)
+  - Wavelength: **λ** (Greek lambda) - energy-equivalent via E = hc/λ (hc = 1.239841984e-6 eV·m), inverse relationship, with prefixes for nm
   - Wavenumber: cm⁻¹ (1 eV = 8065.54393734 cm⁻¹)
+  - Note: Greek symbols (ν, λ) indicate these are photon-specific energy equivalents, not generic frequency/length
 - **Typography Category**: 11 units for print/design measurements including point (1/72 inch), pica (12 points), pixel (96 PPI ref), em, twip, cicero, with meter as SI base
 - **Cooking Measures Category**: 24 units for kitchen measurements covering US/UK/Metric/Japan variants including teaspoons, tablespoons, cups, fluid ounces, pints, quarts, gallons, with mL as base unit
 - **Multilingual Support**: 12 languages with complete translations:
