@@ -192,10 +192,10 @@ describe('Cross-Domain Matching', () => {
       expect(matches).toContain('Photon');
     });
 
-    it('should find Fuel Energy as cross-domain match for Energy', () => {
+    it('should NOT include Fuel Energy in cross-domain matches (excluded category)', () => {
       const energyDims: DimensionalFormula = { mass: 1, length: 2, time: -2 };
       const matches = findCrossDomainMatches(energyDims, 'energy');
-      expect(matches).toContain('Fuel Energy');
+      expect(matches).not.toContain('Fuel Energy');
     });
 
     it('should not include base quantities in matches', () => {

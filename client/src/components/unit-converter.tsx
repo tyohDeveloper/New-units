@@ -261,7 +261,7 @@ export default function UnitConverter() {
   // Categories to exclude from cross-domain matching (archaic, specialty, other)
   const EXCLUDED_CROSS_DOMAIN_CATEGORIES = [
     'archaic_length', 'archaic_mass', 'archaic_volume', 'archaic_area', 'archaic_energy', 'archaic_power',
-    'typography', 'cooking', 'beer_wine_volume', 'fuel_economy', 'lightbulb', 'rack_geometry', 'shipping',
+    'typography', 'cooking', 'beer_wine_volume', 'fuel', 'fuel_economy', 'lightbulb', 'rack_geometry', 'shipping',
     'data', 'math'
   ];
 
