@@ -534,6 +534,23 @@ describe('Photon Conversion Function', () => {
     const result = convert(1e15, 'nu', 'eV', 'photon');
     expect(result).toBeCloseTo(4.136, 2);
   });
+
+  // Reference test: 550 nm green light conversions
+  // 550 nm = 545 THz = 2.25 eV = 0.36 fJ
+  it('should convert 550 nm wavelength to 545 THz frequency', () => {
+    const result = convert(550e-9, 'lambda', 'nu', 'photon');
+    expect(result / 1e12).toBeCloseTo(545, 0); // 545 THz
+  });
+
+  it('should convert 550 nm wavelength to 2.25 eV energy', () => {
+    const result = convert(550e-9, 'lambda', 'eV', 'photon');
+    expect(result).toBeCloseTo(2.25, 2);
+  });
+
+  it('should convert 550 nm wavelength to 0.36 aJ (attojoules) energy', () => {
+    const result = convert(550e-9, 'lambda', 'J_photon', 'photon');
+    expect(result * 1e18).toBeCloseTo(0.36, 1); // 0.36 aJ (attojoules)
+  });
 });
 
 describe('Radioactive Decay Category', () => {
