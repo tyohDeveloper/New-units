@@ -3563,6 +3563,42 @@ export default function UnitConverter() {
     }
   };
 
+  // Mode switching handlers with data transfer
+  // RPN stack naming: x=stack[3] (bottom/result), y=stack[2], s2=stack[1], s3=stack[0] (top)
+  const switchToRpn = () => {
+    // Transfer simple calculator fields to RPN stack:
+    // result → x (stack[3])
+    // field1 → s3 (stack[0]) - reversed order
+    // field2 → s2 (stack[1]) - reversed order  
+    // field3 → y (stack[2]) - reversed order
+    const newRpnStack: typeof rpnStack = [
+      calcValues[0], // s3 = field1
+      calcValues[1], // s2 = field2
+      calcValues[2], // y = field3
+      calcValues[3]  // x = result
+    ];
+    setRpnStack(newRpnStack);
+    setRpnResultPrefix('none');
+    setRpnSelectedAlternative(0);
+    setCalculatorMode('rpn');
+  };
+
+  const switchToSimple = () => {
+    // Clear all simple fields and copy x to result
+    const newCalcValues: typeof calcValues = [
+      null,
+      null,
+      null,
+      rpnStack[3] // x → result
+    ];
+    setCalcValues(newCalcValues);
+    setCalcOp1(null);
+    setCalcOp2(null);
+    setResultPrefix('none');
+    setSelectedAlternative(0);
+    setCalculatorMode('simple');
+  };
+
   // Helper to fix floating-point precision artifacts
   // Only cleans up obvious artifacts, doesn't truncate valid precision
   const fixPrecision = (num: number): number => {
@@ -4693,10 +4729,10 @@ export default function UnitConverter() {
             </div>
             {/* Right-side mode toggle button */}
             <Button 
-              variant="outline" 
+              variant="ghost" 
               size="sm" 
-              onClick={() => setCalculatorMode(calculatorMode === 'simple' ? 'rpn' : 'simple')}
-              className="text-xs font-mono"
+              onClick={() => calculatorMode === 'simple' ? switchToRpn() : switchToSimple()}
+              className="text-xs font-mono hover:text-accent"
             >
               {calculatorMode === 'simple' ? 'RPN' : 'SIMPLE'}
             </Button>
