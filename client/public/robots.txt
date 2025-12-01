@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://unitverse-converter-tyohdeveloper.replit.app/sitemap.xml
+Sitemap: https://tyoh.org/sitemap.xml
