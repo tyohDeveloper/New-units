@@ -611,9 +611,6 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       // Greek letter lambda (λ) indicates this is photon wavelength
       // hc = 1.239841984e-6 eV·m (CODATA 2018)
       { id: "lambda", name: "Wavelength (λ)", symbol: "λ", factor: 1.239841984e-6, allowPrefixes: true, isInverse: true },
-      // Wavenumber (k̃) - direct relationship: k̃ = E/(hc) = 1/λ
-      // 1 eV = 8065.54393734 cm⁻¹ (CODATA 2018)
-      { id: "cm_inv", name: "Wavenumber", symbol: "cm⁻¹", factor: 1/8065.54393734 },
     ],
   },
   {

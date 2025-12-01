@@ -460,12 +460,11 @@ describe('Photon/Light Category', () => {
     expect(photonCategory).toBeDefined();
   });
 
-  it('should have wavelength (λ), frequency (ν), energy, and wavenumber units', () => {
+  it('should have wavelength (λ), frequency (ν), and energy units', () => {
     expect(photonCategory?.units.some((u) => u.id === 'lambda')).toBe(true);
     expect(photonCategory?.units.some((u) => u.id === 'nu')).toBe(true);
     expect(photonCategory?.units.some((u) => u.id === 'eV')).toBe(true);
     expect(photonCategory?.units.some((u) => u.id === 'J_photon')).toBe(true);
-    expect(photonCategory?.units.some((u) => u.id === 'cm_inv')).toBe(true);
   });
 
   it('should have inverse conversion for wavelength (λ) unit', () => {
