@@ -71,7 +71,14 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 - **SI Representation Constraints**:
   - Base unit expression always appears LAST in dropdown options
   - Derived representations cannot have more terms than the base expression
-  - rad and sr are NOT reduced - angle/solid angle units remain as-is like Hz, Bq, Gy, Sv, lm, lx, kat
+  - Only Hz is excluded from calculator compositions (prefers s⁻¹ representation)
+  - All other SI derived units (lm, lx, Bq, Gy, Sv, kat, rad, sr) are available in calculator dropdowns
+- **Extended Calculator Units**: In addition to standard SI derived units, the calculator includes:
+  - eV (electronvolt) - photon energy, same dimensions as J
+  - b (barn) - cross-section area (1e-28 m²)
+  - St (stokes) - kinematic viscosity (cm²/s)
+  - rayl - acoustic impedance (Pa⋅s⋅m⁻¹)
+  - D (dioptre) - refractive power (m⁻¹)
 - **Typography Category**: 11 units for print/design measurements including point (1/72 inch), pica (12 points), pixel (96 PPI ref), em, twip, cicero, with meter as SI base
 - **Cooking Measures Category**: 24 units for kitchen measurements covering US/UK/Metric/Japan variants including teaspoons, tablespoons, cups, fluid ounces, pints, quarts, gallons, with mL as base unit
 - **Multilingual Support**: 12 languages with complete translations:
