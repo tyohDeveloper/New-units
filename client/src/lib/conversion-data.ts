@@ -1494,3 +1494,241 @@ export function convert(
 
   return result / toPrefixFactor;
 }
+
+// Unit parsing result interface
+export interface ParsedUnitResult {
+  value: number;
+  categoryId: UnitCategory | null;
+  unitId: string | null;
+  prefixId: string;
+  dimensions: Record<string, number>;
+}
+
+// Build a lookup map for quick unit matching
+// Returns Map<symbol, {categoryId, unitId, allowPrefixes}>
+export function buildUnitSymbolMap(): Map<string, { categoryId: UnitCategory; unitId: string; symbol: string; allowPrefixes: boolean; factor: number }> {
+  const map = new Map();
+  for (const category of CONVERSION_DATA) {
+    for (const unit of category.units) {
+      // Skip math functions as they're not units
+      if (unit.mathFunction) continue;
+      map.set(unit.symbol, {
+        categoryId: category.id,
+        unitId: unit.id,
+        symbol: unit.symbol,
+        allowPrefixes: unit.allowPrefixes || false,
+        factor: unit.factor
+      });
+    }
+  }
+  return map;
+}
+
+// Cached unit symbol map
+let cachedUnitSymbolMap: ReturnType<typeof buildUnitSymbolMap> | null = null;
+
+function getUnitSymbolMap() {
+  if (!cachedUnitSymbolMap) {
+    cachedUnitSymbolMap = buildUnitSymbolMap();
+  }
+  return cachedUnitSymbolMap;
+}
+
+// Get category dimensions for a given category ID
+function getCategoryDimensionsForParse(categoryId: UnitCategory): Record<string, number> {
+  const dimensionMap: Record<string, Record<string, number>> = {
+    length: { length: 1 },
+    mass: { mass: 1 },
+    time: { time: 1 },
+    current: { current: 1 },
+    temperature: { temperature: 1 },
+    amount: { amount: 1 },
+    intensity: { intensity: 1 },
+    area: { length: 2 },
+    volume: { length: 3 },
+    speed: { length: 1, time: -1 },
+    acceleration: { length: 1, time: -2 },
+    force: { mass: 1, length: 1, time: -2 },
+    pressure: { mass: 1, length: -1, time: -2 },
+    energy: { mass: 1, length: 2, time: -2 },
+    power: { mass: 1, length: 2, time: -3 },
+    frequency: { time: -1 },
+    charge: { current: 1, time: 1 },
+    potential: { mass: 1, length: 2, time: -3, current: -1 },
+    capacitance: { mass: -1, length: -2, time: 4, current: 2 },
+    resistance: { mass: 1, length: 2, time: -3, current: -2 },
+    conductance: { mass: -1, length: -2, time: 3, current: 2 },
+    inductance: { mass: 1, length: 2, time: -2, current: -2 },
+    magnetic_flux: { mass: 1, length: 2, time: -2, current: -1 },
+    magnetic_density: { mass: 1, time: -2, current: -1 },
+    radioactivity: { time: -1 },
+    radiation_dose: { length: 2, time: -2 },
+    equivalent_dose: { length: 2, time: -2 },
+    catalytic: { amount: 1, time: -1 },
+    angle: { angle: 1 },
+    solid_angle: { solid_angle: 1 },
+    angular_velocity: { angle: 1, time: -1 },
+    momentum: { mass: 1, length: 1, time: -1 },
+    angular_momentum: { mass: 1, length: 2, time: -1 },
+    luminous_flux: { intensity: 1, solid_angle: 1 },
+    illuminance: { intensity: 1, solid_angle: 1, length: -2 },
+    luminous_exitance: { intensity: 1, solid_angle: 1, length: -2 },
+    luminance: { intensity: 1, length: -2 },
+    torque: { mass: 1, length: 2, time: -2 },
+    density: { mass: 1, length: -3 },
+    flow: { length: 3, time: -1 },
+    viscosity: { mass: 1, length: -1, time: -1 },
+    surface_tension: { mass: 1, time: -2 },
+    thermal_conductivity: { mass: 1, length: 1, time: -3, temperature: -1 },
+    specific_heat: { length: 2, time: -2, temperature: -1 },
+    entropy: { mass: 1, length: 2, time: -2, temperature: -1 },
+    concentration: { amount: 1, length: -3 },
+    data: {},
+    rack_geometry: {},
+    shipping: {},
+    math: {},
+    beer_wine_volume: { length: 3 },
+    refractive_power: { length: -1 },
+    sound_pressure: { mass: 1, length: -1, time: -2 },
+    fuel_economy: { length: -2 },
+    lightbulb: {},
+    photon: { mass: 1, length: 2, time: -2 },
+    radioactive_decay: { time: -1 },
+    cross_section: { length: 2 },
+    kinematic_viscosity: { length: 2, time: -1 },
+    electric_field: { mass: 1, length: 1, time: -3, current: -1 },
+    magnetic_field_h: { current: 1, length: -1 },
+    sound_intensity: { mass: 1, time: -3 },
+    acoustic_impedance: { mass: 1, length: -4, time: -1 },
+    fuel: { mass: 1, length: 2, time: -2 },
+    archaic_length: { length: 1 },
+    archaic_mass: { mass: 1 },
+    archaic_volume: { length: 3 },
+    archaic_area: { length: 2 },
+    archaic_energy: { mass: 1, length: 2, time: -2 },
+    archaic_power: { mass: 1, length: 2, time: -3 },
+    typography: { length: 1 },
+    cooking: { length: 3 }
+  };
+  return dimensionMap[categoryId] || {};
+}
+
+// Parse unit text and return parsed result
+// unitText: the text after the number, e.g., "km", "meter", "µg"
+// unitNameLookup: optional Map<lowercaseName, {categoryId, unitId}> for localized name matching
+export function parseUnitSymbol(
+  unitText: string,
+  unitNameLookup?: Map<string, { categoryId: UnitCategory; unitId: string }>
+): { categoryId: UnitCategory | null; unitId: string | null; prefixId: string; factor: number } {
+  const symbolMap = getUnitSymbolMap();
+  const normalizedText = unitText.trim();
+  
+  if (!normalizedText) {
+    return { categoryId: null, unitId: null, prefixId: 'none', factor: 1 };
+  }
+  
+  // 1. Try exact symbol match first (no prefix)
+  const exactMatch = symbolMap.get(normalizedText);
+  if (exactMatch) {
+    return { 
+      categoryId: exactMatch.categoryId, 
+      unitId: exactMatch.unitId, 
+      prefixId: 'none',
+      factor: exactMatch.factor
+    };
+  }
+  
+  // 2. Try localized name match if provided
+  if (unitNameLookup) {
+    const nameLower = normalizedText.toLowerCase();
+    const nameMatch = unitNameLookup.get(nameLower);
+    if (nameMatch) {
+      const category = CONVERSION_DATA.find(c => c.id === nameMatch.categoryId);
+      const unit = category?.units.find(u => u.id === nameMatch.unitId);
+      return {
+        categoryId: nameMatch.categoryId,
+        unitId: nameMatch.unitId,
+        prefixId: 'none',
+        factor: unit?.factor || 1
+      };
+    }
+  }
+  
+  // 3. Try prefix + symbol match
+  // Sort prefixes by symbol length (longest first) to match "micro" before "m"
+  const sortedPrefixes = [...PREFIXES, ...BINARY_PREFIXES]
+    .filter(p => p.id !== 'none' && p.symbol)
+    .sort((a, b) => b.symbol.length - a.symbol.length);
+  
+  for (const prefix of sortedPrefixes) {
+    if (normalizedText.startsWith(prefix.symbol)) {
+      const remainder = normalizedText.slice(prefix.symbol.length);
+      const unitMatch = symbolMap.get(remainder);
+      
+      if (unitMatch && unitMatch.allowPrefixes) {
+        // Check for binary prefix usage - only allow on data category
+        const isBinaryPrefix = BINARY_PREFIXES.some(bp => bp.id === prefix.id);
+        if (isBinaryPrefix && unitMatch.categoryId !== 'data') {
+          continue;
+        }
+        
+        return {
+          categoryId: unitMatch.categoryId,
+          unitId: unitMatch.unitId,
+          prefixId: prefix.id,
+          factor: unitMatch.factor * prefix.factor
+        };
+      }
+    }
+  }
+  
+  // 4. No match found
+  return { categoryId: null, unitId: null, prefixId: 'none', factor: 1 };
+}
+
+// Parse complete text with number and unit
+export function parseUnitText(
+  text: string,
+  unitNameLookup?: Map<string, { categoryId: UnitCategory; unitId: string }>
+): ParsedUnitResult {
+  const trimmed = text.trim()
+    .replace(/\u00A0/g, ' ')  // Replace non-breaking spaces
+    .replace(/\u202F/g, ' '); // Replace narrow no-break spaces
+  
+  if (!trimmed) {
+    return { value: 1, categoryId: null, unitId: null, prefixId: 'none', dimensions: {} };
+  }
+  
+  // Try to extract number from the beginning
+  // Support scientific notation, comma/dot decimal separators
+  const numberMatch = trimmed.match(/^([+-]?\d+(?:[.,]\d+)?(?:[eE][+-]?\d+)?)\s*/);
+  
+  let numValue = 1;
+  let unitText = trimmed;
+  
+  if (numberMatch) {
+    const numStr = numberMatch[1].replace(',', '.'); // Normalize decimal separator
+    numValue = parseFloat(numStr);
+    if (isNaN(numValue)) numValue = 1;
+    unitText = trimmed.slice(numberMatch[0].length);
+  } else {
+    // No number found - default to 1
+    numValue = 1;
+  }
+  
+  // Parse the unit part
+  const unitResult = parseUnitSymbol(unitText, unitNameLookup);
+  
+  // Get dimensions for the matched category
+  const dimensions = unitResult.categoryId 
+    ? getCategoryDimensionsForParse(unitResult.categoryId) 
+    : {};
+  
+  return {
+    value: numValue,
+    categoryId: unitResult.categoryId,
+    unitId: unitResult.unitId,
+    prefixId: unitResult.prefixId,
+    dimensions
+  };
+}

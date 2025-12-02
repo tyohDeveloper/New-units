@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES, Prefix, findOptimalPrefix } from '@/lib/conversion-data';
+import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES, Prefix, findOptimalPrefix, parseUnitText, ParsedUnitResult } from '@/lib/conversion-data';
 import { UNIT_NAME_TRANSLATIONS, type SupportedLanguage } from '@/lib/localization';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -49,6 +49,7 @@ export default function UnitConverter() {
   
   // RPN calculator state - independent from simple calculator
   const [rpnStack, setRpnStack] = useState<Array<CalcValue | null>>([null, null, null, null]);
+  const [previousRpnStack, setPreviousRpnStack] = useState<Array<CalcValue | null>>([null, null, null, null]);
   const [flashRpnField1, setFlashRpnField1] = useState<boolean>(false);
   const [flashRpnField2, setFlashRpnField2] = useState<boolean>(false);
   const [flashRpnField3, setFlashRpnField3] = useState<boolean>(false);
@@ -2018,6 +2019,64 @@ export default function UnitConverter() {
     inputRef.current?.focus();
   }, []);
 
+  // Smart paste handler - parses pasted text into number and unit
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      // Get the active element
+      const activeElement = document.activeElement as HTMLElement;
+      const activeTagName = activeElement?.tagName?.toLowerCase();
+      
+      // Skip if focused on input/textarea (standard paste behavior)
+      if (activeTagName === 'input' || activeTagName === 'textarea') {
+        return;
+      }
+      
+      // Get pasted text
+      const pastedText = e.clipboardData?.getData('text');
+      if (!pastedText) return;
+      
+      // Parse the unit text
+      const parsed = parseUnitText(pastedText);
+      
+      // Route based on active tab
+      if (activeTab === 'converter') {
+        // Converter tab: set from value and optionally switch to matched category/unit
+        if (parsed.categoryId && parsed.unitId) {
+          setActiveCategory(parsed.categoryId);
+          setFromUnit(parsed.unitId);
+          setFromPrefix(parsed.prefixId);
+        }
+        setInputValue(parsed.value.toString());
+      } else if (activeTab === 'custom') {
+        // Custom tab: set value field and update dimension grid based on parsed dimensions
+        setDirectValue(parsed.value.toString());
+        
+        // Map dimensional formula to exponent grid
+        const newExponents: Record<string, number> = {
+          m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
+        };
+        
+        if (parsed.dimensions.length) newExponents.m = parsed.dimensions.length;
+        if (parsed.dimensions.mass) newExponents.kg = parsed.dimensions.mass;
+        if (parsed.dimensions.time) newExponents.s = parsed.dimensions.time;
+        if (parsed.dimensions.current) newExponents.A = parsed.dimensions.current;
+        if (parsed.dimensions.temperature) newExponents.K = parsed.dimensions.temperature;
+        if (parsed.dimensions.amount) newExponents.mol = parsed.dimensions.amount;
+        if (parsed.dimensions.intensity) newExponents.cd = parsed.dimensions.intensity;
+        if (parsed.dimensions.angle) newExponents.rad = parsed.dimensions.angle;
+        if (parsed.dimensions.solid_angle) newExponents.sr = parsed.dimensions.solid_angle;
+        
+        setDirectExponents(newExponents);
+      }
+      
+      // Prevent default paste behavior since we handled it
+      e.preventDefault();
+    };
+    
+    document.addEventListener('paste', handlePaste);
+    return () => document.removeEventListener('paste', handlePaste);
+  }, [activeTab]);
+
   // Refocus input after interactions
   const refocusInput = () => {
     setTimeout(() => {
@@ -2658,6 +2717,7 @@ export default function UnitConverter() {
       if (calculatorMode === 'rpn') {
         // RPN mode: Push onto stack position x with stack lift
         // Stack lifts: s3 gets old s2, s2 gets old y, y gets old x, new value goes to x
+        saveRpnStackForUndo();
         setRpnStack(prev => {
           const newStack = [...prev];
           newStack[0] = prev[1]; // s3 gets old s2
@@ -3512,7 +3572,21 @@ export default function UnitConverter() {
   };
 
   // RPN Calculator functions
+  
+  // Save current stack before any operation (for undo)
+  const saveRpnStackForUndo = () => {
+    setPreviousRpnStack([...rpnStack]);
+  };
+  
+  // Undo: swap current stack with previous stack (pressing twice = redo)
+  const undoRpnStack = () => {
+    const temp = [...rpnStack];
+    setRpnStack([...previousRpnStack]);
+    setPreviousRpnStack(temp);
+  };
+  
   const clearRpnStack = () => {
+    saveRpnStackForUndo();
     setRpnStack([null, null, null, null]);
     setRpnResultPrefix('none');
     setRpnSelectedAlternative(0);
@@ -3520,6 +3594,7 @@ export default function UnitConverter() {
 
   const clearRpnTop = () => {
     // Clear the top non-null entry in the stack
+    saveRpnStackForUndo();
     setRpnStack(prev => {
       const newStack = [...prev];
       // Find the last non-null entry (highest index with data)
@@ -3537,6 +3612,7 @@ export default function UnitConverter() {
     // Standard RPN ENTER: lift stack and duplicate x
     // s3 gets old s2, s2 gets old y, y gets old x, x stays same
     if (!rpnStack[3]) return;
+    saveRpnStackForUndo();
     setRpnStack(prev => {
       const newStack = [...prev];
       newStack[0] = prev[1]; // s3 <- s2
@@ -3550,6 +3626,7 @@ export default function UnitConverter() {
   const popFromRpnStack = () => {
     // Pop: drops x, shifts stack down
     // x gets old y, y gets old s2, s2 gets old s3, s3 becomes null
+    saveRpnStackForUndo();
     setRpnStack(prev => {
       const newStack = [...prev];
       newStack[3] = prev[2]; // x <- y
@@ -3579,6 +3656,7 @@ export default function UnitConverter() {
   // Apply unary operation to RPN x register (stack[3])
   const applyRpnUnary = (op: RpnUnaryOp) => {
     if (!rpnStack[3]) return;
+    saveRpnStackForUndo();
     
     const x = rpnStack[3];
     let newValue: number;
@@ -3840,6 +3918,7 @@ export default function UnitConverter() {
   // y is stack[2], x is stack[3], result goes to x, stack drops
   const applyRpnBinary = (op: RpnBinaryOp) => {
     if (!rpnStack[2] || !rpnStack[3]) return;
+    saveRpnStackForUndo();
     
     const y = rpnStack[2];
     const x = rpnStack[3];
@@ -3945,6 +4024,7 @@ export default function UnitConverter() {
 
   // Push a constant value onto the RPN stack (dimensionless)
   const pushRpnConstant = (value: number) => {
+    saveRpnStackForUndo();
     setRpnStack(prev => {
       const newStack = [...prev];
       // Lift stack: each position moves up one
@@ -4039,6 +4119,7 @@ export default function UnitConverter() {
     // "The top field placed in y" → field1 → y (stack[2])
     // "the second from the top to s2" → field2 → s2 (stack[1])
     // "the one above the result to s3" → field3 → s3 (stack[0])
+    saveRpnStackForUndo();
     const newRpnStack: typeof rpnStack = [
       calcValues[2], // s3 = field3 (one above result)
       calcValues[1], // s2 = field2 (second from top)
@@ -5005,6 +5086,7 @@ export default function UnitConverter() {
                     
                     if (calculatorMode === 'rpn') {
                       // RPN mode: Push onto stack position x with stack lift
+                      saveRpnStackForUndo();
                       setRpnStack(prev => {
                         const newStack = [...prev];
                         newStack[0] = prev[1];
@@ -5072,6 +5154,7 @@ export default function UnitConverter() {
                     
                     if (calculatorMode === 'rpn') {
                       // RPN mode: Push onto stack position x with stack lift
+                      saveRpnStackForUndo();
                       setRpnStack(prev => {
                         const newStack = [...prev];
                         newStack[0] = prev[1];
@@ -5177,18 +5260,13 @@ export default function UnitConverter() {
           >
             <div className="flex items-center gap-4">
               <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
-                <Label className="text-xs font-mono uppercase text-muted-foreground">
-                  {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR - UNIT')}
+                <Label 
+                  className="text-xs font-mono uppercase text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
+                  onClick={() => calculatorMode === 'simple' ? switchToRpn() : switchToSimple()}
+                >
+                  {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR - UNIT')} ↻
                 </Label>
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => calculatorMode === 'simple' ? switchToRpn() : switchToSimple()}
-                    className="h-5 w-5 p-0 text-muted-foreground hover:text-accent"
-                  >
-                    {'\u{1F504}'}
-                  </Button>
                   <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
                   <Select 
                     value={calculatorPrecision.toString()} 
@@ -5659,14 +5737,15 @@ export default function UnitConverter() {
                 return s3Buttons.map((btn, i) => {
                   const hasOp = 'op' in btn;
                   const currentOp = hasOp ? (shiftActive ? btn.shiftOp : btn.op) : undefined;
+                  const isDisabled = !hasOp || !rpnStack[3];
                   return (
                     <Button 
                       key={`s3-btn-${i}`} 
                       variant="ghost" 
                       size="sm" 
-                      className="text-xs font-mono w-full text-muted-foreground hover:text-foreground"
+                      className={`text-xs font-mono w-full ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                       onClick={() => currentOp && applyRpnUnary(currentOp)}
-                      disabled={!hasOp || !rpnStack[3]}
+                      disabled={isDisabled}
                     >
                       {shiftActive ? btn.shiftLabel : btn.label}
                     </Button>
@@ -5726,14 +5805,15 @@ export default function UnitConverter() {
                 return s2Buttons.map((btn, i) => {
                   const hasOp = 'op' in btn;
                   const currentOp = hasOp ? (shiftActive ? btn.shiftOp : btn.op) : undefined;
+                  const isDisabled = !hasOp || !rpnStack[3];
                   return (
                     <Button 
                       key={`s2-btn-${i}`} 
                       variant="ghost" 
                       size="sm" 
-                      className="text-xs font-mono w-full text-muted-foreground hover:text-foreground"
+                      className={`text-xs font-mono w-full ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                       onClick={() => currentOp && applyRpnUnary(currentOp)}
-                      disabled={!hasOp || !rpnStack[3]}
+                      disabled={isDisabled}
                     >
                       {shiftActive ? btn.shiftLabel : btn.label}
                     </Button>
@@ -5784,15 +5864,15 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full text-muted-foreground hover:text-foreground"
-                onClick={() => pushRpnConstant(Math.PI)}
+                className="text-xs font-mono w-full text-foreground hover:text-accent"
+                onClick={() => shiftActive ? undoRpnStack() : pushRpnConstant(Math.PI)}
               >
-                π
+                {shiftActive ? 'Undo' : 'π'}
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full text-muted-foreground hover:text-foreground"
+                className="text-xs font-mono w-full text-foreground hover:text-accent"
                 onClick={() => pushRpnConstant(Math.E)}
               >
                 ℯ
@@ -5800,7 +5880,7 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full text-muted-foreground hover:text-foreground"
+                className="text-xs font-mono w-full text-foreground hover:text-accent"
                 onClick={() => pushRpnConstant(Math.SQRT2)}
               >
                 √2
@@ -5820,7 +5900,7 @@ export default function UnitConverter() {
                       key={`y-bin-${i}`} 
                       variant="ghost" 
                       size="sm" 
-                      className="text-xs font-mono w-full text-muted-foreground hover:text-foreground"
+                      className={`text-xs font-mono w-full ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                       onClick={() => applyRpnBinary(currentOp)}
                       disabled={isDisabled}
                     >
