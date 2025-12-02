@@ -1265,6 +1265,11 @@ export default function UnitConverter() {
       es: 'Limpiar', fr: 'Effacer', it: 'Cancella', ko: '지우기',
       pt: 'Limpar', ru: 'Очистить', zh: '清除', ja: 'クリア'
     },
+    'Clear calculator': { 
+      en: 'Clear calculator', ar: 'مسح الآلة الحاسبة', de: 'Rechner löschen',
+      es: 'Limpiar calculadora', fr: 'Effacer calculatrice', it: 'Cancella calcolatrice', ko: '계산기 지우기',
+      pt: 'Limpar calculadora', ru: 'Очистить калькулятор', zh: '清除计算器', ja: '計算機クリア'
+    },
     'Dimensional Analysis': { 
       en: 'Dimensional Analysis', ar: 'التحليل البعدي', de: 'Dimensionsanalyse',
       es: 'Análisis Dimensional', fr: 'Analyse Dimensionnelle', it: 'Analisi Dimensionale', ko: '차원 분석',
@@ -3537,6 +3542,19 @@ export default function UnitConverter() {
       newStack[1] = prev[2]; // s2 <- y
       newStack[2] = prev[3]; // y <- x
       // newStack[3] stays as x (duplicated)
+      return newStack;
+    });
+  };
+
+  const popFromRpnStack = () => {
+    // Pop: drops x, shifts stack down
+    // x gets old y, y gets old s2, s2 gets old s3, s3 becomes null
+    setRpnStack(prev => {
+      const newStack = [...prev];
+      newStack[3] = prev[2]; // x <- y
+      newStack[2] = prev[1]; // y <- s2
+      newStack[1] = prev[0]; // s2 <- s3
+      newStack[0] = null;    // s3 <- null
       return newStack;
     });
   };
@@ -5863,41 +5881,40 @@ export default function UnitConverter() {
               )}
             </div>
 
-            {/* Bottom row: CLR left, Shift in first button column, Push+Copy right */}
-            <div 
-              className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `${CommonFieldWidth} ${RpnBtnWidth} 1fr auto` }}
-            >
-              <div className="flex items-center">
+            {/* Bottom row: Shift left, Push/Pop under unit dropdown, Clear calculator + Copy right */}
+            <div className="flex items-center justify-between">
+              {/* Left side: Shift button */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShiftActive(!shiftActive)}
+                className={`text-xs font-mono ${shiftActive ? 'bg-accent text-accent-foreground' : 'hover:text-accent'}`}
+                data-testid="button-shift"
+                aria-pressed={shiftActive}
+              >
+                {shiftActive ? 'SHIFT' : 'Shift'}
+              </Button>
+              {/* Center area: Push/Pop button, positioned to align under unit dropdown */}
+              <div className="flex-1 flex items-center justify-start pl-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={shiftActive ? popFromRpnStack : pushToRpnStack}
+                  className="text-xs hover:text-accent"
+                  disabled={shiftActive ? !rpnStack[3] && !rpnStack[2] && !rpnStack[1] && !rpnStack[0] : !rpnStack[3]}
+                >
+                  {shiftActive ? 'Pop' : 'Push'}
+                </Button>
+              </div>
+              {/* Right side: Clear calculator + Copy */}
+              <div className="flex items-center gap-1">
                 <Button 
                   variant="ghost" 
                   size="sm" 
                   onClick={clearRpnStack}
                   className="text-xs hover:text-accent"
                 >
-                  CLR
-                </Button>
-              </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setShiftActive(!shiftActive)}
-                className={`text-xs font-mono w-full ${shiftActive ? 'bg-accent text-accent-foreground' : 'hover:text-accent'}`}
-                data-testid="button-shift"
-                aria-pressed={shiftActive}
-              >
-                {shiftActive ? 'SHIFT' : 'Shift'}
-              </Button>
-              <div /> {/* Spacer */}
-              <div className="flex items-center gap-1">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={pushToRpnStack}
-                  className="text-xs hover:text-accent"
-                  disabled={!rpnStack[3]}
-                >
-                  Push
+                  {t('Clear calculator')}
                 </Button>
                 <Button 
                   variant="ghost" 
