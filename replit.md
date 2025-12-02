@@ -23,8 +23,11 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
   - **CALCULATOR - RPN**: Reverse Polish Notation mode with 4-level stack (s3, s2, y, x). Stack indices: s3=stack[0] (top), s2=stack[1], y=stack[2], x=stack[3] (bottom/result). Copy button lifts stack and pushes value to x position.
 - **RPN Button Layout** (7 buttons per row):
   - s3 row: x², x³, x⁴, √/∛/∜ (shift: ∜), 10ˣ/log₁₀, 2ˣ/log₂, rnd/trunc
-  - s2 row: sin/asin, cos/acos, tan/atan, sinh/asinh, cosh/acosh, tanh/atanh, (empty)
-  - y row: π, ℯ, √2, ×/×ᵤ, ÷/÷ᵤ, +/+ᵤ, −/−ᵤ (constants push to stack, operators with ᵤ subscript are unit-aware)
+  - s2 row: sin/asin, cos/acos, tan/atan, sinh/asinh, cosh/acosh, tanh/atanh, ⌊x⌋/⌈x⌉
+  - y row: π/Undo, ℯ, √2, ×/×ᵤ, ÷/÷ᵤ, +/+ᵤ, −/−ᵤ (constants push to stack, operators with ᵤ subscript are unit-aware)
+- **RPN Undo/Redo**: Shift+π becomes "Undo" button. Each RPN operation saves stack state before executing. Pressing Undo swaps current stack with previous state. Pressing Undo twice = redo (swap back).
+- **RPN Button Styling**: Enabled buttons are bright (text-foreground), disabled buttons are dimmed (text-muted-foreground/50). +ᵤ and −ᵤ buttons dim when stack values have incompatible dimensions.
+- **Calculator Mode Switching**: Mode labels "CALCULATOR - UNIT ↻" and "CALCULATOR - RPN ↻" are clickable to switch modes (no separate button needed)
 - **Trig/Hyperbolic Function Behavior**: If input is dimensionless, rad (angle:1), or sr (solid_angle:1) → output is unitless. If input has other units → function applies to numeric value only, dimensions preserved (e.g., sin(0.5 m²) = 0.479... m²).
 - **Rounding Functions**: rnd = banker's rounding (round to nearest even) at precision setting; trunc = truncate at precision setting. Both preserve dimensions.
 - **Clipboard Copying**: Supports precision settings and "Normalize & Copy" for normalizing to SI units with optimal prefixing. Uses `normalizeDimensions` to convert raw dimensional formulas to derived units (J, N, W, etc.) before applying prefixes, preventing prefix stacking with kg. Prefers base unit representation s⁻¹ over derived unit Hz for frequency.
@@ -63,6 +66,7 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 - **Scientific Notation Input**: Input field accepts scientific notation (e.g., 12e35, 1.5e-10, 3E8, 2.998e+8)
 - **CGS Unit Prefixes**: All CGS base units support prefixes (dyne, erg, poise, stokes, gauss, maxwell, oersted, statampere, statvolt, etc.) but pre-prefixed units (centipoise, centistokes) do NOT allow additional prefixes
 - **Comparison Mode**: Toggle button ("Compare All") next to the "To" label shows input value converted to up to 8 units simultaneously with optimal prefix display and click-to-copy functionality
+- **Smart Paste**: When pasting text anywhere except input fields, `parseUnitText` parses "number unit" text (e.g., "15 km", "2.5e-3 mA") into value, unit, prefix, category, and dimensions. Routes to Converter tab (sets from value/unit/category) or Custom tab (sets value and dimension grid based on parsed dimensions). Handles prefix+symbol combinations and localized unit names.
 - **Cross-Domain Dimensional Analysis**: Calculator result dropdown shows related quantity categories that share the same dimensions:
   - Energy ↔ Torque, Photon Energy, Fuel Energy (all have kg⋅m²⋅s⁻²)
   - Frequency ↔ Radioactivity, Radioactive Decay (all have s⁻¹)
