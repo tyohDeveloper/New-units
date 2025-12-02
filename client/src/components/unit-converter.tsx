@@ -43,7 +43,8 @@ export default function UnitConverter() {
   const [comparisonMode, setComparisonMode] = useState<boolean>(false);
   
   // Calculator mode state ('simple' | 'rpn')
-  const [calculatorMode, setCalculatorMode] = useState<'simple' | 'rpn'>('simple');
+  const [calculatorMode, setCalculatorMode] = useState<'simple' | 'rpn'>('rpn');
+  const [shiftActive, setShiftActive] = useState(false);
   
   // RPN calculator state - independent from simple calculator
   const [rpnStack, setRpnStack] = useState<Array<CalcValue | null>>([null, null, null, null]);
@@ -3508,6 +3509,86 @@ export default function UnitConverter() {
     // which detects calculatorMode and pushes to rpnStack instead
   };
 
+  // Check if root operation would produce integer exponents
+  const canApplyRoot = (dimensions: DimensionalFormula, divisor: number): boolean => {
+    for (const exp of Object.values(dimensions)) {
+      if (exp % divisor !== 0) return false;
+    }
+    return true;
+  };
+
+  // Apply unary operation to RPN x register (stack[3])
+  const applyRpnUnary = (op: 'square' | 'cube' | 'pow4' | 'sqrt' | 'cbrt' | 'root4') => {
+    if (!rpnStack[3]) return;
+    
+    const x = rpnStack[3];
+    let newValue: number;
+    let newDimensions: Record<string, number> = {};
+    
+    switch (op) {
+      case 'square':
+        newValue = x.value * x.value;
+        for (const [dim, exp] of Object.entries(x.dimensions)) {
+          newDimensions[dim] = exp * 2;
+        }
+        break;
+      case 'cube':
+        newValue = x.value * x.value * x.value;
+        for (const [dim, exp] of Object.entries(x.dimensions)) {
+          newDimensions[dim] = exp * 3;
+        }
+        break;
+      case 'pow4':
+        newValue = Math.pow(x.value, 4);
+        for (const [dim, exp] of Object.entries(x.dimensions)) {
+          newDimensions[dim] = exp * 4;
+        }
+        break;
+      case 'sqrt':
+        if (x.value < 0) return; // Can't sqrt negative
+        if (!canApplyRoot(x.dimensions, 2)) return; // Would produce fractional exponents
+        newValue = Math.sqrt(x.value);
+        for (const [dim, exp] of Object.entries(x.dimensions)) {
+          newDimensions[dim] = exp / 2;
+        }
+        break;
+      case 'cbrt':
+        if (!canApplyRoot(x.dimensions, 3)) return; // Would produce fractional exponents
+        newValue = Math.cbrt(x.value);
+        for (const [dim, exp] of Object.entries(x.dimensions)) {
+          newDimensions[dim] = exp / 3;
+        }
+        break;
+      case 'root4':
+        if (x.value < 0) return; // Can't 4th root negative
+        if (!canApplyRoot(x.dimensions, 4)) return; // Would produce fractional exponents
+        newValue = Math.pow(x.value, 0.25);
+        for (const [dim, exp] of Object.entries(x.dimensions)) {
+          newDimensions[dim] = exp / 4;
+        }
+        break;
+    }
+    
+    // Clean up zero exponents
+    for (const [dim, exp] of Object.entries(newDimensions)) {
+      if (exp === 0) delete newDimensions[dim];
+    }
+    
+    setRpnStack(prev => {
+      const newStack = [...prev];
+      newStack[3] = {
+        value: newValue,
+        dimensions: newDimensions,
+        prefix: 'none' // Reset prefix since dimensions changed
+      };
+      return newStack;
+    });
+    setRpnResultPrefix('none');
+    setRpnSelectedAlternative(0);
+    setFlashRpnResult(true);
+    setTimeout(() => setFlashRpnResult(false), 300);
+  };
+
   // Get RPN result display (similar to getCalcResultDisplay but for RPN)
   const getRpnResultDisplay = () => {
     if (!rpnStack[3]) return null;
@@ -5116,12 +5197,30 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Placeholder buttons for s3 row */}
-              {Array.from({ length: RpnBtnCount }).map((_, i) => (
-                <Button key={`s3-btn-${i}`} variant="ghost" size="sm" className="text-xs font-mono w-full">
-                  s3.{i}
-                </Button>
-              ))}
+              {/* Power buttons for s3 row */}
+              {(() => {
+                const s3Buttons: Array<{ label: string; shiftLabel: string; op?: 'square' | 'cube' | 'pow4' }> = [
+                  { label: 'x²', shiftLabel: 'X²', op: 'square' },
+                  { label: 'x³', shiftLabel: 'X³', op: 'cube' },
+                  { label: 's3.2', shiftLabel: 'S3.2' },
+                  { label: 'x⁴', shiftLabel: 'X⁴', op: 'pow4' },
+                  { label: 's3.4', shiftLabel: 'S3.4' },
+                  { label: 's3.5', shiftLabel: 'S3.5' },
+                  { label: 's3.6', shiftLabel: 'S3.6' },
+                ];
+                return s3Buttons.map((btn, i) => (
+                  <Button 
+                    key={`s3-btn-${i}`} 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-xs font-mono w-full"
+                    onClick={() => btn.op && applyRpnUnary(btn.op)}
+                    disabled={!btn.op || !rpnStack[3]}
+                  >
+                    {shiftActive ? btn.shiftLabel : btn.label}
+                  </Button>
+                ));
+              })()}
             </div>
 
             {/* s2 field with button grid */}
@@ -5159,12 +5258,30 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Placeholder buttons for s2 row */}
-              {Array.from({ length: RpnBtnCount }).map((_, i) => (
-                <Button key={`s2-btn-${i}`} variant="ghost" size="sm" className="text-xs font-mono w-full">
-                  s2.{i}
-                </Button>
-              ))}
+              {/* Root buttons for s2 row */}
+              {(() => {
+                const s2Buttons: Array<{ label: string; shiftLabel: string; op?: 'sqrt' | 'cbrt' | 'root4' }> = [
+                  { label: '√', shiftLabel: '√', op: 'sqrt' },
+                  { label: '∛', shiftLabel: '∛', op: 'cbrt' },
+                  { label: 's2.2', shiftLabel: 'S2.2' },
+                  { label: '∜', shiftLabel: '∜', op: 'root4' },
+                  { label: 's2.4', shiftLabel: 'S2.4' },
+                  { label: 's2.5', shiftLabel: 'S2.5' },
+                  { label: 's2.6', shiftLabel: 'S2.6' },
+                ];
+                return s2Buttons.map((btn, i) => (
+                  <Button 
+                    key={`s2-btn-${i}`} 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-xs font-mono w-full"
+                    onClick={() => btn.op && applyRpnUnary(btn.op)}
+                    disabled={!btn.op || !rpnStack[3]}
+                  >
+                    {shiftActive ? btn.shiftLabel : btn.label}
+                  </Button>
+                ));
+              })()}
             </div>
 
             {/* y field with button grid */}
@@ -5204,8 +5321,8 @@ export default function UnitConverter() {
               </motion.div>
               {/* Placeholder buttons for y row */}
               {Array.from({ length: RpnBtnCount }).map((_, i) => (
-                <Button key={`y-btn-${i}`} variant="ghost" size="sm" className="text-xs font-mono w-full">
-                  y{i}
+                <Button key={`y-btn-${i}`} variant="ghost" size="sm" className="text-xs font-mono w-full" disabled>
+                  {shiftActive ? `Y${i}` : `y${i}`}
                 </Button>
               ))}
             </div>
@@ -5342,9 +5459,12 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full hover:text-accent"
+                onClick={() => setShiftActive(!shiftActive)}
+                className={`text-xs font-mono w-full ${shiftActive ? 'bg-accent text-accent-foreground' : 'hover:text-accent'}`}
+                data-testid="button-shift"
+                aria-pressed={shiftActive}
               >
-                Shift
+                {shiftActive ? 'SHIFT' : 'Shift'}
               </Button>
               <div /> {/* Spacer */}
               <div className="flex items-center gap-1">
