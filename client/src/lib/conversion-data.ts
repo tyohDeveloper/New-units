@@ -1699,6 +1699,36 @@ const SI_BASE_UNIT_MAP: Record<string, { dimension: string; factor: number }> = 
   'sr': { dimension: 'solid_angle', factor: 1 },
 };
 
+// SI derived unit symbols mapped to their dimensional formulas
+const SI_DERIVED_UNIT_MAP: Record<string, { dimensions: Record<string, number>; factor: number }> = {
+  // Mechanical
+  'N': { dimensions: { mass: 1, length: 1, time: -2 }, factor: 1 },  // Newton
+  'J': { dimensions: { mass: 1, length: 2, time: -2 }, factor: 1 },  // Joule
+  'W': { dimensions: { mass: 1, length: 2, time: -3 }, factor: 1 },  // Watt
+  'Pa': { dimensions: { mass: 1, length: -1, time: -2 }, factor: 1 },  // Pascal
+  'Hz': { dimensions: { time: -1 }, factor: 1 },  // Hertz
+  // Electrical
+  'V': { dimensions: { mass: 1, length: 2, time: -3, current: -1 }, factor: 1 },  // Volt
+  'Ω': { dimensions: { mass: 1, length: 2, time: -3, current: -2 }, factor: 1 },  // Ohm
+  'ohm': { dimensions: { mass: 1, length: 2, time: -3, current: -2 }, factor: 1 },  // Ohm (spelled)
+  'F': { dimensions: { mass: -1, length: -2, time: 4, current: 2 }, factor: 1 },  // Farad
+  'C': { dimensions: { time: 1, current: 1 }, factor: 1 },  // Coulomb
+  'S': { dimensions: { mass: -1, length: -2, time: 3, current: 2 }, factor: 1 },  // Siemens
+  // Magnetic
+  'T': { dimensions: { mass: 1, time: -2, current: -1 }, factor: 1 },  // Tesla
+  'Wb': { dimensions: { mass: 1, length: 2, time: -2, current: -1 }, factor: 1 },  // Weber
+  'H': { dimensions: { mass: 1, length: 2, time: -2, current: -2 }, factor: 1 },  // Henry
+  // Radiometry/Photometry
+  'lm': { dimensions: { intensity: 1, solid_angle: 1 }, factor: 1 },  // Lumen
+  'lx': { dimensions: { intensity: 1, solid_angle: 1, length: -2 }, factor: 1 },  // Lux
+  // Radiation
+  'Bq': { dimensions: { time: -1 }, factor: 1 },  // Becquerel
+  'Gy': { dimensions: { length: 2, time: -2 }, factor: 1 },  // Gray
+  'Sv': { dimensions: { length: 2, time: -2 }, factor: 1 },  // Sievert
+  // Chemistry
+  'kat': { dimensions: { amount: 1, time: -1 }, factor: 1 },  // Katal
+};
+
 // Superscript to normal digit mapping
 const SUPERSCRIPT_MAP: Record<string, string> = {
   '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
@@ -1824,8 +1854,16 @@ export function parseDimensionalFormula(formulaText: string): ParsedDimensionalF
       dimensions[dimension] = (dimensions[dimension] || 0) + exponent;
       factor *= Math.pow(unitFactor, exponent);
       matched = true;
+    } else if (SI_DERIVED_UNIT_MAP[baseSymbol]) {
+      // Try derived units (W, J, N, Pa, V, etc.)
+      const derived = SI_DERIVED_UNIT_MAP[baseSymbol];
+      for (const [dim, dimExp] of Object.entries(derived.dimensions)) {
+        dimensions[dim] = (dimensions[dim] || 0) + dimExp * exponent;
+      }
+      factor *= Math.pow(derived.factor, exponent);
+      matched = true;
     } else {
-      // Try with SI prefixes
+      // Try with SI prefixes on base units
       const sortedPrefixes = [...PREFIXES]
         .filter(p => p.id !== 'none' && p.symbol)
         .sort((a, b) => b.symbol.length - a.symbol.length);
@@ -1837,6 +1875,16 @@ export function parseDimensionalFormula(formulaText: string): ParsedDimensionalF
             const { dimension, factor: unitFactor } = SI_BASE_UNIT_MAP[remainder];
             dimensions[dimension] = (dimensions[dimension] || 0) + exponent;
             factor *= Math.pow(prefix.factor * unitFactor, exponent);
+            matched = true;
+            break;
+          }
+          // Also try derived units with prefixes (kW, MW, GJ, etc.)
+          if (SI_DERIVED_UNIT_MAP[remainder]) {
+            const derived = SI_DERIVED_UNIT_MAP[remainder];
+            for (const [dim, dimExp] of Object.entries(derived.dimensions)) {
+              dimensions[dim] = (dimensions[dim] || 0) + dimExp * exponent;
+            }
+            factor *= Math.pow(prefix.factor * derived.factor, exponent);
             matched = true;
             break;
           }
@@ -1882,6 +1930,14 @@ export function looksLikeDimensionalFormula(text: string): boolean {
   
   // Contains ASCII exponent notation
   if (/\^-?\d+/.test(trimmed)) return true;
+  
+  // Single derived unit with exponent also qualifies as dimensional
+  const derivedUnits = ['W', 'J', 'N', 'Pa', 'Hz', 'V', 'Ω', 'ohm', 'F', 'C', 'S', 'T', 'Wb', 'H', 'lm', 'lx', 'Bq', 'Gy', 'Sv', 'kat'];
+  for (const unit of derivedUnits) {
+    // Match unit followed by exponent
+    const pattern = new RegExp(`^${unit}(\\^-?\\d+|[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)$`);
+    if (pattern.test(trimmed)) return true;
+  }
   
   // Multiple SI base units next to each other
   const siUnits = ['kg', 'm', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr'];

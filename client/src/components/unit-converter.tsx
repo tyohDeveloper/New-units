@@ -2068,7 +2068,14 @@ export default function UnitConverter() {
         if (parsed.dimensions.angle) newExponents.rad = parsed.dimensions.angle;
         if (parsed.dimensions.solid_angle) newExponents.sr = parsed.dimensions.solid_angle;
         
-        setDirectExponents(newExponents);
+        // Check if any exponent is outside -5..5 range - if so, clear the grid
+        const hasOutOfRange = Object.values(newExponents).some(exp => exp < -5 || exp > 5);
+        if (hasOutOfRange) {
+          // Keep value but clear the dimension grid
+          setDirectExponents({ m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0 });
+        } else {
+          setDirectExponents(newExponents);
+        }
       }
       
       // Prevent default only when we handled smart paste (not in input fields)
@@ -3740,7 +3747,8 @@ export default function UnitConverter() {
     | 'exp' | 'ln' | 'pow10' | 'log10' | 'pow2' | 'log2'
     | 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan'
     | 'sinh' | 'cosh' | 'tanh' | 'asinh' | 'acosh' | 'atanh'
-    | 'rnd' | 'trunc' | 'floor' | 'ceil';
+    | 'rnd' | 'trunc' | 'floor' | 'ceil'
+    | 'neg';
 
   // Apply unary operation to RPN x register (stack[3])
   const applyRpnUnary = (op: RpnUnaryOp) => {
@@ -3865,100 +3873,103 @@ export default function UnitConverter() {
         break;
       }
       
-      // Trigonometric functions - decrement angle exponent by 1
-      // e.g., rad¹ → dimensionless, m²⋅rad² → m²⋅rad¹, dimensionless → rad⁻¹
+      // Sign change - negate the value, preserve dimensions
+      case 'neg': {
+        newValue = -x.value;
+        newDimensions = { ...x.dimensions };
+        break;
+      }
+      
+      // Trigonometric functions - strip rad/sr if present, otherwise preserve dimensions
+      // e.g., rad → dimensionless, m² → m² (apply to numeric only)
       case 'sin': {
         newValue = Math.sin(x.value);
+        // Strip any angle/solid_angle dimensions present, preserve other dimensions
         newDimensions = { ...x.dimensions };
-        newDimensions.angle = (newDimensions.angle || 0) - 1;
-        if (newDimensions.angle === 0) delete newDimensions.angle;
+        delete newDimensions.angle;
+        delete newDimensions.solid_angle;
         break;
       }
       case 'cos': {
         newValue = Math.cos(x.value);
+        // Strip any angle/solid_angle dimensions present, preserve other dimensions
         newDimensions = { ...x.dimensions };
-        newDimensions.angle = (newDimensions.angle || 0) - 1;
-        if (newDimensions.angle === 0) delete newDimensions.angle;
+        delete newDimensions.angle;
+        delete newDimensions.solid_angle;
         break;
       }
       case 'tan': {
         newValue = Math.tan(x.value);
+        // Strip any angle/solid_angle dimensions present, preserve other dimensions
         newDimensions = { ...x.dimensions };
-        newDimensions.angle = (newDimensions.angle || 0) - 1;
-        if (newDimensions.angle === 0) delete newDimensions.angle;
+        delete newDimensions.angle;
+        delete newDimensions.solid_angle;
         break;
       }
       
-      // Inverse trig functions - increment angle exponent by 1
-      // e.g., dimensionless → rad¹, m² → m²⋅rad¹, rad⁻¹ → dimensionless
+      // Inverse trig functions - add rad dimension, preserve other dimensions
       case 'asin': {
         if (x.value < -1 || x.value > 1) return;
         newValue = Math.asin(x.value);
-        newDimensions = { ...x.dimensions };
-        newDimensions.angle = (newDimensions.angle || 0) + 1;
+        newDimensions = { ...x.dimensions, angle: (x.dimensions.angle || 0) + 1 };
         if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       case 'acos': {
         if (x.value < -1 || x.value > 1) return;
         newValue = Math.acos(x.value);
-        newDimensions = { ...x.dimensions };
-        newDimensions.angle = (newDimensions.angle || 0) + 1;
+        newDimensions = { ...x.dimensions, angle: (x.dimensions.angle || 0) + 1 };
         if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       case 'atan': {
         newValue = Math.atan(x.value);
-        newDimensions = { ...x.dimensions };
-        newDimensions.angle = (newDimensions.angle || 0) + 1;
+        newDimensions = { ...x.dimensions, angle: (x.dimensions.angle || 0) + 1 };
         if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       
-      // Hyperbolic functions - decrement angle exponent by 1
+      // Hyperbolic functions - same behavior as trig: strip rad/sr if present, preserve other dimensions
       case 'sinh': {
         newValue = Math.sinh(x.value);
         newDimensions = { ...x.dimensions };
-        newDimensions.angle = (newDimensions.angle || 0) - 1;
-        if (newDimensions.angle === 0) delete newDimensions.angle;
+        delete newDimensions.angle;
+        delete newDimensions.solid_angle;
         break;
       }
       case 'cosh': {
         newValue = Math.cosh(x.value);
         newDimensions = { ...x.dimensions };
-        newDimensions.angle = (newDimensions.angle || 0) - 1;
-        if (newDimensions.angle === 0) delete newDimensions.angle;
+        delete newDimensions.angle;
+        delete newDimensions.solid_angle;
         break;
       }
       case 'tanh': {
         newValue = Math.tanh(x.value);
         newDimensions = { ...x.dimensions };
-        newDimensions.angle = (newDimensions.angle || 0) - 1;
-        if (newDimensions.angle === 0) delete newDimensions.angle;
+        delete newDimensions.angle;
+        delete newDimensions.solid_angle;
         break;
       }
       
-      // Inverse hyperbolic functions - increment angle exponent by 1
+      // Inverse hyperbolic functions - add rad dimension, preserve other dimensions
       case 'asinh': {
         newValue = Math.asinh(x.value);
-        newDimensions = { ...x.dimensions };
-        newDimensions.angle = (newDimensions.angle || 0) + 1;
+        newDimensions = { ...x.dimensions, angle: (x.dimensions.angle || 0) + 1 };
         if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       case 'acosh': {
         if (x.value < 1) return;
         newValue = Math.acosh(x.value);
-        newDimensions = { ...x.dimensions };
-        newDimensions.angle = (newDimensions.angle || 0) + 1;
+        newDimensions = { ...x.dimensions, angle: (x.dimensions.angle || 0) + 1 };
         if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       case 'atanh': {
         if (x.value <= -1 || x.value >= 1) return;
         newValue = Math.atanh(x.value);
-        newDimensions = { ...x.dimensions };
-        newDimensions.angle = (newDimensions.angle || 0) + 1;
+        newDimensions = { ...x.dimensions, angle: (x.dimensions.angle || 0) + 1 };
         if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
@@ -5169,7 +5180,14 @@ export default function UnitConverter() {
                         if (parsed.dimensions.angle) newExponents.rad = parsed.dimensions.angle;
                         if (parsed.dimensions.solid_angle) newExponents.sr = parsed.dimensions.solid_angle;
                         
-                        setDirectExponents(newExponents);
+                        // Check if any exponent is outside -5..5 range - if so, clear the grid
+                        const hasOutOfRange = Object.values(newExponents).some(exp => exp < -5 || exp > 5);
+                        if (hasOutOfRange) {
+                          // Keep value but clear the dimension grid
+                          setDirectExponents({ m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0 });
+                        } else {
+                          setDirectExponents(newExponents);
+                        }
                       }
                     }
                   }}
@@ -6009,11 +6027,12 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Binary operation buttons for y row: 3.1=Push/Pop, 3.2-3.3 = placeholders, 3.4-3.7 = ×/÷/+/−, 3.8=√2 */}
+              {/* Binary operation buttons for y row: 3.1-3.2=Push/Pop (double width), 3.3=neg, 3.4-3.7 = ×/÷/+/−, 3.8=√2 */}
               <Button 
                 variant="ghost" 
                 size="sm" 
                 className={`text-xs font-mono w-full ${!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
+                style={{ gridColumn: 'span 2' }}
                 disabled={!rpnStack[3]}
                 onClick={() => shiftActive ? popFromRpnStack() : pushToRpnStack()}
               >
@@ -6022,18 +6041,11 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full text-muted-foreground/50"
-                disabled={true}
+                className={`text-xs font-mono w-full ${!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
+                disabled={!rpnStack[3]}
+                onClick={() => applyRpnUnary('neg')}
               >
-                3.2
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-xs font-mono w-full text-muted-foreground/50"
-                disabled={true}
-              >
-                3.3
+                neg
               </Button>
               {(() => {
                 const yBinaryButtons: Array<{ label: string; shiftLabel: string; op: RpnBinaryOp; shiftOp: RpnBinaryOp }> = [
