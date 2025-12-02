@@ -5032,7 +5032,7 @@ export default function UnitConverter() {
                     setFlashDirectCopy(true);
                     setTimeout(() => setFlashDirectCopy(false), 300);
                     
-                    // Add to calculator (first three fields only)
+                    // Add to calculator - same behavior as Converter pane
                     const dims = buildDirectDimensions();
                     const newEntry = {
                       value: numValue,
@@ -5041,13 +5041,22 @@ export default function UnitConverter() {
                     };
                     
                     if (calculatorMode === 'rpn') {
-                      const firstEmptyIndex = rpnStack.findIndex((v, i) => i < 3 && v === null);
-                      if (firstEmptyIndex !== -1) {
-                        const newRpnStack = [...rpnStack];
-                        newRpnStack[firstEmptyIndex] = newEntry;
-                        setRpnStack(newRpnStack);
-                      }
+                      // RPN mode: Push onto stack position x with stack lift
+                      // Stack lifts: s3 gets old s2, s2 gets old y, y gets old x, new value goes to x
+                      setRpnStack(prev => {
+                        const newStack = [...prev];
+                        newStack[0] = prev[1]; // s3 gets old s2
+                        newStack[1] = prev[2]; // s2 gets old y
+                        newStack[2] = prev[3]; // y gets old x
+                        newStack[3] = newEntry; // new value goes to x
+                        return newStack;
+                      });
+                      setRpnResultPrefix('none');
+                      setRpnSelectedAlternative(0);
+                      setFlashRpnResult(true);
+                      setTimeout(() => setFlashRpnResult(false), 300);
                     } else {
+                      // UNIT mode: Find first empty field in positions 0-2
                       const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
                       if (firstEmptyIndex !== -1) {
                         const newCalcValues = [...calcValues];
@@ -5950,6 +5959,16 @@ export default function UnitConverter() {
             </div>
           </div>
           )}
+          </div>
+        </Card>
+
+        {/* Help Pane */}
+        <Card className="p-6 bg-card border-border/50">
+          <div className="flex flex-col gap-2">
+            <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Help')}</Label>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
           </div>
         </Card>
       </div>
