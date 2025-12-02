@@ -2725,9 +2725,14 @@ export default function UnitConverter() {
     return true;
   };
 
-  // Helper: Check if dimensions are dimensionless (empty)
+  // Helper: Check if dimensions are dimensionless (empty or all zeros)
   const isDimensionless = (d: DimensionalFormula): boolean => {
-    return Object.keys(d).length === 0;
+    if (Object.keys(d).length === 0) return true;
+    // Also check if all dimension values are zero
+    for (const exp of Object.values(d)) {
+      if (exp !== 0) return false;
+    }
+    return true;
   };
 
   // Helper: Check if addition/subtraction is valid between two values
@@ -3517,8 +3522,15 @@ export default function UnitConverter() {
     return true;
   };
 
+  // RPN unary operation types
+  type RpnUnaryOp = 
+    | 'square' | 'cube' | 'pow4' | 'sqrt' | 'cbrt' | 'root4'
+    | 'exp' | 'ln' | 'pow10' | 'log10'
+    | 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan'
+    | 'sinh' | 'cosh' | 'tanh' | 'asinh' | 'acosh' | 'atanh';
+
   // Apply unary operation to RPN x register (stack[3])
-  const applyRpnUnary = (op: 'square' | 'cube' | 'pow4' | 'sqrt' | 'cbrt' | 'root4') => {
+  const applyRpnUnary = (op: RpnUnaryOp) => {
     if (!rpnStack[3]) return;
     
     const x = rpnStack[3];
@@ -3526,6 +3538,7 @@ export default function UnitConverter() {
     let newDimensions: Record<string, number> = {};
     
     switch (op) {
+      // Power operations (modify dimensions)
       case 'square':
         newValue = x.value * x.value;
         for (const [dim, exp] of Object.entries(x.dimensions)) {
@@ -3544,29 +3557,110 @@ export default function UnitConverter() {
           newDimensions[dim] = exp * 4;
         }
         break;
+      
+      // Root operations (modify dimensions, require integer result)
       case 'sqrt':
-        if (x.value < 0) return; // Can't sqrt negative
-        if (!canApplyRoot(x.dimensions, 2)) return; // Would produce fractional exponents
+        if (x.value < 0) return;
+        if (!canApplyRoot(x.dimensions, 2)) return;
         newValue = Math.sqrt(x.value);
         for (const [dim, exp] of Object.entries(x.dimensions)) {
           newDimensions[dim] = exp / 2;
         }
         break;
       case 'cbrt':
-        if (!canApplyRoot(x.dimensions, 3)) return; // Would produce fractional exponents
+        if (!canApplyRoot(x.dimensions, 3)) return;
         newValue = Math.cbrt(x.value);
         for (const [dim, exp] of Object.entries(x.dimensions)) {
           newDimensions[dim] = exp / 3;
         }
         break;
       case 'root4':
-        if (x.value < 0) return; // Can't 4th root negative
-        if (!canApplyRoot(x.dimensions, 4)) return; // Would produce fractional exponents
+        if (x.value < 0) return;
+        if (!canApplyRoot(x.dimensions, 4)) return;
         newValue = Math.pow(x.value, 0.25);
         for (const [dim, exp] of Object.entries(x.dimensions)) {
           newDimensions[dim] = exp / 4;
         }
         break;
+      
+      // Exponential/logarithmic (require dimensionless, output dimensionless)
+      case 'exp':
+        if (!isDimensionless(x.dimensions)) return;
+        newValue = Math.exp(x.value);
+        break;
+      case 'ln':
+        if (!isDimensionless(x.dimensions)) return;
+        if (x.value <= 0) return;
+        newValue = Math.log(x.value);
+        break;
+      case 'pow10':
+        if (!isDimensionless(x.dimensions)) return;
+        newValue = Math.pow(10, x.value);
+        break;
+      case 'log10':
+        if (!isDimensionless(x.dimensions)) return;
+        if (x.value <= 0) return;
+        newValue = Math.log10(x.value);
+        break;
+      
+      // Trigonometric (require dimensionless, output dimensionless)
+      case 'sin':
+        if (!isDimensionless(x.dimensions)) return;
+        newValue = Math.sin(x.value);
+        break;
+      case 'cos':
+        if (!isDimensionless(x.dimensions)) return;
+        newValue = Math.cos(x.value);
+        break;
+      case 'tan':
+        if (!isDimensionless(x.dimensions)) return;
+        newValue = Math.tan(x.value);
+        break;
+      case 'asin':
+        if (!isDimensionless(x.dimensions)) return;
+        if (x.value < -1 || x.value > 1) return;
+        newValue = Math.asin(x.value);
+        break;
+      case 'acos':
+        if (!isDimensionless(x.dimensions)) return;
+        if (x.value < -1 || x.value > 1) return;
+        newValue = Math.acos(x.value);
+        break;
+      case 'atan':
+        if (!isDimensionless(x.dimensions)) return;
+        newValue = Math.atan(x.value);
+        break;
+      
+      // Hyperbolic (require dimensionless, output dimensionless)
+      case 'sinh':
+        if (!isDimensionless(x.dimensions)) return;
+        newValue = Math.sinh(x.value);
+        break;
+      case 'cosh':
+        if (!isDimensionless(x.dimensions)) return;
+        newValue = Math.cosh(x.value);
+        break;
+      case 'tanh':
+        if (!isDimensionless(x.dimensions)) return;
+        newValue = Math.tanh(x.value);
+        break;
+      case 'asinh':
+        if (!isDimensionless(x.dimensions)) return;
+        newValue = Math.asinh(x.value);
+        break;
+      case 'acosh':
+        if (!isDimensionless(x.dimensions)) return;
+        if (x.value < 1) return;
+        newValue = Math.acosh(x.value);
+        break;
+      case 'atanh':
+        if (!isDimensionless(x.dimensions)) return;
+        if (x.value <= -1 || x.value >= 1) return;
+        newValue = Math.atanh(x.value);
+        break;
+      
+      default:
+        return;
     }
     
     // Clean up zero exponents
@@ -3579,7 +3673,7 @@ export default function UnitConverter() {
       newStack[3] = {
         value: newValue,
         dimensions: newDimensions,
-        prefix: 'none' // Reset prefix since dimensions changed
+        prefix: 'none'
       };
       return newStack;
     });
@@ -5197,29 +5291,33 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Power buttons for s3 row */}
+              {/* Power/Root/Exp/Log buttons for s3 row */}
               {(() => {
-                const s3Buttons: Array<{ label: string; shiftLabel: string; op?: 'square' | 'cube' | 'pow4' }> = [
-                  { label: 'x²', shiftLabel: 'X²', op: 'square' },
-                  { label: 'x³', shiftLabel: 'X³', op: 'cube' },
-                  { label: 's3.2', shiftLabel: 'S3.2' },
-                  { label: 'x⁴', shiftLabel: 'X⁴', op: 'pow4' },
-                  { label: 's3.4', shiftLabel: 'S3.4' },
+                const s3Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string }> = [
+                  { label: 'x²', shiftLabel: '√', op: 'square', shiftOp: 'sqrt' },
+                  { label: 'x³', shiftLabel: '∛', op: 'cube', shiftOp: 'cbrt' },
+                  { label: 'x⁴', shiftLabel: '∜', op: 'pow4', shiftOp: 'root4' },
+                  { label: 'eˣ', shiftLabel: 'ln', op: 'exp', shiftOp: 'ln' },
+                  { label: '10ˣ', shiftLabel: 'log₁₀', op: 'pow10', shiftOp: 'log10' },
                   { label: 's3.5', shiftLabel: 'S3.5' },
                   { label: 's3.6', shiftLabel: 'S3.6' },
                 ];
-                return s3Buttons.map((btn, i) => (
-                  <Button 
-                    key={`s3-btn-${i}`} 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-xs font-mono w-full"
-                    onClick={() => btn.op && applyRpnUnary(btn.op)}
-                    disabled={!btn.op || !rpnStack[3]}
-                  >
-                    {shiftActive ? btn.shiftLabel : btn.label}
-                  </Button>
-                ));
+                return s3Buttons.map((btn, i) => {
+                  const hasOp = 'op' in btn;
+                  const currentOp = hasOp ? (shiftActive ? btn.shiftOp : btn.op) : undefined;
+                  return (
+                    <Button 
+                      key={`s3-btn-${i}`} 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-xs font-mono w-full"
+                      onClick={() => currentOp && applyRpnUnary(currentOp)}
+                      disabled={!hasOp || !rpnStack[3]}
+                    >
+                      {shiftActive ? btn.shiftLabel : btn.label}
+                    </Button>
+                  );
+                });
               })()}
             </div>
 
@@ -5258,29 +5356,33 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Root buttons for s2 row */}
+              {/* Trig/Hyperbolic buttons for s2 row */}
               {(() => {
-                const s2Buttons: Array<{ label: string; shiftLabel: string; op?: 'sqrt' | 'cbrt' | 'root4' }> = [
-                  { label: '√', shiftLabel: '√', op: 'sqrt' },
-                  { label: '∛', shiftLabel: '∛', op: 'cbrt' },
-                  { label: 's2.2', shiftLabel: 'S2.2' },
-                  { label: '∜', shiftLabel: '∜', op: 'root4' },
-                  { label: 's2.4', shiftLabel: 'S2.4' },
-                  { label: 's2.5', shiftLabel: 'S2.5' },
+                const s2Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string }> = [
+                  { label: 'sin', shiftLabel: 'asin', op: 'sin', shiftOp: 'asin' },
+                  { label: 'cos', shiftLabel: 'acos', op: 'cos', shiftOp: 'acos' },
+                  { label: 'tan', shiftLabel: 'atan', op: 'tan', shiftOp: 'atan' },
+                  { label: 'sinh', shiftLabel: 'asinh', op: 'sinh', shiftOp: 'asinh' },
+                  { label: 'cosh', shiftLabel: 'acosh', op: 'cosh', shiftOp: 'acosh' },
+                  { label: 'tanh', shiftLabel: 'atanh', op: 'tanh', shiftOp: 'atanh' },
                   { label: 's2.6', shiftLabel: 'S2.6' },
                 ];
-                return s2Buttons.map((btn, i) => (
-                  <Button 
-                    key={`s2-btn-${i}`} 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-xs font-mono w-full"
-                    onClick={() => btn.op && applyRpnUnary(btn.op)}
-                    disabled={!btn.op || !rpnStack[3]}
-                  >
-                    {shiftActive ? btn.shiftLabel : btn.label}
-                  </Button>
-                ));
+                return s2Buttons.map((btn, i) => {
+                  const hasOp = 'op' in btn;
+                  const currentOp = hasOp ? (shiftActive ? btn.shiftOp : btn.op) : undefined;
+                  return (
+                    <Button 
+                      key={`s2-btn-${i}`} 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-xs font-mono w-full"
+                      onClick={() => currentOp && applyRpnUnary(currentOp)}
+                      disabled={!hasOp || !rpnStack[3]}
+                    >
+                      {shiftActive ? btn.shiftLabel : btn.label}
+                    </Button>
+                  );
+                });
               })()}
             </div>
 
