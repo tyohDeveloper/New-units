@@ -5081,9 +5081,19 @@ export default function UnitConverter() {
           >
             <div className="flex items-center gap-4">
               <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
-                <Label className="text-xs font-mono uppercase text-muted-foreground">
-                  {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR - UNIT')}
-                </Label>
+                <div className="flex items-center gap-1">
+                  <Label className="text-xs font-mono uppercase text-muted-foreground">
+                    {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR - UNIT')}
+                  </Label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => calculatorMode === 'simple' ? switchToRpn() : switchToSimple()}
+                    className="h-5 w-5 p-0 text-muted-foreground hover:text-accent"
+                  >
+                    {'\u{1F504}'}
+                  </Button>
+                </div>
                 <div className="flex items-center gap-2">
                   <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
                   <Select 
@@ -5115,15 +5125,6 @@ export default function UnitConverter() {
                 </Button>
               )}
             </div>
-            {/* Right-side mode toggle button */}
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => calculatorMode === 'simple' ? switchToRpn() : switchToSimple()}
-              className="text-xs font-mono hover:text-accent"
-            >
-              {calculatorMode === 'simple' ? 'RPN' : 'SIMPLE'}
-            </Button>
           </div>
           
           {/* Simple Calculator Mode */}
