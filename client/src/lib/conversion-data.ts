@@ -1686,6 +1686,214 @@ export function parseUnitSymbol(
   return { categoryId: null, unitId: null, prefixId: 'none', factor: 1 };
 }
 
+// SI base unit symbols mapped to dimension keys
+const SI_BASE_UNIT_MAP: Record<string, { dimension: string; factor: number }> = {
+  'kg': { dimension: 'mass', factor: 1 },
+  'm': { dimension: 'length', factor: 1 },
+  's': { dimension: 'time', factor: 1 },
+  'A': { dimension: 'current', factor: 1 },
+  'K': { dimension: 'temperature', factor: 1 },
+  'mol': { dimension: 'amount', factor: 1 },
+  'cd': { dimension: 'intensity', factor: 1 },
+  'rad': { dimension: 'angle', factor: 1 },
+  'sr': { dimension: 'solid_angle', factor: 1 },
+};
+
+// Superscript to normal digit mapping
+const SUPERSCRIPT_MAP: Record<string, string> = {
+  '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
+  '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁻': '-',
+};
+
+// Convert superscript string to number
+function superscriptToNumber(superscript: string): number {
+  let normal = '';
+  for (const char of superscript) {
+    if (SUPERSCRIPT_MAP[char] !== undefined) {
+      normal += SUPERSCRIPT_MAP[char];
+    }
+  }
+  return normal ? parseInt(normal, 10) : 1;
+}
+
+// Parse exponent from a unit term (handles both superscript and ASCII ^notation)
+// Returns [baseSymbol, exponent]
+function parseExponent(term: string): [string, number] {
+  // Check for ASCII exponent notation: unit^n or unit^-n
+  const asciiMatch = term.match(/^(.+?)\^(-?\d+)$/);
+  if (asciiMatch) {
+    return [asciiMatch[1], parseInt(asciiMatch[2], 10)];
+  }
+  
+  // Check for superscript exponent at the end
+  const superscriptRegex = /([⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)$/;
+  const superMatch = term.match(superscriptRegex);
+  if (superMatch) {
+    const base = term.slice(0, -superMatch[1].length);
+    const exp = superscriptToNumber(superMatch[1]);
+    return [base, exp];
+  }
+  
+  // No exponent found, default to 1
+  return [term, 1];
+}
+
+// Parse a dimensional formula string like "kg²⋅m⁴⋅s⁻⁶" or "kg^2*m^4*s^-6"
+// Returns { dimensions, factor } where factor accounts for any prefix conversions
+export interface ParsedDimensionalFormula {
+  dimensions: Record<string, number>;
+  factor: number;
+  isValid: boolean;
+}
+
+export function parseDimensionalFormula(formulaText: string): ParsedDimensionalFormula {
+  const text = formulaText.trim();
+  if (!text) {
+    return { dimensions: {}, factor: 1, isValid: false };
+  }
+  
+  // Handle degree symbols specially
+  // ° alone or °² etc. means angle
+  // "sq deg" means solid angle
+  
+  // Check for "sq deg" pattern first (solid angle)
+  const sqDegMatch = text.match(/^\(?\s*sq\s+deg\s*\)?(\^(-?\d+)|[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]*)$/i);
+  if (sqDegMatch) {
+    const [, expPart] = sqDegMatch;
+    let exp = 1;
+    if (expPart) {
+      if (expPart.startsWith('^')) {
+        exp = parseInt(expPart.slice(1), 10);
+      } else if (expPart) {
+        exp = superscriptToNumber(expPart);
+      }
+    }
+    // Square degree to steradian: 1 sq deg ≈ 0.0003046 sr
+    const sqDegToSr = (Math.PI / 180) * (Math.PI / 180);
+    return {
+      dimensions: { solid_angle: exp },
+      factor: Math.pow(sqDegToSr, exp),
+      isValid: true
+    };
+  }
+  
+  // Check for degree patterns (°, deg, degree with optional exponent)
+  const degreeMatch = text.match(/^(°|deg(?:ree)?s?)(\^(-?\d+)|[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]*)$/i);
+  if (degreeMatch) {
+    const [, , expPart] = degreeMatch;
+    let exp = 1;
+    if (expPart) {
+      if (expPart.startsWith('^')) {
+        exp = parseInt(expPart.slice(1), 10);
+      } else if (expPart) {
+        exp = superscriptToNumber(expPart);
+      }
+    }
+    // Degree to radian conversion factor
+    const degToRad = Math.PI / 180;
+    return {
+      dimensions: { angle: exp },
+      factor: Math.pow(degToRad, exp),
+      isValid: true
+    };
+  }
+  
+  // Split by multiplication separators: ⋅, ·, *, ×, or whitespace between terms
+  const terms = text.split(/[⋅·*×]|\s+/).filter(t => t.trim());
+  
+  if (terms.length === 0) {
+    return { dimensions: {}, factor: 1, isValid: false };
+  }
+  
+  const dimensions: Record<string, number> = {};
+  let factor = 1;
+  let allValid = true;
+  
+  for (const term of terms) {
+    const trimmedTerm = term.trim();
+    if (!trimmedTerm) continue;
+    
+    const [baseSymbol, exponent] = parseExponent(trimmedTerm);
+    
+    // Try to match against SI base units (with potential prefixes)
+    let matched = false;
+    
+    // First try exact match with SI base units
+    if (SI_BASE_UNIT_MAP[baseSymbol]) {
+      const { dimension, factor: unitFactor } = SI_BASE_UNIT_MAP[baseSymbol];
+      dimensions[dimension] = (dimensions[dimension] || 0) + exponent;
+      factor *= Math.pow(unitFactor, exponent);
+      matched = true;
+    } else {
+      // Try with SI prefixes
+      const sortedPrefixes = [...PREFIXES]
+        .filter(p => p.id !== 'none' && p.symbol)
+        .sort((a, b) => b.symbol.length - a.symbol.length);
+      
+      for (const prefix of sortedPrefixes) {
+        if (baseSymbol.startsWith(prefix.symbol)) {
+          const remainder = baseSymbol.slice(prefix.symbol.length);
+          if (SI_BASE_UNIT_MAP[remainder]) {
+            const { dimension, factor: unitFactor } = SI_BASE_UNIT_MAP[remainder];
+            dimensions[dimension] = (dimensions[dimension] || 0) + exponent;
+            factor *= Math.pow(prefix.factor * unitFactor, exponent);
+            matched = true;
+            break;
+          }
+        }
+      }
+      
+      // Special case: 'g' (gram) without 'k' prefix
+      if (!matched && baseSymbol === 'g') {
+        dimensions['mass'] = (dimensions['mass'] || 0) + exponent;
+        factor *= Math.pow(0.001, exponent); // gram to kg
+        matched = true;
+      }
+    }
+    
+    if (!matched) {
+      allValid = false;
+    }
+  }
+  
+  // Clean up zero exponents
+  for (const key of Object.keys(dimensions)) {
+    if (dimensions[key] === 0) {
+      delete dimensions[key];
+    }
+  }
+  
+  return {
+    dimensions,
+    factor,
+    isValid: allValid && Object.keys(dimensions).length > 0
+  };
+}
+
+// Check if text looks like a dimensional formula (contains SI base units with exponents or separators)
+export function looksLikeDimensionalFormula(text: string): boolean {
+  const trimmed = text.trim();
+  
+  // Contains multiplication separator
+  if (/[⋅·×]/.test(trimmed)) return true;
+  
+  // Contains superscript exponents
+  if (/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]/.test(trimmed)) return true;
+  
+  // Contains ASCII exponent notation
+  if (/\^-?\d+/.test(trimmed)) return true;
+  
+  // Multiple SI base units next to each other
+  const siUnits = ['kg', 'm', 's', 'A', 'K', 'mol', 'cd', 'rad', 'sr'];
+  let count = 0;
+  for (const unit of siUnits) {
+    if (trimmed.includes(unit)) count++;
+  }
+  if (count >= 2) return true;
+  
+  return false;
+}
+
 // Parse complete text with number and unit
 export function parseUnitText(
   text: string,
@@ -1716,7 +1924,55 @@ export function parseUnitText(
     numValue = 1;
   }
   
-  // Parse the unit part
+  // If unit text looks like a dimensional formula, try parsing it as such
+  if (unitText && looksLikeDimensionalFormula(unitText)) {
+    const dimResult = parseDimensionalFormula(unitText);
+    if (dimResult.isValid) {
+      return {
+        value: numValue * dimResult.factor,
+        categoryId: null, // Dimensional formulas don't map to a specific category
+        unitId: null,
+        prefixId: 'none',
+        dimensions: dimResult.dimensions
+      };
+    }
+  }
+  
+  // Check for degree symbol alone (°) - treat as angle
+  if (unitText === '°') {
+    return {
+      value: numValue * (Math.PI / 180),
+      categoryId: 'angle',
+      unitId: 'rad',
+      prefixId: 'none',
+      dimensions: { angle: 1 }
+    };
+  }
+  
+  // Check for "deg" shorthand (if localized name would start with "deg")
+  if (/^deg$/i.test(unitText)) {
+    return {
+      value: numValue * (Math.PI / 180),
+      categoryId: 'angle',
+      unitId: 'rad',
+      prefixId: 'none',
+      dimensions: { angle: 1 }
+    };
+  }
+  
+  // Check for "sq deg" (solid angle)
+  if (/^sq\s*deg$/i.test(unitText)) {
+    const sqDegToSr = (Math.PI / 180) * (Math.PI / 180);
+    return {
+      value: numValue * sqDegToSr,
+      categoryId: 'solid_angle',
+      unitId: 'sr',
+      prefixId: 'none',
+      dimensions: { solid_angle: 1 }
+    };
+  }
+  
+  // Parse the unit part using standard symbol matching
   const unitResult = parseUnitSymbol(unitText, unitNameLookup);
   
   // Get dimensions for the matched category
@@ -1724,8 +1980,13 @@ export function parseUnitText(
     ? getCategoryDimensionsForParse(unitResult.categoryId) 
     : {};
   
+  // Apply prefix factor to value for matched units
+  const adjustedValue = unitResult.categoryId 
+    ? numValue * unitResult.factor 
+    : numValue;
+  
   return {
-    value: numValue,
+    value: adjustedValue,
     categoryId: unitResult.categoryId,
     unitId: unitResult.unitId,
     prefixId: unitResult.prefixId,

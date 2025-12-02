@@ -3865,97 +3865,101 @@ export default function UnitConverter() {
         break;
       }
       
-      // Helper: check if dimensions are angle-compatible (dimensionless, rad, or sr)
-      // If so, result is dimensionless; otherwise preserve dimensions
-      // Trigonometric functions
+      // Trigonometric functions - decrement angle exponent by 1
+      // e.g., rad¹ → dimensionless, m²⋅rad² → m²⋅rad¹, dimensionless → rad⁻¹
       case 'sin': {
-        const isAngleCompatible = isDimensionless(x.dimensions) || 
-          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.sin(x.value);
-        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
+        newDimensions = { ...x.dimensions };
+        newDimensions.angle = (newDimensions.angle || 0) - 1;
+        if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       case 'cos': {
-        const isAngleCompatible = isDimensionless(x.dimensions) || 
-          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.cos(x.value);
-        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
+        newDimensions = { ...x.dimensions };
+        newDimensions.angle = (newDimensions.angle || 0) - 1;
+        if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       case 'tan': {
-        const isAngleCompatible = isDimensionless(x.dimensions) || 
-          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.tan(x.value);
-        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
+        newDimensions = { ...x.dimensions };
+        newDimensions.angle = (newDimensions.angle || 0) - 1;
+        if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
+      
+      // Inverse trig functions - increment angle exponent by 1
+      // e.g., dimensionless → rad¹, m² → m²⋅rad¹, rad⁻¹ → dimensionless
       case 'asin': {
         if (x.value < -1 || x.value > 1) return;
-        const isAngleCompatible = isDimensionless(x.dimensions) || 
-          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.asin(x.value);
-        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
+        newDimensions = { ...x.dimensions };
+        newDimensions.angle = (newDimensions.angle || 0) + 1;
+        if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       case 'acos': {
         if (x.value < -1 || x.value > 1) return;
-        const isAngleCompatible = isDimensionless(x.dimensions) || 
-          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.acos(x.value);
-        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
+        newDimensions = { ...x.dimensions };
+        newDimensions.angle = (newDimensions.angle || 0) + 1;
+        if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       case 'atan': {
-        const isAngleCompatible = isDimensionless(x.dimensions) || 
-          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.atan(x.value);
-        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
+        newDimensions = { ...x.dimensions };
+        newDimensions.angle = (newDimensions.angle || 0) + 1;
+        if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       
-      // Hyperbolic functions
+      // Hyperbolic functions - decrement angle exponent by 1
       case 'sinh': {
-        const isAngleCompatible = isDimensionless(x.dimensions) || 
-          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.sinh(x.value);
-        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
+        newDimensions = { ...x.dimensions };
+        newDimensions.angle = (newDimensions.angle || 0) - 1;
+        if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       case 'cosh': {
-        const isAngleCompatible = isDimensionless(x.dimensions) || 
-          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.cosh(x.value);
-        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
+        newDimensions = { ...x.dimensions };
+        newDimensions.angle = (newDimensions.angle || 0) - 1;
+        if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       case 'tanh': {
-        const isAngleCompatible = isDimensionless(x.dimensions) || 
-          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.tanh(x.value);
-        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
+        newDimensions = { ...x.dimensions };
+        newDimensions.angle = (newDimensions.angle || 0) - 1;
+        if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
+      
+      // Inverse hyperbolic functions - increment angle exponent by 1
       case 'asinh': {
-        const isAngleCompatible = isDimensionless(x.dimensions) || 
-          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.asinh(x.value);
-        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
+        newDimensions = { ...x.dimensions };
+        newDimensions.angle = (newDimensions.angle || 0) + 1;
+        if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       case 'acosh': {
         if (x.value < 1) return;
-        const isAngleCompatible = isDimensionless(x.dimensions) || 
-          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.acosh(x.value);
-        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
+        newDimensions = { ...x.dimensions };
+        newDimensions.angle = (newDimensions.angle || 0) + 1;
+        if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       case 'atanh': {
         if (x.value <= -1 || x.value >= 1) return;
-        const isAngleCompatible = isDimensionless(x.dimensions) || 
-          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.atanh(x.value);
-        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
+        newDimensions = { ...x.dimensions };
+        newDimensions.angle = (newDimensions.angle || 0) + 1;
+        if (newDimensions.angle === 0) delete newDimensions.angle;
         break;
       }
       
@@ -5131,16 +5135,49 @@ export default function UnitConverter() {
                 <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Value')}</Label>
                 <Input 
                   type="text"
-                  inputMode="decimal"
+                  inputMode="text"
                   value={directValue}
                   onChange={(e) => {
-                    const format = NUMBER_FORMATS[numberFormat];
-                    const decimalSep = format.decimal === '.' ? '\\.' : format.decimal === "'" ? "\\'" : format.decimal;
-                    const thousandsSep = format.thousands ? (format.thousands === ' ' ? '\\s' : format.thousands === "'" ? "\\'" : format.thousands) : '';
-                    const isArabicFormat = numberFormat === 'arabic';
-                    const digitPattern = isArabicFormat ? '0-9٠-٩' : '0-9';
-                    const pattern = new RegExp(`[^${digitPattern}\\-${decimalSep}${thousandsSep}eE\\+]`, 'g');
-                    setDirectValue(e.target.value.replace(pattern, ''));
+                    // Allow more characters for unit expressions (letters, symbols, spaces)
+                    setDirectValue(e.target.value);
+                  }}
+                  onBlur={(e) => {
+                    // Parse unit expressions on blur (e.g., "12 GPa", "45°", "10 deg")
+                    const text = e.target.value.trim();
+                    if (!text) return;
+                    
+                    // Check if it contains non-numeric characters (suggesting a unit expression)
+                    const hasUnitPart = /[a-zA-Z°⋅·×\^⁰¹²³⁴⁵⁶⁷⁸⁹⁻]/.test(text);
+                    if (hasUnitPart) {
+                      const parsed = parseUnitText(text);
+                      if (parsed.value && (Object.keys(parsed.dimensions).length > 0 || parsed.categoryId)) {
+                        // Update value with parsed numeric value (including conversions)
+                        setDirectValue(parsed.value.toString());
+                        
+                        // Update dimension grid from parsed dimensions
+                        const newExponents: Record<string, number> = {
+                          m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
+                        };
+                        
+                        if (parsed.dimensions.length) newExponents.m = parsed.dimensions.length;
+                        if (parsed.dimensions.mass) newExponents.kg = parsed.dimensions.mass;
+                        if (parsed.dimensions.time) newExponents.s = parsed.dimensions.time;
+                        if (parsed.dimensions.current) newExponents.A = parsed.dimensions.current;
+                        if (parsed.dimensions.temperature) newExponents.K = parsed.dimensions.temperature;
+                        if (parsed.dimensions.amount) newExponents.mol = parsed.dimensions.amount;
+                        if (parsed.dimensions.intensity) newExponents.cd = parsed.dimensions.intensity;
+                        if (parsed.dimensions.angle) newExponents.rad = parsed.dimensions.angle;
+                        if (parsed.dimensions.solid_angle) newExponents.sr = parsed.dimensions.solid_angle;
+                        
+                        setDirectExponents(newExponents);
+                      }
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    // Parse unit expressions on Enter
+                    if (e.key === 'Enter') {
+                      e.currentTarget.blur(); // Triggers onBlur handler
+                    }
                   }}
                   className="font-mono px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-left"
                   style={{ height: FIELD_HEIGHT, fontSize: '0.875rem', width: CommonFieldWidth }}

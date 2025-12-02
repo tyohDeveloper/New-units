@@ -274,3 +274,94 @@ export const formatDimensions = (dims: DimensionalFormula): string => {
   
   return [...positive, ...negative].join('⋅');
 };
+
+// Convert a number to superscript string
+export const toSuperscript = (n: number): string => {
+  const superscripts: Record<string, string> = {
+    '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+    '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
+  };
+  return n.toString().split('').map(c => superscripts[c] || c).join('');
+};
+
+// Result type for derived unit power detection
+export interface DerivedUnitPowerMatch {
+  symbol: string;        // e.g., "W²" or "J³"
+  baseSymbol: string;    // e.g., "W" or "J"
+  power: number;         // e.g., 2 or 3
+  category: string;      // e.g., "power" or "energy"
+}
+
+// Check if dimensions are an integer power of a known SI derived unit
+// For example, kg²⋅m⁴⋅s⁻⁶ = W² (power dimensions * 2)
+export const findDerivedUnitPower = (dimensions: DimensionalFormula): DerivedUnitPowerMatch | null => {
+  if (isDimensionless(dimensions)) return null;
+  
+  // Get all non-zero dimension exponents
+  const dimEntries = Object.entries(dimensions).filter(([, exp]) => exp !== 0 && exp !== undefined) as [keyof DimensionalFormula, number][];
+  if (dimEntries.length === 0) return null;
+  
+  // For each SI derived unit, check if the dimensions are an integer multiple
+  for (const derivedUnit of SI_DERIVED_UNITS) {
+    // Skip photon units (special case)
+    if (derivedUnit.category === 'photon') continue;
+    
+    const unitDims = derivedUnit.dimensions;
+    const unitEntries = Object.entries(unitDims).filter(([, exp]) => exp !== 0 && exp !== undefined) as [keyof DimensionalFormula, number][];
+    
+    if (unitEntries.length === 0) continue;
+    
+    // Check if the input dimensions have the same dimension keys (with different exponents)
+    const inputKeys = dimEntries.map(([k]) => k);
+    const unitKeysSet = new Set(unitEntries.map(([k]) => k));
+    
+    if (inputKeys.length !== unitKeysSet.size) continue;
+    
+    let keysMatch = true;
+    for (let i = 0; i < inputKeys.length; i++) {
+      if (!unitKeysSet.has(inputKeys[i])) {
+        keysMatch = false;
+        break;
+      }
+    }
+    if (!keysMatch) continue;
+    
+    // Check if all exponents are the same integer multiple
+    let power: number | null = null;
+    let isMultiple = true;
+    
+    for (const [dim, inputExp] of dimEntries) {
+      const unitExp = unitDims[dim] || 0;
+      if (unitExp === 0) {
+        isMultiple = false;
+        break;
+      }
+      
+      const ratio = inputExp / unitExp;
+      
+      // Must be an integer and greater than 1 (powers of 1 are just the unit itself)
+      if (!Number.isInteger(ratio) || ratio <= 1) {
+        isMultiple = false;
+        break;
+      }
+      
+      if (power === null) {
+        power = ratio;
+      } else if (power !== ratio) {
+        isMultiple = false;
+        break;
+      }
+    }
+    
+    if (isMultiple && power !== null && power > 1) {
+      return {
+        symbol: `${derivedUnit.symbol}${toSuperscript(power)}`,
+        baseSymbol: derivedUnit.symbol,
+        power,
+        category: derivedUnit.category
+      };
+    }
+  }
+  
+  return null;
+};
