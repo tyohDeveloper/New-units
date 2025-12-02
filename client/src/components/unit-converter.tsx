@@ -18,7 +18,7 @@ const OperatorBtnWidth = '32px'; // width of +, -, × and / operator buttons in 
 const ClearBtnWidth = '100px'; // width of Clear buttons in calculator
 const RpnBtnWidth = '50px'; // width of RPN function buttons (sized for 'acosh')
 const RpnBtnCount = 7; // number of RPN buttons per row that fit in pane width
-const CALC_CONTENT_HEIGHT = '280px'; // fixed height for calculator content area to prevent flicker on mode switch
+const CALC_CONTENT_HEIGHT = '220px'; // fixed height for calculator content area to prevent flicker on mode switch
 
 export default function UnitConverter() {
   const inputRef = useRef<HTMLInputElement>(null);
