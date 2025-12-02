@@ -6005,14 +6005,15 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Binary operation buttons for y row: 3.1-3.4 = placeholders, 3.5-3.8 = ×/÷/+/−, then √2 */}
+              {/* Binary operation buttons for y row: 3.1=Push/Pop, 3.2-3.3 = placeholders, 3.4-3.7 = ×/÷/+/−, 3.8=√2 */}
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full text-muted-foreground/50"
-                disabled={true}
+                className={`text-xs font-mono w-full ${!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
+                disabled={!rpnStack[3]}
+                onClick={() => shiftActive ? popFromRpnStack() : pushToRpnStack()}
               >
-                3.1
+                {shiftActive ? 'Pop' : 'Push'}
               </Button>
               <Button 
                 variant="ghost" 
