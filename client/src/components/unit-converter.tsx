@@ -5851,7 +5851,7 @@ export default function UnitConverter() {
               </motion.div>
               {/* Power/Root/Exp/Log buttons for s3 row */}
               {(() => {
-                const s3Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number }> = [
+                const s3Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number }> = [
                   { label: 'x²', shiftLabel: '√', op: 'square', shiftOp: 'sqrt' },
                   { label: 'x³', shiftLabel: '∛', op: 'cube', shiftOp: 'cbrt' },
                   { label: 'x⁴', shiftLabel: '∜', op: 'pow4', shiftOp: 'root4' },
@@ -5859,7 +5859,7 @@ export default function UnitConverter() {
                   { label: '10ˣ', shiftLabel: 'log₁₀', op: 'pow10', shiftOp: 'log10' },
                   { label: '2ˣ', shiftLabel: 'log₂', op: 'pow2', shiftOp: 'log2' },
                   { label: 'rnd', shiftLabel: 'trunc', op: 'rnd', shiftOp: 'trunc' },
-                  { label: 'π', shiftLabel: 'Undo', isConstant: true, value: Math.PI },
+                  { label: 'π', shiftLabel: '1/π', isConstant: true, value: Math.PI, shiftValue: 1/Math.PI },
                 ];
                 return s3Buttons.map((btn, i) => {
                   const hasOp = 'op' in btn;
@@ -5874,8 +5874,8 @@ export default function UnitConverter() {
                       className={`text-xs font-mono w-full ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                       onClick={() => {
                         if (isConstant && 'value' in btn) {
-                          if (shiftActive) {
-                            undoRpnStack();
+                          if (shiftActive && 'shiftValue' in btn) {
+                            pushRpnConstant(btn.shiftValue);
                           } else {
                             pushRpnConstant(btn.value);
                           }
@@ -5931,7 +5931,7 @@ export default function UnitConverter() {
               </motion.div>
               {/* Trig/Hyperbolic buttons for s2 row */}
               {(() => {
-                const s2Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number }> = [
+                const s2Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number }> = [
                   { label: 'sin', shiftLabel: 'asin', op: 'sin', shiftOp: 'asin' },
                   { label: 'cos', shiftLabel: 'acos', op: 'cos', shiftOp: 'acos' },
                   { label: 'tan', shiftLabel: 'atan', op: 'tan', shiftOp: 'atan' },
@@ -5939,7 +5939,7 @@ export default function UnitConverter() {
                   { label: 'cosh', shiftLabel: 'acosh', op: 'cosh', shiftOp: 'acosh' },
                   { label: 'tanh', shiftLabel: 'atanh', op: 'tanh', shiftOp: 'atanh' },
                   { label: '⌊x⌋', shiftLabel: '⌈x⌉', op: 'floor', shiftOp: 'ceil' },
-                  { label: 'ℯ', shiftLabel: 'ℯ', isConstant: true, value: Math.E },
+                  { label: 'ℯ', shiftLabel: '1/ℯ', isConstant: true, value: Math.E, shiftValue: 1/Math.E },
                 ];
                 return s2Buttons.map((btn, i) => {
                   const hasOp = 'op' in btn;
@@ -5954,7 +5954,11 @@ export default function UnitConverter() {
                       className={`text-xs font-mono w-full ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                       onClick={() => {
                         if (isConstant && 'value' in btn) {
-                          pushRpnConstant(btn.value);
+                          if (shiftActive && 'shiftValue' in btn) {
+                            pushRpnConstant(btn.shiftValue);
+                          } else {
+                            pushRpnConstant(btn.value);
+                          }
                         } else if (currentOp) {
                           applyRpnUnary(currentOp);
                         }
@@ -6059,9 +6063,9 @@ export default function UnitConverter() {
                 variant="ghost" 
                 size="sm" 
                 className="text-xs font-mono w-full text-foreground hover:text-accent"
-                onClick={() => pushRpnConstant(Math.SQRT2)}
+                onClick={() => pushRpnConstant(shiftActive ? 1/Math.SQRT2 : Math.SQRT2)}
               >
-                √2
+                {shiftActive ? '1/√2' : '√2'}
               </Button>
             </div>
 
