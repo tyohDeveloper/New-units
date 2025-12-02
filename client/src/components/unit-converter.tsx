@@ -5367,10 +5367,10 @@ export default function UnitConverter() {
                 <div key={unit} className="flex items-center gap-2">
                   <span className="text-xs w-32 text-right text-muted-foreground truncate" title={t(quantity)}>{t(quantity)}</span>
                   <div className="flex gap-0">
-                    {[0, 1, 2, 3, 4, 5, -1, -2, -3, -4, -5].map((exp) => {
+                    {[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((exp) => {
                       const superscripts: Record<number, string> = {
-                        1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵',
-                        [-1]: '⁻¹', [-2]: '⁻²', [-3]: '⁻³', [-4]: '⁻⁴', [-5]: '⁻⁵'
+                        1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶',
+                        [-1]: '⁻¹', [-2]: '⁻²', [-3]: '⁻³', [-4]: '⁻⁴', [-5]: '⁻⁵', [-6]: '⁻⁶'
                       };
                       const label = exp === 0 ? '-' : `${unit}${superscripts[exp] || ''}`;
                       const isSelected = directExponents[unit] === exp;
@@ -5382,7 +5382,7 @@ export default function UnitConverter() {
                             isSelected 
                               ? 'bg-accent text-accent-foreground border-accent' 
                               : 'bg-background/30 border-border/50 hover:bg-muted/50 text-muted-foreground'
-                          } ${exp === 0 ? 'rounded-l' : ''} ${exp === -5 ? 'rounded-r' : ''}`}
+                          } ${exp === -6 ? 'rounded-l' : ''} ${exp === 6 ? 'rounded-r' : ''}`}
                           {...testId(`custom-exp-${unit}-${exp}`)}
                         >
                           {label}
@@ -6027,25 +6027,25 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Binary operation buttons for y row: 3.1-3.2=Enter/Drop (double width), 3.3=neg, 3.4-3.7 = ×/÷/+/−, 3.8=√2 */}
+              {/* Binary operation buttons for y row: 3.1-3.2=Enter/Drop (double width), 3.3=neg/undo, 3.4-3.7 = ×/÷/+/−, 3.8=√2 */}
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className={`text-xs font-mono w-full ${!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
+                className={`text-xs font-mono w-full border border-border/30 ${!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                 style={{ gridColumn: 'span 2' }}
                 disabled={!rpnStack[3]}
                 onClick={() => shiftActive ? dropRpnStack() : pushToRpnStack()}
               >
-                {shiftActive ? 'Drop⬇' : 'Enter⬆'}
+                {shiftActive ? 'drop↓' : 'enter↑'}
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className={`text-xs font-mono w-full ${!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
-                disabled={!rpnStack[3]}
-                onClick={() => applyRpnUnary('neg')}
+                className={`text-xs font-mono w-full ${shiftActive ? (!previousRpnStack.some(v => v !== null) ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent') : (!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent')}`}
+                disabled={shiftActive ? !previousRpnStack.some(v => v !== null) : !rpnStack[3]}
+                onClick={() => shiftActive ? undoRpnStack() : applyRpnUnary('neg')}
               >
-                neg
+                {shiftActive ? 'undo' : 'neg'}
               </Button>
               {(() => {
                 const yBinaryButtons: Array<{ label: string; shiftLabel: string; op: RpnBinaryOp; shiftOp: RpnBinaryOp }> = [
