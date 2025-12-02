@@ -1257,10 +1257,10 @@ export default function UnitConverter() {
       es: 'CALCULADORA - RPN', fr: 'CALCULATRICE - RPN', it: 'CALCOLATRICE - RPN', ko: '계산기 - RPN',
       pt: 'CALCULADORA - RPN', ru: 'КАЛЬКУЛЯТОР - RPN', zh: '计算器 - RPN', ja: '計算機 - RPN'
     },
-    'CALCULATOR - UNIT': { 
-      en: 'CALCULATOR - UNIT', ar: 'الآلة الحاسبة - وحدة', de: 'RECHNER - EINHEIT',
-      es: 'CALCULADORA - UNIDAD', fr: 'CALCULATRICE - UNITÉ', it: 'CALCOLATRICE - UNITÀ', ko: '계산기 - 단위',
-      pt: 'CALCULADORA - UNIDADE', ru: 'КАЛЬКУЛЯТОР - ЕДИНИЦА', zh: '计算器 - 单位', ja: '計算機 - 単位'
+    'CALCULATOR': { 
+      en: 'CALCULATOR', ar: 'الآلة الحاسبة', de: 'RECHNER',
+      es: 'CALCULADORA', fr: 'CALCULATRICE', it: 'CALCOLATRICE', ko: '계산기',
+      pt: 'CALCULADORA', ru: 'КАЛЬКУЛЯТОР', zh: '计算器', ja: '計算機'
     },
     'Clear': { 
       en: 'Clear', ar: 'مسح', de: 'Löschen',
@@ -5390,7 +5390,7 @@ export default function UnitConverter() {
                   className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors"
                   onClick={() => calculatorMode === 'simple' ? switchToRpn() : switchToSimple()}
                 >
-                  {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR - UNIT')} ↻
+                  {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR')} ↻
                 </Label>
                 <div className="flex items-center gap-2">
                   <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
