@@ -16,8 +16,8 @@ const FIELD_HEIGHT = '2.5rem'; // 40px - change this to adjust all field heights
 const CommonFieldWidth = '285px'; // change this to adjust width of main value fields
 const OperatorBtnWidth = '32px'; // width of +, -, × and / operator buttons in calculator
 const ClearBtnWidth = '100px'; // width of Clear buttons in calculator
-const RpnBtnWidth = '50px'; // width of RPN function buttons (sized for 'acosh')
-const RpnBtnCount = 7; // number of RPN buttons per row that fit in pane width
+const RpnBtnWidth = '43px'; // width of RPN function buttons (8 columns)
+const RpnBtnCount = 8; // number of RPN buttons per row that fit in pane width
 const CALC_CONTENT_HEIGHT = '220px'; // fixed height for calculator content area to prevent flicker on mode switch
 
 export default function UnitConverter() {
