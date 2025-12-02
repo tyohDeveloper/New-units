@@ -6004,6 +6004,9 @@ export default function UnitConverter() {
               <p className="text-xs text-muted-foreground/70 leading-relaxed">
                 Copyright © 2025 David Hoyt. MIT License - Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files, to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
               </p>
+              <p className="text-xs text-muted-foreground/70 mt-2">
+                GitHub: <a href="https://github.com/tyohDeveloper/New-units" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">https://github.com/tyohDeveloper/New-units</a>
+              </p>
             </div>
           </div>
         </Card>
