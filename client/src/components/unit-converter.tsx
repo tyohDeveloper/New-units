@@ -3573,7 +3573,7 @@ export default function UnitConverter() {
     | 'exp' | 'ln' | 'pow10' | 'log10' | 'pow2' | 'log2'
     | 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan'
     | 'sinh' | 'cosh' | 'tanh' | 'asinh' | 'acosh' | 'atanh'
-    | 'rnd' | 'trunc';
+    | 'rnd' | 'trunc' | 'floor' | 'ceil';
 
   // Apply unary operation to RPN x register (stack[3])
   const applyRpnUnary = (op: RpnUnaryOp) => {
@@ -3679,6 +3679,20 @@ export default function UnitConverter() {
         // Truncate at precision decimal places
         const factor = Math.pow(10, calculatorPrecision);
         newValue = Math.trunc(x.value * factor) / factor;
+        newDimensions = { ...x.dimensions };
+        break;
+      }
+      case 'floor': {
+        // Floor at precision decimal places
+        const factor = Math.pow(10, calculatorPrecision);
+        newValue = Math.floor(x.value * factor) / factor;
+        newDimensions = { ...x.dimensions };
+        break;
+      }
+      case 'ceil': {
+        // Ceiling at precision decimal places
+        const factor = Math.pow(10, calculatorPrecision);
+        newValue = Math.ceil(x.value * factor) / factor;
         newDimensions = { ...x.dimensions };
         break;
       }
@@ -5154,15 +5168,24 @@ export default function UnitConverter() {
                   </Select>
                 </div>
               </div>
-              {/* Left-side Clear button - simple mode only */}
-              {calculatorMode === 'simple' && (
+              {/* Clear button - different function for each mode */}
+              {calculatorMode === 'simple' ? (
                 <Button 
                   variant="ghost" 
                   size="sm" 
                   onClick={clearCalculator}
                   className="text-xs hover:text-accent"
                 >
-                  {t('Clear')} {t('Calculator')}
+                  {t('Clear calculator')}
+                </Button>
+              ) : (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={clearRpnStack}
+                  className="text-xs hover:text-accent"
+                >
+                  {t('Clear calculator')}
                 </Button>
               )}
             </div>
@@ -5657,7 +5680,7 @@ export default function UnitConverter() {
                   { label: 'sinh', shiftLabel: 'asinh', op: 'sinh', shiftOp: 'asinh' },
                   { label: 'cosh', shiftLabel: 'acosh', op: 'cosh', shiftOp: 'acosh' },
                   { label: 'tanh', shiftLabel: 'atanh', op: 'tanh', shiftOp: 'atanh' },
-                  { label: 's2.6', shiftLabel: 'S2.6' },
+                  { label: '⌊x⌋', shiftLabel: '⌈x⌉', op: 'floor', shiftOp: 'ceil' },
                 ];
                 return s2Buttons.map((btn, i) => {
                   const hasOp = 'op' in btn;
@@ -5881,21 +5904,26 @@ export default function UnitConverter() {
               )}
             </div>
 
-            {/* Bottom row: Shift left, Push/Pop under unit dropdown, Clear calculator + Copy right */}
-            <div className="flex items-center justify-between">
-              {/* Left side: Shift button */}
+            {/* Bottom row: empty spacer, Shift under prefix, Push/Pop under unit select, Copy right */}
+            <div 
+              className="grid gap-2 items-center"
+              style={{ gridTemplateColumns: `${CommonFieldWidth} 50px 1fr` }}
+            >
+              {/* Column 1: empty spacer (under result field) */}
+              <div />
+              {/* Column 2 (50px, under prefix dropdown): Shift button */}
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={() => setShiftActive(!shiftActive)}
-                className={`text-xs font-mono ${shiftActive ? 'bg-accent text-accent-foreground' : 'hover:text-accent'}`}
+                className={`text-xs font-mono w-full ${shiftActive ? 'bg-accent text-accent-foreground' : 'hover:text-accent'}`}
                 data-testid="button-shift"
                 aria-pressed={shiftActive}
               >
                 {shiftActive ? 'SHIFT' : 'Shift'}
               </Button>
-              {/* Center area: Push/Pop button, positioned to align under unit dropdown */}
-              <div className="flex-1 flex items-center justify-start pl-2">
+              {/* Column 3 (1fr, under unit select): Push/Pop left-justified, Copy right-justified */}
+              <div className="flex items-center justify-between">
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -5904,17 +5932,6 @@ export default function UnitConverter() {
                   disabled={shiftActive ? !rpnStack[3] && !rpnStack[2] && !rpnStack[1] && !rpnStack[0] : !rpnStack[3]}
                 >
                   {shiftActive ? 'Pop' : 'Push'}
-                </Button>
-              </div>
-              {/* Right side: Clear calculator + Copy */}
-              <div className="flex items-center gap-1">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={clearRpnStack}
-                  className="text-xs hover:text-accent"
-                >
-                  {t('Clear calculator')}
                 </Button>
                 <Button 
                   variant="ghost" 
