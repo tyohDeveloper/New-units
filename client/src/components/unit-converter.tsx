@@ -43,7 +43,7 @@ export default function UnitConverter() {
   const [comparisonMode, setComparisonMode] = useState<boolean>(false);
   
   // Calculator mode state ('simple' | 'rpn')
-  const [calculatorMode, setCalculatorMode] = useState<'simple' | 'rpn'>('rpn');
+  const [calculatorMode, setCalculatorMode] = useState<'simple' | 'rpn'>('simple');
   const [shiftActive, setShiftActive] = useState(false);
   
   // RPN calculator state - independent from simple calculator
@@ -3528,9 +3528,17 @@ export default function UnitConverter() {
   };
 
   const pushToRpnStack = () => {
-    // Push from clipboard/pending value to RPN stack
-    // For now, this will be handled by the copy-to-calculator logic
-    // which detects calculatorMode and pushes to rpnStack instead
+    // Standard RPN ENTER: lift stack and duplicate x
+    // s3 gets old s2, s2 gets old y, y gets old x, x stays same
+    if (!rpnStack[3]) return;
+    setRpnStack(prev => {
+      const newStack = [...prev];
+      newStack[0] = prev[1]; // s3 <- s2
+      newStack[1] = prev[2]; // s2 <- y
+      newStack[2] = prev[3]; // y <- x
+      // newStack[3] stays as x (duplicated)
+      return newStack;
+    });
   };
 
   // Check if root operation would produce integer exponents
@@ -3936,9 +3944,13 @@ export default function UnitConverter() {
     
     const formattedValue = formatNumberWithSeparators(displayValue, calculatorPrecision);
     
+    // Include prefix symbol in unit display when showPrefix is true
+    const prefixData = PREFIXES.find(p => p.id === rpnResultPrefix);
+    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
+    
     return {
       formattedValue,
-      unitSymbol: kgResult.displaySymbol
+      unitSymbol: prefixSymbol + kgResult.displaySymbol
     };
   };
 
@@ -3964,7 +3976,12 @@ export default function UnitConverter() {
     const displayValue = val.value / kgResult.effectivePrefixFactor;
     const formattedValue = formatNumberWithSeparators(displayValue, calculatorPrecision);
     const cleanValue = formattedValue.replace(/,/g, '');
-    const textToCopy = kgResult.displaySymbol ? `${cleanValue} ${kgResult.displaySymbol}` : cleanValue;
+    
+    // Include prefix symbol when showPrefix is true
+    const prefixData = PREFIXES.find(p => p.id === val.prefix);
+    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
+    const unitSymbol = prefixSymbol + kgResult.displaySymbol;
+    const textToCopy = unitSymbol ? `${cleanValue} ${unitSymbol}` : cleanValue;
     
     navigator.clipboard.writeText(textToCopy);
     
@@ -4046,9 +4063,13 @@ export default function UnitConverter() {
     // Format value
     const formattedValue = formatNumberWithSeparators(displayValue, calculatorPrecision);
     
+    // Include prefix symbol in unit display when showPrefix is true
+    const prefixData = PREFIXES.find(p => p.id === resultPrefix);
+    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
+    
     return {
       formattedValue,
-      unitSymbol: kgResult.displaySymbol
+      unitSymbol: prefixSymbol + kgResult.displaySymbol
     };
   };
 
@@ -4098,7 +4119,11 @@ export default function UnitConverter() {
     // Apply kg prefix handoff: kg + prefix → prefixed-g (e.g., kg + milli → mg)
     const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
     const displayValue = fixPrecision(val.value / kgResult.effectivePrefixFactor);
-    const unitSymbol = kgResult.displaySymbol;
+    
+    // Include prefix symbol when showPrefix is true
+    const prefixData = PREFIXES.find(p => p.id === val.prefix);
+    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
+    const unitSymbol = prefixSymbol + kgResult.displaySymbol;
     
     // Copy with only decimal separator, no thousands separator
     const format = NUMBER_FORMATS[numberFormat];
@@ -5081,10 +5106,10 @@ export default function UnitConverter() {
           >
             <div className="flex items-center gap-4">
               <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
-                <div className="flex items-center gap-1">
-                  <Label className="text-xs font-mono uppercase text-muted-foreground">
-                    {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR - UNIT')}
-                  </Label>
+                <Label className="text-xs font-mono uppercase text-muted-foreground">
+                  {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR - UNIT')}
+                </Label>
+                <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -5093,8 +5118,6 @@ export default function UnitConverter() {
                   >
                     {'\u{1F504}'}
                   </Button>
-                </div>
-                <div className="flex items-center gap-2">
                   <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
                   <Select 
                     value={calculatorPrecision.toString()} 
@@ -5161,7 +5184,9 @@ export default function UnitConverter() {
                     if (!val) return '';
                     const baseUnitSymbol = formatDimensions(val.dimensions);
                     const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    return kgResult.displaySymbol;
+                    const prefixData = PREFIXES.find(p => p.id === val.prefix);
+                    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
+                    return prefixSymbol + kgResult.displaySymbol;
                   })() : ''}
                 </span>
               </motion.div>
@@ -5211,7 +5236,9 @@ export default function UnitConverter() {
                     if (!val) return '';
                     const baseUnitSymbol = formatDimensions(val.dimensions);
                     const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    return kgResult.displaySymbol;
+                    const prefixData = PREFIXES.find(p => p.id === val.prefix);
+                    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
+                    return prefixSymbol + kgResult.displaySymbol;
                   })() : ''}
                 </span>
               </motion.div>
@@ -5293,7 +5320,9 @@ export default function UnitConverter() {
                     if (!val) return '';
                     const baseUnitSymbol = formatDimensions(val.dimensions);
                     const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    return kgResult.displaySymbol;
+                    const prefixData = PREFIXES.find(p => p.id === val.prefix);
+                    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
+                    return prefixSymbol + kgResult.displaySymbol;
                   })() : ''}
                 </span>
               </motion.div>
@@ -5528,7 +5557,9 @@ export default function UnitConverter() {
                     if (!val) return '';
                     const baseUnitSymbol = formatDimensions(val.dimensions);
                     const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    return kgResult.displaySymbol;
+                    const prefixData = PREFIXES.find(p => p.id === val.prefix);
+                    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
+                    return prefixSymbol + kgResult.displaySymbol;
                   })() : ''}
                 </span>
               </motion.div>
@@ -5593,7 +5624,9 @@ export default function UnitConverter() {
                     if (!val) return '';
                     const baseUnitSymbol = formatDimensions(val.dimensions);
                     const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    return kgResult.displaySymbol;
+                    const prefixData = PREFIXES.find(p => p.id === val.prefix);
+                    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
+                    return prefixSymbol + kgResult.displaySymbol;
                   })() : ''}
                 </span>
               </motion.div>
@@ -5658,7 +5691,9 @@ export default function UnitConverter() {
                     if (!val) return '';
                     const baseUnitSymbol = formatDimensions(val.dimensions);
                     const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    return kgResult.displaySymbol;
+                    const prefixData = PREFIXES.find(p => p.id === val.prefix);
+                    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
+                    return prefixSymbol + kgResult.displaySymbol;
                   })() : ''}
                 </span>
               </motion.div>
@@ -5860,7 +5895,7 @@ export default function UnitConverter() {
                   size="sm" 
                   onClick={pushToRpnStack}
                   className="text-xs hover:text-accent"
-                  disabled
+                  disabled={!rpnStack[3]}
                 >
                   Push
                 </Button>
