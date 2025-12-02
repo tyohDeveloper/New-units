@@ -18,6 +18,7 @@ const OperatorBtnWidth = '32px'; // width of +, -, × and / operator buttons in 
 const ClearBtnWidth = '100px'; // width of Clear buttons in calculator
 const RpnBtnWidth = '50px'; // width of RPN function buttons (sized for 'acosh')
 const RpnBtnCount = 7; // number of RPN buttons per row that fit in pane width
+const CALC_CONTENT_HEIGHT = '280px'; // fixed height for calculator content area to prevent flicker on mode switch
 
 export default function UnitConverter() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -5174,7 +5175,7 @@ export default function UnitConverter() {
                   variant="ghost" 
                   size="sm" 
                   onClick={clearCalculator}
-                  className="text-xs hover:text-accent"
+                  className="text-xs text-muted-foreground hover:text-foreground"
                 >
                   {t('Clear calculator')}
                 </Button>
@@ -5183,7 +5184,7 @@ export default function UnitConverter() {
                   variant="ghost" 
                   size="sm" 
                   onClick={clearRpnStack}
-                  className="text-xs hover:text-accent"
+                  className="text-xs text-muted-foreground hover:text-foreground"
                 >
                   {t('Clear calculator')}
                 </Button>
@@ -5191,6 +5192,8 @@ export default function UnitConverter() {
             </div>
           </div>
           
+          {/* Fixed-height container to prevent flicker on mode switch */}
+          <div style={{ minHeight: CALC_CONTENT_HEIGHT }}>
           {/* Simple Calculator Mode */}
           {calculatorMode === 'simple' && (
           <div className="space-y-2">
@@ -5547,7 +5550,7 @@ export default function UnitConverter() {
                 size="sm" 
                 onClick={copyCalcResult}
                 disabled={!calcValues[3]}
-                className="text-xs hover:text-accent gap-2 shrink-0"
+                className="text-xs text-muted-foreground hover:text-foreground gap-2 shrink-0"
               >
                 <Copy className="w-3 h-3" />
                 <motion.span
@@ -5623,7 +5626,7 @@ export default function UnitConverter() {
                       key={`s3-btn-${i}`} 
                       variant="ghost" 
                       size="sm" 
-                      className="text-xs font-mono w-full"
+                      className="text-xs font-mono w-full text-muted-foreground hover:text-foreground"
                       onClick={() => currentOp && applyRpnUnary(currentOp)}
                       disabled={!hasOp || !rpnStack[3]}
                     >
@@ -5690,7 +5693,7 @@ export default function UnitConverter() {
                       key={`s2-btn-${i}`} 
                       variant="ghost" 
                       size="sm" 
-                      className="text-xs font-mono w-full"
+                      className="text-xs font-mono w-full text-muted-foreground hover:text-foreground"
                       onClick={() => currentOp && applyRpnUnary(currentOp)}
                       disabled={!hasOp || !rpnStack[3]}
                     >
@@ -5743,7 +5746,7 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full"
+                className="text-xs font-mono w-full text-muted-foreground hover:text-foreground"
                 onClick={() => pushRpnConstant(Math.PI)}
               >
                 π
@@ -5751,7 +5754,7 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full"
+                className="text-xs font-mono w-full text-muted-foreground hover:text-foreground"
                 onClick={() => pushRpnConstant(Math.E)}
               >
                 ℯ
@@ -5759,7 +5762,7 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full"
+                className="text-xs font-mono w-full text-muted-foreground hover:text-foreground"
                 onClick={() => pushRpnConstant(Math.SQRT2)}
               >
                 √2
@@ -5779,7 +5782,7 @@ export default function UnitConverter() {
                       key={`y-bin-${i}`} 
                       variant="ghost" 
                       size="sm" 
-                      className="text-xs font-mono w-full"
+                      className="text-xs font-mono w-full text-muted-foreground hover:text-foreground"
                       onClick={() => applyRpnBinary(currentOp)}
                       disabled={isDisabled}
                     >
@@ -5916,7 +5919,7 @@ export default function UnitConverter() {
                 variant="ghost" 
                 size="sm" 
                 onClick={() => setShiftActive(!shiftActive)}
-                className={`text-xs font-mono w-full ${shiftActive ? 'bg-accent text-accent-foreground' : 'hover:text-accent'}`}
+                className={`text-xs font-mono w-full ${shiftActive ? 'bg-accent !text-accent-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                 data-testid="button-shift"
                 aria-pressed={shiftActive}
               >
@@ -5928,7 +5931,7 @@ export default function UnitConverter() {
                   variant="ghost" 
                   size="sm" 
                   onClick={shiftActive ? popFromRpnStack : pushToRpnStack}
-                  className="text-xs hover:text-accent"
+                  className="text-xs text-muted-foreground hover:text-foreground"
                   disabled={shiftActive ? !rpnStack[3] && !rpnStack[2] && !rpnStack[1] && !rpnStack[0] : !rpnStack[3]}
                 >
                   {shiftActive ? 'Pop' : 'Push'}
@@ -5938,7 +5941,7 @@ export default function UnitConverter() {
                   size="sm" 
                   onClick={copyRpnResult}
                   disabled={!rpnStack[3]}
-                  className="text-xs hover:text-accent gap-1"
+                  className="text-xs text-muted-foreground hover:text-foreground gap-1"
                 >
                   <Copy className="w-3 h-3" />
                   {t('Copy')}
@@ -5947,6 +5950,7 @@ export default function UnitConverter() {
             </div>
           </div>
           )}
+          </div>
         </Card>
       </div>
     </div>
