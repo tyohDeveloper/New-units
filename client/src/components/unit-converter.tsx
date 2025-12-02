@@ -44,7 +44,7 @@ export default function UnitConverter() {
   const [comparisonMode, setComparisonMode] = useState<boolean>(false);
   
   // Calculator mode state ('simple' | 'rpn')
-  const [calculatorMode, setCalculatorMode] = useState<'simple' | 'rpn'>('simple');
+  const [calculatorMode, setCalculatorMode] = useState<'simple' | 'rpn'>('rpn');
   const [shiftActive, setShiftActive] = useState(false);
   
   // RPN calculator state - independent from simple calculator
@@ -3719,16 +3719,16 @@ export default function UnitConverter() {
     });
   };
 
-  const popFromRpnStack = () => {
-    // Pop: drops x, shifts stack down
-    // x gets old y, y gets old s2, s2 gets old s3, s3 becomes null
+  const rollDownRpnStack = () => {
+    // Roll down: rotates stack down, x wraps to s3
+    // s3 gets old x, x gets old y, y gets old s2, s2 gets old s3
     saveRpnStackForUndo();
     setRpnStack(prev => {
       const newStack = [...prev];
+      newStack[0] = prev[3]; // s3 <- x (wrap)
       newStack[3] = prev[2]; // x <- y
       newStack[2] = prev[1]; // y <- s2
       newStack[1] = prev[0]; // s2 <- s3
-      newStack[0] = null;    // s3 <- null
       return newStack;
     });
   };
@@ -6034,9 +6034,9 @@ export default function UnitConverter() {
                 className={`text-xs font-mono w-full ${!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                 style={{ gridColumn: 'span 2' }}
                 disabled={!rpnStack[3]}
-                onClick={() => shiftActive ? popFromRpnStack() : pushToRpnStack()}
+                onClick={() => shiftActive ? rollDownRpnStack() : pushToRpnStack()}
               >
-                {shiftActive ? 'Pop' : 'Push'}
+                {shiftActive ? 'Roll⬇' : 'Enter⬆'}
               </Button>
               <Button 
                 variant="ghost" 
@@ -6218,11 +6218,11 @@ export default function UnitConverter() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  onClick={shiftActive ? popFromRpnStack : pushToRpnStack}
+                  onClick={shiftActive ? rollDownRpnStack : pushToRpnStack}
                   className="text-xs text-muted-foreground hover:text-foreground"
-                  disabled={shiftActive ? !rpnStack[3] && !rpnStack[2] && !rpnStack[1] && !rpnStack[0] : !rpnStack[3]}
+                  disabled={!rpnStack[3]}
                 >
-                  {shiftActive ? 'Pop' : 'Push'}
+                  {shiftActive ? 'Roll⬇' : 'Enter⬆'}
                 </Button>
                 <Button 
                   variant="ghost" 
