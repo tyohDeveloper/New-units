@@ -5851,7 +5851,7 @@ export default function UnitConverter() {
               </motion.div>
               {/* Power/Root/Exp/Log buttons for s3 row */}
               {(() => {
-                const s3Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string }> = [
+                const s3Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number }> = [
                   { label: 'x²', shiftLabel: '√', op: 'square', shiftOp: 'sqrt' },
                   { label: 'x³', shiftLabel: '∛', op: 'cube', shiftOp: 'cbrt' },
                   { label: 'x⁴', shiftLabel: '∜', op: 'pow4', shiftOp: 'root4' },
@@ -5859,19 +5859,30 @@ export default function UnitConverter() {
                   { label: '10ˣ', shiftLabel: 'log₁₀', op: 'pow10', shiftOp: 'log10' },
                   { label: '2ˣ', shiftLabel: 'log₂', op: 'pow2', shiftOp: 'log2' },
                   { label: 'rnd', shiftLabel: 'trunc', op: 'rnd', shiftOp: 'trunc' },
-                  { label: '1.8', shiftLabel: '1.8' },
+                  { label: 'π', shiftLabel: 'Undo', isConstant: true, value: Math.PI },
                 ];
                 return s3Buttons.map((btn, i) => {
                   const hasOp = 'op' in btn;
+                  const isConstant = 'isConstant' in btn;
                   const currentOp = hasOp ? (shiftActive ? btn.shiftOp : btn.op) : undefined;
-                  const isDisabled = !hasOp || !rpnStack[3];
+                  const isDisabled = hasOp && !rpnStack[3];
                   return (
                     <Button 
                       key={`s3-btn-${i}`} 
                       variant="ghost" 
                       size="sm" 
                       className={`text-xs font-mono w-full ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
-                      onClick={() => currentOp && applyRpnUnary(currentOp)}
+                      onClick={() => {
+                        if (isConstant && 'value' in btn) {
+                          if (shiftActive) {
+                            undoRpnStack();
+                          } else {
+                            pushRpnConstant(btn.value);
+                          }
+                        } else if (currentOp) {
+                          applyRpnUnary(currentOp);
+                        }
+                      }}
                       disabled={isDisabled}
                     >
                       {shiftActive ? btn.shiftLabel : btn.label}
@@ -5920,7 +5931,7 @@ export default function UnitConverter() {
               </motion.div>
               {/* Trig/Hyperbolic buttons for s2 row */}
               {(() => {
-                const s2Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string }> = [
+                const s2Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number }> = [
                   { label: 'sin', shiftLabel: 'asin', op: 'sin', shiftOp: 'asin' },
                   { label: 'cos', shiftLabel: 'acos', op: 'cos', shiftOp: 'acos' },
                   { label: 'tan', shiftLabel: 'atan', op: 'tan', shiftOp: 'atan' },
@@ -5928,19 +5939,26 @@ export default function UnitConverter() {
                   { label: 'cosh', shiftLabel: 'acosh', op: 'cosh', shiftOp: 'acosh' },
                   { label: 'tanh', shiftLabel: 'atanh', op: 'tanh', shiftOp: 'atanh' },
                   { label: '⌊x⌋', shiftLabel: '⌈x⌉', op: 'floor', shiftOp: 'ceil' },
-                  { label: '2.8', shiftLabel: '2.8' },
+                  { label: 'ℯ', shiftLabel: 'ℯ', isConstant: true, value: Math.E },
                 ];
                 return s2Buttons.map((btn, i) => {
                   const hasOp = 'op' in btn;
+                  const isConstant = 'isConstant' in btn;
                   const currentOp = hasOp ? (shiftActive ? btn.shiftOp : btn.op) : undefined;
-                  const isDisabled = !hasOp || !rpnStack[3];
+                  const isDisabled = hasOp && !rpnStack[3];
                   return (
                     <Button 
                       key={`s2-btn-${i}`} 
                       variant="ghost" 
                       size="sm" 
                       className={`text-xs font-mono w-full ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
-                      onClick={() => currentOp && applyRpnUnary(currentOp)}
+                      onClick={() => {
+                        if (isConstant && 'value' in btn) {
+                          pushRpnConstant(btn.value);
+                        } else if (currentOp) {
+                          applyRpnUnary(currentOp);
+                        }
+                      }}
                       disabled={isDisabled}
                     >
                       {shiftActive ? btn.shiftLabel : btn.label}
@@ -5987,31 +6005,30 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Constants and binary operation buttons for y row */}
-              {/* y0=π, y1=𝑒, y2=√2 (constants), y3-y6 = ×/÷/+/− (binary ops), y7 = placeholder */}
+              {/* Binary operation buttons for y row: 3.1-3.4 = placeholders, 3.5-3.8 = ×/÷/+/−, then √2 */}
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full text-foreground hover:text-accent"
-                onClick={() => shiftActive ? undoRpnStack() : pushRpnConstant(Math.PI)}
+                className="text-xs font-mono w-full text-muted-foreground/50"
+                disabled={true}
               >
-                {shiftActive ? 'Undo' : 'π'}
+                3.1
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full text-foreground hover:text-accent"
-                onClick={() => pushRpnConstant(Math.E)}
+                className="text-xs font-mono w-full text-muted-foreground/50"
+                disabled={true}
               >
-                ℯ
+                3.2
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full text-foreground hover:text-accent"
-                onClick={() => pushRpnConstant(Math.SQRT2)}
+                className="text-xs font-mono w-full text-muted-foreground/50"
+                disabled={true}
               >
-                √2
+                3.3
               </Button>
               {(() => {
                 const yBinaryButtons: Array<{ label: string; shiftLabel: string; op: RpnBinaryOp; shiftOp: RpnBinaryOp }> = [
@@ -6040,10 +6057,10 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full text-muted-foreground/50"
-                disabled={true}
+                className="text-xs font-mono w-full text-foreground hover:text-accent"
+                onClick={() => pushRpnConstant(Math.SQRT2)}
               >
-                3.8
+                √2
               </Button>
             </div>
 
