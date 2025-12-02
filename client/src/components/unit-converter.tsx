@@ -4987,14 +4987,45 @@ export default function UnitConverter() {
                   style={{ height: FIELD_HEIGHT, minWidth: CommonFieldWidth }}
                   onClick={() => {
                     const numValue = parseNumberWithFormat(directValue);
-                    if (isNaN(numValue)) return;
+                    if (isNaN(numValue) || !directValue) return;
                     const unitSymbol = buildDirectUnitSymbol();
-                    if (!unitSymbol) return;
                     const valueStr = formatForClipboard(numValue, precision);
-                    const textToCopy = `${valueStr} ${unitSymbol}`;
+                    const textToCopy = unitSymbol ? `${valueStr} ${unitSymbol}` : valueStr;
                     navigator.clipboard.writeText(textToCopy);
                     setFlashDirectCopy(true);
                     setTimeout(() => setFlashDirectCopy(false), 300);
+                    
+                    // Add to calculator - same behavior as Converter pane result click
+                    const dims = buildDirectDimensions();
+                    const newEntry = {
+                      value: numValue,
+                      dimensions: dims,
+                      prefix: 'none'
+                    };
+                    
+                    if (calculatorMode === 'rpn') {
+                      // RPN mode: Push onto stack position x with stack lift
+                      setRpnStack(prev => {
+                        const newStack = [...prev];
+                        newStack[0] = prev[1];
+                        newStack[1] = prev[2];
+                        newStack[2] = prev[3];
+                        newStack[3] = newEntry;
+                        return newStack;
+                      });
+                      setRpnResultPrefix('none');
+                      setRpnSelectedAlternative(0);
+                      setFlashRpnResult(true);
+                      setTimeout(() => setFlashRpnResult(false), 300);
+                    } else {
+                      // UNIT mode: Find first empty field in positions 0-2
+                      const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
+                      if (firstEmptyIndex !== -1) {
+                        const newCalcValues = [...calcValues];
+                        newCalcValues[firstEmptyIndex] = newEntry;
+                        setCalcValues(newCalcValues);
+                      }
+                    }
                   }}
                   animate={{
                     opacity: flashDirectCopy ? [1, 0.3, 1] : 1,
@@ -5023,11 +5054,10 @@ export default function UnitConverter() {
                   size="sm" 
                   onClick={() => {
                     const numValue = parseNumberWithFormat(directValue);
-                    if (isNaN(numValue)) return;
+                    if (isNaN(numValue) || !directValue) return;
                     const unitSymbol = buildDirectUnitSymbol();
-                    if (!unitSymbol) return;
                     const valueStr = formatForClipboard(numValue, precision);
-                    const textToCopy = `${valueStr} ${unitSymbol}`;
+                    const textToCopy = unitSymbol ? `${valueStr} ${unitSymbol}` : valueStr;
                     navigator.clipboard.writeText(textToCopy);
                     setFlashDirectCopy(true);
                     setTimeout(() => setFlashDirectCopy(false), 300);
@@ -5042,13 +5072,12 @@ export default function UnitConverter() {
                     
                     if (calculatorMode === 'rpn') {
                       // RPN mode: Push onto stack position x with stack lift
-                      // Stack lifts: s3 gets old s2, s2 gets old y, y gets old x, new value goes to x
                       setRpnStack(prev => {
                         const newStack = [...prev];
-                        newStack[0] = prev[1]; // s3 gets old s2
-                        newStack[1] = prev[2]; // s2 gets old y
-                        newStack[2] = prev[3]; // y gets old x
-                        newStack[3] = newEntry; // new value goes to x
+                        newStack[0] = prev[1];
+                        newStack[1] = prev[2];
+                        newStack[2] = prev[3];
+                        newStack[3] = newEntry;
                         return newStack;
                       });
                       setRpnResultPrefix('none');
