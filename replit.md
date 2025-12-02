@@ -17,7 +17,16 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 
 ### Key Design Decisions
 - **Calculator Layout**: CSS Grid-based, six-column layout with four arithmetic operators (×, /, +, −). Addition and subtraction require dimensional compatibility.
-- **Calculator Input Method**: Calculator input fields are READ-ONLY. Data entry is ONLY via copy buttons in Converter or Custom tabs, which populate the next available calculator field. Direct typing in calculator fields is not supported.
+- **Calculator Input Method**: Calculator input fields are READ-ONLY. Data entry is ONLY via copy buttons in Converter or Custom tabs. Direct typing in calculator fields is not supported.
+- **Dual Calculator Modes**:
+  - **CALCULATOR - UNIT**: Simple mode with three input fields (1, 2, 3) + result field. Copy button fills first available empty field.
+  - **CALCULATOR - RPN**: Reverse Polish Notation mode with 4-level stack (s3, s2, y, x). Stack indices: s3=stack[0] (top), s2=stack[1], y=stack[2], x=stack[3] (bottom/result). Copy button lifts stack and pushes value to x position.
+- **RPN Button Layout** (7 buttons per row):
+  - s3 row: x², x³, x⁴, √/∛/∜ (shift: ∜), 10ˣ/log₁₀, 2ˣ/log₂, rnd/trunc
+  - s2 row: sin/asin, cos/acos, tan/atan, sinh/asinh, cosh/acosh, tanh/atanh, (empty)
+  - y row: π, ℯ, √2, ×/×ᵤ, ÷/÷ᵤ, +/+ᵤ, −/−ᵤ (constants push to stack, operators with ᵤ subscript are unit-aware)
+- **Trig/Hyperbolic Function Behavior**: If input is dimensionless, rad (angle:1), or sr (solid_angle:1) → output is unitless. If input has other units → function applies to numeric value only, dimensions preserved (e.g., sin(0.5 m²) = 0.479... m²).
+- **Rounding Functions**: rnd = banker's rounding (round to nearest even) at precision setting; trunc = truncate at precision setting. Both preserve dimensions.
 - **Clipboard Copying**: Supports precision settings and "Normalize & Copy" for normalizing to SI units with optimal prefixing. Uses `normalizeDimensions` to convert raw dimensional formulas to derived units (J, N, W, etc.) before applying prefixes, preventing prefix stacking with kg. Prefers base unit representation s⁻¹ over derived unit Hz for frequency.
 - **Math Category**: Includes 28 functions and 3 constants, all producing dimensionless outputs:
   - Trigonometric: sin, cos, tan, asin, acos, atan
