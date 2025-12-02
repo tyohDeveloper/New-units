@@ -5849,35 +5849,18 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Power/Root/Exp/Log buttons for s3 row */}
-              {(() => {
-                const s3Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string }> = [
-                  { label: 'x²', shiftLabel: '√', op: 'square', shiftOp: 'sqrt' },
-                  { label: 'x³', shiftLabel: '∛', op: 'cube', shiftOp: 'cbrt' },
-                  { label: 'x⁴', shiftLabel: '∜', op: 'pow4', shiftOp: 'root4' },
-                  { label: 'eˣ', shiftLabel: 'ln', op: 'exp', shiftOp: 'ln' },
-                  { label: '10ˣ', shiftLabel: 'log₁₀', op: 'pow10', shiftOp: 'log10' },
-                  { label: '2ˣ', shiftLabel: 'log₂', op: 'pow2', shiftOp: 'log2' },
-                  { label: 'rnd', shiftLabel: 'trunc', op: 'rnd', shiftOp: 'trunc' },
-                ];
-                return s3Buttons.map((btn, i) => {
-                  const hasOp = 'op' in btn;
-                  const currentOp = hasOp ? (shiftActive ? btn.shiftOp : btn.op) : undefined;
-                  const isDisabled = !hasOp || !rpnStack[3];
-                  return (
-                    <Button 
-                      key={`s3-btn-${i}`} 
-                      variant="ghost" 
-                      size="sm" 
-                      className={`text-xs font-mono w-full ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
-                      onClick={() => currentOp && applyRpnUnary(currentOp)}
-                      disabled={isDisabled}
-                    >
-                      {shiftActive ? btn.shiftLabel : btn.label}
-                    </Button>
-                  );
-                });
-              })()}
+              {/* Row 1 (s3) - placeholder buttons labeled 1.1 through 1.8 */}
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((col) => (
+                <Button 
+                  key={`s3-btn-${col}`} 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-xs font-mono w-full text-muted-foreground/50"
+                  disabled={true}
+                >
+                  1.{col}
+                </Button>
+              ))}
             </div>
 
             {/* s2 field with button grid */}
@@ -5917,35 +5900,18 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Trig/Hyperbolic buttons for s2 row */}
-              {(() => {
-                const s2Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string }> = [
-                  { label: 'sin', shiftLabel: 'asin', op: 'sin', shiftOp: 'asin' },
-                  { label: 'cos', shiftLabel: 'acos', op: 'cos', shiftOp: 'acos' },
-                  { label: 'tan', shiftLabel: 'atan', op: 'tan', shiftOp: 'atan' },
-                  { label: 'sinh', shiftLabel: 'asinh', op: 'sinh', shiftOp: 'asinh' },
-                  { label: 'cosh', shiftLabel: 'acosh', op: 'cosh', shiftOp: 'acosh' },
-                  { label: 'tanh', shiftLabel: 'atanh', op: 'tanh', shiftOp: 'atanh' },
-                  { label: '⌊x⌋', shiftLabel: '⌈x⌉', op: 'floor', shiftOp: 'ceil' },
-                ];
-                return s2Buttons.map((btn, i) => {
-                  const hasOp = 'op' in btn;
-                  const currentOp = hasOp ? (shiftActive ? btn.shiftOp : btn.op) : undefined;
-                  const isDisabled = !hasOp || !rpnStack[3];
-                  return (
-                    <Button 
-                      key={`s2-btn-${i}`} 
-                      variant="ghost" 
-                      size="sm" 
-                      className={`text-xs font-mono w-full ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
-                      onClick={() => currentOp && applyRpnUnary(currentOp)}
-                      disabled={isDisabled}
-                    >
-                      {shiftActive ? btn.shiftLabel : btn.label}
-                    </Button>
-                  );
-                });
-              })()}
+              {/* Row 2 (s2) - placeholder buttons labeled 2.1 through 2.8 */}
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((col) => (
+                <Button 
+                  key={`s2-btn-${col}`} 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-xs font-mono w-full text-muted-foreground/50"
+                  disabled={true}
+                >
+                  2.{col}
+                </Button>
+              ))}
             </div>
 
             {/* y field with button grid */}
@@ -5985,56 +5951,18 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Constants and binary operation buttons for y row */}
-              {/* y0=π, y1=𝑒, y2=√2 (constants), y3-y6 = ×/÷/+/− (binary ops) */}
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-xs font-mono w-full text-foreground hover:text-accent"
-                onClick={() => shiftActive ? undoRpnStack() : pushRpnConstant(Math.PI)}
-              >
-                {shiftActive ? 'Undo' : 'π'}
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-xs font-mono w-full text-foreground hover:text-accent"
-                onClick={() => pushRpnConstant(Math.E)}
-              >
-                ℯ
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-xs font-mono w-full text-foreground hover:text-accent"
-                onClick={() => pushRpnConstant(Math.SQRT2)}
-              >
-                √2
-              </Button>
-              {(() => {
-                const yBinaryButtons: Array<{ label: string; shiftLabel: string; op: RpnBinaryOp; shiftOp: RpnBinaryOp }> = [
-                  { label: '×ᵤ', shiftLabel: '×', op: 'mulUnit', shiftOp: 'mul' },
-                  { label: '÷ᵤ', shiftLabel: '÷', op: 'divUnit', shiftOp: 'div' },
-                  { label: '+ᵤ', shiftLabel: '+', op: 'addUnit', shiftOp: 'add' },
-                  { label: '−ᵤ', shiftLabel: '−', op: 'subUnit', shiftOp: 'sub' },
-                ];
-                return yBinaryButtons.map((btn, i) => {
-                  const currentOp = shiftActive ? btn.shiftOp : btn.op;
-                  const isDisabled = !canApplyRpnBinary(currentOp);
-                  return (
-                    <Button 
-                      key={`y-bin-${i}`} 
-                      variant="ghost" 
-                      size="sm" 
-                      className={`text-xs font-mono w-full ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
-                      onClick={() => applyRpnBinary(currentOp)}
-                      disabled={isDisabled}
-                    >
-                      {shiftActive ? btn.shiftLabel : btn.label}
-                    </Button>
-                  );
-                });
-              })()}
+              {/* Row 3 (y) - placeholder buttons labeled 3.1 through 3.8 */}
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((col) => (
+                <Button 
+                  key={`y-btn-${col}`} 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-xs font-mono w-full text-muted-foreground/50"
+                  disabled={true}
+                >
+                  3.{col}
+                </Button>
+              ))}
             </div>
 
             {/* x field (result) with prefix and unit dropdowns */}
