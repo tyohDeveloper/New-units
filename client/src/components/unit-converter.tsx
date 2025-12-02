@@ -2020,18 +2020,20 @@ export default function UnitConverter() {
   }, []);
 
   // Smart paste handler - parses pasted text into number and unit
+  // Only triggers when NOT focused on input/textarea - allows standard paste to work normally
   useEffect(() => {
     const handlePaste = (e: ClipboardEvent) => {
       // Get the active element
       const activeElement = document.activeElement as HTMLElement;
       const activeTagName = activeElement?.tagName?.toLowerCase();
       
-      // Skip if focused on input/textarea (standard paste behavior)
-      if (activeTagName === 'input' || activeTagName === 'textarea') {
-        return;
+      // Allow standard paste when focused on input/textarea or contenteditable
+      // Do NOT call preventDefault - let browser handle it normally
+      if (activeTagName === 'input' || activeTagName === 'textarea' || activeElement?.isContentEditable) {
+        return; // Exit early - standard paste will proceed
       }
       
-      // Get pasted text
+      // Get pasted text for smart parsing (only when not in input fields)
       const pastedText = e.clipboardData?.getData('text');
       if (!pastedText) return;
       
@@ -2069,7 +2071,7 @@ export default function UnitConverter() {
         setDirectExponents(newExponents);
       }
       
-      // Prevent default paste behavior since we handled it
+      // Prevent default only when we handled smart paste (not in input fields)
       e.preventDefault();
     };
     
@@ -2088,6 +2090,93 @@ export default function UnitConverter() {
   const toUnitData = categoryData.units.find(u => u.id === toUnit);
   const fromPrefixData = PREFIXES.find(p => p.id === fromPrefix) || PREFIXES.find(p => p.id === 'none') || PREFIXES[0];
   const toPrefixData = PREFIXES.find(p => p.id === toPrefix) || PREFIXES.find(p => p.id === 'none') || PREFIXES[0];
+
+  // Keyboard copy handler - prioritizes calculator result over converter/custom result
+  useEffect(() => {
+    const handleKeyboardCopy = (e: KeyboardEvent) => {
+      // Only handle Ctrl+C or Cmd+C
+      if (!((e.ctrlKey || e.metaKey) && e.key === 'c')) return;
+      
+      // Allow standard copy when text is selected or in input fields
+      const activeElement = document.activeElement as HTMLElement;
+      const activeTagName = activeElement?.tagName?.toLowerCase();
+      const selection = window.getSelection();
+      
+      if (activeTagName === 'input' || activeTagName === 'textarea' || activeElement?.isContentEditable) {
+        return; // Let browser handle standard copy
+      }
+      
+      if (selection && selection.toString().trim()) {
+        return; // Let browser handle text selection copy
+      }
+      
+      // Priority 1: Copy from calculator (RPN x or simple result)
+      if (calculatorMode === 'rpn' && rpnStack[3]) {
+        // Copy RPN x value - use same logic as getRpnResultDisplay to respect selected alternative
+        const val = rpnStack[3];
+        const siReps = generateSIRepresentations(val.dimensions);
+        const currentSymbol = siReps[rpnSelectedAlternative]?.displaySymbol || formatDimensions(val.dimensions);
+        const kgResult = applyPrefixToKgUnit(currentSymbol, rpnResultPrefix);
+        const displayValue = val.value / kgResult.effectivePrefixFactor;
+        const formattedValue = formatNumberWithSeparators(displayValue, calculatorPrecision);
+        const cleanValue = formattedValue.replace(/,/g, '');
+        const prefixData = PREFIXES.find(p => p.id === rpnResultPrefix);
+        const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
+        const unitSymbol = prefixSymbol + kgResult.displaySymbol;
+        const textToCopy = unitSymbol ? `${cleanValue} ${unitSymbol}` : cleanValue;
+        
+        navigator.clipboard.writeText(textToCopy);
+        setFlashRpnResult(true);
+        setTimeout(() => setFlashRpnResult(false), 300);
+        e.preventDefault();
+        return;
+      }
+      
+      if (calculatorMode === 'simple' && calcValues[3]) {
+        // Copy simple calculator result - use same logic as getCalcResultDisplay to respect selected alternative
+        const val = calcValues[3];
+        const siReps = generateSIRepresentations(val.dimensions);
+        const currentSymbol = siReps[selectedAlternative]?.displaySymbol || formatDimensions(val.dimensions);
+        const kgResult = applyPrefixToKgUnit(currentSymbol, resultPrefix);
+        const displayValue = val.value / kgResult.effectivePrefixFactor;
+        const formattedValue = formatNumberWithSeparators(displayValue, calculatorPrecision);
+        const prefixData = PREFIXES.find(p => p.id === resultPrefix);
+        const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
+        const unitSymbol = prefixSymbol + kgResult.displaySymbol;
+        const textToCopy = unitSymbol ? `${formattedValue} ${unitSymbol}` : formattedValue;
+        
+        navigator.clipboard.writeText(textToCopy);
+        setFlashCopyCalc(true);
+        setTimeout(() => setFlashCopyCalc(false), 300);
+        e.preventDefault();
+        return;
+      }
+      
+      // Priority 2: Fall back to converter result
+      if (activeTab === 'converter' && result !== null && toUnitData) {
+        const unitSymbol = toUnitData?.symbol || '';
+        const prefixSymbol = (toUnitData?.allowPrefixes && toPrefixData?.id !== 'none') ? toPrefixData.symbol : '';
+        const textToCopy = `${formatForClipboard(result, precision)} ${prefixSymbol}${unitSymbol}`;
+        
+        navigator.clipboard.writeText(textToCopy);
+        setFlashCopyResult(true);
+        setTimeout(() => setFlashCopyResult(false), 300);
+        e.preventDefault();
+        return;
+      }
+      
+      // Priority 3: Custom tab direct value (if applicable)
+      if (activeTab === 'custom' && directValue) {
+        const textToCopy = directValue;
+        navigator.clipboard.writeText(textToCopy);
+        e.preventDefault();
+        return;
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyboardCopy);
+    return () => document.removeEventListener('keydown', handleKeyboardCopy);
+  }, [calculatorMode, rpnStack, calcValues, rpnResultPrefix, rpnSelectedAlternative, resultPrefix, selectedAlternative, calculatorPrecision, activeTab, result, toUnitData, toPrefixData, precision, directValue]);
 
   // Helper: Map category to dimensional formula
   const getCategoryDimensions = (category: UnitCategory): DimensionalFormula => {
@@ -5261,7 +5350,7 @@ export default function UnitConverter() {
             <div className="flex items-center gap-4">
               <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
                 <Label 
-                  className="text-xs font-mono uppercase text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
+                  className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors"
                   onClick={() => calculatorMode === 'simple' ? switchToRpn() : switchToSimple()}
                 >
                   {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR - UNIT')} ↻
@@ -5887,10 +5976,10 @@ export default function UnitConverter() {
               </Button>
               {(() => {
                 const yBinaryButtons: Array<{ label: string; shiftLabel: string; op: RpnBinaryOp; shiftOp: RpnBinaryOp }> = [
-                  { label: '×', shiftLabel: '×ᵤ', op: 'mul', shiftOp: 'mulUnit' },
-                  { label: '÷', shiftLabel: '÷ᵤ', op: 'div', shiftOp: 'divUnit' },
-                  { label: '+', shiftLabel: '+ᵤ', op: 'add', shiftOp: 'addUnit' },
-                  { label: '−', shiftLabel: '−ᵤ', op: 'sub', shiftOp: 'subUnit' },
+                  { label: '×ᵤ', shiftLabel: '×', op: 'mulUnit', shiftOp: 'mul' },
+                  { label: '÷ᵤ', shiftLabel: '÷', op: 'divUnit', shiftOp: 'div' },
+                  { label: '+ᵤ', shiftLabel: '+', op: 'addUnit', shiftOp: 'add' },
+                  { label: '−ᵤ', shiftLabel: '−', op: 'subUnit', shiftOp: 'sub' },
                 ];
                 return yBinaryButtons.map((btn, i) => {
                   const currentOp = shiftActive ? btn.shiftOp : btn.op;
