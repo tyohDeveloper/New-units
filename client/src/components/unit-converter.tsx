@@ -4526,7 +4526,7 @@ export default function UnitConverter() {
         <div className="grid">
           {/* Converter Tab Content - always rendered, visibility controlled with opacity transition */}
           <Card 
-            className={`p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden col-start-1 row-start-1 transition-opacity duration-150 ${
+            className={`w-full p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden col-start-1 row-start-1 transition-opacity duration-150 ${
               activeTab === 'converter' ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
           >
@@ -4948,7 +4948,7 @@ export default function UnitConverter() {
 
           {/* Custom Tab Content - always rendered, visibility controlled with opacity transition */}
           <Card 
-            className={`p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden col-start-1 row-start-1 transition-opacity duration-150 ${
+            className={`w-full p-6 md:p-8 bg-card border-border/50 shadow-xl relative overflow-hidden col-start-1 row-start-1 transition-opacity duration-150 ${
               activeTab === 'custom' ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
           >
@@ -5142,7 +5142,7 @@ export default function UnitConverter() {
         </div>
 
         {/* Mini Calculator */}
-        <Card className="p-6 bg-card border-border/50">
+        <Card className="w-full p-6 bg-card border-border/50">
           <div 
             className="flex gap-2 mb-4 items-center justify-between"
           >
@@ -5963,7 +5963,7 @@ export default function UnitConverter() {
         </Card>
 
         {/* Help Pane */}
-        <Card className="p-6 bg-card border-border/50">
+        <Card className="w-full p-6 bg-card border-border/50">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Help')}</Label>
