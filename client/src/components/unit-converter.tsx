@@ -3683,6 +3683,133 @@ export default function UnitConverter() {
     setTimeout(() => setFlashRpnResult(false), 300);
   };
 
+  // RPN binary operation types
+  type RpnBinaryOp = 'mul' | 'div' | 'add' | 'sub' | 'mulUnit' | 'divUnit' | 'addUnit' | 'subUnit';
+
+  // Check if binary operation can be performed
+  const canApplyRpnBinary = (op: RpnBinaryOp): boolean => {
+    if (!rpnStack[2] || !rpnStack[3]) return false;
+    
+    // Unit-aware add/sub require compatible dimensions
+    if (op === 'addUnit' || op === 'subUnit') {
+      const y = rpnStack[2];
+      const x = rpnStack[3];
+      // Compatible if: same dimensions, or either is dimensionless
+      return dimensionsEqual(y.dimensions, x.dimensions) || 
+             isDimensionless(y.dimensions) || 
+             isDimensionless(x.dimensions);
+    }
+    
+    return true;
+  };
+
+  // Apply binary operation to RPN x and y registers
+  // y is stack[2], x is stack[3], result goes to x, stack drops
+  const applyRpnBinary = (op: RpnBinaryOp) => {
+    if (!rpnStack[2] || !rpnStack[3]) return;
+    
+    const y = rpnStack[2];
+    const x = rpnStack[3];
+    let newValue: number;
+    let newDimensions: Record<string, number> = {};
+    
+    switch (op) {
+      // Numeric-only operations (preserve y's dimensions)
+      case 'mul':
+        newValue = y.value * x.value;
+        newDimensions = { ...y.dimensions };
+        break;
+      case 'div':
+        if (x.value === 0) return; // Prevent division by zero
+        newValue = y.value / x.value;
+        newDimensions = { ...y.dimensions };
+        break;
+      case 'add':
+        newValue = y.value + x.value;
+        newDimensions = { ...y.dimensions };
+        break;
+      case 'sub':
+        newValue = y.value - x.value;
+        newDimensions = { ...y.dimensions };
+        break;
+      
+      // Unit-aware operations
+      case 'mulUnit':
+        newValue = y.value * x.value;
+        // Multiply dimensions: add exponents
+        // First copy y's dimensions
+        for (const dim of Object.keys(y.dimensions)) {
+          newDimensions[dim] = (y.dimensions as Record<string, number>)[dim] || 0;
+        }
+        // Then add x's dimensions
+        for (const dim of Object.keys(x.dimensions)) {
+          const xExp = (x.dimensions as Record<string, number>)[dim] || 0;
+          newDimensions[dim] = (newDimensions[dim] || 0) + xExp;
+        }
+        break;
+      case 'divUnit':
+        if (x.value === 0) return; // Prevent division by zero
+        newValue = y.value / x.value;
+        // Divide dimensions: subtract exponents
+        // First copy y's dimensions
+        for (const dim of Object.keys(y.dimensions)) {
+          newDimensions[dim] = (y.dimensions as Record<string, number>)[dim] || 0;
+        }
+        // Then subtract x's dimensions
+        for (const dim of Object.keys(x.dimensions)) {
+          const xExp = (x.dimensions as Record<string, number>)[dim] || 0;
+          newDimensions[dim] = (newDimensions[dim] || 0) - xExp;
+        }
+        break;
+      case 'addUnit':
+        // Only valid if dimensions match or one is dimensionless
+        if (!dimensionsEqual(y.dimensions, x.dimensions) && 
+            !isDimensionless(y.dimensions) && !isDimensionless(x.dimensions)) {
+          return;
+        }
+        newValue = y.value + x.value;
+        // Use the non-dimensionless one, or x if both have dimensions
+        newDimensions = isDimensionless(x.dimensions) ? { ...y.dimensions } : { ...x.dimensions };
+        break;
+      case 'subUnit':
+        // Only valid if dimensions match or one is dimensionless
+        if (!dimensionsEqual(y.dimensions, x.dimensions) && 
+            !isDimensionless(y.dimensions) && !isDimensionless(x.dimensions)) {
+          return;
+        }
+        newValue = y.value - x.value;
+        // Use the non-dimensionless one, or x if both have dimensions
+        newDimensions = isDimensionless(x.dimensions) ? { ...y.dimensions } : { ...x.dimensions };
+        break;
+      
+      default:
+        return;
+    }
+    
+    // Clean up zero exponents
+    for (const [dim, exp] of Object.entries(newDimensions)) {
+      if (exp === 0) delete newDimensions[dim];
+    }
+    
+    // Drop stack: s3→s2, s2→y, result→x
+    setRpnStack(prev => {
+      const newStack = [...prev];
+      newStack[3] = {
+        value: newValue,
+        dimensions: newDimensions,
+        prefix: 'none'
+      };
+      newStack[2] = prev[1]; // s2 → y
+      newStack[1] = prev[0]; // s3 → s2
+      newStack[0] = null;    // s3 becomes empty
+      return newStack;
+    });
+    setRpnResultPrefix('none');
+    setRpnSelectedAlternative(0);
+    setFlashRpnResult(true);
+    setTimeout(() => setFlashRpnResult(false), 300);
+  };
+
   // Get RPN result display (similar to getCalcResultDisplay but for RPN)
   const getRpnResultDisplay = () => {
     if (!rpnStack[3]) return null;
@@ -5421,12 +5548,35 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Placeholder buttons for y row */}
-              {Array.from({ length: RpnBtnCount }).map((_, i) => (
-                <Button key={`y-btn-${i}`} variant="ghost" size="sm" className="text-xs font-mono w-full" disabled>
-                  {shiftActive ? `Y${i}` : `y${i}`}
-                </Button>
-              ))}
+              {/* Binary operation buttons for y row */}
+              {(() => {
+                const yButtons: Array<{ label: string; shiftLabel: string; op?: RpnBinaryOp; shiftOp?: RpnBinaryOp }> = [
+                  { label: 'y0', shiftLabel: 'Y0' },
+                  { label: 'y1', shiftLabel: 'Y1' },
+                  { label: 'y2', shiftLabel: 'Y2' },
+                  { label: '×', shiftLabel: '×ᵤ', op: 'mul', shiftOp: 'mulUnit' },
+                  { label: '÷', shiftLabel: '÷ᵤ', op: 'div', shiftOp: 'divUnit' },
+                  { label: '+', shiftLabel: '+ᵤ', op: 'add', shiftOp: 'addUnit' },
+                  { label: '−', shiftLabel: '−ᵤ', op: 'sub', shiftOp: 'subUnit' },
+                ];
+                return yButtons.map((btn, i) => {
+                  const hasOp = 'op' in btn && btn.op !== undefined;
+                  const currentOp = hasOp ? (shiftActive ? btn.shiftOp : btn.op) : undefined;
+                  const isDisabled = !hasOp || !canApplyRpnBinary(currentOp!);
+                  return (
+                    <Button 
+                      key={`y-btn-${i}`} 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-xs font-mono w-full"
+                      onClick={() => currentOp && applyRpnBinary(currentOp)}
+                      disabled={isDisabled}
+                    >
+                      {shiftActive ? btn.shiftLabel : btn.label}
+                    </Button>
+                  );
+                });
+              })()}
             </div>
 
             {/* x field (result) with prefix and unit dropdowns */}
