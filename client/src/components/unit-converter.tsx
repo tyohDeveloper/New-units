@@ -1250,6 +1250,16 @@ export default function UnitConverter() {
       es: 'Calculadora', fr: 'Calculatrice', it: 'Calcolatrice', ko: '계산기',
       pt: 'Calculadora', ru: 'Калькулятор', zh: '计算器', ja: '計算機'
     },
+    'CALCULATOR - RPN': { 
+      en: 'CALCULATOR - RPN', ar: 'الآلة الحاسبة - RPN', de: 'RECHNER - RPN',
+      es: 'CALCULADORA - RPN', fr: 'CALCULATRICE - RPN', it: 'CALCOLATRICE - RPN', ko: '계산기 - RPN',
+      pt: 'CALCULADORA - RPN', ru: 'КАЛЬКУЛЯТОР - RPN', zh: '计算器 - RPN', ja: '計算機 - RPN'
+    },
+    'CALCULATOR - UNIT': { 
+      en: 'CALCULATOR - UNIT', ar: 'الآلة الحاسبة - وحدة', de: 'RECHNER - EINHEIT',
+      es: 'CALCULADORA - UNIDAD', fr: 'CALCULATRICE - UNITÉ', it: 'CALCOLATRICE - UNITÀ', ko: '계산기 - 단위',
+      pt: 'CALCULADORA - UNIDADE', ru: 'КАЛЬКУЛЯТОР - ЕДИНИЦА', zh: '计算器 - 单位', ja: '計算機 - 単位'
+    },
     'Clear': { 
       en: 'Clear', ar: 'مسح', de: 'Löschen',
       es: 'Limpiar', fr: 'Effacer', it: 'Cancella', ko: '지우기',
@@ -2640,13 +2650,22 @@ export default function UnitConverter() {
       };
       
       if (calculatorMode === 'rpn') {
-        const firstEmptyIndex = rpnStack.findIndex((v, i) => i < 3 && v === null);
-        if (firstEmptyIndex !== -1) {
-          const newRpnStack = [...rpnStack];
-          newRpnStack[firstEmptyIndex] = newEntry;
-          setRpnStack(newRpnStack);
-        }
+        // RPN mode: Push onto stack position x with stack lift
+        // Stack lifts: s3 gets old s2, s2 gets old y, y gets old x, new value goes to x
+        setRpnStack(prev => {
+          const newStack = [...prev];
+          newStack[0] = prev[1]; // s3 gets old s2
+          newStack[1] = prev[2]; // s2 gets old y
+          newStack[2] = prev[3]; // y gets old x
+          newStack[3] = newEntry; // new value goes to x
+          return newStack;
+        });
+        setRpnResultPrefix('none');
+        setRpnSelectedAlternative(0);
+        setFlashRpnResult(true);
+        setTimeout(() => setFlashRpnResult(false), 300);
       } else {
+        // UNIT mode: Find first empty field in positions 0-2
         const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
         if (firstEmptyIndex !== -1) {
           const newCalcValues = [...calcValues];
@@ -3525,9 +3544,10 @@ export default function UnitConverter() {
   // RPN unary operation types
   type RpnUnaryOp = 
     | 'square' | 'cube' | 'pow4' | 'sqrt' | 'cbrt' | 'root4'
-    | 'exp' | 'ln' | 'pow10' | 'log10'
+    | 'exp' | 'ln' | 'pow10' | 'log10' | 'pow2' | 'log2'
     | 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan'
-    | 'sinh' | 'cosh' | 'tanh' | 'asinh' | 'acosh' | 'atanh';
+    | 'sinh' | 'cosh' | 'tanh' | 'asinh' | 'acosh' | 'atanh'
+    | 'rnd' | 'trunc';
 
   // Apply unary operation to RPN x register (stack[3])
   const applyRpnUnary = (op: RpnUnaryOp) => {
@@ -3602,62 +3622,134 @@ export default function UnitConverter() {
         if (x.value <= 0) return;
         newValue = Math.log10(x.value);
         break;
-      
-      // Trigonometric (require dimensionless, output dimensionless)
-      case 'sin':
+      case 'pow2':
         if (!isDimensionless(x.dimensions)) return;
+        newValue = Math.pow(2, x.value);
+        break;
+      case 'log2':
+        if (!isDimensionless(x.dimensions)) return;
+        if (x.value <= 0) return;
+        newValue = Math.log2(x.value);
+        break;
+      
+      // Rounding functions (use precision setting, preserve dimensions)
+      case 'rnd': {
+        // Round to nearest even at precision decimal places
+        const factor = Math.pow(10, calculatorPrecision);
+        const scaled = x.value * factor;
+        // Round to nearest even (banker's rounding)
+        const rounded = Math.round(scaled);
+        // Check if exactly halfway - if so, round to even
+        if (Math.abs(scaled - Math.floor(scaled) - 0.5) < 1e-10) {
+          const floor = Math.floor(scaled);
+          newValue = (floor % 2 === 0 ? floor : floor + 1) / factor;
+        } else {
+          newValue = rounded / factor;
+        }
+        newDimensions = { ...x.dimensions };
+        break;
+      }
+      case 'trunc': {
+        // Truncate at precision decimal places
+        const factor = Math.pow(10, calculatorPrecision);
+        newValue = Math.trunc(x.value * factor) / factor;
+        newDimensions = { ...x.dimensions };
+        break;
+      }
+      
+      // Helper: check if dimensions are angle-compatible (dimensionless, rad, or sr)
+      // If so, result is dimensionless; otherwise preserve dimensions
+      // Trigonometric functions
+      case 'sin': {
+        const isAngleCompatible = isDimensionless(x.dimensions) || 
+          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.sin(x.value);
+        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
         break;
-      case 'cos':
-        if (!isDimensionless(x.dimensions)) return;
+      }
+      case 'cos': {
+        const isAngleCompatible = isDimensionless(x.dimensions) || 
+          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.cos(x.value);
+        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
         break;
-      case 'tan':
-        if (!isDimensionless(x.dimensions)) return;
+      }
+      case 'tan': {
+        const isAngleCompatible = isDimensionless(x.dimensions) || 
+          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.tan(x.value);
+        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
         break;
-      case 'asin':
-        if (!isDimensionless(x.dimensions)) return;
+      }
+      case 'asin': {
         if (x.value < -1 || x.value > 1) return;
+        const isAngleCompatible = isDimensionless(x.dimensions) || 
+          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.asin(x.value);
+        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
         break;
-      case 'acos':
-        if (!isDimensionless(x.dimensions)) return;
+      }
+      case 'acos': {
         if (x.value < -1 || x.value > 1) return;
+        const isAngleCompatible = isDimensionless(x.dimensions) || 
+          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.acos(x.value);
+        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
         break;
-      case 'atan':
-        if (!isDimensionless(x.dimensions)) return;
+      }
+      case 'atan': {
+        const isAngleCompatible = isDimensionless(x.dimensions) || 
+          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.atan(x.value);
+        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
         break;
+      }
       
-      // Hyperbolic (require dimensionless, output dimensionless)
-      case 'sinh':
-        if (!isDimensionless(x.dimensions)) return;
+      // Hyperbolic functions
+      case 'sinh': {
+        const isAngleCompatible = isDimensionless(x.dimensions) || 
+          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.sinh(x.value);
+        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
         break;
-      case 'cosh':
-        if (!isDimensionless(x.dimensions)) return;
+      }
+      case 'cosh': {
+        const isAngleCompatible = isDimensionless(x.dimensions) || 
+          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.cosh(x.value);
+        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
         break;
-      case 'tanh':
-        if (!isDimensionless(x.dimensions)) return;
+      }
+      case 'tanh': {
+        const isAngleCompatible = isDimensionless(x.dimensions) || 
+          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.tanh(x.value);
+        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
         break;
-      case 'asinh':
-        if (!isDimensionless(x.dimensions)) return;
+      }
+      case 'asinh': {
+        const isAngleCompatible = isDimensionless(x.dimensions) || 
+          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.asinh(x.value);
+        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
         break;
-      case 'acosh':
-        if (!isDimensionless(x.dimensions)) return;
+      }
+      case 'acosh': {
         if (x.value < 1) return;
+        const isAngleCompatible = isDimensionless(x.dimensions) || 
+          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.acosh(x.value);
+        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
         break;
-      case 'atanh':
-        if (!isDimensionless(x.dimensions)) return;
+      }
+      case 'atanh': {
         if (x.value <= -1 || x.value >= 1) return;
+        const isAngleCompatible = isDimensionless(x.dimensions) || 
+          (Object.keys(x.dimensions).length === 1 && (x.dimensions.angle === 1 || x.dimensions.solid_angle === 1));
         newValue = Math.atanh(x.value);
+        newDimensions = isAngleCompatible ? {} : { ...x.dimensions };
         break;
+      }
       
       default:
         return;
@@ -3802,6 +3894,27 @@ export default function UnitConverter() {
       newStack[2] = prev[1]; // s2 → y
       newStack[1] = prev[0]; // s3 → s2
       newStack[0] = null;    // s3 becomes empty
+      return newStack;
+    });
+    setRpnResultPrefix('none');
+    setRpnSelectedAlternative(0);
+    setFlashRpnResult(true);
+    setTimeout(() => setFlashRpnResult(false), 300);
+  };
+
+  // Push a constant value onto the RPN stack (dimensionless)
+  const pushRpnConstant = (value: number) => {
+    setRpnStack(prev => {
+      const newStack = [...prev];
+      // Lift stack: each position moves up one
+      newStack[0] = prev[1]; // s3 gets old s2
+      newStack[1] = prev[2]; // s2 gets old y
+      newStack[2] = prev[3]; // y gets old x
+      newStack[3] = {
+        value,
+        dimensions: {},
+        prefix: 'none'
+      };
       return newStack;
     });
     setRpnResultPrefix('none');
@@ -4969,7 +5082,7 @@ export default function UnitConverter() {
             <div className="flex items-center gap-4">
               <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
                 <Label className="text-xs font-mono uppercase text-muted-foreground">
-                  {calculatorMode === 'rpn' ? t('RPN Calculator') : t('Calculator')}
+                  {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR - UNIT')}
                 </Label>
                 <div className="flex items-center gap-2">
                   <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
@@ -5426,8 +5539,8 @@ export default function UnitConverter() {
                   { label: 'x⁴', shiftLabel: '∜', op: 'pow4', shiftOp: 'root4' },
                   { label: 'eˣ', shiftLabel: 'ln', op: 'exp', shiftOp: 'ln' },
                   { label: '10ˣ', shiftLabel: 'log₁₀', op: 'pow10', shiftOp: 'log10' },
-                  { label: 's3.5', shiftLabel: 'S3.5' },
-                  { label: 's3.6', shiftLabel: 'S3.6' },
+                  { label: '2ˣ', shiftLabel: 'log₂', op: 'pow2', shiftOp: 'log2' },
+                  { label: 'rnd', shiftLabel: 'trunc', op: 'rnd', shiftOp: 'trunc' },
                 ];
                 return s3Buttons.map((btn, i) => {
                   const hasOp = 'op' in btn;
@@ -5548,28 +5661,49 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Binary operation buttons for y row */}
+              {/* Constants and binary operation buttons for y row */}
+              {/* y0=π, y1=𝑒, y2=√2 (constants), y3-y6 = ×/÷/+/− (binary ops) */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-xs font-mono w-full"
+                onClick={() => pushRpnConstant(Math.PI)}
+              >
+                π
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-xs font-mono w-full"
+                onClick={() => pushRpnConstant(Math.E)}
+              >
+                ℯ
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-xs font-mono w-full"
+                onClick={() => pushRpnConstant(Math.SQRT2)}
+              >
+                √2
+              </Button>
               {(() => {
-                const yButtons: Array<{ label: string; shiftLabel: string; op?: RpnBinaryOp; shiftOp?: RpnBinaryOp }> = [
-                  { label: 'y0', shiftLabel: 'Y0' },
-                  { label: 'y1', shiftLabel: 'Y1' },
-                  { label: 'y2', shiftLabel: 'Y2' },
+                const yBinaryButtons: Array<{ label: string; shiftLabel: string; op: RpnBinaryOp; shiftOp: RpnBinaryOp }> = [
                   { label: '×', shiftLabel: '×ᵤ', op: 'mul', shiftOp: 'mulUnit' },
                   { label: '÷', shiftLabel: '÷ᵤ', op: 'div', shiftOp: 'divUnit' },
                   { label: '+', shiftLabel: '+ᵤ', op: 'add', shiftOp: 'addUnit' },
                   { label: '−', shiftLabel: '−ᵤ', op: 'sub', shiftOp: 'subUnit' },
                 ];
-                return yButtons.map((btn, i) => {
-                  const hasOp = 'op' in btn && btn.op !== undefined;
-                  const currentOp = hasOp ? (shiftActive ? btn.shiftOp : btn.op) : undefined;
-                  const isDisabled = !hasOp || !canApplyRpnBinary(currentOp!);
+                return yBinaryButtons.map((btn, i) => {
+                  const currentOp = shiftActive ? btn.shiftOp : btn.op;
+                  const isDisabled = !canApplyRpnBinary(currentOp);
                   return (
                     <Button 
-                      key={`y-btn-${i}`} 
+                      key={`y-bin-${i}`} 
                       variant="ghost" 
                       size="sm" 
                       className="text-xs font-mono w-full"
-                      onClick={() => currentOp && applyRpnBinary(currentOp)}
+                      onClick={() => applyRpnBinary(currentOp)}
                       disabled={isDisabled}
                     >
                       {shiftActive ? btn.shiftLabel : btn.label}
