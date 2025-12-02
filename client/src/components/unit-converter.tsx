@@ -3719,16 +3719,16 @@ export default function UnitConverter() {
     });
   };
 
-  const rollDownRpnStack = () => {
-    // Roll down: rotates stack down, x wraps to s3
-    // s3 gets old x, x gets old y, y gets old s2, s2 gets old s3
+  const dropRpnStack = () => {
+    // Drop: pushes s3 down the stack, duplicating top, x becomes old y
+    // s3 stays (duplicated), s2 <- s3, y <- s2, x <- y
     saveRpnStackForUndo();
     setRpnStack(prev => {
       const newStack = [...prev];
-      newStack[0] = prev[3]; // s3 <- x (wrap)
-      newStack[3] = prev[2]; // x <- y
-      newStack[2] = prev[1]; // y <- s2
+      // s3 stays the same (newStack[0] = prev[0])
       newStack[1] = prev[0]; // s2 <- s3
+      newStack[2] = prev[1]; // y <- s2
+      newStack[3] = prev[2]; // x <- y
       return newStack;
     });
   };
@@ -6027,16 +6027,16 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Binary operation buttons for y row: 3.1-3.2=Push/Pop (double width), 3.3=neg, 3.4-3.7 = ×/÷/+/−, 3.8=√2 */}
+              {/* Binary operation buttons for y row: 3.1-3.2=Enter/Drop (double width), 3.3=neg, 3.4-3.7 = ×/÷/+/−, 3.8=√2 */}
               <Button 
                 variant="ghost" 
                 size="sm" 
                 className={`text-xs font-mono w-full ${!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                 style={{ gridColumn: 'span 2' }}
                 disabled={!rpnStack[3]}
-                onClick={() => shiftActive ? rollDownRpnStack() : pushToRpnStack()}
+                onClick={() => shiftActive ? dropRpnStack() : pushToRpnStack()}
               >
-                {shiftActive ? 'Roll⬇' : 'Enter⬆'}
+                {shiftActive ? 'Drop⬇' : 'Enter⬆'}
               </Button>
               <Button 
                 variant="ghost" 
@@ -6213,17 +6213,8 @@ export default function UnitConverter() {
               >
                 {shiftActive ? 'SHIFT' : 'Shift'}
               </Button>
-              {/* Column 3 (1fr, under unit select): Push/Pop left-justified, Copy right-justified */}
-              <div className="flex items-center justify-between">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={shiftActive ? rollDownRpnStack : pushToRpnStack}
-                  className="text-xs text-muted-foreground hover:text-foreground"
-                  disabled={!rpnStack[3]}
-                >
-                  {shiftActive ? 'Roll⬇' : 'Enter⬆'}
-                </Button>
+              {/* Column 3 (1fr, under unit select): Copy right-justified */}
+              <div className="flex items-center justify-end">
                 <Button 
                   variant="ghost" 
                   size="sm" 
