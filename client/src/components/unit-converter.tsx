@@ -5567,9 +5567,13 @@ export default function UnitConverter() {
 
         {/* Mini Calculator */}
         <Card className="w-full p-6 bg-card border-border/50">
-          {/* Simple Calculator Header */}
+          {/* Simple Calculator Header - aligned with grid below */}
           {calculatorMode === 'simple' && (
-            <div className="flex gap-2 mb-4 items-center justify-between">
+            <div 
+              className="grid gap-2 mb-4 items-center"
+              style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
+            >
+              {/* Column 1: Calculator label and Precision - left-aligned with field below */}
               <div className="flex items-center gap-4">
                 <Label 
                   className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
@@ -5577,15 +5581,40 @@ export default function UnitConverter() {
                 >
                   {t('CALCULATOR') + ' ⇅'}
                 </Label>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={clearCalculator}
-                  className="text-xs text-muted-foreground hover:text-foreground border !border-border/30"
-                >
-                  {t('Clear calculator')}
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Label className="text-xs text-foreground">{t('Precision')}</Label>
+                  <Select 
+                    value={calculatorPrecision.toString()} 
+                    onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
+                  >
+                    <SelectTrigger className="h-8 w-[50px] text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent align="start">
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(p => (
+                        <SelectItem key={p} value={p.toString()} className="text-xs">
+                          {numberFormat === 'arabic' ? toArabicNumerals(p.toString()) : p}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
+              {/* Column 2: Clear calculator - right-aligned with × button */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={clearCalculator}
+                className="text-xs text-foreground hover:text-accent border !border-border/30"
+                style={{ justifySelf: 'end' }}
+              >
+                {t('Clear calculator')}
+              </Button>
+              {/* Spacer columns for / + - Clear */}
+              <div />
+              <div />
+              <div />
+              <div />
             </div>
           )}
           
@@ -5604,7 +5633,7 @@ export default function UnitConverter() {
                   {t('CALCULATOR - RPN') + ' ⇅'}
                 </Label>
                 <div className="flex items-center gap-1">
-                  <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
+                  <Label className="text-xs text-foreground">{t('Precision')}</Label>
                   <Select 
                     value={calculatorPrecision.toString()} 
                     onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
@@ -5627,7 +5656,7 @@ export default function UnitConverter() {
                 variant="ghost" 
                 size="sm" 
                 onClick={clearRpnStack}
-                className="text-xs text-muted-foreground hover:text-foreground border !border-border/30"
+                className="text-xs text-foreground hover:text-accent border !border-border/30"
                 style={{ justifySelf: 'start' }}
               >
                 {t('Clear calculator')}
@@ -5677,7 +5706,7 @@ export default function UnitConverter() {
                     console.error('Failed to read clipboard:', err);
                   }
                 }}
-                className="text-xs text-muted-foreground hover:text-foreground gap-2 border !border-border/30"
+                className="text-xs text-foreground hover:text-accent gap-2 border !border-border/30"
               >
                 <ClipboardPaste className="w-3 h-3" />
                 {t('Paste')}
@@ -6517,8 +6546,7 @@ export default function UnitConverter() {
                       return newStack;
                     });
                   }}
-                  disabled={!rpnStack[3]}
-                  className="text-xs text-muted-foreground hover:text-foreground border !border-border/30"
+                  className="text-xs text-foreground hover:text-accent border !border-border/30"
                 >
                   {t('Clear x')}
                 </Button>
@@ -6536,8 +6564,7 @@ export default function UnitConverter() {
                     setRpnResultPrefix('none');
                     setRpnSelectedAlternative(0);
                   }}
-                  disabled={!rpnStack[3]}
-                  className="text-xs text-muted-foreground hover:text-foreground border !border-border/30"
+                  className="text-xs text-foreground hover:text-accent border !border-border/30"
                 >
                   {t('Clear unit')}
                 </Button>
@@ -6547,7 +6574,7 @@ export default function UnitConverter() {
                 variant="ghost" 
                 size="sm" 
                 onClick={() => setShiftActive(!shiftActive)}
-                className={`text-xs font-mono border !border-border/30 ${shiftActive ? 'bg-accent !text-accent-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`text-xs font-mono border !border-border/30 ${shiftActive ? 'bg-accent !text-accent-foreground' : 'text-foreground hover:text-accent'}`}
                 data-testid="button-shift"
                 aria-pressed={shiftActive}
               >
@@ -6560,8 +6587,7 @@ export default function UnitConverter() {
                 variant="ghost" 
                 size="sm" 
                 onClick={copyRpnResult}
-                disabled={!rpnStack[3]}
-                className="text-xs text-muted-foreground hover:text-foreground gap-1 border !border-border/30"
+                className="text-xs text-foreground hover:text-accent gap-1 border !border-border/30"
               >
                 <Copy className="w-3 h-3" />
                 {t('Copy')}
