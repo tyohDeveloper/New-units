@@ -617,4 +617,172 @@ describe('Smart Paste - Division and Compound Units', () => {
       expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -3 });
     });
   });
+
+  describe('Negative Numbers with Units', () => {
+    it('should parse "-5 m" as negative length', () => {
+      const result = parseUnitText('-5 m');
+      expect(result.originalValue).toBe(-5);
+      expect(result.categoryId).toBe('length');
+      expect(result.dimensions).toEqual({ length: 1 });
+    });
+
+    it('should parse "-10 J/s" as negative power', () => {
+      const result = parseUnitText('-10 J/s');
+      expect(result.originalValue).toBe(-10);
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -3 });
+    });
+
+    it('should parse "-3.14 rad" as negative angle', () => {
+      const result = parseUnitText('-3.14 rad');
+      expect(result.originalValue).toBe(-3.14);
+      expect(result.categoryId).toBe('angle');
+    });
+  });
+
+  describe('European Decimal Notation', () => {
+    it('should parse "3,14 m" with comma decimal', () => {
+      const result = parseUnitText('3,14 m');
+      expect(result.originalValue).toBeCloseTo(3.14, 2);
+      expect(result.categoryId).toBe('length');
+    });
+
+    it('should parse "2,5 kg" with comma decimal', () => {
+      const result = parseUnitText('2,5 kg');
+      expect(result.originalValue).toBeCloseTo(2.5, 1);
+      expect(result.categoryId).toBe('mass');
+    });
+  });
+
+  describe('Zero Exponent', () => {
+    it('should parse "m⁰" as dimensionless (contributes nothing)', () => {
+      const result = parseUnitText('5 m⁰');
+      expect(result.originalValue).toBe(5);
+      expect(result.dimensions).toEqual({});
+    });
+
+    it('should parse "s^0" as dimensionless', () => {
+      const result = parseUnitText('10 s^0');
+      expect(result.originalValue).toBe(10);
+      expect(result.dimensions).toEqual({});
+    });
+  });
+
+  describe('Prefixed Units in Formulas', () => {
+    it('should parse "km/h" as velocity with prefix', () => {
+      const result = parseUnitText('100 km/h');
+      expect(result.originalValue).toBe(100);
+      expect(result.dimensions).toEqual({ length: 1, time: -1 });
+    });
+
+    it('should parse "µg/L" with micro prefix', () => {
+      const result = parseUnitText('50 µg/L');
+      expect(result.originalValue).toBe(50);
+      expect(result.dimensions).toEqual({ mass: 1, length: -3 });
+    });
+
+    it('should parse "mN⋅m" (millinewton-meter)', () => {
+      const result = parseUnitText('25 mN⋅m');
+      expect(result.originalValue).toBe(25);
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -2 });
+    });
+  });
+
+  describe('1/unit Notation (Reciprocal Units)', () => {
+    it('should parse "1/s" as frequency', () => {
+      const result = parseUnitText('50 1/s');
+      expect(result.originalValue).toBe(50);
+      expect(result.dimensions).toEqual({ time: -1 });
+    });
+
+    it('should parse "1/m" as wavenumber', () => {
+      const result = parseUnitText('100 1/m');
+      expect(result.originalValue).toBe(100);
+      expect(result.dimensions).toEqual({ length: -1 });
+    });
+  });
+
+  describe('Complex SI Derived Units', () => {
+    it('should parse "kg⋅m²⋅s⁻³⋅A⁻¹" as volt dimensions', () => {
+      const result = parseUnitText('12 kg⋅m²⋅s⁻³⋅A⁻¹');
+      expect(result.originalValue).toBe(12);
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -3, current: -1 });
+    });
+
+    it('should parse "kg⋅m⋅s⁻²" as force (newton) dimensions', () => {
+      const result = parseUnitText('9.8 kg⋅m⋅s⁻²');
+      expect(result.originalValue).toBeCloseTo(9.8, 1);
+      expect(result.dimensions).toEqual({ mass: 1, length: 1, time: -2 });
+    });
+
+    it('should parse "kg⋅m²⋅s⁻²" as energy (joule) dimensions', () => {
+      const result = parseUnitText('1000 kg⋅m²⋅s⁻²');
+      expect(result.originalValue).toBe(1000);
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -2 });
+    });
+  });
+
+  describe('Whitespace Variations', () => {
+    it('should handle non-breaking space (U+00A0)', () => {
+      const result = parseUnitText('141\u00A0s⁻¹');
+      expect(result.originalValue).toBe(141);
+      expect(result.dimensions).toEqual({ time: -1 });
+    });
+
+    it('should handle narrow no-break space (U+202F)', () => {
+      const result = parseUnitText('50\u202Fm');
+      expect(result.originalValue).toBe(50);
+      expect(result.categoryId).toBe('length');
+    });
+
+    it('should handle multiple spaces', () => {
+      const result = parseUnitText('25   kg');
+      expect(result.originalValue).toBe(25);
+      expect(result.categoryId).toBe('mass');
+    });
+  });
+
+  describe('Case Sensitivity', () => {
+    it('should distinguish "kg" (kilogram) from potential uppercase', () => {
+      const result = parseUnitText('5 kg');
+      expect(result.categoryId).toBe('mass');
+      expect(result.dimensions).toEqual({ mass: 1 });
+    });
+
+    it('should recognize "Hz" correctly (case-sensitive)', () => {
+      const result = parseUnitText('60 Hz');
+      expect(result.categoryId).toBe('frequency');
+      expect(result.dimensions).toEqual({ time: -1 });
+    });
+
+    it('should recognize "Pa" (pascal) correctly', () => {
+      const result = parseUnitText('101325 Pa');
+      expect(result.categoryId).toBe('pressure');
+    });
+  });
+
+  describe('Standalone Derived Units', () => {
+    it('should parse "W" (watt) alone', () => {
+      const result = parseUnitText('100 W');
+      expect(result.categoryId).toBe('power');
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -3 });
+    });
+
+    it('should parse "N" (newton) alone', () => {
+      const result = parseUnitText('9.8 N');
+      expect(result.categoryId).toBe('force');
+      expect(result.dimensions).toEqual({ mass: 1, length: 1, time: -2 });
+    });
+
+    it('should parse "J" (joule) alone', () => {
+      const result = parseUnitText('4184 J');
+      expect(result.categoryId).toBe('energy');
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -2 });
+    });
+
+    it('should parse "V" (volt) alone', () => {
+      const result = parseUnitText('12 V');
+      expect(result.categoryId).toBe('potential');
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -3, current: -1 });
+    });
+  });
 });

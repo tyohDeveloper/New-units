@@ -1703,6 +1703,10 @@ const SI_BASE_UNIT_MAP: Record<string, { dimension: string; factor: number }> = 
   'cd': { dimension: 'intensity', factor: 1 },
   'rad': { dimension: 'angle', factor: 1 },
   'sr': { dimension: 'solid_angle', factor: 1 },
+  // Common non-SI units accepted for use with SI
+  'h': { dimension: 'time', factor: 3600 },      // hour
+  'min': { dimension: 'time', factor: 60 },      // minute
+  'd': { dimension: 'time', factor: 86400 },     // day
 };
 
 // SI derived unit symbols mapped to their dimensional formulas
@@ -1733,6 +1737,9 @@ const SI_DERIVED_UNIT_MAP: Record<string, { dimensions: Record<string, number>; 
   'Sv': { dimensions: { length: 2, time: -2 }, factor: 1 },  // Sievert
   // Chemistry
   'kat': { dimensions: { amount: 1, time: -1 }, factor: 1 },  // Katal
+  // Volume (non-SI accepted)
+  'L': { dimensions: { length: 3 }, factor: 0.001 },  // Liter = 10⁻³ m³
+  'l': { dimensions: { length: 3 }, factor: 0.001 },  // Liter (lowercase)
 };
 
 // Superscript to normal digit mapping
@@ -1840,10 +1847,26 @@ function processTerm(
     }
   }
   
-  // Special case: 'g' (gram) without 'k' prefix
+  // Special case: 'g' (gram) without prefix
   if (baseSymbol === 'g') {
     dimensions['mass'] = (dimensions['mass'] || 0) + effectiveExponent;
     factorRef.value *= Math.pow(0.001, effectiveExponent); // gram to kg
+    return true;
+  }
+  
+  // Special case: prefixed 'g' (gram) like µg, mg, ng
+  for (const prefix of sortedPrefixes) {
+    if (baseSymbol.startsWith(prefix.symbol) && baseSymbol.slice(prefix.symbol.length) === 'g') {
+      dimensions['mass'] = (dimensions['mass'] || 0) + effectiveExponent;
+      // prefix.factor converts to base (e.g., µ = 1e-6), then * 0.001 to convert g to kg
+      factorRef.value *= Math.pow(prefix.factor * 0.001, effectiveExponent);
+      return true;
+    }
+  }
+  
+  // Special case: '1' is dimensionless (for "1/s" notation)
+  if (baseSymbol === '1') {
+    // Contributes nothing to dimensions, factor is 1
     return true;
   }
   
