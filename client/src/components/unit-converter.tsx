@@ -52,12 +52,15 @@ export default function UnitConverter() {
   // RPN calculator state - independent from simple calculator
   const [rpnStack, setRpnStack] = useState<Array<CalcValue | null>>([null, null, null, null]);
   const [previousRpnStack, setPreviousRpnStack] = useState<Array<CalcValue | null>>([null, null, null, null]);
+  const [lastX, setLastX] = useState<CalcValue | null>(null); // LASTx register - stores X before operations
   const [flashRpnField1, setFlashRpnField1] = useState<boolean>(false);
   const [flashRpnField2, setFlashRpnField2] = useState<boolean>(false);
   const [flashRpnField3, setFlashRpnField3] = useState<boolean>(false);
   const [flashRpnResult, setFlashRpnResult] = useState<boolean>(false);
   const [rpnResultPrefix, setRpnResultPrefix] = useState<string>('none');
   const [rpnSelectedAlternative, setRpnSelectedAlternative] = useState<number>(0);
+  const [rpnXEditing, setRpnXEditing] = useState<boolean>(false);
+  const [rpnXEditValue, setRpnXEditValue] = useState<string>('');
   
   // Tab state
   const [activeTab, setActiveTab] = useState<string>('converter');
@@ -1255,14 +1258,14 @@ export default function UnitConverter() {
       pt: 'Calculadora', ru: 'Калькулятор', zh: '计算器', ja: '計算機'
     },
     'CALCULATOR - RPN': { 
-      en: 'CALCULATOR - RPN', ar: 'الآلة الحاسبة - RPN', de: 'RECHNER - RPN',
-      es: 'CALCULADORA - RPN', fr: 'CALCULATRICE - RPN', it: 'CALCOLATRICE - RPN', ko: '계산기 - RPN',
-      pt: 'CALCULADORA - RPN', ru: 'КАЛЬКУЛЯТОР - RPN', zh: '计算器 - RPN', ja: '計算機 - RPN'
+      en: 'CALCULATOR - RPN⇅', ar: 'الآلة الحاسبة - RPN⇅', de: 'RECHNER - RPN⇅',
+      es: 'CALCULADORA - RPN⇅', fr: 'CALCULATRICE - RPN⇅', it: 'CALCOLATRICE - RPN⇅', ko: '계산기 - RPN⇅',
+      pt: 'CALCULADORA - RPN⇅', ru: 'КАЛЬКУЛЯТОР - RPN⇅', zh: '计算器 - RPN⇅', ja: '計算機 - RPN⇅'
     },
     'CALCULATOR': { 
-      en: 'CALCULATOR', ar: 'الآلة الحاسبة', de: 'RECHNER',
-      es: 'CALCULADORA', fr: 'CALCULATRICE', it: 'CALCOLATRICE', ko: '계산기',
-      pt: 'CALCULADORA', ru: 'КАЛЬКУЛЯТОР', zh: '计算器', ja: '計算機'
+      en: 'CALCULATOR⇅', ar: 'الآلة الحاسبة⇅', de: 'RECHNER⇅',
+      es: 'CALCULADORA⇅', fr: 'CALCULATRICE⇅', it: 'CALCOLATRICE⇅', ko: '계산기⇅',
+      pt: 'CALCULADORA⇅', ru: 'КАЛЬКУЛЯТОР⇅', zh: '计算器⇅', ja: '計算機⇅'
     },
     'Clear': { 
       en: 'Clear', ar: 'مسح', de: 'Löschen',
@@ -3764,6 +3767,33 @@ export default function UnitConverter() {
     });
   };
 
+  // Swap X and Y registers (x⇆y)
+  const swapRpnXY = () => {
+    if (!rpnStack[3] || !rpnStack[2]) return;
+    saveRpnStackForUndo();
+    setRpnStack(prev => {
+      const newStack = [...prev];
+      newStack[3] = prev[2]; // x <- y
+      newStack[2] = prev[3]; // y <- x
+      return newStack;
+    });
+  };
+
+  // Recall LASTx - push lastX value onto stack
+  const recallLastX = () => {
+    if (!lastX) return;
+    saveRpnStackForUndo();
+    // Stack lift: push lastX onto x, old values shift up
+    setRpnStack(prev => {
+      const newStack = [...prev];
+      newStack[0] = prev[1]; // s3 <- s2
+      newStack[1] = prev[2]; // s2 <- y
+      newStack[2] = prev[3]; // y <- x
+      newStack[3] = lastX;   // x <- lastX
+      return newStack;
+    });
+  };
+
   // RPN unary operation types
   type RpnUnaryOp = 
     | 'square' | 'cube' | 'sqrt' | 'cbrt'
@@ -3771,7 +3801,7 @@ export default function UnitConverter() {
     | 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan'
     | 'sinh' | 'cosh' | 'tanh' | 'asinh' | 'acosh' | 'atanh'
     | 'rnd' | 'trunc' | 'floor' | 'ceil'
-    | 'neg';
+    | 'neg' | 'abs';
   
   // Helper to check if dimensions represent exactly radians (angle: 1, all others 0 or undefined)
   const isRadians = (dimensions: DimensionalFormula): boolean => {
@@ -3789,6 +3819,9 @@ export default function UnitConverter() {
   const applyRpnUnary = (op: RpnUnaryOp) => {
     if (!rpnStack[3]) return;
     saveRpnStackForUndo();
+    
+    // Save X to lastX before operation
+    setLastX(rpnStack[3]);
     
     const x = rpnStack[3];
     let newValue: number;
@@ -3898,6 +3931,12 @@ export default function UnitConverter() {
       // Sign change - negate the value, preserve X's dimensions
       case 'neg': {
         newValue = -x.value;
+        newDimensions = { ...x.dimensions };
+        break;
+      }
+      
+      case 'abs': {
+        newValue = Math.abs(x.value);
         newDimensions = { ...x.dimensions };
         break;
       }
@@ -4079,6 +4118,9 @@ export default function UnitConverter() {
   const applyRpnBinary = (op: RpnBinaryOp) => {
     if (!rpnStack[2] || !rpnStack[3]) return;
     saveRpnStackForUndo();
+    
+    // Save X to lastX before operation
+    setLastX(rpnStack[3]);
     
     const y = rpnStack[2];
     const x = rpnStack[3];
@@ -5501,32 +5543,12 @@ export default function UnitConverter() {
             className="flex gap-2 mb-4 items-center justify-between"
           >
             <div className="flex items-center gap-4">
-              <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
-                <Label 
-                  className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
-                  onClick={() => calculatorMode === 'simple' ? switchToRpn() : switchToSimple()}
-                >
-                  {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR')} ↻
-                </Label>
-                <div className="flex items-center gap-2">
-                  <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
-                  <Select 
-                    value={calculatorPrecision.toString()} 
-                    onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
-                  >
-                    <SelectTrigger className="h-10 w-[70px] text-xs">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent align="end">
-                      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(p => (
-                        <SelectItem key={p} value={p.toString()} className="text-xs">
-                          {numberFormat === 'arabic' ? toArabicNumerals(p.toString()) : p}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+              <Label 
+                className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
+                onClick={() => calculatorMode === 'simple' ? switchToRpn() : switchToSimple()}
+              >
+                {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR')}
+              </Label>
               {/* Clear button - different function for each mode */}
               {calculatorMode === 'simple' ? (
                 <Button 
@@ -5548,6 +5570,58 @@ export default function UnitConverter() {
                 </Button>
               )}
             </div>
+            {/* Paste button - aligned far right */}
+            {calculatorMode === 'rpn' && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={async () => {
+                  try {
+                    const text = await navigator.clipboard.readText();
+                    if (!text) return;
+                    const parsed = parseUnitText(text);
+                    // Map dimensional formula to exponent grid format
+                    const dims: Record<string, number> = {};
+                    if (parsed.dimensions.length) dims.length = parsed.dimensions.length;
+                    if (parsed.dimensions.mass) dims.mass = parsed.dimensions.mass;
+                    if (parsed.dimensions.time) dims.time = parsed.dimensions.time;
+                    if (parsed.dimensions.current) dims.current = parsed.dimensions.current;
+                    if (parsed.dimensions.temperature) dims.temperature = parsed.dimensions.temperature;
+                    if (parsed.dimensions.amount) dims.amount = parsed.dimensions.amount;
+                    if (parsed.dimensions.intensity) dims.intensity = parsed.dimensions.intensity;
+                    if (parsed.dimensions.angle) dims.angle = parsed.dimensions.angle;
+                    if (parsed.dimensions.solid_angle) dims.solid_angle = parsed.dimensions.solid_angle;
+                    
+                    const newEntry = {
+                      value: parsed.value,
+                      dimensions: dims,
+                      prefix: parsed.prefixId || 'none'
+                    };
+                    
+                    // Push onto stack with lift
+                    saveRpnStackForUndo();
+                    setRpnStack(prev => {
+                      const newStack = [...prev];
+                      newStack[0] = prev[1];
+                      newStack[1] = prev[2];
+                      newStack[2] = prev[3];
+                      newStack[3] = newEntry;
+                      return newStack;
+                    });
+                    setRpnResultPrefix('none');
+                    setRpnSelectedAlternative(0);
+                    setFlashRpnResult(true);
+                    setTimeout(() => setFlashRpnResult(false), 300);
+                  } catch (err) {
+                    console.error('Failed to read clipboard:', err);
+                  }
+                }}
+                className="text-xs text-muted-foreground hover:text-foreground gap-2 border !border-border/30"
+              >
+                <ClipboardPaste className="w-3 h-3" />
+                {t('Paste')}
+              </Button>
+            )}
           </div>
           
           {/* Fixed-height container to prevent flicker on mode switch */}
@@ -5928,10 +6002,37 @@ export default function UnitConverter() {
           {/* RPN Calculator Mode */}
           {calculatorMode === 'rpn' && (
           <div className="space-y-2">
-            {/* s3 field (top) with button grid */}
+            {/* Precision selector row - right-aligned over s3 button area */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} repeat(${RpnBtnCount}, ${RpnBtnWidth})` }}
+              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} repeat(7, ${RpnBtnWidth})` }}
+            >
+              <span></span>
+              <span></span>
+              <span style={{ gridColumn: 'span 5' }}></span>
+              <div className="flex items-center gap-2 justify-end" style={{ gridColumn: 'span 2' }}>
+                <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
+                <Select 
+                  value={calculatorPrecision.toString()} 
+                  onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
+                >
+                  <SelectTrigger className="h-8 w-[60px] text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent align="end">
+                    {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(p => (
+                      <SelectItem key={p} value={p.toString()} className="text-xs">
+                        {numberFormat === 'arabic' ? toArabicNumerals(p.toString()) : p}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            {/* s3 field (top) with button grid - 7 buttons */}
+            <div 
+              className="grid gap-2 items-center"
+              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} repeat(7, ${RpnBtnWidth})` }}
             >
               <span className="text-[10px] font-mono text-muted-foreground text-right">{shiftActive ? 'S.3' : 's.3'}</span>
               <motion.div 
@@ -5966,17 +6067,16 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Power/Root/Exp/Log buttons for s.3 row */}
+              {/* Power/Root/Exp/Log buttons for s.3 row (7 buttons) */}
               {(() => {
                 const s3Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number }> = [
                   { label: 'x²ᵤ', shiftLabel: '√ᵤ', op: 'square', shiftOp: 'sqrt' },
-                  { label: 'x³ᵤ', shiftLabel: '∛ᵤ', op: 'cube', shiftOp: 'cbrt' },
+                  { label: '+/−', shiftLabel: 'ABS', op: 'neg', shiftOp: 'abs' },
                   { label: 'eˣ', shiftLabel: 'ln', op: 'exp', shiftOp: 'ln' },
                   { label: '10ˣ', shiftLabel: 'log₁₀', op: 'pow10', shiftOp: 'log10' },
                   { label: '2ˣ', shiftLabel: 'log₂', op: 'pow2', shiftOp: 'log2' },
                   { label: 'rnd', shiftLabel: 'trunc', op: 'rnd', shiftOp: 'trunc' },
-                  { label: 'neg', shiftLabel: 'neg', op: 'neg', shiftOp: 'neg' },
-                  { label: 'π', shiftLabel: '1/π', isConstant: true, value: Math.PI, shiftValue: 1/Math.PI },
+                  { label: 'π', shiftLabel: 'π⁻¹', isConstant: true, value: Math.PI, shiftValue: 1/Math.PI },
                 ];
                 return s3Buttons.map((btn, i) => {
                   const hasOp = 'op' in btn;
@@ -6128,7 +6228,7 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Binary operation buttons for y row: 3.1-3.2=Enter/Drop (double width), 3.3=neg/undo, 3.4-3.7 = ×/÷/+/−, 3.8=√2 */}
+              {/* Binary operation buttons for y row: 1-2=Enter/Drop (double width), 3=undo/undo, 4-7=×/÷/+/−, 8=LASTx/x⇆y */}
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -6142,11 +6242,11 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className={`text-xs font-mono w-full border !border-border/30 ${shiftActive ? (!previousRpnStack.some(v => v !== null) ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent') : (!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent')}`}
-                disabled={shiftActive ? !previousRpnStack.some(v => v !== null) : !rpnStack[3]}
-                onClick={() => shiftActive ? undoRpnStack() : applyRpnUnary('neg')}
+                className={`text-xs font-mono w-full border !border-border/30 ${!previousRpnStack.some(v => v !== null) ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
+                disabled={!previousRpnStack.some(v => v !== null)}
+                onClick={() => undoRpnStack()}
               >
-                {shiftActive ? 'undo' : 'neg'}
+                undo
               </Button>
               {(() => {
                 const yBinaryButtons: Array<{ label: string; shiftLabel: string; op: RpnBinaryOp; shiftOp: RpnBinaryOp }> = [
@@ -6175,43 +6275,104 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full border !border-border/30 text-foreground hover:text-accent"
-                onClick={() => pushRpnConstant(shiftActive ? 1/Math.SQRT2 : Math.SQRT2)}
+                className={`text-xs font-mono w-full border !border-border/30 ${shiftActive ? (!rpnStack[3] || !rpnStack[2] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent') : (!lastX ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent')}`}
+                disabled={shiftActive ? (!rpnStack[3] || !rpnStack[2]) : !lastX}
+                onClick={() => shiftActive ? swapRpnXY() : recallLastX()}
               >
-                {shiftActive ? '1/√2' : '√2'}
+                {shiftActive ? 'x⇆y' : 'LASTx'}
               </Button>
             </div>
 
-            {/* x field (result) with prefix and unit dropdowns */}
+            {/* x field (result) with prefix and unit dropdowns - editable with parseUnitText */}
             <div 
               className="grid gap-2 items-center"
               style={{ gridTemplateColumns: `28px ${CommonFieldWidth} 50px 1fr` }}
             >
               <span className="text-[10px] font-mono text-muted-foreground text-right">{shiftActive ? 'X' : 'x'}</span>
-              <motion.div 
-                className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between select-none ${rpnStack[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
-                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
-                onClick={() => rpnStack[3] && copyRpnResult()}
-                animate={{
-                  opacity: flashRpnResult ? [1, 0.3, 1] : 1,
-                  scale: flashRpnResult ? [1, 1.02, 1] : 1
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                {(() => {
-                  const display = getRpnResultDisplay();
-                  return (
-                    <>
-                      <span className="text-sm font-mono text-primary font-bold truncate">
-                        {display?.formattedValue || ''}
-                      </span>
-                      <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                        {display?.unitSymbol || ''}
-                      </span>
-                    </>
-                  );
-                })()}
-              </motion.div>
+              {rpnXEditing ? (
+                <input
+                  type="text"
+                  autoFocus
+                  value={rpnXEditValue}
+                  onChange={(e) => setRpnXEditValue(e.target.value)}
+                  onBlur={() => {
+                    // Parse and apply on blur
+                    if (rpnXEditValue.trim()) {
+                      const parsed = parseUnitText(rpnXEditValue);
+                      const dims: Record<string, number> = {};
+                      if (parsed.dimensions.length) dims.length = parsed.dimensions.length;
+                      if (parsed.dimensions.mass) dims.mass = parsed.dimensions.mass;
+                      if (parsed.dimensions.time) dims.time = parsed.dimensions.time;
+                      if (parsed.dimensions.current) dims.current = parsed.dimensions.current;
+                      if (parsed.dimensions.temperature) dims.temperature = parsed.dimensions.temperature;
+                      if (parsed.dimensions.amount) dims.amount = parsed.dimensions.amount;
+                      if (parsed.dimensions.intensity) dims.intensity = parsed.dimensions.intensity;
+                      if (parsed.dimensions.angle) dims.angle = parsed.dimensions.angle;
+                      if (parsed.dimensions.solid_angle) dims.solid_angle = parsed.dimensions.solid_angle;
+                      
+                      const newEntry = {
+                        value: parsed.value,
+                        dimensions: dims,
+                        prefix: parsed.prefixId || 'none'
+                      };
+                      
+                      // Update X directly (no stack lift for edit)
+                      saveRpnStackForUndo();
+                      setRpnStack(prev => {
+                        const newStack = [...prev];
+                        newStack[3] = newEntry;
+                        return newStack;
+                      });
+                      setRpnResultPrefix('none');
+                      setRpnSelectedAlternative(0);
+                    }
+                    setRpnXEditing(false);
+                    setRpnXEditValue('');
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.currentTarget.blur();
+                    } else if (e.key === 'Escape') {
+                      setRpnXEditing(false);
+                      setRpnXEditValue('');
+                    }
+                  }}
+                  className="px-3 bg-muted/20 border border-accent rounded-md text-sm font-mono text-primary font-bold"
+                  style={{ height: FIELD_HEIGHT }}
+                  placeholder="Enter value or 'value unit'"
+                />
+              ) : (
+                <motion.div 
+                  className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between cursor-text hover:bg-muted/40 active:bg-muted/60`}
+                  style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
+                  onClick={() => {
+                    // Start editing with current value + unit if any
+                    const display = getRpnResultDisplay();
+                    const currentText = display ? `${display.formattedValue}${display.unitSymbol ? ' ' + display.unitSymbol : ''}` : '';
+                    setRpnXEditValue(currentText);
+                    setRpnXEditing(true);
+                  }}
+                  animate={{
+                    opacity: flashRpnResult ? [1, 0.3, 1] : 1,
+                    scale: flashRpnResult ? [1, 1.02, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {(() => {
+                    const display = getRpnResultDisplay();
+                    return (
+                      <>
+                        <span className="text-sm font-mono text-primary font-bold truncate">
+                          {display?.formattedValue || ''}
+                        </span>
+                        <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
+                          {display?.unitSymbol || ''}
+                        </span>
+                      </>
+                    );
+                  })()}
+                </motion.div>
+              )}
               {/* Prefix and unit selectors for RPN result */}
               {rpnStack[3] && !isDimensionEmpty(rpnStack[3].dimensions) ? (
                 (() => {

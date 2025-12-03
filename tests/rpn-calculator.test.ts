@@ -1078,6 +1078,192 @@ describe('fixPrecision Behavior', () => {
   });
 });
 
+describe('Negate (Change Sign) Operation', () => {
+  // RPN negate operation - changes sign of x, preserves dimensions
+  const rpnNeg = (stack: RpnStack): RpnStack | null => {
+    if (!stack[3]) return null;
+    
+    const x = stack[3];
+    const result: CalcValue = {
+      value: -x.value,
+      dimensions: x.dimensions,
+      prefix: x.prefix
+    };
+    
+    return [stack[0], stack[1], stack[2], result];
+  };
+
+  it('should negate positive value', () => {
+    const val: CalcValue = { value: 5, dimensions: { length: 1 }, prefix: 'none' };
+    const stack: RpnStack = [null, null, null, val];
+    
+    const result = rpnNeg(stack);
+    
+    expect(result![3]?.value).toBe(-5);
+    expect(result![3]?.dimensions).toEqual({ length: 1 });
+  });
+
+  it('should negate negative value', () => {
+    const val: CalcValue = { value: -3, dimensions: { mass: 1 }, prefix: 'none' };
+    const stack: RpnStack = [null, null, null, val];
+    
+    const result = rpnNeg(stack);
+    
+    expect(result![3]?.value).toBe(3);
+  });
+
+  it('should handle zero', () => {
+    const val: CalcValue = { value: 0, dimensions: { time: 1 }, prefix: 'none' };
+    const stack: RpnStack = [null, null, null, val];
+    
+    const result = rpnNeg(stack);
+    
+    expect(result![3]?.value).toBe(-0);
+  });
+
+  it('should preserve prefix', () => {
+    const val: CalcValue = { value: 5, dimensions: { length: 1 }, prefix: 'k' };
+    const stack: RpnStack = [null, null, null, val];
+    
+    const result = rpnNeg(stack);
+    
+    expect(result![3]?.prefix).toBe('k');
+  });
+});
+
+describe('Absolute Value Operation', () => {
+  // RPN absolute value operation - takes absolute value of x, preserves dimensions
+  const rpnAbs = (stack: RpnStack): RpnStack | null => {
+    if (!stack[3]) return null;
+    
+    const x = stack[3];
+    const result: CalcValue = {
+      value: Math.abs(x.value),
+      dimensions: x.dimensions,
+      prefix: x.prefix
+    };
+    
+    return [stack[0], stack[1], stack[2], result];
+  };
+
+  it('should return absolute value of positive number', () => {
+    const val: CalcValue = { value: 5, dimensions: { length: 1 }, prefix: 'none' };
+    const stack: RpnStack = [null, null, null, val];
+    
+    const result = rpnAbs(stack);
+    
+    expect(result![3]?.value).toBe(5);
+  });
+
+  it('should return absolute value of negative number', () => {
+    const val: CalcValue = { value: -7, dimensions: { mass: 1 }, prefix: 'none' };
+    const stack: RpnStack = [null, null, null, val];
+    
+    const result = rpnAbs(stack);
+    
+    expect(result![3]?.value).toBe(7);
+  });
+
+  it('should handle zero', () => {
+    const val: CalcValue = { value: 0, dimensions: { time: 1 }, prefix: 'none' };
+    const stack: RpnStack = [null, null, null, val];
+    
+    const result = rpnAbs(stack);
+    
+    expect(result![3]?.value).toBe(0);
+  });
+
+  it('should preserve dimensions', () => {
+    const val: CalcValue = { value: -3.14, dimensions: { length: 2, time: -2 }, prefix: 'none' };
+    const stack: RpnStack = [null, null, null, val];
+    
+    const result = rpnAbs(stack);
+    
+    expect(result![3]?.value).toBe(3.14);
+    expect(result![3]?.dimensions).toEqual({ length: 2, time: -2 });
+  });
+
+  it('should preserve prefix', () => {
+    const val: CalcValue = { value: -5, dimensions: { length: 1 }, prefix: 'M' };
+    const stack: RpnStack = [null, null, null, val];
+    
+    const result = rpnAbs(stack);
+    
+    expect(result![3]?.prefix).toBe('M');
+  });
+});
+
+describe('LASTx Register', () => {
+  // LASTx register - stores x before each operation for recall
+  let lastX: CalcValue | null = null;
+
+  const saveLastX = (stack: RpnStack) => {
+    lastX = stack[3];
+  };
+
+  const recallLastX = (stack: RpnStack): RpnStack | null => {
+    if (!lastX) return null;
+    return stackLift(stack, lastX);
+  };
+
+  it('should store x value before operation', () => {
+    const x: CalcValue = { value: 5, dimensions: { length: 1 }, prefix: 'none' };
+    const stack: RpnStack = [null, null, null, x];
+    
+    saveLastX(stack);
+    
+    expect(lastX?.value).toBe(5);
+    expect(lastX?.dimensions).toEqual({ length: 1 });
+  });
+
+  it('should recall last x with stack lift', () => {
+    const x: CalcValue = { value: 5, dimensions: { length: 1 }, prefix: 'none' };
+    const newX: CalcValue = { value: 10, dimensions: { time: 1 }, prefix: 'none' };
+    const stack: RpnStack = [null, null, null, x];
+    
+    saveLastX(stack);
+    // Simulate an operation that changes x
+    const afterOp: RpnStack = [null, null, null, newX];
+    
+    const result = recallLastX(afterOp);
+    
+    // LASTx pushes the stored value with stack lift
+    expect(result![3]?.value).toBe(5);
+    expect(result![2]?.value).toBe(10);
+  });
+
+  it('should preserve dimensions when recalling', () => {
+    const x: CalcValue = { value: 3, dimensions: { mass: 1, length: 2, time: -2 }, prefix: 'k' };
+    const stack: RpnStack = [null, null, null, x];
+    
+    saveLastX(stack);
+    const afterOp: RpnStack = [null, null, null, null];
+    
+    const result = recallLastX(afterOp);
+    
+    expect(result![3]?.dimensions).toEqual({ mass: 1, length: 2, time: -2 });
+    expect(result![3]?.prefix).toBe('k');
+  });
+
+  it('should allow correction after error', () => {
+    // Scenario: User enters 5, enters 3, multiplies (gets 15), realizes they wanted to add
+    const five: CalcValue = { value: 5, dimensions: {}, prefix: 'none' };
+    const three: CalcValue = { value: 3, dimensions: {}, prefix: 'none' };
+    const stack: RpnStack = [null, null, five, three];
+    
+    saveLastX(stack); // Save x (3) before multiply
+    const afterMul = rpnMultiply(stack); // Result: 15
+    
+    expect(afterMul![3]?.value).toBe(15);
+    
+    // Recall LASTx (3) to reuse the operand
+    const afterRecall = recallLastX(afterMul!);
+    
+    expect(afterRecall![3]?.value).toBe(3);
+    expect(afterRecall![2]?.value).toBe(15);
+  });
+});
+
 describe('Special Value Handling', () => {
   it('should handle very small values', () => {
     const tiny: CalcValue = { value: 1e-15, dimensions: { length: 1 }, prefix: 'none' };
