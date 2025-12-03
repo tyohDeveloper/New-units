@@ -67,6 +67,10 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 - **CGS Unit Prefixes**: All CGS base units support prefixes (dyne, erg, poise, stokes, gauss, maxwell, oersted, statampere, statvolt, etc.) but pre-prefixed units (centipoise, centistokes) do NOT allow additional prefixes
 - **Comparison Mode**: Toggle button ("Compare All") next to the "To" label shows input value converted to up to 8 units simultaneously with optimal prefix display and click-to-copy functionality
 - **Smart Paste**: When pasting text anywhere except input fields, `parseUnitText` parses "number unit" text (e.g., "15 km", "2.5e-3 mA") into value, unit, prefix, category, and dimensions. Routes to Converter tab (sets from value/unit/category) or Custom tab (sets value and dimension grid based on parsed dimensions). Handles prefix+symbol combinations and localized unit names.
+- **Symbol Conflict Prevention**: Unit symbols are unique to prevent buildUnitSymbolMap from overwriting earlier categories:
+  - Half-life units use "t½(s)", "t½(min)", "t½(h)", "t½(d)", "t½(y)" instead of bare time symbols
+  - Poise uses "Po" instead of "P" (which conflicts with Peta prefix)
+  - Minim (US volume) uses "minim" instead of "min" (which conflicts with Minute)
 - **Cross-Domain Dimensional Analysis**: Calculator result dropdown shows related quantity categories that share the same dimensions:
   - Energy ↔ Torque, Photon Energy, Fuel Energy (all have kg⋅m²⋅s⁻²)
   - Frequency ↔ Radioactivity, Radioactive Decay (all have s⁻¹)

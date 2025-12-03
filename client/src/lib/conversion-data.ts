@@ -626,11 +626,11 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
       { id: "per_day", name: "Per Day (λ)", symbol: "d⁻¹", factor: 1/86400 },
       { id: "per_year", name: "Per Year (λ)", symbol: "y⁻¹", factor: 1/31557600 },
       // Half-life t½ = ln(2)/λ - INVERSE relationship
-      { id: "half_s", name: "Half-life (seconds)", symbol: "s", factor: 0.693147180559945, isInverse: true },
-      { id: "half_min", name: "Half-life (minutes)", symbol: "min", factor: 0.693147180559945 * 60, isInverse: true },
-      { id: "half_hr", name: "Half-life (hours)", symbol: "h", factor: 0.693147180559945 * 3600, isInverse: true },
-      { id: "half_day", name: "Half-life (days)", symbol: "d", factor: 0.693147180559945 * 86400, isInverse: true },
-      { id: "half_year", name: "Half-life (years)", symbol: "y", factor: 0.693147180559945 * 31557600, isInverse: true },
+      { id: "half_s", name: "Half-life (seconds)", symbol: "t½(s)", factor: 0.693147180559945, isInverse: true },
+      { id: "half_min", name: "Half-life (minutes)", symbol: "t½(min)", factor: 0.693147180559945 * 60, isInverse: true },
+      { id: "half_hr", name: "Half-life (hours)", symbol: "t½(h)", factor: 0.693147180559945 * 3600, isInverse: true },
+      { id: "half_day", name: "Half-life (days)", symbol: "t½(d)", factor: 0.693147180559945 * 86400, isInverse: true },
+      { id: "half_year", name: "Half-life (years)", symbol: "t½(y)", factor: 0.693147180559945 * 31557600, isInverse: true },
       // Mean lifetime τ = 1/λ - INVERSE relationship
       { id: "tau_s", name: "Mean Lifetime (seconds)", symbol: "τ (s)", factor: 1, isInverse: true },
       { id: "tau_min", name: "Mean Lifetime (minutes)", symbol: "τ (min)", factor: 60, isInverse: true },
@@ -811,7 +811,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     units: [
       { id: "pas", name: "Pascal-second", symbol: "Pa·s", factor: 1, allowPrefixes: true },
       { id: "cp", name: "Centipoise", symbol: "cP", factor: 0.001 },
-      { id: "poise", name: "Poise", symbol: "P", factor: 0.1, allowPrefixes: true },
+      { id: "poise", name: "Poise", symbol: "Po", factor: 0.1, allowPrefixes: true },
     ],
   },
   {
@@ -1254,7 +1254,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "L",
     units: [
       { id: "l", name: "Litre", symbol: "L", factor: 1, allowPrefixes: true },
-      { id: "minim", name: "Minim (US)", symbol: "min", factor: 0.0000616115 },
+      { id: "minim", name: "Minim (US)", symbol: "minim", factor: 0.0000616115 },
       { id: "ml", name: "Millilitre", symbol: "mL", factor: 0.001 },
       { id: "fl_scruple", name: "Fluid Scruple", symbol: "fl s", factor: 0.00123223 },
       { id: "fl_dram", name: "Fluid Dram", symbol: "fl dr", factor: 0.00369669 },
@@ -1498,6 +1498,7 @@ export function convert(
 // Unit parsing result interface
 export interface ParsedUnitResult {
   value: number;
+  originalValue: number; // The numeric value as parsed from input (before conversion to base unit)
   categoryId: UnitCategory | null;
   unitId: string | null;
   prefixId: string;
@@ -1960,7 +1961,7 @@ export function parseUnitText(
     .replace(/\u202F/g, ' '); // Replace narrow no-break spaces
   
   if (!trimmed) {
-    return { value: 1, categoryId: null, unitId: null, prefixId: 'none', dimensions: {} };
+    return { value: 1, originalValue: 1, categoryId: null, unitId: null, prefixId: 'none', dimensions: {} };
   }
   
   // Try to extract number from the beginning
@@ -1986,6 +1987,7 @@ export function parseUnitText(
     if (dimResult.isValid) {
       return {
         value: numValue * dimResult.factor,
+        originalValue: numValue,
         categoryId: null, // Dimensional formulas don't map to a specific category
         unitId: null,
         prefixId: 'none',
@@ -1998,6 +2000,7 @@ export function parseUnitText(
   if (unitText === '°') {
     return {
       value: numValue * (Math.PI / 180),
+      originalValue: numValue,
       categoryId: 'angle',
       unitId: 'rad',
       prefixId: 'none',
@@ -2009,6 +2012,7 @@ export function parseUnitText(
   if (/^deg$/i.test(unitText)) {
     return {
       value: numValue * (Math.PI / 180),
+      originalValue: numValue,
       categoryId: 'angle',
       unitId: 'rad',
       prefixId: 'none',
@@ -2021,6 +2025,7 @@ export function parseUnitText(
     const sqDegToSr = (Math.PI / 180) * (Math.PI / 180);
     return {
       value: numValue * sqDegToSr,
+      originalValue: numValue,
       categoryId: 'solid_angle',
       unitId: 'sr',
       prefixId: 'none',
@@ -2043,6 +2048,7 @@ export function parseUnitText(
   
   return {
     value: adjustedValue,
+    originalValue: numValue,
     categoryId: unitResult.categoryId,
     unitId: unitResult.unitId,
     prefixId: unitResult.prefixId,

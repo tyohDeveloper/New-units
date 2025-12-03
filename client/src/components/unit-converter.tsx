@@ -155,7 +155,7 @@ export default function UnitConverter() {
     { symbol: 'erg⋅s⁻¹', category: 'power', unitId: 'erg_per_s', dimensions: { mass: 1, length: 2, time: -3 }, allowPrefixes: false },
     { symbol: 'hp', category: 'power', unitId: 'hp', dimensions: { mass: 1, length: 2, time: -3 }, allowPrefixes: false },
     // Viscosity (CGS)
-    { symbol: 'P', category: 'viscosity', unitId: 'poise', dimensions: { mass: 1, length: -1, time: -1 }, allowPrefixes: true },
+    { symbol: 'Po', category: 'viscosity', unitId: 'poise', dimensions: { mass: 1, length: -1, time: -1 }, allowPrefixes: true },
     { symbol: 'St', category: 'kinematic_viscosity', unitId: 'stokes', dimensions: { length: 2, time: -1 }, allowPrefixes: true },
     // Acoustic (CGS-derived)
     { symbol: 'rayl', category: 'acoustic_impedance', unitId: 'rayl', dimensions: { mass: 1, length: -2, time: -1 }, allowPrefixes: true },
@@ -2043,12 +2043,13 @@ export default function UnitConverter() {
       // Route based on active tab
       if (activeTab === 'converter') {
         // Converter tab: set from value and optionally switch to matched category/unit
+        // Use originalValue to show the user's input as-is with the matched unit
         if (parsed.categoryId && parsed.unitId) {
           setActiveCategory(parsed.categoryId);
           setFromUnit(parsed.unitId);
           setFromPrefix(parsed.prefixId);
         }
-        setInputValue(parsed.value.toString());
+        setInputValue(parsed.originalValue.toString());
       } else if (activeTab === 'custom') {
         // Custom tab: set value field and update dimension grid based on parsed dimensions
         setDirectValue(parsed.value.toString());
@@ -5367,10 +5368,10 @@ export default function UnitConverter() {
                 <div key={unit} className="flex items-center gap-2">
                   <span className="text-xs w-32 text-right text-muted-foreground truncate" title={t(quantity)}>{t(quantity)}</span>
                   <div className="flex gap-0">
-                    {[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6].map((exp) => {
+                    {[-4, -3, -2, -1, 0, 1, 2, 3, 4, 5].map((exp) => {
                       const superscripts: Record<number, string> = {
-                        1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶',
-                        [-1]: '⁻¹', [-2]: '⁻²', [-3]: '⁻³', [-4]: '⁻⁴', [-5]: '⁻⁵', [-6]: '⁻⁶'
+                        1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵',
+                        [-1]: '⁻¹', [-2]: '⁻²', [-3]: '⁻³', [-4]: '⁻⁴'
                       };
                       const label = exp === 0 ? '-' : `${unit}${superscripts[exp] || ''}`;
                       const isSelected = directExponents[unit] === exp;
@@ -5382,7 +5383,7 @@ export default function UnitConverter() {
                             isSelected 
                               ? 'bg-accent text-accent-foreground border-accent' 
                               : 'bg-background/30 border-border/50 hover:bg-muted/50 text-muted-foreground'
-                          } ${exp === -6 ? 'rounded-l' : ''} ${exp === 6 ? 'rounded-r' : ''}`}
+                          } ${exp === -4 ? 'rounded-l' : ''} ${exp === 5 ? 'rounded-r' : ''}`}
                           {...testId(`custom-exp-${unit}-${exp}`)}
                         >
                           {label}
