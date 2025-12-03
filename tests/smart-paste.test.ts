@@ -569,4 +569,52 @@ describe('Smart Paste - Division and Compound Units', () => {
       expect(result.dimensions).toEqual({ length: 2, time: -2, temperature: -1 });
     });
   });
+
+  describe('Bare Exponents (mathematical)', () => {
+    it('should parse "141⁻¹" as reciprocal', () => {
+      const result = parseUnitText('141⁻¹');
+      expect(result.originalValue).toBe(141);
+      expect(result.value).toBeCloseTo(1/141, 10);
+      expect(result.dimensions).toEqual({});
+    });
+
+    it('should parse "141^-1" as reciprocal', () => {
+      const result = parseUnitText('141^-1');
+      expect(result.originalValue).toBe(141);
+      expect(result.value).toBeCloseTo(1/141, 10);
+      expect(result.dimensions).toEqual({});
+    });
+
+    it('should parse "2²" as squared', () => {
+      const result = parseUnitText('2²');
+      expect(result.originalValue).toBe(2);
+      expect(result.value).toBe(4);
+    });
+
+    it('should parse "10^3" as cubed', () => {
+      const result = parseUnitText('10^3');
+      expect(result.originalValue).toBe(10);
+      expect(result.value).toBe(1000);
+    });
+  });
+
+  describe('All Multiplication Operators with Units', () => {
+    it('should parse "141 J⋅s⁻¹" (middle dot)', () => {
+      const result = parseUnitText('141 J⋅s⁻¹');
+      expect(result.originalValue).toBe(141);
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -3 });
+    });
+
+    it('should parse "141 J×s⁻¹" (multiplication sign)', () => {
+      const result = parseUnitText('141 J×s⁻¹');
+      expect(result.originalValue).toBe(141);
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -3 });
+    });
+
+    it('should parse "141 J*s⁻¹" (asterisk)', () => {
+      const result = parseUnitText('141 J*s⁻¹');
+      expect(result.originalValue).toBe(141);
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -3 });
+    });
+  });
 });

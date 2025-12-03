@@ -2007,6 +2007,37 @@ export function parseUnitText(
     numValue = 1;
   }
   
+  // Check for bare exponent (like "⁻¹" or "^-1") - apply to the number itself
+  const bareExponentMatch = unitText.match(/^(\^-?\d+|[⁻⁺]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+)$/);
+  if (bareExponentMatch) {
+    const expStr = bareExponentMatch[1];
+    let exponent = 1;
+    
+    if (expStr.startsWith('^')) {
+      exponent = parseInt(expStr.slice(1), 10);
+    } else {
+      // Parse superscript characters
+      const superscriptMap: Record<string, string> = {
+        '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
+        '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9',
+        '⁻': '-', '⁺': '+'
+      };
+      const normalized = expStr.split('').map(c => superscriptMap[c] || c).join('');
+      exponent = parseInt(normalized, 10);
+    }
+    
+    if (!isNaN(exponent)) {
+      return {
+        value: Math.pow(numValue, exponent),
+        originalValue: numValue,
+        categoryId: null,
+        unitId: null,
+        prefixId: 'none',
+        dimensions: {}
+      };
+    }
+  }
+  
   // If unit text looks like a dimensional formula, try parsing it as such
   if (unitText && looksLikeDimensionalFormula(unitText)) {
     const dimResult = parseDimensionalFormula(unitText);
