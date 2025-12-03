@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES, Prefix, findOptimalPrefix, parseUnitText, ParsedUnitResult } from '@/lib/conversion-data';
 import { UNIT_NAME_TRANSLATIONS, type SupportedLanguage } from '@/lib/localization';
+import { fixPrecision } from '@/lib/formatting';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -3735,22 +3736,26 @@ export default function UnitConverter() {
     });
   };
 
-  // Check if root operation would produce integer exponents
-  const canApplyRoot = (dimensions: DimensionalFormula, divisor: number): boolean => {
-    for (const exp of Object.values(dimensions)) {
-      if (exp % divisor !== 0) return false;
-    }
-    return true;
-  };
-
   // RPN unary operation types
   type RpnUnaryOp = 
-    | 'square' | 'cube' | 'pow4' | 'sqrt' | 'cbrt' | 'root4'
+    | 'square' | 'cube' | 'sqrt' | 'cbrt'
     | 'exp' | 'ln' | 'pow10' | 'log10' | 'pow2' | 'log2'
     | 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan'
     | 'sinh' | 'cosh' | 'tanh' | 'asinh' | 'acosh' | 'atanh'
     | 'rnd' | 'trunc' | 'floor' | 'ceil'
     | 'neg';
+  
+  // Helper to check if dimensions represent exactly radians (angle: 1, all others 0 or undefined)
+  const isRadians = (dimensions: DimensionalFormula): boolean => {
+    // Must have angle = 1
+    if (dimensions.angle !== 1) return false;
+    // All other dimensions must be 0 or undefined
+    for (const [key, value] of Object.entries(dimensions)) {
+      if (key === 'angle') continue;
+      if (value !== 0 && value !== undefined) return false;
+    }
+    return true;
+  };
 
   // Apply unary operation to RPN x register (stack[3])
   const applyRpnUnary = (op: RpnUnaryOp) => {
@@ -3762,78 +3767,65 @@ export default function UnitConverter() {
     let newDimensions: Record<string, number> = {};
     
     switch (op) {
-      // Power operations (modify dimensions)
+      // Power operations (multiply unit exponents)
       case 'square':
-        newValue = x.value * x.value;
+        newValue = fixPrecision(x.value * x.value);
         for (const [dim, exp] of Object.entries(x.dimensions)) {
           newDimensions[dim] = exp * 2;
         }
         break;
       case 'cube':
-        newValue = x.value * x.value * x.value;
+        newValue = fixPrecision(x.value * x.value * x.value);
         for (const [dim, exp] of Object.entries(x.dimensions)) {
           newDimensions[dim] = exp * 3;
         }
         break;
-      case 'pow4':
-        newValue = Math.pow(x.value, 4);
-        for (const [dim, exp] of Object.entries(x.dimensions)) {
-          newDimensions[dim] = exp * 4;
-        }
-        break;
       
-      // Root operations (modify dimensions, require integer result)
+      // Root operations - divide exponents with round-up for non-integer results
+      // Per user requirement: sqrt(m²)→m¹, sqrt(m³)→m², sqrt(m⁴)→m², cbrt(m³)→m¹, cbrt(m⁴)→m², etc.
       case 'sqrt':
         if (x.value < 0) return;
-        if (!canApplyRoot(x.dimensions, 2)) return;
-        newValue = Math.sqrt(x.value);
+        newValue = fixPrecision(Math.sqrt(x.value));
         for (const [dim, exp] of Object.entries(x.dimensions)) {
-          newDimensions[dim] = exp / 2;
+          // E/2, round up: E=2→1, E=3→2, E=4→2
+          newDimensions[dim] = Math.ceil(exp / 2);
         }
         break;
       case 'cbrt':
-        if (!canApplyRoot(x.dimensions, 3)) return;
-        newValue = Math.cbrt(x.value);
+        newValue = fixPrecision(Math.cbrt(x.value));
         for (const [dim, exp] of Object.entries(x.dimensions)) {
-          newDimensions[dim] = exp / 3;
-        }
-        break;
-      case 'root4':
-        if (x.value < 0) return;
-        if (!canApplyRoot(x.dimensions, 4)) return;
-        newValue = Math.pow(x.value, 0.25);
-        for (const [dim, exp] of Object.entries(x.dimensions)) {
-          newDimensions[dim] = exp / 4;
+          // E/3, round up: E=1,2,3→1, E=4,5→2
+          newDimensions[dim] = Math.ceil(exp / 3);
         }
         break;
       
-      // Exponential/logarithmic (require dimensionless, output dimensionless)
+      // Exponential/logarithmic (operate on numeric value, pass units through)
       case 'exp':
-        if (!isDimensionless(x.dimensions)) return;
-        newValue = Math.exp(x.value);
+        newValue = fixPrecision(Math.exp(x.value));
+        newDimensions = { ...x.dimensions };
         break;
       case 'ln':
-        if (!isDimensionless(x.dimensions)) return;
         if (x.value <= 0) return;
-        newValue = Math.log(x.value);
+        newValue = fixPrecision(Math.log(x.value));
+        newDimensions = { ...x.dimensions };
         break;
       case 'pow10':
-        if (!isDimensionless(x.dimensions)) return;
-        newValue = Math.pow(10, x.value);
+        newValue = fixPrecision(Math.pow(10, x.value));
+        newDimensions = { ...x.dimensions };
         break;
       case 'log10':
-        if (!isDimensionless(x.dimensions)) return;
         if (x.value <= 0) return;
-        newValue = Math.log10(x.value);
+        newValue = fixPrecision(Math.log10(x.value));
+        newDimensions = { ...x.dimensions };
         break;
       case 'pow2':
-        if (!isDimensionless(x.dimensions)) return;
-        newValue = Math.pow(2, x.value);
+        newValue = fixPrecision(Math.pow(2, x.value));
+        newDimensions = { ...x.dimensions };
         break;
       case 'log2':
-        if (!isDimensionless(x.dimensions)) return;
         if (x.value <= 0) return;
-        newValue = Math.log2(x.value);
+        newValue = fixPrecision(Math.log2(x.value));
+        newDimensions = { ...x.dimensions };
         break;
       
       // Rounding functions (use precision setting, preserve dimensions)
@@ -3875,104 +3867,138 @@ export default function UnitConverter() {
         break;
       }
       
-      // Sign change - negate the value, preserve dimensions
+      // Sign change - negate the value, preserve X's dimensions
       case 'neg': {
         newValue = -x.value;
         newDimensions = { ...x.dimensions };
         break;
       }
       
-      // Trigonometric functions - strip rad/sr if present, otherwise preserve dimensions
-      // e.g., rad → dimensionless, m² → m² (apply to numeric only)
+      // Forward trigonometric functions:
+      // - If input is rad → output is unitless
+      // - Otherwise → preserve input units (operate on numeric only)
       case 'sin': {
-        newValue = Math.sin(x.value);
-        // Strip any angle/solid_angle dimensions present, preserve other dimensions
-        newDimensions = { ...x.dimensions };
-        delete newDimensions.angle;
-        delete newDimensions.solid_angle;
+        newValue = fixPrecision(Math.sin(x.value));
+        if (isRadians(x.dimensions)) {
+          newDimensions = {}; // unitless output
+        } else {
+          newDimensions = { ...x.dimensions }; // preserve input units
+        }
         break;
       }
       case 'cos': {
-        newValue = Math.cos(x.value);
-        // Strip any angle/solid_angle dimensions present, preserve other dimensions
-        newDimensions = { ...x.dimensions };
-        delete newDimensions.angle;
-        delete newDimensions.solid_angle;
+        newValue = fixPrecision(Math.cos(x.value));
+        if (isRadians(x.dimensions)) {
+          newDimensions = {}; // unitless output
+        } else {
+          newDimensions = { ...x.dimensions }; // preserve input units
+        }
         break;
       }
       case 'tan': {
-        newValue = Math.tan(x.value);
-        // Strip any angle/solid_angle dimensions present, preserve other dimensions
-        newDimensions = { ...x.dimensions };
-        delete newDimensions.angle;
-        delete newDimensions.solid_angle;
+        newValue = fixPrecision(Math.tan(x.value));
+        if (isRadians(x.dimensions)) {
+          newDimensions = {}; // unitless output
+        } else {
+          newDimensions = { ...x.dimensions }; // preserve input units
+        }
         break;
       }
       
-      // Inverse trig functions - add rad dimension, preserve other dimensions
+      // Inverse trig functions:
+      // - If input is unitless → output is rad
+      // - Otherwise → preserve input units (operate on numeric only)
       case 'asin': {
         if (x.value < -1 || x.value > 1) return;
-        newValue = Math.asin(x.value);
-        newDimensions = { ...x.dimensions, angle: (x.dimensions.angle || 0) + 1 };
-        if (newDimensions.angle === 0) delete newDimensions.angle;
+        newValue = fixPrecision(Math.asin(x.value));
+        if (isDimensionless(x.dimensions)) {
+          newDimensions = { angle: 1 }; // output rad
+        } else {
+          newDimensions = { ...x.dimensions }; // preserve input units
+        }
         break;
       }
       case 'acos': {
         if (x.value < -1 || x.value > 1) return;
-        newValue = Math.acos(x.value);
-        newDimensions = { ...x.dimensions, angle: (x.dimensions.angle || 0) + 1 };
-        if (newDimensions.angle === 0) delete newDimensions.angle;
+        newValue = fixPrecision(Math.acos(x.value));
+        if (isDimensionless(x.dimensions)) {
+          newDimensions = { angle: 1 }; // output rad
+        } else {
+          newDimensions = { ...x.dimensions }; // preserve input units
+        }
         break;
       }
       case 'atan': {
-        newValue = Math.atan(x.value);
-        newDimensions = { ...x.dimensions, angle: (x.dimensions.angle || 0) + 1 };
-        if (newDimensions.angle === 0) delete newDimensions.angle;
+        newValue = fixPrecision(Math.atan(x.value));
+        if (isDimensionless(x.dimensions)) {
+          newDimensions = { angle: 1 }; // output rad
+        } else {
+          newDimensions = { ...x.dimensions }; // preserve input units
+        }
         break;
       }
       
-      // Hyperbolic functions - same behavior as trig: strip rad/sr if present, preserve other dimensions
+      // Forward hyperbolic functions:
+      // - If input is rad → output is unitless
+      // - Otherwise → preserve input units (operate on numeric only)
       case 'sinh': {
-        newValue = Math.sinh(x.value);
-        newDimensions = { ...x.dimensions };
-        delete newDimensions.angle;
-        delete newDimensions.solid_angle;
+        newValue = fixPrecision(Math.sinh(x.value));
+        if (isRadians(x.dimensions)) {
+          newDimensions = {}; // unitless output
+        } else {
+          newDimensions = { ...x.dimensions }; // preserve input units
+        }
         break;
       }
       case 'cosh': {
-        newValue = Math.cosh(x.value);
-        newDimensions = { ...x.dimensions };
-        delete newDimensions.angle;
-        delete newDimensions.solid_angle;
+        newValue = fixPrecision(Math.cosh(x.value));
+        if (isRadians(x.dimensions)) {
+          newDimensions = {}; // unitless output
+        } else {
+          newDimensions = { ...x.dimensions }; // preserve input units
+        }
         break;
       }
       case 'tanh': {
-        newValue = Math.tanh(x.value);
-        newDimensions = { ...x.dimensions };
-        delete newDimensions.angle;
-        delete newDimensions.solid_angle;
+        newValue = fixPrecision(Math.tanh(x.value));
+        if (isRadians(x.dimensions)) {
+          newDimensions = {}; // unitless output
+        } else {
+          newDimensions = { ...x.dimensions }; // preserve input units
+        }
         break;
       }
       
-      // Inverse hyperbolic functions - add rad dimension, preserve other dimensions
+      // Inverse hyperbolic functions:
+      // - If input is unitless → output is rad
+      // - Otherwise → preserve input units (operate on numeric only)
       case 'asinh': {
-        newValue = Math.asinh(x.value);
-        newDimensions = { ...x.dimensions, angle: (x.dimensions.angle || 0) + 1 };
-        if (newDimensions.angle === 0) delete newDimensions.angle;
+        newValue = fixPrecision(Math.asinh(x.value));
+        if (isDimensionless(x.dimensions)) {
+          newDimensions = { angle: 1 }; // output rad
+        } else {
+          newDimensions = { ...x.dimensions }; // preserve input units
+        }
         break;
       }
       case 'acosh': {
         if (x.value < 1) return;
-        newValue = Math.acosh(x.value);
-        newDimensions = { ...x.dimensions, angle: (x.dimensions.angle || 0) + 1 };
-        if (newDimensions.angle === 0) delete newDimensions.angle;
+        newValue = fixPrecision(Math.acosh(x.value));
+        if (isDimensionless(x.dimensions)) {
+          newDimensions = { angle: 1 }; // output rad
+        } else {
+          newDimensions = { ...x.dimensions }; // preserve input units
+        }
         break;
       }
       case 'atanh': {
         if (x.value <= -1 || x.value >= 1) return;
-        newValue = Math.atanh(x.value);
-        newDimensions = { ...x.dimensions, angle: (x.dimensions.angle || 0) + 1 };
-        if (newDimensions.angle === 0) delete newDimensions.angle;
+        newValue = fixPrecision(Math.atanh(x.value));
+        if (isDimensionless(x.dimensions)) {
+          newDimensions = { angle: 1 }; // output rad
+        } else {
+          newDimensions = { ...x.dimensions }; // preserve input units
+        }
         break;
       }
       
@@ -4032,28 +4058,28 @@ export default function UnitConverter() {
     let newDimensions: Record<string, number> = {};
     
     switch (op) {
-      // Numeric-only operations (preserve y's dimensions)
+      // Numeric-only operations (preserve X's dimensions)
       case 'mul':
-        newValue = y.value * x.value;
-        newDimensions = { ...y.dimensions };
+        newValue = fixPrecision(y.value * x.value);
+        newDimensions = { ...x.dimensions };
         break;
       case 'div':
         if (x.value === 0) return; // Prevent division by zero
-        newValue = y.value / x.value;
-        newDimensions = { ...y.dimensions };
+        newValue = fixPrecision(y.value / x.value);
+        newDimensions = { ...x.dimensions };
         break;
       case 'add':
-        newValue = y.value + x.value;
-        newDimensions = { ...y.dimensions };
+        newValue = fixPrecision(y.value + x.value);
+        newDimensions = { ...x.dimensions };
         break;
       case 'sub':
-        newValue = y.value - x.value;
-        newDimensions = { ...y.dimensions };
+        newValue = fixPrecision(y.value - x.value);
+        newDimensions = { ...x.dimensions };
         break;
       
       // Unit-aware operations
       case 'mulUnit':
-        newValue = y.value * x.value;
+        newValue = fixPrecision(y.value * x.value);
         // Multiply dimensions: add exponents
         // First copy y's dimensions
         for (const dim of Object.keys(y.dimensions)) {
@@ -4067,7 +4093,7 @@ export default function UnitConverter() {
         break;
       case 'divUnit':
         if (x.value === 0) return; // Prevent division by zero
-        newValue = y.value / x.value;
+        newValue = fixPrecision(y.value / x.value);
         // Divide dimensions: subtract exponents
         // First copy y's dimensions
         for (const dim of Object.keys(y.dimensions)) {
@@ -4085,7 +4111,7 @@ export default function UnitConverter() {
             !isDimensionless(y.dimensions) && !isDimensionless(x.dimensions)) {
           return;
         }
-        newValue = y.value + x.value;
+        newValue = fixPrecision(y.value + x.value);
         // Use the non-dimensionless one, or x if both have dimensions
         newDimensions = isDimensionless(x.dimensions) ? { ...y.dimensions } : { ...x.dimensions };
         break;
@@ -4095,7 +4121,7 @@ export default function UnitConverter() {
             !isDimensionless(y.dimensions) && !isDimensionless(x.dimensions)) {
           return;
         }
-        newValue = y.value - x.value;
+        newValue = fixPrecision(y.value - x.value);
         // Use the non-dimensionless one, or x if both have dimensions
         newDimensions = isDimensionless(x.dimensions) ? { ...y.dimensions } : { ...x.dimensions };
         break;
@@ -5877,8 +5903,9 @@ export default function UnitConverter() {
             {/* s3 field (top) with button grid */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(${RpnBtnCount}, ${RpnBtnWidth})` }}
+              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} repeat(${RpnBtnCount}, ${RpnBtnWidth})` }}
             >
+              <span className="text-[10px] font-mono text-muted-foreground text-right">{shiftActive ? 'S.3' : 's.3'}</span>
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => rpnStack[0] && copyRpnField(0)}
@@ -5911,16 +5938,16 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Power/Root/Exp/Log buttons for s3 row */}
+              {/* Power/Root/Exp/Log buttons for s.3 row */}
               {(() => {
                 const s3Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number }> = [
-                  { label: 'x²', shiftLabel: '√', op: 'square', shiftOp: 'sqrt' },
-                  { label: 'x³', shiftLabel: '∛', op: 'cube', shiftOp: 'cbrt' },
-                  { label: 'x⁴', shiftLabel: '∜', op: 'pow4', shiftOp: 'root4' },
+                  { label: 'x²ᵤ', shiftLabel: '√ᵤ', op: 'square', shiftOp: 'sqrt' },
+                  { label: 'x³ᵤ', shiftLabel: '∛ᵤ', op: 'cube', shiftOp: 'cbrt' },
                   { label: 'eˣ', shiftLabel: 'ln', op: 'exp', shiftOp: 'ln' },
                   { label: '10ˣ', shiftLabel: 'log₁₀', op: 'pow10', shiftOp: 'log10' },
                   { label: '2ˣ', shiftLabel: 'log₂', op: 'pow2', shiftOp: 'log2' },
                   { label: 'rnd', shiftLabel: 'trunc', op: 'rnd', shiftOp: 'trunc' },
+                  { label: 'neg', shiftLabel: 'neg', op: 'neg', shiftOp: 'neg' },
                   { label: 'π', shiftLabel: '1/π', isConstant: true, value: Math.PI, shiftValue: 1/Math.PI },
                 ];
                 return s3Buttons.map((btn, i) => {
@@ -5957,8 +5984,9 @@ export default function UnitConverter() {
             {/* s2 field with button grid */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(${RpnBtnCount}, ${RpnBtnWidth})` }}
+              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} repeat(${RpnBtnCount}, ${RpnBtnWidth})` }}
             >
+              <span className="text-[10px] font-mono text-muted-foreground text-right">{shiftActive ? 'S.2' : 's.2'}</span>
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => rpnStack[1] && copyRpnField(1)}
@@ -6037,8 +6065,9 @@ export default function UnitConverter() {
             {/* y field with button grid */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(${RpnBtnCount}, ${RpnBtnWidth})` }}
+              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} repeat(${RpnBtnCount}, ${RpnBtnWidth})` }}
             >
+              <span className="text-[10px] font-mono text-muted-foreground text-right">{shiftActive ? 'Y' : 'y'}</span>
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => rpnStack[2] && copyRpnField(2)}
@@ -6128,8 +6157,9 @@ export default function UnitConverter() {
             {/* x field (result) with prefix and unit dropdowns */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `${CommonFieldWidth} 50px 1fr` }}
+              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} 50px 1fr` }}
             >
+              <span className="text-[10px] font-mono text-muted-foreground text-right">{shiftActive ? 'X' : 'x'}</span>
               <motion.div 
                 className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between select-none ${rpnStack[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
                 style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
@@ -6242,8 +6272,10 @@ export default function UnitConverter() {
             {/* Bottom row: empty spacer, Shift under prefix, Push/Pop under unit select, Copy right */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `${CommonFieldWidth} 50px 1fr` }}
+              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} 50px 1fr` }}
             >
+              {/* Column 0: empty label spacer */}
+              <div />
               {/* Column 1: empty spacer (under result field) */}
               <div />
               {/* Column 2 (50px, under prefix dropdown): Shift button */}
