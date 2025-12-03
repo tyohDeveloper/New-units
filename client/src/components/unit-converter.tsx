@@ -3796,7 +3796,7 @@ export default function UnitConverter() {
 
   // RPN unary operation types
   type RpnUnaryOp = 
-    | 'square' | 'cube' | 'sqrt' | 'cbrt'
+    | 'square' | 'cube' | 'sqrt' | 'cbrt' | 'recip'
     | 'exp' | 'ln' | 'pow10' | 'log10' | 'pow2' | 'log2'
     | 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan'
     | 'sinh' | 'cosh' | 'tanh' | 'asinh' | 'acosh' | 'atanh'
@@ -3938,6 +3938,16 @@ export default function UnitConverter() {
       case 'abs': {
         newValue = Math.abs(x.value);
         newDimensions = { ...x.dimensions };
+        break;
+      }
+      
+      // Reciprocal - 1/x, inverts unit exponents
+      case 'recip': {
+        if (x.value === 0) return; // Division by zero
+        newValue = fixPrecision(1 / x.value);
+        for (const [dim, exp] of Object.entries(x.dimensions)) {
+          newDimensions[dim] = -exp;
+        }
         break;
       }
       
@@ -4094,7 +4104,7 @@ export default function UnitConverter() {
   };
 
   // RPN binary operation types
-  type RpnBinaryOp = 'mul' | 'div' | 'add' | 'sub' | 'mulUnit' | 'divUnit' | 'addUnit' | 'subUnit';
+  type RpnBinaryOp = 'mul' | 'div' | 'add' | 'sub' | 'mulUnit' | 'divUnit' | 'addUnit' | 'subUnit' | 'pow';
 
   // Check if binary operation can be performed
   const canApplyRpnBinary = (op: RpnBinaryOp): boolean => {
@@ -4195,6 +4205,24 @@ export default function UnitConverter() {
         // Use the non-dimensionless one, or x if both have dimensions
         newDimensions = isDimensionless(x.dimensions) ? { ...y.dimensions } : { ...x.dimensions };
         break;
+      
+      // Power: y^x - x must be dimensionless, result dimensions are y's dimensions multiplied by x
+      case 'pow': {
+        // x (exponent) must be dimensionless for physical meaning
+        if (!isDimensionless(x.dimensions)) return;
+        // Handle special cases
+        if (y.value === 0 && x.value < 0) return; // 0 to negative power is undefined
+        if (y.value < 0 && !Number.isInteger(x.value)) return; // Negative base with non-integer exponent
+        newValue = fixPrecision(Math.pow(y.value, x.value));
+        // Multiply y's dimension exponents by x (the power)
+        for (const [dim, exp] of Object.entries(y.dimensions)) {
+          const newExp = exp * x.value;
+          if (newExp !== 0) {
+            newDimensions[dim] = newExp;
+          }
+        }
+        break;
+      }
       
       default:
         return;
@@ -5547,7 +5575,7 @@ export default function UnitConverter() {
                 className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
                 onClick={() => calculatorMode === 'simple' ? switchToRpn() : switchToSimple()}
               >
-                {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR')}
+                {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') + ' ⇅' : t('CALCULATOR') + ' ⇅'}
               </Label>
               {/* Clear button - different function for each mode */}
               {calculatorMode === 'simple' ? (
@@ -6029,12 +6057,11 @@ export default function UnitConverter() {
                 </Select>
               </div>
             </div>
-            {/* s3 field (top) with button grid - 7 buttons */}
+            {/* s3 field (top) with button grid - 8 buttons */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} repeat(7, ${RpnBtnWidth})` }}
+              style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(8, ${RpnBtnWidth})` }}
             >
-              <span className="text-[10px] font-mono text-muted-foreground text-right">{shiftActive ? 'S.3' : 's.3'}</span>
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => rpnStack[0] && copyRpnField(0)}
@@ -6067,10 +6094,11 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Power/Root/Exp/Log buttons for s.3 row (7 buttons) */}
+              {/* Power/Root/Exp/Log buttons for s.3 row (8 buttons) */}
               {(() => {
-                const s3Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number }> = [
+                const s3Buttons: Array<{ label: string; shiftLabel: string; op?: RpnUnaryOp; shiftOp?: RpnUnaryOp; binaryOp?: RpnBinaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number }> = [
                   { label: 'x²ᵤ', shiftLabel: '√ᵤ', op: 'square', shiftOp: 'sqrt' },
+                  { label: '1/x', shiftLabel: 'yˣ', op: 'recip', binaryOp: 'pow' },
                   { label: '+/−', shiftLabel: 'ABS', op: 'neg', shiftOp: 'abs' },
                   { label: 'eˣ', shiftLabel: 'ln', op: 'exp', shiftOp: 'ln' },
                   { label: '10ˣ', shiftLabel: 'log₁₀', op: 'pow10', shiftOp: 'log10' },
@@ -6080,9 +6108,14 @@ export default function UnitConverter() {
                 ];
                 return s3Buttons.map((btn, i) => {
                   const hasOp = 'op' in btn;
+                  const hasBinaryOp = 'binaryOp' in btn;
                   const isConstant = 'isConstant' in btn;
-                  const currentOp = hasOp ? (shiftActive ? btn.shiftOp : btn.op) : undefined;
-                  const isDisabled = hasOp && !rpnStack[3];
+                  const currentOp = hasOp ? (shiftActive && btn.shiftOp ? btn.shiftOp : btn.op) : undefined;
+                  const currentBinaryOp = hasBinaryOp && shiftActive ? btn.binaryOp : undefined;
+                  // Disable unary ops when x is empty, binary ops when x or y is empty
+                  const isDisabled = currentBinaryOp 
+                    ? !canApplyRpnBinary(currentBinaryOp)
+                    : (hasOp && !rpnStack[3]);
                   return (
                     <Button 
                       key={`s3-btn-${i}`} 
@@ -6096,6 +6129,8 @@ export default function UnitConverter() {
                           } else {
                             pushRpnConstant(btn.value);
                           }
+                        } else if (currentBinaryOp) {
+                          applyRpnBinary(currentBinaryOp);
                         } else if (currentOp) {
                           applyRpnUnary(currentOp);
                         }
@@ -6109,12 +6144,11 @@ export default function UnitConverter() {
               })()}
             </div>
 
-            {/* s2 field with button grid */}
+            {/* s2 field with button grid - 8 buttons */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} repeat(${RpnBtnCount}, ${RpnBtnWidth})` }}
+              style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(8, ${RpnBtnWidth})` }}
             >
-              <span className="text-[10px] font-mono text-muted-foreground text-right">{shiftActive ? 'S.2' : 's.2'}</span>
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => rpnStack[1] && copyRpnField(1)}
@@ -6147,7 +6181,7 @@ export default function UnitConverter() {
                   })() : ''}
                 </span>
               </motion.div>
-              {/* Trig/Hyperbolic buttons for s2 row */}
+              {/* Trig/Hyperbolic buttons for s2 row - 8 buttons */}
               {(() => {
                 const s2Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number }> = [
                   { label: 'sin', shiftLabel: 'asin', op: 'sin', shiftOp: 'asin' },
@@ -6157,7 +6191,7 @@ export default function UnitConverter() {
                   { label: 'cosh', shiftLabel: 'acosh', op: 'cosh', shiftOp: 'acosh' },
                   { label: 'tanh', shiftLabel: 'atanh', op: 'tanh', shiftOp: 'atanh' },
                   { label: '⌊x⌋', shiftLabel: '⌈x⌉', op: 'floor', shiftOp: 'ceil' },
-                  { label: 'ℯ', shiftLabel: '1/ℯ', isConstant: true, value: Math.E, shiftValue: 1/Math.E },
+                  { label: 'ℯ', shiftLabel: 'ℯ⁻¹', isConstant: true, value: Math.E, shiftValue: 1/Math.E },
                 ];
                 return s2Buttons.map((btn, i) => {
                   const hasOp = 'op' in btn;
@@ -6190,12 +6224,11 @@ export default function UnitConverter() {
               })()}
             </div>
 
-            {/* y field with button grid */}
+            {/* y field with button grid - 8 buttons */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} repeat(${RpnBtnCount}, ${RpnBtnWidth})` }}
+              style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(8, ${RpnBtnWidth})` }}
             >
-              <span className="text-[10px] font-mono text-muted-foreground text-right">{shiftActive ? 'Y' : 'y'}</span>
               <motion.div 
                 className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
                 onClick={() => rpnStack[2] && copyRpnField(2)}
@@ -6232,9 +6265,9 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className={`text-xs font-mono w-full border !border-border/30 ${!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
+                className={`text-xs font-mono w-full border !border-border/30 ${shiftActive && !rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                 style={{ gridColumn: 'span 2' }}
-                disabled={!rpnStack[3]}
+                disabled={shiftActive && !rpnStack[3]}
                 onClick={() => shiftActive ? dropRpnStack() : pushToRpnStack()}
               >
                 {shiftActive ? 'drop↓' : 'enter↑'}
@@ -6286,9 +6319,8 @@ export default function UnitConverter() {
             {/* x field (result) with prefix and unit dropdowns - editable with parseUnitText */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} 50px 1fr` }}
+              style={{ gridTemplateColumns: `${CommonFieldWidth} 50px 1fr` }}
             >
-              <span className="text-[10px] font-mono text-muted-foreground text-right">{shiftActive ? 'X' : 'x'}</span>
               {rpnXEditing ? (
                 <input
                   type="text"
