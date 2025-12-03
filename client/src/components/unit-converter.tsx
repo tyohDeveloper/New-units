@@ -5601,7 +5601,7 @@ export default function UnitConverter() {
                   className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
                   onClick={() => switchToSimple()}
                 >
-                  {t('CALCULATOR - RPN') + ' ⇅'}
+                  {t('CALCULATOR - RPN')}
                 </Label>
                 <div className="flex items-center gap-1">
                   <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
@@ -5622,17 +5622,15 @@ export default function UnitConverter() {
                   </Select>
                 </div>
               </div>
-              {/* Column 2: Clear calculator - right-aligned with x² button */}
-              <div className="flex justify-end">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={clearRpnStack}
-                  className="text-xs text-muted-foreground hover:text-foreground border !border-border/30"
-                >
-                  {t('Clear calculator')}
-                </Button>
-              </div>
+              {/* Column 2: Clear calculator - left-aligned with x² button */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={clearRpnStack}
+                className="text-xs text-muted-foreground hover:text-foreground border !border-border/30"
+              >
+                {t('Clear calculator')}
+              </Button>
               {/* Spacer columns 3-7 */}
               <span style={{ gridColumn: 'span 6' }}></span>
               {/* Column 9: Paste - far right */}
