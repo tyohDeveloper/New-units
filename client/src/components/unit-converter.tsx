@@ -5595,26 +5595,34 @@ export default function UnitConverter() {
               className="grid gap-2 mb-4 items-center"
               style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(8, ${RpnBtnWidth})` }}
             >
-              {/* Precision - aligned over stack field */}
-              <div className="flex items-center gap-2">
-                <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
-                <Select 
-                  value={calculatorPrecision.toString()} 
-                  onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
+              {/* Column 1: Calculator label (far left) and Precision (right-aligned) */}
+              <div className="flex items-center justify-between">
+                <Label 
+                  className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
+                  onClick={() => switchToSimple()}
                 >
-                  <SelectTrigger className="h-8 w-[50px] text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent align="start">
-                    {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(p => (
-                      <SelectItem key={p} value={p.toString()} className="text-xs">
-                        {numberFormat === 'arabic' ? toArabicNumerals(p.toString()) : p}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  {t('CALCULATOR - RPN') + ' ⇅'}
+                </Label>
+                <div className="flex items-center gap-1">
+                  <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
+                  <Select 
+                    value={calculatorPrecision.toString()} 
+                    onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
+                  >
+                    <SelectTrigger className="h-8 w-[50px] text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent align="end">
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(p => (
+                        <SelectItem key={p} value={p.toString()} className="text-xs">
+                          {numberFormat === 'arabic' ? toArabicNumerals(p.toString()) : p}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              {/* Clear calculator - aligned left above key grid */}
+              {/* Column 2: Clear calculator - left-aligned above key grid */}
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -5623,15 +5631,9 @@ export default function UnitConverter() {
               >
                 {t('Clear calculator')}
               </Button>
-              {/* Spacer columns */}
-              <span style={{ gridColumn: 'span 4' }}></span>
-              {/* Calculator label and Paste - far right */}
-              <Label 
-                className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30 text-center"
-                onClick={() => switchToSimple()}
-              >
-                {t('CALCULATOR - RPN') + ' ⇅'}
-              </Label>
+              {/* Spacer columns 3-7 */}
+              <span style={{ gridColumn: 'span 6' }}></span>
+              {/* Column 9: Paste - far right */}
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -6495,23 +6497,13 @@ export default function UnitConverter() {
               )}
             </div>
 
-            {/* Bottom row: Shift, Clear x, Clear unit, and Copy aligned with x row */}
+            {/* Bottom row: Clear x/unit under stack field, Shift under key grid, Copy far right */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `${CommonFieldWidth} 50px 1fr` }}
+              style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(8, ${RpnBtnWidth})` }}
             >
-              {/* Under result field: Shift and Clear buttons */}
-              <div className="flex items-center gap-2">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setShiftActive(!shiftActive)}
-                  className={`text-xs font-mono border !border-border/30 ${shiftActive ? 'bg-accent !text-accent-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                  data-testid="button-shift"
-                  aria-pressed={shiftActive}
-                >
-                  {shiftActive ? 'SHIFT' : 'Shift'}
-                </Button>
+              {/* Column 1: Clear x (left) and Clear unit (right) under stack field */}
+              <div className="flex items-center justify-between">
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -6549,21 +6541,30 @@ export default function UnitConverter() {
                   {t('Clear unit')}
                 </Button>
               </div>
-              {/* Empty spacer under prefix */}
-              <div />
-              {/* Copy right-justified under unit select */}
-              <div className="flex items-center justify-end">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={copyRpnResult}
-                  disabled={!rpnStack[3]}
-                  className="text-xs text-muted-foreground hover:text-foreground gap-1 border !border-border/30"
-                >
-                  <Copy className="w-3 h-3" />
-                  {t('Copy')}
-                </Button>
-              </div>
+              {/* Column 2: Shift - left-aligned with key grid */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShiftActive(!shiftActive)}
+                className={`text-xs font-mono border !border-border/30 ${shiftActive ? 'bg-accent !text-accent-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                data-testid="button-shift"
+                aria-pressed={shiftActive}
+              >
+                {shiftActive ? 'SHIFT' : 'Shift'}
+              </Button>
+              {/* Spacer columns 3-8 */}
+              <span style={{ gridColumn: 'span 6' }}></span>
+              {/* Column 9: Copy - far right */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={copyRpnResult}
+                disabled={!rpnStack[3]}
+                className="text-xs text-muted-foreground hover:text-foreground gap-1 border !border-border/30"
+              >
+                <Copy className="w-3 h-3" />
+                {t('Copy')}
+              </Button>
             </div>
           </div>
           )}
