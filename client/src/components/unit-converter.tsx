@@ -5347,10 +5347,10 @@ export default function UnitConverter() {
                 <div key={unit} className="flex items-center gap-2">
                   <span className="text-xs w-32 text-right text-muted-foreground truncate" title={t(quantity)}>{t(quantity)}</span>
                   <div className="flex gap-0">
-                    {[-4, -3, -2, -1, 0, 1, 2, 3, 4, 5].map((exp) => {
+                    {[5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5].map((exp) => {
                       const superscripts: Record<number, string> = {
                         1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵',
-                        [-1]: '⁻¹', [-2]: '⁻²', [-3]: '⁻³', [-4]: '⁻⁴'
+                        [-1]: '⁻¹', [-2]: '⁻²', [-3]: '⁻³', [-4]: '⁻⁴', [-5]: '⁻⁵'
                       };
                       const label = exp === 0 ? '-' : `${unit}${superscripts[exp] || ''}`;
                       const isSelected = directExponents[unit] === exp;
@@ -5362,7 +5362,7 @@ export default function UnitConverter() {
                             isSelected 
                               ? 'bg-accent text-accent-foreground border-accent' 
                               : 'bg-background/30 border-border/50 hover:bg-muted/50 text-muted-foreground'
-                          } ${exp === -4 ? 'rounded-l' : ''} ${exp === 5 ? 'rounded-r' : ''}`}
+                          } ${exp === 5 ? 'rounded-l' : ''} ${exp === -5 ? 'rounded-r' : ''}`}
                           {...testId(`custom-exp-${unit}-${exp}`)}
                         >
                           {label}
