@@ -466,3 +466,107 @@ describe('Unit Symbol Uniqueness', () => {
     expect(symbolCategories.get('Po')?.length).toBe(1); // viscosity only
   });
 });
+
+describe('Smart Paste - Division and Compound Units', () => {
+  describe('Division Expressions', () => {
+    it('should parse "J/s" as power dimensions', () => {
+      const result = parseUnitText('657 J/s');
+      expect(result.originalValue).toBe(657);
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -3 });
+    });
+
+    it('should parse "m/s" as velocity dimensions', () => {
+      const result = parseUnitText('10 m/s');
+      expect(result.originalValue).toBe(10);
+      expect(result.dimensions).toEqual({ length: 1, time: -1 });
+    });
+
+    it('should parse "kg/m³" as density dimensions', () => {
+      const result = parseUnitText('1000 kg/m³');
+      expect(result.originalValue).toBe(1000);
+      expect(result.dimensions).toEqual({ mass: 1, length: -3 });
+    });
+
+    it('should parse "N/m²" as pressure dimensions', () => {
+      const result = parseUnitText('101325 N/m²');
+      expect(result.originalValue).toBe(101325);
+      expect(result.dimensions).toEqual({ mass: 1, length: -1, time: -2 });
+    });
+
+    it('should parse "141/s" as frequency dimensions', () => {
+      const result = parseUnitText('141/s');
+      expect(result.originalValue).toBe(141);
+      expect(result.dimensions).toEqual({ time: -1 });
+    });
+  });
+
+  describe('Negative Exponents', () => {
+    it('should parse "s^-1" as frequency dimensions', () => {
+      const result = parseUnitText('141 s^-1');
+      expect(result.originalValue).toBe(141);
+      expect(result.dimensions).toEqual({ time: -1 });
+    });
+
+    it('should parse superscript "s⁻¹" as frequency dimensions', () => {
+      const result = parseUnitText('141 s⁻¹');
+      expect(result.originalValue).toBe(141);
+      expect(result.dimensions).toEqual({ time: -1 });
+    });
+  });
+
+  describe('Multiplication Expressions', () => {
+    it('should parse "J*s" as action dimensions', () => {
+      const result = parseUnitText('123 J*s');
+      expect(result.originalValue).toBe(123);
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -1 });
+    });
+
+    it('should parse "N⋅m" as torque dimensions', () => {
+      const result = parseUnitText('50 N⋅m');
+      expect(result.originalValue).toBe(50);
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -2 });
+    });
+  });
+
+  describe('Core Category Priority (First-Wins)', () => {
+    it('should parse "yd" as length, not shipping', () => {
+      const result = parseUnitText('2.7432 yd');
+      expect(result.categoryId).toBe('length');
+      expect(result.dimensions).toEqual({ length: 1 });
+    });
+
+    it('should parse "m" as length, not typography', () => {
+      const result = parseUnitText('5 m');
+      expect(result.categoryId).toBe('length');
+      expect(result.dimensions).toEqual({ length: 1 });
+    });
+
+    it('should parse "rad" as angle, not radiation dose', () => {
+      const result = parseUnitText('3.14159 rad');
+      expect(result.categoryId).toBe('angle');
+      expect(result.originalValue).toBeCloseTo(3.14159, 4);
+    });
+  });
+
+  describe('Multi-Division Expressions', () => {
+    it('should parse "kg/m/s" with multiple denominators', () => {
+      const result = parseUnitText('kg/m/s');
+      expect(result.dimensions).toEqual({ mass: 1, length: -1, time: -1 });
+    });
+
+    it('should parse "N·m/s²" with mixed operators', () => {
+      const result = parseUnitText('N·m/s²');
+      expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -4 });
+    });
+
+    it('should parse "kg/m³/s" correctly', () => {
+      const result = parseUnitText('kg/m³/s');
+      expect(result.dimensions).toEqual({ mass: 1, length: -3, time: -1 });
+    });
+
+    it('should parse "J/kg/K" as specific heat capacity', () => {
+      const result = parseUnitText('J/kg/K');
+      expect(result.dimensions).toEqual({ length: 2, time: -2, temperature: -1 });
+    });
+  });
+});

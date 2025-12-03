@@ -579,7 +579,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     baseSISymbol: "m²⋅s⁻²",
     units: [
       { id: "gy", name: "Gray", symbol: "Gy", factor: 1, allowPrefixes: true },
-      { id: "rad", name: "Rad", symbol: "rad", factor: 0.01 },
+      { id: "rad", name: "Rad (CGS)", symbol: "Rad", factor: 0.01 },
     ],
   },
   {
@@ -1507,19 +1507,24 @@ export interface ParsedUnitResult {
 
 // Build a lookup map for quick unit matching
 // Returns Map<symbol, {categoryId, unitId, allowPrefixes}>
+// First-wins: core categories (length, mass, time, etc.) are defined first in CONVERSION_DATA
+// and take priority over specialty categories (shipping, typography, etc.)
 export function buildUnitSymbolMap(): Map<string, { categoryId: UnitCategory; unitId: string; symbol: string; allowPrefixes: boolean; factor: number }> {
   const map = new Map();
   for (const category of CONVERSION_DATA) {
     for (const unit of category.units) {
       // Skip math functions as they're not units
       if (unit.mathFunction) continue;
-      map.set(unit.symbol, {
-        categoryId: category.id,
-        unitId: unit.id,
-        symbol: unit.symbol,
-        allowPrefixes: unit.allowPrefixes || false,
-        factor: unit.factor
-      });
+      // Only add if not already present (first wins - core categories take priority)
+      if (!map.has(unit.symbol)) {
+        map.set(unit.symbol, {
+          categoryId: category.id,
+          unitId: unit.id,
+          symbol: unit.symbol,
+          allowPrefixes: unit.allowPrefixes || false,
+          factor: unit.factor
+        });
+      }
     }
   }
   return map;
@@ -1777,6 +1782,74 @@ export interface ParsedDimensionalFormula {
   isValid: boolean;
 }
 
+// Helper function to process a single unit term and update dimensions/factor
+// signMultiplier: 1 for numerator terms, -1 for denominator terms
+function processTerm(
+  term: string,
+  signMultiplier: number,
+  dimensions: Record<string, number>,
+  factorRef: { value: number }
+): boolean {
+  const trimmedTerm = term.trim();
+  if (!trimmedTerm) return true;
+  
+  const [baseSymbol, exponent] = parseExponent(trimmedTerm);
+  const effectiveExponent = exponent * signMultiplier;
+  
+  // First try exact match with SI base units
+  if (SI_BASE_UNIT_MAP[baseSymbol]) {
+    const { dimension, factor: unitFactor } = SI_BASE_UNIT_MAP[baseSymbol];
+    dimensions[dimension] = (dimensions[dimension] || 0) + effectiveExponent;
+    factorRef.value *= Math.pow(unitFactor, effectiveExponent);
+    return true;
+  }
+  
+  // Try derived units (W, J, N, Pa, V, etc.)
+  if (SI_DERIVED_UNIT_MAP[baseSymbol]) {
+    const derived = SI_DERIVED_UNIT_MAP[baseSymbol];
+    for (const [dim, dimExp] of Object.entries(derived.dimensions)) {
+      dimensions[dim] = (dimensions[dim] || 0) + dimExp * effectiveExponent;
+    }
+    factorRef.value *= Math.pow(derived.factor, effectiveExponent);
+    return true;
+  }
+  
+  // Try with SI prefixes on base units
+  const sortedPrefixes = [...PREFIXES]
+    .filter(p => p.id !== 'none' && p.symbol)
+    .sort((a, b) => b.symbol.length - a.symbol.length);
+  
+  for (const prefix of sortedPrefixes) {
+    if (baseSymbol.startsWith(prefix.symbol)) {
+      const remainder = baseSymbol.slice(prefix.symbol.length);
+      if (SI_BASE_UNIT_MAP[remainder]) {
+        const { dimension, factor: unitFactor } = SI_BASE_UNIT_MAP[remainder];
+        dimensions[dimension] = (dimensions[dimension] || 0) + effectiveExponent;
+        factorRef.value *= Math.pow(prefix.factor * unitFactor, effectiveExponent);
+        return true;
+      }
+      // Also try derived units with prefixes (kW, MW, GJ, etc.)
+      if (SI_DERIVED_UNIT_MAP[remainder]) {
+        const derived = SI_DERIVED_UNIT_MAP[remainder];
+        for (const [dim, dimExp] of Object.entries(derived.dimensions)) {
+          dimensions[dim] = (dimensions[dim] || 0) + dimExp * effectiveExponent;
+        }
+        factorRef.value *= Math.pow(prefix.factor * derived.factor, effectiveExponent);
+        return true;
+      }
+    }
+  }
+  
+  // Special case: 'g' (gram) without 'k' prefix
+  if (baseSymbol === 'g') {
+    dimensions['mass'] = (dimensions['mass'] || 0) + effectiveExponent;
+    factorRef.value *= Math.pow(0.001, effectiveExponent); // gram to kg
+    return true;
+  }
+  
+  return false;
+}
+
 export function parseDimensionalFormula(formulaText: string): ParsedDimensionalFormula {
   const text = formulaText.trim();
   if (!text) {
@@ -1829,79 +1902,28 @@ export function parseDimensionalFormula(formulaText: string): ParsedDimensionalF
     };
   }
   
-  // Split by multiplication separators: ⋅, ·, *, ×, or whitespace between terms
-  const terms = text.split(/[⋅·*×]|\s+/).filter(t => t.trim());
-  
-  if (terms.length === 0) {
-    return { dimensions: {}, factor: 1, isValid: false };
-  }
+  // Handle division: split by '/' first to get numerator and denominator
+  const divisionParts = text.split('/');
   
   const dimensions: Record<string, number> = {};
-  let factor = 1;
+  const factorRef = { value: 1 };
   let allValid = true;
   
-  for (const term of terms) {
-    const trimmedTerm = term.trim();
-    if (!trimmedTerm) continue;
+  for (let partIndex = 0; partIndex < divisionParts.length; partIndex++) {
+    const part = divisionParts[partIndex].trim();
+    if (!part) continue;
     
-    const [baseSymbol, exponent] = parseExponent(trimmedTerm);
+    // partIndex 0 is numerator (positive exponents), rest are denominators (negative exponents)
+    const signMultiplier = partIndex === 0 ? 1 : -1;
     
-    // Try to match against SI base units (with potential prefixes)
-    let matched = false;
+    // Split each part by multiplication separators: ⋅, ·, *, ×, or whitespace between terms
+    const terms = part.split(/[⋅·*×]|\s+/).filter(t => t.trim());
     
-    // First try exact match with SI base units
-    if (SI_BASE_UNIT_MAP[baseSymbol]) {
-      const { dimension, factor: unitFactor } = SI_BASE_UNIT_MAP[baseSymbol];
-      dimensions[dimension] = (dimensions[dimension] || 0) + exponent;
-      factor *= Math.pow(unitFactor, exponent);
-      matched = true;
-    } else if (SI_DERIVED_UNIT_MAP[baseSymbol]) {
-      // Try derived units (W, J, N, Pa, V, etc.)
-      const derived = SI_DERIVED_UNIT_MAP[baseSymbol];
-      for (const [dim, dimExp] of Object.entries(derived.dimensions)) {
-        dimensions[dim] = (dimensions[dim] || 0) + dimExp * exponent;
+    for (const term of terms) {
+      const matched = processTerm(term, signMultiplier, dimensions, factorRef);
+      if (!matched) {
+        allValid = false;
       }
-      factor *= Math.pow(derived.factor, exponent);
-      matched = true;
-    } else {
-      // Try with SI prefixes on base units
-      const sortedPrefixes = [...PREFIXES]
-        .filter(p => p.id !== 'none' && p.symbol)
-        .sort((a, b) => b.symbol.length - a.symbol.length);
-      
-      for (const prefix of sortedPrefixes) {
-        if (baseSymbol.startsWith(prefix.symbol)) {
-          const remainder = baseSymbol.slice(prefix.symbol.length);
-          if (SI_BASE_UNIT_MAP[remainder]) {
-            const { dimension, factor: unitFactor } = SI_BASE_UNIT_MAP[remainder];
-            dimensions[dimension] = (dimensions[dimension] || 0) + exponent;
-            factor *= Math.pow(prefix.factor * unitFactor, exponent);
-            matched = true;
-            break;
-          }
-          // Also try derived units with prefixes (kW, MW, GJ, etc.)
-          if (SI_DERIVED_UNIT_MAP[remainder]) {
-            const derived = SI_DERIVED_UNIT_MAP[remainder];
-            for (const [dim, dimExp] of Object.entries(derived.dimensions)) {
-              dimensions[dim] = (dimensions[dim] || 0) + dimExp * exponent;
-            }
-            factor *= Math.pow(prefix.factor * derived.factor, exponent);
-            matched = true;
-            break;
-          }
-        }
-      }
-      
-      // Special case: 'g' (gram) without 'k' prefix
-      if (!matched && baseSymbol === 'g') {
-        dimensions['mass'] = (dimensions['mass'] || 0) + exponent;
-        factor *= Math.pow(0.001, exponent); // gram to kg
-        matched = true;
-      }
-    }
-    
-    if (!matched) {
-      allValid = false;
     }
   }
   
@@ -1914,7 +1936,7 @@ export function parseDimensionalFormula(formulaText: string): ParsedDimensionalF
   
   return {
     dimensions,
-    factor,
+    factor: factorRef.value,
     isValid: allValid && Object.keys(dimensions).length > 0
   };
 }
@@ -1924,7 +1946,11 @@ export function looksLikeDimensionalFormula(text: string): boolean {
   const trimmed = text.trim();
   
   // Contains multiplication separator
-  if (/[⋅·×]/.test(trimmed)) return true;
+  if (/[⋅·×*]/.test(trimmed)) return true;
+  
+  // Contains division separator (but not just a single unit)
+  // e.g., "J/s", "m/s", "kg/m³"
+  if (trimmed.includes('/')) return true;
   
   // Contains superscript exponents
   if (/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]/.test(trimmed)) return true;
