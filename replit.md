@@ -16,10 +16,10 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 - **Conversion Logic**: Client-side engine featuring a comprehensive unit catalog, dimensional analysis, metric prefix support, and a wide range of unit categories (length, mass, time, temperature, area, volume, energy, pressure, specialized units).
 
 ### Key Design Decisions
-- **Calculator Layout**: CSS Grid-based, six-column layout with four arithmetic operators. Addition and subtraction require dimensional compatibility.
-- **Calculator Input**: Fields are read-only; data entry is only via copy buttons from Converter or Custom tabs.
-- **Dual Calculator Modes**: "UNIT" mode (three input fields + result) and "RPN" (Reverse Polish Notation) mode with a 4-level stack. Both modes support unit-aware operations.
-- **RPN Features**: Includes trigonometric, hyperbolic, power, root, and rounding functions. An undo/redo mechanism is implemented.
+- **Calculator Layout**: CSS Grid-based layout with four arithmetic operators. Addition and subtraction require dimensional compatibility.
+- **Calculator Input**: Stack fields (s3, s2, y) are read-only; X field is directly editable with parseUnitText parsing for entering values with units. Data can also be entered via copy buttons from Converter or Custom tabs, or the Paste button.
+- **Dual Calculator Modes**: "CALCULATOR⇅" mode (three input fields + result) and "CALCULATOR - RPN⇅" mode with a 4-level stack (default). Both modes support unit-aware operations.
+- **RPN Features**: HP-inspired design with trigonometric, hyperbolic, power, root, and rounding functions. Includes LASTx register (saves X before operations for error correction), x⇆y swap function, +/− (change sign), ABS (absolute value). Undo mechanism implemented. S3 row has 7 buttons, Y row has 8 positions including enter/drop (double-width), binary operations, LASTx/swap.
 - **Trigonometric/Hyperbolic Functions**: Preserve dimensions if input has units other than dimensionless, rad, or sr; otherwise, output is unitless.
 - **Rounding Functions**: `rnd` (banker's rounding) and `trunc` (truncate) preserve dimensions.
 - **Clipboard Copying**: Supports precision settings and "Normalize & Copy" for converting to SI units with optimal prefixing and dimensional analysis to derived units (J, N, W, etc.).

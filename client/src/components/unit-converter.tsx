@@ -6293,6 +6293,7 @@ export default function UnitConverter() {
                 <input
                   type="text"
                   autoFocus
+                  data-testid="rpn-x-input"
                   value={rpnXEditValue}
                   onChange={(e) => setRpnXEditValue(e.target.value)}
                   onBlur={() => {
@@ -6345,6 +6346,7 @@ export default function UnitConverter() {
                 <motion.div 
                   className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between cursor-text hover:bg-muted/40 active:bg-muted/60`}
                   style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
+                  data-testid="rpn-x-field"
                   onClick={() => {
                     // Start editing with current value + unit if any
                     const display = getRpnResultDisplay();
