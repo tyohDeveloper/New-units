@@ -5573,8 +5573,8 @@ export default function UnitConverter() {
               className="grid gap-2 mb-4 items-center"
               style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
             >
-              {/* Column 1: Calculator label and Precision - left-aligned with field below */}
-              <div className="flex items-center gap-4">
+              {/* Column 1: Calculator label (left) and Precision (right-aligned with field below) - constrained width */}
+              <div className="flex items-center justify-between" style={{ width: CommonFieldWidth, maxWidth: CommonFieldWidth }}>
                 <Label 
                   className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
                   onClick={() => switchToRpn()}
@@ -5590,7 +5590,7 @@ export default function UnitConverter() {
                     <SelectTrigger className="h-8 w-[50px] text-xs">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent align="start">
+                    <SelectContent align="end">
                       {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(p => (
                         <SelectItem key={p} value={p.toString()} className="text-xs">
                           {numberFormat === 'arabic' ? toArabicNumerals(p.toString()) : p}
@@ -5600,13 +5600,13 @@ export default function UnitConverter() {
                   </Select>
                 </div>
               </div>
-              {/* Column 2: Clear calculator - right-aligned with × button */}
+              {/* Column 2: Clear calculator - left-aligned with × button */}
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={clearCalculator}
                 className="text-xs text-foreground hover:text-accent border !border-border/30"
-                style={{ justifySelf: 'end' }}
+                style={{ justifySelf: 'start' }}
               >
                 {t('Clear calculator')}
               </Button>
