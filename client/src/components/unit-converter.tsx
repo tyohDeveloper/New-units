@@ -5274,67 +5274,49 @@ export default function UnitConverter() {
                 </motion.div>
               </div>
               
-              {/* Copy button aligned far right */}
+              {/* Paste button aligned far right */}
               <div className="flex-1 flex justify-end">
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  onClick={() => {
-                    const numValue = parseNumberWithFormat(directValue);
-                    if (isNaN(numValue) || !directValue) return;
-                    const unitSymbol = buildDirectUnitSymbol();
-                    const valueStr = formatForClipboard(numValue, precision);
-                    const textToCopy = unitSymbol ? `${valueStr} ${unitSymbol}` : valueStr;
-                    navigator.clipboard.writeText(textToCopy);
-                    setFlashDirectCopy(true);
-                    setTimeout(() => setFlashDirectCopy(false), 300);
-                    
-                    // Add to calculator - same behavior as Converter pane
-                    const dims = buildDirectDimensions();
-                    const newEntry = {
-                      value: numValue,
-                      dimensions: dims,
-                      prefix: 'none'
-                    };
-                    
-                    if (calculatorMode === 'rpn') {
-                      // RPN mode: Push onto stack position x with stack lift
-                      saveRpnStackForUndo();
-                      setRpnStack(prev => {
-                        const newStack = [...prev];
-                        newStack[0] = prev[1];
-                        newStack[1] = prev[2];
-                        newStack[2] = prev[3];
-                        newStack[3] = newEntry;
-                        return newStack;
-                      });
-                      setRpnResultPrefix('none');
-                      setRpnSelectedAlternative(0);
-                      setFlashRpnResult(true);
-                      setTimeout(() => setFlashRpnResult(false), 300);
-                    } else {
-                      // UNIT mode: Find first empty field in positions 0-2
-                      const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
-                      if (firstEmptyIndex !== -1) {
-                        const newCalcValues = [...calcValues];
-                        newCalcValues[firstEmptyIndex] = newEntry;
-                        setCalcValues(newCalcValues);
+                  onClick={async () => {
+                    try {
+                      const text = await navigator.clipboard.readText();
+                      if (!text) return;
+                      
+                      const parsed = parseUnitText(text);
+                      setDirectValue(parsed.value.toString());
+                      
+                      const newExponents: Record<string, number> = {
+                        m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
+                      };
+                      
+                      if (parsed.dimensions.length) newExponents.m = parsed.dimensions.length;
+                      if (parsed.dimensions.mass) newExponents.kg = parsed.dimensions.mass;
+                      if (parsed.dimensions.time) newExponents.s = parsed.dimensions.time;
+                      if (parsed.dimensions.current) newExponents.A = parsed.dimensions.current;
+                      if (parsed.dimensions.temperature) newExponents.K = parsed.dimensions.temperature;
+                      if (parsed.dimensions.amount) newExponents.mol = parsed.dimensions.amount;
+                      if (parsed.dimensions.intensity) newExponents.cd = parsed.dimensions.intensity;
+                      if (parsed.dimensions.angle) newExponents.rad = parsed.dimensions.angle;
+                      if (parsed.dimensions.solid_angle) newExponents.sr = parsed.dimensions.solid_angle;
+                      
+                      const hasOutOfRange = Object.values(newExponents).some(exp => exp < -5 || exp > 5);
+                      if (hasOutOfRange) {
+                        setDirectExponents({ m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0 });
+                      } else {
+                        setDirectExponents(newExponents);
                       }
+                    } catch (err) {
+                      console.error('Failed to read clipboard:', err);
                     }
                   }}
                   className="text-xs hover:text-accent gap-2"
                   style={{ height: FIELD_HEIGHT }}
+                  {...testId('custom-paste-button')}
                 >
-                  <Copy className="w-3 h-3" />
-                  <motion.span
-                    animate={{
-                      opacity: flashDirectCopy ? [1, 0.3, 1] : 1,
-                      scale: flashDirectCopy ? [1, 1.1, 1] : 1
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {t('Copy')}
-                  </motion.span>
+                  <ClipboardPaste className="w-3 h-3" />
+                  {t('Paste')}
                 </Button>
               </div>
             </div>
@@ -5343,59 +5325,16 @@ export default function UnitConverter() {
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between mb-2">
                 <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Dimensions')}</Label>
-                <div className="flex items-center gap-2">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={async () => {
-                      try {
-                        const text = await navigator.clipboard.readText();
-                        if (!text) return;
-                        
-                        const parsed = parseUnitText(text);
-                        setDirectValue(parsed.value.toString());
-                        
-                        const newExponents: Record<string, number> = {
-                          m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
-                        };
-                        
-                        if (parsed.dimensions.length) newExponents.m = parsed.dimensions.length;
-                        if (parsed.dimensions.mass) newExponents.kg = parsed.dimensions.mass;
-                        if (parsed.dimensions.time) newExponents.s = parsed.dimensions.time;
-                        if (parsed.dimensions.current) newExponents.A = parsed.dimensions.current;
-                        if (parsed.dimensions.temperature) newExponents.K = parsed.dimensions.temperature;
-                        if (parsed.dimensions.amount) newExponents.mol = parsed.dimensions.amount;
-                        if (parsed.dimensions.intensity) newExponents.cd = parsed.dimensions.intensity;
-                        if (parsed.dimensions.angle) newExponents.rad = parsed.dimensions.angle;
-                        if (parsed.dimensions.solid_angle) newExponents.sr = parsed.dimensions.solid_angle;
-                        
-                        const hasOutOfRange = Object.values(newExponents).some(exp => exp < -5 || exp > 5);
-                        if (hasOutOfRange) {
-                          setDirectExponents({ m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0 });
-                        } else {
-                          setDirectExponents(newExponents);
-                        }
-                      } catch (err) {
-                        console.error('Failed to read clipboard:', err);
-                      }
-                    }}
-                    className="text-xs hover:text-accent gap-1"
-                    {...testId('custom-paste-button')}
-                  >
-                    <ClipboardPaste className="w-3 h-3" />
-                    {t('Paste')}
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => setDirectExponents({
-                      m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
-                    })}
-                    className="text-xs hover:text-accent"
-                  >
-                    {t('Clear')}
-                  </Button>
-                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setDirectExponents({
+                    m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
+                  })}
+                  className="text-xs hover:text-accent"
+                >
+                  {t('Clear')}
+                </Button>
               </div>
               {([
                 { unit: 'm', quantity: 'Length' },
@@ -5436,6 +5375,70 @@ export default function UnitConverter() {
                   </div>
                 </div>
               ))}
+            </div>
+            
+            {/* Copy button at bottom, aligned far right */}
+            <div className="flex justify-end mt-4">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => {
+                  const numValue = parseNumberWithFormat(directValue);
+                  if (isNaN(numValue) || !directValue) return;
+                  const unitSymbol = buildDirectUnitSymbol();
+                  const valueStr = formatForClipboard(numValue, precision);
+                  const textToCopy = unitSymbol ? `${valueStr} ${unitSymbol}` : valueStr;
+                  navigator.clipboard.writeText(textToCopy);
+                  setFlashDirectCopy(true);
+                  setTimeout(() => setFlashDirectCopy(false), 300);
+                  
+                  // Add to calculator - same behavior as Converter pane
+                  const dims = buildDirectDimensions();
+                  const newEntry = {
+                    value: numValue,
+                    dimensions: dims,
+                    prefix: 'none'
+                  };
+                  
+                  if (calculatorMode === 'rpn') {
+                    // RPN mode: Push onto stack position x with stack lift
+                    saveRpnStackForUndo();
+                    setRpnStack(prev => {
+                      const newStack = [...prev];
+                      newStack[0] = prev[1];
+                      newStack[1] = prev[2];
+                      newStack[2] = prev[3];
+                      newStack[3] = newEntry;
+                      return newStack;
+                    });
+                    setRpnResultPrefix('none');
+                    setRpnSelectedAlternative(0);
+                    setFlashRpnResult(true);
+                    setTimeout(() => setFlashRpnResult(false), 300);
+                  } else {
+                    // UNIT mode: Find first empty field in positions 0-2
+                    const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
+                    if (firstEmptyIndex !== -1) {
+                      const newCalcValues = [...calcValues];
+                      newCalcValues[firstEmptyIndex] = newEntry;
+                      setCalcValues(newCalcValues);
+                    }
+                  }
+                }}
+                className="text-xs hover:text-accent gap-2"
+                {...testId('custom-copy-button')}
+              >
+                <Copy className="w-3 h-3" />
+                <motion.span
+                  animate={{
+                    opacity: flashDirectCopy ? [1, 0.3, 1] : 1,
+                    scale: flashDirectCopy ? [1, 1.1, 1] : 1
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {t('Copy')}
+                </motion.span>
+              </Button>
             </div>
           </div>
           </Card>
