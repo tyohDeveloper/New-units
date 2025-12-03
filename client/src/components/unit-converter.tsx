@@ -3292,6 +3292,21 @@ export default function UnitConverter() {
     !['Hz', 'Bq'].includes(u.symbol)
   );
 
+  // Specialty/rare derived units - sorted after main path units
+  // These are less commonly used in general physics/engineering
+  const SPECIALTY_DERIVED_UNITS = new Set([
+    'Gy',   // Gray - absorbed radiation dose
+    'Sv',   // Sievert - equivalent radiation dose  
+    'Bq',   // Becquerel - radioactivity
+    'kat',  // katal - catalytic activity
+    'lm',   // lumen - luminous flux
+    'lx',   // lux - illuminance
+    'rad',  // radian - plane angle (less common in compositions)
+    'sr',   // steradian - solid angle
+    'ν',    // photon frequency
+    'λ',    // photon wavelength
+  ]);
+
   // Validation: Check if a symbol string has duplicate base units (e.g., "rad⋅rad⁻²")
   // Returns true if valid (no duplicates), false if invalid
   const isValidSymbolRepresentation = (symbol: string): boolean => {
@@ -3429,7 +3444,14 @@ export default function UnitConverter() {
           return countUnits(rep.displaySymbol) <= baseTermCount;
         });
     
-    // Sort: (1) pure base units last, (2) fewest units, (3) lowest sum of abs exponents, (4) alphabetically
+    // Helper: Check if representation uses a specialty derived unit
+    const usesSpecialtyUnit = (rep: SIRepresentation): boolean => {
+      if (!rep.derivedUnits || rep.derivedUnits.length === 0) return false;
+      return rep.derivedUnits.some(u => SPECIALTY_DERIVED_UNITS.has(u));
+    };
+    
+    // Sort: (1) pure base units last, (2) fewest units, (3) lowest sum of abs exponents, 
+    //       (4) main-path units before specialty, (5) alphabetically
     filteredRepresentations.sort((a, b) => {
       // Pure base units (depth=0) go LAST
       const aIsRaw = a.depth === 0;
@@ -3446,6 +3468,12 @@ export default function UnitConverter() {
       const aExpSum = sumAbsExponents(a.displaySymbol);
       const bExpSum = sumAbsExponents(b.displaySymbol);
       if (aExpSum !== bExpSum) return aExpSum - bExpSum;
+      
+      // Main-path units before specialty units
+      const aIsSpecialty = usesSpecialtyUnit(a);
+      const bIsSpecialty = usesSpecialtyUnit(b);
+      if (aIsSpecialty && !bIsSpecialty) return 1;  // a is specialty, goes after b
+      if (!aIsSpecialty && bIsSpecialty) return -1; // b is specialty, goes after a
       
       // Finally alphabetically
       return a.displaySymbol.localeCompare(b.displaySymbol);
