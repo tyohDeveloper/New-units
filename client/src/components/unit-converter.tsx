@@ -1258,14 +1258,14 @@ export default function UnitConverter() {
       pt: 'Calculadora', ru: 'Калькулятор', zh: '计算器', ja: '計算機'
     },
     'CALCULATOR - RPN': { 
-      en: 'CALCULATOR - RPN⇅', ar: 'الآلة الحاسبة - RPN⇅', de: 'RECHNER - RPN⇅',
-      es: 'CALCULADORA - RPN⇅', fr: 'CALCULATRICE - RPN⇅', it: 'CALCOLATRICE - RPN⇅', ko: '계산기 - RPN⇅',
-      pt: 'CALCULADORA - RPN⇅', ru: 'КАЛЬКУЛЯТОР - RPN⇅', zh: '计算器 - RPN⇅', ja: '計算機 - RPN⇅'
+      en: 'CALCULATOR - RPN', ar: 'الآلة الحاسبة - RPN', de: 'RECHNER - RPN',
+      es: 'CALCULADORA - RPN', fr: 'CALCULATRICE - RPN', it: 'CALCOLATRICE - RPN', ko: '계산기 - RPN',
+      pt: 'CALCULADORA - RPN', ru: 'КАЛЬКУЛЯТОР - RPN', zh: '计算器 - RPN', ja: '計算機 - RPN'
     },
     'CALCULATOR': { 
-      en: 'CALCULATOR⇅', ar: 'الآلة الحاسبة⇅', de: 'RECHNER⇅',
-      es: 'CALCULADORA⇅', fr: 'CALCULATRICE⇅', it: 'CALCOLATRICE⇅', ko: '계산기⇅',
-      pt: 'CALCULADORA⇅', ru: 'КАЛЬКУЛЯТОР⇅', zh: '计算器⇅', ja: '計算機⇅'
+      en: 'CALCULATOR', ar: 'الآلة الحاسبة', de: 'RECHNER',
+      es: 'CALCULADORA', fr: 'CALCULATRICE', it: 'CALCOLATRICE', ko: '계산기',
+      pt: 'CALCULADORA', ru: 'КАЛЬКУЛЯТОР', zh: '计算器', ja: '計算機'
     },
     'Clear': { 
       en: 'Clear', ar: 'مسح', de: 'Löschen',
@@ -5601,7 +5601,7 @@ export default function UnitConverter() {
                   className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
                   onClick={() => switchToSimple()}
                 >
-                  {t('CALCULATOR - RPN')}
+                  {t('CALCULATOR - RPN') + ' ⇅'}
                 </Label>
                 <div className="flex items-center gap-1">
                   <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
