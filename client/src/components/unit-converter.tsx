@@ -6343,8 +6343,7 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className={`text-xs font-mono w-full border !border-border/30 ${shiftActive ? (!rpnStack[3] || !rpnStack[2] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent') : (!lastX ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent')}`}
-                disabled={shiftActive ? (!rpnStack[3] || !rpnStack[2]) : !lastX}
+                className="text-xs font-mono w-full border !border-border/30 text-foreground hover:text-accent"
                 onClick={() => shiftActive ? swapRpnXY() : recallLastX()}
               >
                 {shiftActive ? 'x⇆y' : 'LASTx'}
