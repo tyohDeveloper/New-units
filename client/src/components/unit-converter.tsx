@@ -5933,7 +5933,7 @@ export default function UnitConverter() {
                       key={`s3-btn-${i}`} 
                       variant="ghost" 
                       size="sm" 
-                      className={`text-xs font-mono w-full border border-border/30 ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
+                      className={`text-xs font-mono w-full border !border-border/30 ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                       onClick={() => {
                         if (isConstant && 'value' in btn) {
                           if (shiftActive && 'shiftValue' in btn) {
@@ -6013,7 +6013,7 @@ export default function UnitConverter() {
                       key={`s2-btn-${i}`} 
                       variant="ghost" 
                       size="sm" 
-                      className={`text-xs font-mono w-full border border-border/30 ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
+                      className={`text-xs font-mono w-full border !border-border/30 ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                       onClick={() => {
                         if (isConstant && 'value' in btn) {
                           if (shiftActive && 'shiftValue' in btn) {
@@ -6075,7 +6075,7 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className={`text-xs font-mono w-full border border-border/30 ${!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
+                className={`text-xs font-mono w-full border !border-border/30 ${!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                 style={{ gridColumn: 'span 2' }}
                 disabled={!rpnStack[3]}
                 onClick={() => shiftActive ? dropRpnStack() : pushToRpnStack()}
@@ -6085,7 +6085,7 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className={`text-xs font-mono w-full border border-border/30 ${shiftActive ? (!previousRpnStack.some(v => v !== null) ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent') : (!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent')}`}
+                className={`text-xs font-mono w-full border !border-border/30 ${shiftActive ? (!previousRpnStack.some(v => v !== null) ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent') : (!rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent')}`}
                 disabled={shiftActive ? !previousRpnStack.some(v => v !== null) : !rpnStack[3]}
                 onClick={() => shiftActive ? undoRpnStack() : applyRpnUnary('neg')}
               >
@@ -6106,7 +6106,7 @@ export default function UnitConverter() {
                       key={`y-bin-${i}`} 
                       variant="ghost" 
                       size="sm" 
-                      className={`text-xs font-mono w-full border border-border/30 ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
+                      className={`text-xs font-mono w-full border !border-border/30 ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                       onClick={() => applyRpnBinary(currentOp)}
                       disabled={isDisabled}
                     >
@@ -6118,7 +6118,7 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-xs font-mono w-full border border-border/30 text-foreground hover:text-accent"
+                className="text-xs font-mono w-full border !border-border/30 text-foreground hover:text-accent"
                 onClick={() => pushRpnConstant(shiftActive ? 1/Math.SQRT2 : Math.SQRT2)}
               >
                 {shiftActive ? '1/√2' : '√2'}
