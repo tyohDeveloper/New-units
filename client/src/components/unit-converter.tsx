@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { ArrowRightLeft, Copy, Info } from 'lucide-react';
+import { ArrowRightLeft, Copy, Info, ClipboardPaste } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { testId } from '@/lib/test-utils';
@@ -5343,16 +5343,59 @@ export default function UnitConverter() {
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between mb-2">
                 <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Dimensions')}</Label>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setDirectExponents({
-                    m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
-                  })}
-                  className="text-xs hover:text-accent"
-                >
-                  {t('Clear')}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={async () => {
+                      try {
+                        const text = await navigator.clipboard.readText();
+                        if (!text) return;
+                        
+                        const parsed = parseUnitText(text);
+                        setDirectValue(parsed.value.toString());
+                        
+                        const newExponents: Record<string, number> = {
+                          m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
+                        };
+                        
+                        if (parsed.dimensions.length) newExponents.m = parsed.dimensions.length;
+                        if (parsed.dimensions.mass) newExponents.kg = parsed.dimensions.mass;
+                        if (parsed.dimensions.time) newExponents.s = parsed.dimensions.time;
+                        if (parsed.dimensions.current) newExponents.A = parsed.dimensions.current;
+                        if (parsed.dimensions.temperature) newExponents.K = parsed.dimensions.temperature;
+                        if (parsed.dimensions.amount) newExponents.mol = parsed.dimensions.amount;
+                        if (parsed.dimensions.intensity) newExponents.cd = parsed.dimensions.intensity;
+                        if (parsed.dimensions.angle) newExponents.rad = parsed.dimensions.angle;
+                        if (parsed.dimensions.solid_angle) newExponents.sr = parsed.dimensions.solid_angle;
+                        
+                        const hasOutOfRange = Object.values(newExponents).some(exp => exp < -5 || exp > 5);
+                        if (hasOutOfRange) {
+                          setDirectExponents({ m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0 });
+                        } else {
+                          setDirectExponents(newExponents);
+                        }
+                      } catch (err) {
+                        console.error('Failed to read clipboard:', err);
+                      }
+                    }}
+                    className="text-xs hover:text-accent gap-1"
+                    {...testId('custom-paste-button')}
+                  >
+                    <ClipboardPaste className="w-3 h-3" />
+                    {t('Paste')}
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setDirectExponents({
+                      m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
+                    })}
+                    className="text-xs hover:text-accent"
+                  >
+                    {t('Clear')}
+                  </Button>
+                </div>
               </div>
               {([
                 { unit: 'm', quantity: 'Length' },
