@@ -5567,18 +5567,16 @@ export default function UnitConverter() {
 
         {/* Mini Calculator */}
         <Card className="w-full p-6 bg-card border-border/50">
-          <div 
-            className="flex gap-2 mb-4 items-center justify-between"
-          >
-            <div className="flex items-center gap-4">
-              <Label 
-                className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
-                onClick={() => calculatorMode === 'simple' ? switchToRpn() : switchToSimple()}
-              >
-                {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') + ' ⇅' : t('CALCULATOR') + ' ⇅'}
-              </Label>
-              {/* Clear button - different function for each mode */}
-              {calculatorMode === 'simple' ? (
+          {/* Simple Calculator Header */}
+          {calculatorMode === 'simple' && (
+            <div className="flex gap-2 mb-4 items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Label 
+                  className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
+                  onClick={() => switchToRpn()}
+                >
+                  {t('CALCULATOR') + ' ⇅'}
+                </Label>
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -5587,19 +5585,53 @@ export default function UnitConverter() {
                 >
                   {t('Clear calculator')}
                 </Button>
-              ) : (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={clearRpnStack}
-                  className="text-xs text-muted-foreground hover:text-foreground border !border-border/30"
-                >
-                  {t('Clear calculator')}
-                </Button>
-              )}
+              </div>
             </div>
-            {/* Paste button - aligned far right */}
-            {calculatorMode === 'rpn' && (
+          )}
+          
+          {/* RPN Calculator Header - single line aligned with stack grid */}
+          {calculatorMode === 'rpn' && (
+            <div 
+              className="grid gap-2 mb-4 items-center"
+              style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(8, ${RpnBtnWidth})` }}
+            >
+              {/* Precision - aligned over stack field */}
+              <div className="flex items-center gap-2">
+                <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
+                <Select 
+                  value={calculatorPrecision.toString()} 
+                  onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
+                >
+                  <SelectTrigger className="h-8 w-[50px] text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent align="start">
+                    {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(p => (
+                      <SelectItem key={p} value={p.toString()} className="text-xs">
+                        {numberFormat === 'arabic' ? toArabicNumerals(p.toString()) : p}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {/* Clear calculator - aligned left above key grid */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={clearRpnStack}
+                className="text-xs text-muted-foreground hover:text-foreground border !border-border/30"
+              >
+                {t('Clear calculator')}
+              </Button>
+              {/* Spacer columns */}
+              <span style={{ gridColumn: 'span 4' }}></span>
+              {/* Calculator label and Paste - far right */}
+              <Label 
+                className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30 text-center"
+                onClick={() => switchToSimple()}
+              >
+                {t('CALCULATOR - RPN') + ' ⇅'}
+              </Label>
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -5608,7 +5640,6 @@ export default function UnitConverter() {
                     const text = await navigator.clipboard.readText();
                     if (!text) return;
                     const parsed = parseUnitText(text);
-                    // Map dimensional formula to exponent grid format
                     const dims: Record<string, number> = {};
                     if (parsed.dimensions.length) dims.length = parsed.dimensions.length;
                     if (parsed.dimensions.mass) dims.mass = parsed.dimensions.mass;
@@ -5626,7 +5657,6 @@ export default function UnitConverter() {
                       prefix: parsed.prefixId || 'none'
                     };
                     
-                    // Push onto stack with lift
                     saveRpnStackForUndo();
                     setRpnStack(prev => {
                       const newStack = [...prev];
@@ -5649,8 +5679,8 @@ export default function UnitConverter() {
                 <ClipboardPaste className="w-3 h-3" />
                 {t('Paste')}
               </Button>
-            )}
-          </div>
+            </div>
+          )}
           
           {/* Fixed-height container to prevent flicker on mode switch */}
           <div style={{ minHeight: CALC_CONTENT_HEIGHT }}>
@@ -6030,33 +6060,6 @@ export default function UnitConverter() {
           {/* RPN Calculator Mode */}
           {calculatorMode === 'rpn' && (
           <div className="space-y-2">
-            {/* Precision selector row - right-aligned over s3 button area */}
-            <div 
-              className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} repeat(7, ${RpnBtnWidth})` }}
-            >
-              <span></span>
-              <span></span>
-              <span style={{ gridColumn: 'span 5' }}></span>
-              <div className="flex items-center gap-2 justify-end" style={{ gridColumn: 'span 2' }}>
-                <Label className="text-xs text-muted-foreground">{t('Precision')}</Label>
-                <Select 
-                  value={calculatorPrecision.toString()} 
-                  onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
-                >
-                  <SelectTrigger className="h-8 w-[60px] text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent align="end">
-                    {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(p => (
-                      <SelectItem key={p} value={p.toString()} className="text-xs">
-                        {numberFormat === 'arabic' ? toArabicNumerals(p.toString()) : p}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
             {/* s3 field (top) with button grid - 8 buttons */}
             <div 
               className="grid gap-2 items-center"
@@ -6492,27 +6495,63 @@ export default function UnitConverter() {
               )}
             </div>
 
-            {/* Bottom row: empty spacer, Shift under prefix, Push/Pop under unit select, Copy right */}
+            {/* Bottom row: Shift, Clear x, Clear unit, and Copy aligned with x row */}
             <div 
               className="grid gap-2 items-center"
-              style={{ gridTemplateColumns: `28px ${CommonFieldWidth} 50px 1fr` }}
+              style={{ gridTemplateColumns: `${CommonFieldWidth} 50px 1fr` }}
             >
-              {/* Column 0: empty label spacer */}
+              {/* Under result field: Shift and Clear buttons */}
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setShiftActive(!shiftActive)}
+                  className={`text-xs font-mono border !border-border/30 ${shiftActive ? 'bg-accent !text-accent-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                  data-testid="button-shift"
+                  aria-pressed={shiftActive}
+                >
+                  {shiftActive ? 'SHIFT' : 'Shift'}
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => {
+                    if (!rpnStack[3]) return;
+                    saveRpnStackForUndo();
+                    setRpnStack(prev => {
+                      const newStack = [...prev];
+                      newStack[3] = { ...prev[3]!, value: 0 };
+                      return newStack;
+                    });
+                  }}
+                  disabled={!rpnStack[3]}
+                  className="text-xs text-muted-foreground hover:text-foreground border !border-border/30"
+                >
+                  {t('Clear x')}
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => {
+                    if (!rpnStack[3]) return;
+                    saveRpnStackForUndo();
+                    setRpnStack(prev => {
+                      const newStack = [...prev];
+                      newStack[3] = { ...prev[3]!, dimensions: {}, prefix: 'none' };
+                      return newStack;
+                    });
+                    setRpnResultPrefix('none');
+                    setRpnSelectedAlternative(0);
+                  }}
+                  disabled={!rpnStack[3]}
+                  className="text-xs text-muted-foreground hover:text-foreground border !border-border/30"
+                >
+                  {t('Clear unit')}
+                </Button>
+              </div>
+              {/* Empty spacer under prefix */}
               <div />
-              {/* Column 1: empty spacer (under result field) */}
-              <div />
-              {/* Column 2 (50px, under prefix dropdown): Shift button */}
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setShiftActive(!shiftActive)}
-                className={`text-xs font-mono w-full border !border-border/30 ${shiftActive ? 'bg-accent !text-accent-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                data-testid="button-shift"
-                aria-pressed={shiftActive}
-              >
-                {shiftActive ? 'SHIFT' : 'Shift'}
-              </Button>
-              {/* Column 3 (1fr, under unit select): Copy right-justified */}
+              {/* Copy right-justified under unit select */}
               <div className="flex items-center justify-end">
                 <Button 
                   variant="ghost" 
