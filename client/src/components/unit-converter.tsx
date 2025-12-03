@@ -5024,7 +5024,7 @@ export default function UnitConverter() {
                   onClick={() => { copyResult(); refocusInput(); }}
                   onBlur={refocusInput}
                   tabIndex={5}
-                  className="text-xs hover:text-accent gap-2"
+                  className="text-xs hover:text-accent gap-2 border !border-border/30"
                 >
                   <Copy className="w-3 h-3" />
                   <motion.span
@@ -5308,7 +5308,7 @@ export default function UnitConverter() {
                       console.error('Failed to read clipboard:', err);
                     }
                   }}
-                  className="text-xs hover:text-accent gap-2"
+                  className="text-xs hover:text-accent gap-2 border !border-border/30"
                   style={{ height: FIELD_HEIGHT }}
                   {...testId('custom-paste-button')}
                 >
@@ -5328,7 +5328,7 @@ export default function UnitConverter() {
                   onClick={() => setDirectExponents({
                     m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
                   })}
-                  className="text-xs hover:text-accent"
+                  className="text-xs hover:text-accent border !border-border/30"
                 >
                   {t('Clear')}
                 </Button>
@@ -5422,7 +5422,7 @@ export default function UnitConverter() {
                     }
                   }
                 }}
-                className="text-xs hover:text-accent gap-2"
+                className="text-xs hover:text-accent gap-2 border !border-border/30"
                 {...testId('custom-copy-button')}
               >
                 <Copy className="w-3 h-3" />
@@ -5449,7 +5449,7 @@ export default function UnitConverter() {
             <div className="flex items-center gap-4">
               <div className="flex items-center justify-between" style={{ width: CommonFieldWidth }}>
                 <Label 
-                  className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors"
+                  className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
                   onClick={() => calculatorMode === 'simple' ? switchToRpn() : switchToSimple()}
                 >
                   {calculatorMode === 'rpn' ? t('CALCULATOR - RPN') : t('CALCULATOR')} ↻
@@ -5479,7 +5479,7 @@ export default function UnitConverter() {
                   variant="ghost" 
                   size="sm" 
                   onClick={clearCalculator}
-                  className="text-xs text-muted-foreground hover:text-foreground"
+                  className="text-xs text-muted-foreground hover:text-foreground border !border-border/30"
                 >
                   {t('Clear calculator')}
                 </Button>
@@ -5488,7 +5488,7 @@ export default function UnitConverter() {
                   variant="ghost" 
                   size="sm" 
                   onClick={clearRpnStack}
-                  className="text-xs text-muted-foreground hover:text-foreground"
+                  className="text-xs text-muted-foreground hover:text-foreground border !border-border/30"
                 >
                   {t('Clear calculator')}
                 </Button>
@@ -5547,7 +5547,7 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={clearField1}
                 disabled={!calcValues[0]}
-                className="text-xs justify-self-start"
+                className="text-xs justify-self-start border !border-border/30"
               >
                 {t('Clear')}
               </Button>
@@ -5595,7 +5595,7 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={() => setCalcOp1('*')}
                 disabled={!calcValues[0] || !calcValues[1]}
-                className={`text-sm w-full ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
+                className={`text-sm w-full border !border-border/30 ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
               >
                 ×
               </Button>
@@ -5604,7 +5604,7 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={() => setCalcOp1('/')}
                 disabled={!calcValues[0] || !calcValues[1]}
-                className={`text-sm w-full ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
+                className={`text-sm w-full border !border-border/30 ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
               >
                 /
               </Button>
@@ -5613,7 +5613,7 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={() => setCalcOp1('+')}
                 disabled={!canAddSubtract(calcValues[0], calcValues[1])}
-                className={`text-sm w-full ${calcOp1 === '+' ? 'text-accent font-bold' : ''}`}
+                className={`text-sm w-full border !border-border/30 ${calcOp1 === '+' ? 'text-accent font-bold' : ''}`}
               >
                 +
               </Button>
@@ -5622,7 +5622,7 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={() => setCalcOp1('-')}
                 disabled={!canAddSubtract(calcValues[0], calcValues[1])}
-                className={`text-sm w-full ${calcOp1 === '-' ? 'text-accent font-bold' : ''}`}
+                className={`text-sm w-full border !border-border/30 ${calcOp1 === '-' ? 'text-accent font-bold' : ''}`}
               >
                 −
               </Button>
@@ -5631,7 +5631,7 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={clearField2}
                 disabled={!calcValues[1]}
-                className="text-xs justify-self-start"
+                className="text-xs justify-self-start border !border-border/30"
               >
                 {t('Clear')}
               </Button>
@@ -5679,7 +5679,7 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={() => setCalcOp2('*')}
                 disabled={!calcValues[1] || !calcValues[2]}
-                className={`text-sm w-full ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
+                className={`text-sm w-full border !border-border/30 ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
               >
                 ×
               </Button>
@@ -5688,7 +5688,7 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={() => setCalcOp2('/')}
                 disabled={!calcValues[1] || !calcValues[2]}
-                className={`text-sm w-full ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
+                className={`text-sm w-full border !border-border/30 ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
               >
                 /
               </Button>
@@ -5697,7 +5697,7 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={() => setCalcOp2('+')}
                 disabled={!canAddSubtract(calcValues[1], calcValues[2])}
-                className={`text-sm w-full ${calcOp2 === '+' ? 'text-accent font-bold' : ''}`}
+                className={`text-sm w-full border !border-border/30 ${calcOp2 === '+' ? 'text-accent font-bold' : ''}`}
               >
                 +
               </Button>
@@ -5706,7 +5706,7 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={() => setCalcOp2('-')}
                 disabled={!canAddSubtract(calcValues[1], calcValues[2])}
-                className={`text-sm w-full ${calcOp2 === '-' ? 'text-accent font-bold' : ''}`}
+                className={`text-sm w-full border !border-border/30 ${calcOp2 === '-' ? 'text-accent font-bold' : ''}`}
               >
                 −
               </Button>
@@ -5715,7 +5715,7 @@ export default function UnitConverter() {
                 size="sm"
                 onClick={clearField3}
                 disabled={!calcValues[2]}
-                className="text-xs justify-self-start"
+                className="text-xs justify-self-start border !border-border/30"
               >
                 {t('Clear')}
               </Button>
@@ -5854,7 +5854,7 @@ export default function UnitConverter() {
                 size="sm" 
                 onClick={copyCalcResult}
                 disabled={!calcValues[3]}
-                className="text-xs text-muted-foreground hover:text-foreground gap-2 shrink-0"
+                className="text-xs text-muted-foreground hover:text-foreground gap-2 shrink-0 border !border-border/30"
               >
                 <Copy className="w-3 h-3" />
                 <motion.span
@@ -6251,7 +6251,7 @@ export default function UnitConverter() {
                 variant="ghost" 
                 size="sm" 
                 onClick={() => setShiftActive(!shiftActive)}
-                className={`text-xs font-mono w-full ${shiftActive ? 'bg-accent !text-accent-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`text-xs font-mono w-full border !border-border/30 ${shiftActive ? 'bg-accent !text-accent-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                 data-testid="button-shift"
                 aria-pressed={shiftActive}
               >
@@ -6264,7 +6264,7 @@ export default function UnitConverter() {
                   size="sm" 
                   onClick={copyRpnResult}
                   disabled={!rpnStack[3]}
-                  className="text-xs text-muted-foreground hover:text-foreground gap-1"
+                  className="text-xs text-muted-foreground hover:text-foreground gap-1 border !border-border/30"
                 >
                   <Copy className="w-3 h-3" />
                   {t('Copy')}
