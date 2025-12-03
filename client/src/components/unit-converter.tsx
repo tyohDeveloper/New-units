@@ -4220,16 +4220,12 @@ export default function UnitConverter() {
   // RPN stack naming: x=stack[3] (bottom/result), y=stack[2], s2=stack[1], s3=stack[0] (top)
   // Simple calculator: field1=calcValues[0] (top), field2=calcValues[1], field3=calcValues[2], result=calcValues[3]
   const switchToRpn = () => {
-    // Transfer simple calculator fields to RPN stack:
-    // result → x (stack[3])
-    // "The top field placed in y" → field1 → y (stack[2])
-    // "the second from the top to s2" → field2 → s2 (stack[1])
-    // "the one above the result to s3" → field3 → s3 (stack[0])
+    // Clear stack, copy result to X
     saveRpnStackForUndo();
     const newRpnStack: typeof rpnStack = [
-      calcValues[2], // s3 = field3 (one above result)
-      calcValues[1], // s2 = field2 (second from top)
-      calcValues[0], // y = field1 (top field)
+      null, // s3 = cleared
+      null, // s2 = cleared
+      null, // y = cleared
       calcValues[3]  // x = result
     ];
     setRpnStack(newRpnStack);
@@ -4239,12 +4235,12 @@ export default function UnitConverter() {
   };
 
   const switchToSimple = () => {
-    // Clear all simple fields and copy x to result
+    // Clear all simple fields and copy X to top field
     const newCalcValues: typeof calcValues = [
+      rpnStack[3], // top field = x
       null,
       null,
-      null,
-      rpnStack[3] // x → result
+      null
     ];
     setCalcValues(newCalcValues);
     setCalcOp1(null);
