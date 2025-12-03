@@ -4874,7 +4874,7 @@ export default function UnitConverter() {
                     variant={comparisonMode ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setComparisonMode(!comparisonMode)}
-                    className={`h-6 px-2 text-[10px] font-mono uppercase ${comparisonMode ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                    className={`h-6 px-2 text-[10px] font-mono uppercase ${comparisonMode ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground border !border-border/30'}`}
                     data-testid="button-comparison-mode"
                   >
                     {t('Compare All')}
