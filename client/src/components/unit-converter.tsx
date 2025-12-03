@@ -3794,6 +3794,51 @@ export default function UnitConverter() {
     });
   };
 
+  // Pull result from Converter or Custom tab onto RPN stack
+  const pullFromPane = () => {
+    let newEntry: CalcValue | null = null;
+    
+    if (activeTab === 'converter') {
+      // Pull from Converter tab
+      if (result !== null && toUnitData) {
+        const siBaseValue = result * toUnitData.factor * (toPrefixData?.factor || 1);
+        newEntry = {
+          value: siBaseValue,
+          dimensions: getCategoryDimensions(activeCategory),
+          prefix: 'none'
+        };
+      }
+    } else if (activeTab === 'custom') {
+      // Pull from Custom tab
+      const numValue = parseNumberWithFormat(directValue);
+      if (!isNaN(numValue) && directValue) {
+        const dims = buildDirectDimensions();
+        newEntry = {
+          value: numValue,
+          dimensions: dims,
+          prefix: 'none'
+        };
+      }
+    }
+    
+    if (!newEntry) return;
+    
+    // Push onto RPN stack with stack lift
+    saveRpnStackForUndo();
+    setRpnStack(prev => {
+      const newStack = [...prev];
+      newStack[0] = prev[1]; // s3 <- s2
+      newStack[1] = prev[2]; // s2 <- y
+      newStack[2] = prev[3]; // y <- x
+      newStack[3] = newEntry; // x <- pulled value
+      return newStack;
+    });
+    setRpnResultPrefix('none');
+    setRpnSelectedAlternative(0);
+    setFlashRpnResult(true);
+    setTimeout(() => setFlashRpnResult(false), 300);
+  };
+
   // RPN unary operation types
   type RpnUnaryOp = 
     | 'square' | 'cube' | 'sqrt' | 'cbrt' | 'recip'
@@ -6310,11 +6355,11 @@ export default function UnitConverter() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className={`text-xs font-mono w-full border !border-border/30 ${!previousRpnStack.some(v => v !== null) ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
-                disabled={!previousRpnStack.some(v => v !== null)}
-                onClick={() => undoRpnStack()}
+                className={`text-xs font-mono w-full border !border-border/30 ${shiftActive ? 'text-foreground hover:text-accent' : (!previousRpnStack.some(v => v !== null) ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent')}`}
+                disabled={!shiftActive && !previousRpnStack.some(v => v !== null)}
+                onClick={() => shiftActive ? pullFromPane() : undoRpnStack()}
               >
-                undo
+                {shiftActive ? 'Pull' : 'undo'}
               </Button>
               {(() => {
                 const yBinaryButtons: Array<{ label: string; shiftLabel: string; op: RpnBinaryOp; shiftOp: RpnBinaryOp }> = [
@@ -6346,7 +6391,7 @@ export default function UnitConverter() {
                 className="text-xs font-mono w-full border !border-border/30 text-foreground hover:text-accent"
                 onClick={() => shiftActive ? swapRpnXY() : recallLastX()}
               >
-                {shiftActive ? 'x⇆y' : 'LASTx'}
+                {shiftActive ? 'x⇆y' : 'Last x'}
               </Button>
             </div>
 
