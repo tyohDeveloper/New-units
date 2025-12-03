@@ -4327,6 +4327,15 @@ export default function UnitConverter() {
     const siReps = generateSIRepresentations(val.dimensions);
     const currentSymbol = siReps[rpnSelectedAlternative]?.displaySymbol || formatDimensions(val.dimensions);
     
+    // Treat '1' (dimensionless) as empty - same as y/s2/s3 display behavior
+    if (currentSymbol === '1' || !currentSymbol) {
+      const formattedValue = formatNumberWithSeparators(val.value, calculatorPrecision);
+      return {
+        formattedValue,
+        unitSymbol: ''
+      };
+    }
+    
     const kgResult = applyPrefixToKgUnit(currentSymbol, rpnResultPrefix);
     const displayValue = val.value / kgResult.effectivePrefixFactor;
     
