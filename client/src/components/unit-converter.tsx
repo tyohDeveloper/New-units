@@ -5595,8 +5595,8 @@ export default function UnitConverter() {
               className="grid gap-2 mb-4 items-center"
               style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(8, ${RpnBtnWidth})` }}
             >
-              {/* Column 1: Calculator label (far left) and Precision (right-aligned) */}
-              <div className="flex items-center justify-between">
+              {/* Column 1: Calculator label (far left) and Precision (right-aligned) - constrained to CommonFieldWidth */}
+              <div className="flex items-center justify-between" style={{ width: CommonFieldWidth, maxWidth: CommonFieldWidth }}>
                 <Label 
                   className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
                   onClick={() => switchToSimple()}
@@ -5628,6 +5628,7 @@ export default function UnitConverter() {
                 size="sm" 
                 onClick={clearRpnStack}
                 className="text-xs text-muted-foreground hover:text-foreground border !border-border/30"
+                style={{ justifySelf: 'start' }}
               >
                 {t('Clear calculator')}
               </Button>
