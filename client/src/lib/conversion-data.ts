@@ -240,6 +240,7 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
     units: [
       { id: "kg", name: "Kilogram", symbol: "kg", factor: 1 },
       { id: "ev_c2", name: "Electronvolt/c²", symbol: "eV⋅c⁻²", factor: 1.78266192e-36, allowPrefixes: true },
+      { id: "mcg", name: "Microgram", symbol: "mcg", factor: 1e-9 },
       { id: "g", name: "Gram", symbol: "g", factor: 0.001, allowPrefixes: true },
       { id: "oz", name: "Ounce", symbol: "oz", factor: 0.028349523125 },
       { id: "oz_t", name: "Troy Ounce", symbol: "oz t", factor: 0.0311034768 },
@@ -1707,6 +1708,7 @@ const SI_BASE_UNIT_MAP: Record<string, { dimension: string; factor: number }> = 
   'h': { dimension: 'time', factor: 3600 },      // hour
   'min': { dimension: 'time', factor: 60 },      // minute
   'd': { dimension: 'time', factor: 86400 },     // day
+  'mcg': { dimension: 'mass', factor: 1e-9 },    // microgram (medical notation)
 };
 
 // SI derived unit symbols mapped to their dimensional formulas

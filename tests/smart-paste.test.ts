@@ -785,4 +785,25 @@ describe('Smart Paste - Division and Compound Units', () => {
       expect(result.dimensions).toEqual({ mass: 1, length: 2, time: -3, current: -1 });
     });
   });
+
+  describe('Medical/Pharmaceutical Units', () => {
+    it('should parse "mcg" as microgram (mass category)', () => {
+      const result = parseUnitText('500 mcg');
+      expect(result.originalValue).toBe(500);
+      expect(result.categoryId).toBe('mass');
+      expect(result.unitId).toBe('mcg');
+      expect(result.dimensions).toEqual({ mass: 1 });
+    });
+
+    it('should parse "mcg" in dimensional formula', () => {
+      const result = parseUnitText('10 mcg/L');
+      expect(result.originalValue).toBe(10);
+      expect(result.dimensions).toEqual({ mass: 1, length: -3 });
+    });
+
+    it('should convert mcg correctly (1 mcg = 1e-9 kg)', () => {
+      const result = parseUnitText('1000000 mcg');
+      expect(result.value).toBeCloseTo(0.001, 6); // 1,000,000 mcg = 1 g = 0.001 kg
+    });
+  });
 });

@@ -779,16 +779,17 @@ describe("Unit Ordering - SI Base First, Then Ascending Factor", () => {
   });
 
   describe("Specific Category Order Verification", () => {
-    it("Mass should be ordered: kg, eV/c², g, oz, oz_t, lb, st, slug, ton_us, t, ton_uk", () => {
+    it("Mass should be ordered: kg, eV/c², mcg, g, oz, oz_t, lb, st, slug, ton_us, t, ton_uk", () => {
       const mass = CONVERSION_DATA.find(c => c.id === "mass");
       const ids = mass?.units.map(u => u.id);
       
       expect(ids?.[0]).toBe("kg");
       expect(ids?.[1]).toBe("ev_c2");
-      expect(ids?.[2]).toBe("g");
-      expect(ids?.[3]).toBe("oz");
-      expect(ids?.[4]).toBe("oz_t");
-      expect(ids?.[5]).toBe("lb");
+      expect(ids?.[2]).toBe("mcg");
+      expect(ids?.[3]).toBe("g");
+      expect(ids?.[4]).toBe("oz");
+      expect(ids?.[5]).toBe("oz_t");
+      expect(ids?.[6]).toBe("lb");
     });
 
     it("Length should be ordered: m, Å, in, ft, ft:in, yd, mi, nmi, AU, ly, pc", () => {
