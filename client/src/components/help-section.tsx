@@ -67,10 +67,11 @@ export default function HelpSection({ t }: HelpSectionProps) {
                 https://github.com/tyohDeveloper/New-units
               </a>
               <br />
-              Just a note, I used the Replit AI to build most of this. You can
+              Just a note, I used the Replit LLM to build most of this. You can
               see it in code. I've done a bunch of testing, and it has a set of
               unit tests. Mostly, it thinks what it's doing is correct. As far
-              as I know, it's correct. But your mileage may vary.
+              as I know, it's correct. But your mileage may vary. I don't know
+              who's LLM they use.
             </p>
           </p>
         </div>
