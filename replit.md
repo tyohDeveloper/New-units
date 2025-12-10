@@ -62,7 +62,7 @@ The codebase is organized for multi-person development collaboration:
 - `index.ts` - Central export aggregator for all unit-related code
 
 **Components (`client/src/components/`)**:
-- `unit-converter.tsx` - Main converter with Converter, Custom, and Calculator tabs (~6658 lines)
+- `unit-converter.tsx` - Main converter with Converter, Custom, and Calculator tabs (~6600 lines)
 - `unit-converter/hooks/` - Custom hooks for state management:
   - `useConverterState.ts` - Converter tab state (category, units, prefixes, result)
   - `useCalculatorState.ts` - Calculator mode state and simple calculator values
