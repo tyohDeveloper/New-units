@@ -4,6 +4,7 @@ import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES, Prefix,
 import { UNIT_NAME_TRANSLATIONS, type SupportedLanguage } from '@/lib/localization';
 import { fixPrecision } from '@/lib/formatting';
 import { DimensionalFormula, CalcValue, DerivedUnitInfo, SI_DERIVED_UNITS } from '@/lib/units/shared-types';
+import { PREFIX_EXPONENTS, GRAM_TO_KG_UNIT_PAIRS, KG_TO_GRAM_UNIT_PAIRS, normalizeMassUnit as normalizeMassUnitHelper } from '@/lib/units/helpers';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -444,15 +445,7 @@ export default function UnitConverter() {
       .replace(/liter/g, 'litre');
   };
 
-  // Map of prefix exponents (shared across normalization functions)
-  const PREFIX_EXPONENTS: Record<string, number> = {
-    'yotta': 24, 'zetta': 21, 'exa': 18, 'peta': 15, 'tera': 12,
-    'giga': 9, 'mega': 6, 'kilo': 3, 'none': 0, 'centi': -2,
-    'milli': -3, 'micro': -6, 'nano': -9, 'pico': -12,
-    'femto': -15, 'atto': -18, 'zepto': -21, 'yocto': -24
-  };
-  
-  // Reverse map: exponent to prefix id
+  // Reverse map: exponent to prefix id (used locally for mass normalization display)
   const EXPONENT_TO_PREFIX: { [key: number]: string } = {
     24: 'yotta', 21: 'zetta', 18: 'exa', 15: 'peta', 12: 'tera',
     9: 'giga', 6: 'mega', 3: 'kilo', 0: 'none', 
@@ -460,45 +453,8 @@ export default function UnitConverter() {
     [-15]: 'femto', [-18]: 'atto', [-21]: 'zepto', [-24]: 'yocto'
   };
 
-  // Mapping of gram-based units to their kg-based counterparts
-  // Used to auto-switch when kilo prefix is selected on g-based unit
-  const GRAM_TO_KG_UNIT_PAIRS: Record<string, string> = {
-    'g': 'kg',           // Mass
-    'gm3': 'kgm3',       // Density: g⋅m⁻³ → kg⋅m⁻³
-    'gms': 'kgms',       // Momentum: g⋅m⋅s⁻¹ → kg⋅m⋅s⁻¹
-    'jgk': 'jkgk',       // Specific Heat: J⋅g⁻¹⋅K⁻¹ → J⋅kg⁻¹⋅K⁻¹
-  };
-  
-  // Reverse mapping: kg-based units to their g-based counterparts
-  // Used to auto-switch when non-kilo prefix is selected on kg-based unit
-  const KG_TO_GRAM_UNIT_PAIRS: Record<string, string> = {
-    'kg': 'g',           // Mass
-    'kgm3': 'gm3',       // Density: kg⋅m⁻³ → g⋅m⁻³
-    'kgms': 'gms',       // Momentum: kg⋅m⋅s⁻¹ → g⋅m⋅s⁻¹
-    'jkgk': 'jgk',       // Specific Heat: J⋅kg⁻¹⋅K⁻¹ → J⋅g⁻¹⋅K⁻¹
-  };
-  
-  // Helper: Normalize kg/g unit pairs across all categories
-  // - When kg-based unit + prefix (not none/kilo) → switch to g-based unit with that prefix
-  // - When g-based unit + kilo prefix → switch to kg-based unit with no prefix
-  // This prevents prefix stacking and follows the Mass category pattern
-  const normalizeMassUnit = (unit: string, prefix: string): { unit: string; prefix: string } => {
-    // Check if this is a kg-based unit that should switch to g-based
-    const gEquivalent = KG_TO_GRAM_UNIT_PAIRS[unit];
-    if (gEquivalent && prefix !== 'none' && prefix !== 'kilo') {
-      // kg-based + non-kilo prefix → g-based with that prefix
-      return { unit: gEquivalent, prefix };
-    }
-    
-    // Check if this is a gram-based unit that can be converted to kg-based
-    const kgEquivalent = GRAM_TO_KG_UNIT_PAIRS[unit];
-    if (kgEquivalent && prefix === 'kilo') {
-      // g-based + kilo → kg-based with no prefix
-      return { unit: kgEquivalent, prefix: 'none' };
-    }
-    
-    return { unit, prefix };
-  };
+  // Local wrapper for normalizeMassUnit from helpers
+  const normalizeMassUnit = normalizeMassUnitHelper;
 
   // Helper: Automatically normalize mass values to the best gram-based representation
   // Given a value in kg, finds the best prefix for grams and returns normalized display
