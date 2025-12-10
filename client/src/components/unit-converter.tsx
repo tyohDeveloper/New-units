@@ -25,14 +25,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { testId } from '@/lib/test-utils';
 import HelpSection from '@/components/help-section';
-
-const FIELD_HEIGHT = '2.5rem'; // 40px - change this to adjust all field heights
-const CommonFieldWidth = '285px'; // change this to adjust width of main value fields
-const OperatorBtnWidth = '32px'; // width of +, -, × and / operator buttons in calculator
-const ClearBtnWidth = '100px'; // width of Clear buttons in calculator
-const RpnBtnWidth = '43px'; // width of RPN function buttons (8 columns)
-const RpnBtnCount = 8; // number of RPN buttons per row that fit in pane width
-const CALC_CONTENT_HEIGHT = '220px'; // fixed height for calculator content area to prevent flicker on mode switch
+import { 
+  FIELD_HEIGHT, CommonFieldWidth, OperatorBtnWidth, ClearBtnWidth, 
+  RpnBtnWidth, RpnBtnCount, CALC_CONTENT_HEIGHT, ISO_LANGUAGES 
+} from '@/components/unit-converter/constants';
 
 export default function UnitConverter() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -155,23 +151,6 @@ export default function UnitConverter() {
   
   // Language state (ISO 639-1 codes)
   const [language, setLanguage] = useState<string>('en');
-  
-  // Languages with complete translations available
-  // Only showing languages that have full translations for all labels to ensure consistent user experience
-  const ISO_LANGUAGES = [
-    'en', // English (380M native speakers) - UK spelling (metre, litre)
-    'en-us', // English US - US spelling (meter, liter)
-    'ar', // Arabic (274M)
-    'de', // German (76M)
-    'es', // Spanish (486M)
-    'fr', // French (77M native, 280M total)
-    'it', // Italian (64M)
-    'ja', // Japanese (125M)
-    'ko', // Korean (77M)
-    'pt', // Portuguese (236M)
-    'ru', // Russian (150M)
-    'zh', // Chinese (920M+)
-  ];
   
   // Helper: Apply regional spelling variations (ONLY for English language)
   // This function should ONLY be called when the language is English
