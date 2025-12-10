@@ -1,6 +1,6 @@
 # OmniUnit - Universal Converter
 
-**Version: 3.1.1**
+**Version: 3.2.0**
 
 ## Overview
 OmniUnit is a comprehensive, frontend-only unit conversion web application built with React and TypeScript. Its primary purpose is to provide a universal conversion tool with a "scientific archival" aesthetic, supporting a vast array of measurement systems including SI, Imperial, US Customary, Archaic, and specialized industrial units. The application produces a single, standalone HTML file for easy distribution, emphasizing accuracy and usability.
@@ -58,10 +58,15 @@ The codebase is organized for multi-person development collaboration:
 - `types.ts` - Core type definitions (UnitCategory, Prefix, UnitDefinition, CategoryDefinition)
 - `prefixes.ts` - SI and binary prefix definitions with helper functions
 - `shared-types.ts` - Shared interfaces (DimensionalFormula, CalcValue, SI_DERIVED_UNITS)
+- `helpers.ts` - Pure helper functions (mass normalization, dimensional analysis, cross-domain matching, regional spelling)
 - `index.ts` - Central export aggregator for all unit-related code
 
 **Components (`client/src/components/`)**:
 - `unit-converter.tsx` - Main converter with Converter, Custom, and Calculator tabs (~6658 lines)
+- `unit-converter/hooks/` - Custom hooks for state management:
+  - `useConverterState.ts` - Converter tab state (category, units, prefixes, result)
+  - `useCalculatorState.ts` - Calculator mode state and simple calculator values
+  - `useRpnStack.ts` - RPN calculator stack state with operations (push, drop, swap, undo)
 - `help-section.tsx` - Help documentation component
 - `ui/` - shadcn/ui component library
 

@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import type { CalcValue, DimensionalFormula } from '@/lib/units/shared-types';
+import { useState, useCallback, useRef } from 'react';
+import type { CalcValue } from '@/lib/units/shared-types';
 
 export interface UseRpnStackReturn {
   rpnStack: Array<CalcValue | null>;
@@ -24,6 +24,7 @@ export interface UseRpnStackReturn {
   setFlashRpnField3: React.Dispatch<React.SetStateAction<boolean>>;
   flashRpnResult: boolean;
   setFlashRpnResult: React.Dispatch<React.SetStateAction<boolean>>;
+  saveAndUpdateStack: (updater: (stack: Array<CalcValue | null>) => Array<CalcValue | null>) => void;
   pushValue: (value: CalcValue) => void;
   dropValue: () => void;
   swapXY: () => void;
@@ -45,10 +46,19 @@ export function useRpnStack(): UseRpnStackReturn {
   const [flashRpnField2, setFlashRpnField2] = useState<boolean>(false);
   const [flashRpnField3, setFlashRpnField3] = useState<boolean>(false);
   const [flashRpnResult, setFlashRpnResult] = useState<boolean>(false);
+  
+  const stackRef = useRef(rpnStack);
+  stackRef.current = rpnStack;
+
+  const saveAndUpdateStack = useCallback((updater: (stack: Array<CalcValue | null>) => Array<CalcValue | null>) => {
+    setPreviousRpnStack([...stackRef.current]);
+    setRpnStack(updater);
+    setRpnResultPrefix('none');
+    setRpnSelectedAlternative(0);
+  }, []);
 
   const pushValue = useCallback((value: CalcValue) => {
-    setPreviousRpnStack([...rpnStack]);
-    setRpnStack(prev => {
+    saveAndUpdateStack(prev => {
       const newStack = [...prev];
       newStack[3] = newStack[2];
       newStack[2] = newStack[1];
@@ -56,13 +66,10 @@ export function useRpnStack(): UseRpnStackReturn {
       newStack[0] = value;
       return newStack;
     });
-    setRpnResultPrefix('none');
-    setRpnSelectedAlternative(0);
-  }, [rpnStack]);
+  }, [saveAndUpdateStack]);
 
   const dropValue = useCallback(() => {
-    setPreviousRpnStack([...rpnStack]);
-    setRpnStack(prev => {
+    saveAndUpdateStack(prev => {
       const newStack = [...prev];
       newStack[0] = newStack[1];
       newStack[1] = newStack[2];
@@ -70,33 +77,25 @@ export function useRpnStack(): UseRpnStackReturn {
       newStack[3] = null;
       return newStack;
     });
-    setRpnResultPrefix('none');
-    setRpnSelectedAlternative(0);
-  }, [rpnStack]);
+  }, [saveAndUpdateStack]);
 
   const swapXY = useCallback(() => {
-    if (rpnStack[0] === null || rpnStack[1] === null) return;
-    setPreviousRpnStack([...rpnStack]);
-    setRpnStack(prev => {
+    if (stackRef.current[0] === null || stackRef.current[1] === null) return;
+    saveAndUpdateStack(prev => {
       const newStack = [...prev];
       const temp = newStack[0];
       newStack[0] = newStack[1];
       newStack[1] = temp;
       return newStack;
     });
-    setRpnResultPrefix('none');
-    setRpnSelectedAlternative(0);
-  }, [rpnStack]);
+  }, [saveAndUpdateStack]);
 
   const clearStack = useCallback(() => {
-    setPreviousRpnStack([...rpnStack]);
-    setRpnStack([null, null, null, null]);
+    saveAndUpdateStack(() => [null, null, null, null]);
     setLastX(null);
-    setRpnResultPrefix('none');
-    setRpnSelectedAlternative(0);
     setRpnXEditing(false);
     setRpnXEditValue('');
-  }, [rpnStack]);
+  }, [saveAndUpdateStack]);
 
   const undoStack = useCallback(() => {
     setRpnStack([...previousRpnStack]);
@@ -130,6 +129,7 @@ export function useRpnStack(): UseRpnStackReturn {
     setFlashRpnField3,
     flashRpnResult,
     setFlashRpnResult,
+    saveAndUpdateStack,
     pushValue,
     dropValue,
     swapXY,
