@@ -667,3 +667,131 @@ export const hasOnlyOriginalDimensions = (original: DimensionalFormula, remainin
   }
   return true;
 };
+
+// Normalizable derived unit for greedy decomposition
+export interface NormalizableDerivedUnit {
+  symbol: string;
+  dimensions: DimensionalFormula;
+  exponentSum: number; // Sum of absolute values of exponents (complexity score)
+}
+
+// Standard SI derived units catalog for normalization (sorted by complexity - more base units consumed first)
+// Only includes the 22 named SI derived units, NOT combinations like Wh
+export const NORMALIZABLE_DERIVED_UNITS: NormalizableDerivedUnit[] = [
+  // Sorted by exponentSum descending (most complex first)
+  // Note: Hz and Bq both have { time: -1 }, using Hz as it's the general SI unit for frequency
+  // Gy and Sv both have { length: 2, time: -2 }, using Gy as it's the base radiation unit
+  { symbol: 'F', dimensions: { mass: -1, length: -2, time: 4, current: 2 }, exponentSum: 9 },
+  { symbol: 'Ω', dimensions: { mass: 1, length: 2, time: -3, current: -2 }, exponentSum: 8 },
+  { symbol: 'S', dimensions: { mass: -1, length: -2, time: 3, current: 2 }, exponentSum: 8 },
+  { symbol: 'V', dimensions: { mass: 1, length: 2, time: -3, current: -1 }, exponentSum: 7 },
+  { symbol: 'H', dimensions: { mass: 1, length: 2, time: -2, current: -2 }, exponentSum: 7 },
+  { symbol: 'Wb', dimensions: { mass: 1, length: 2, time: -2, current: -1 }, exponentSum: 6 },
+  { symbol: 'W', dimensions: { mass: 1, length: 2, time: -3 }, exponentSum: 6 },
+  { symbol: 'J', dimensions: { mass: 1, length: 2, time: -2 }, exponentSum: 5 },
+  { symbol: 'lx', dimensions: { intensity: 1, solid_angle: 1, length: -2 }, exponentSum: 4 },
+  { symbol: 'Gy', dimensions: { length: 2, time: -2 }, exponentSum: 4 },
+  { symbol: 'Pa', dimensions: { mass: 1, length: -1, time: -2 }, exponentSum: 4 },
+  { symbol: 'N', dimensions: { mass: 1, length: 1, time: -2 }, exponentSum: 4 },
+  { symbol: 'T', dimensions: { mass: 1, time: -2, current: -1 }, exponentSum: 4 },
+  { symbol: 'C', dimensions: { current: 1, time: 1 }, exponentSum: 2 },
+  { symbol: 'kat', dimensions: { amount: 1, time: -1 }, exponentSum: 2 },
+  { symbol: 'lm', dimensions: { intensity: 1, solid_angle: 1 }, exponentSum: 2 },
+  // Hz removed: prefer s⁻¹ (base unit representation) over Hz (derived unit) when normalizing
+].sort((a, b) => b.exponentSum - a.exponentSum);
+
+// Check if a derived unit can be factored out from remaining dimensions (for normalization)
+export const canApplyDerivedUnit = (remaining: DimensionalFormula, derived: DimensionalFormula): boolean => {
+  for (const [dim, derivedExp] of Object.entries(derived)) {
+    const remainingExp = remaining[dim as keyof DimensionalFormula] || 0;
+    // The derived unit's exponent must have the same sign and not exceed the remaining magnitude
+    if (derivedExp > 0) {
+      if (remainingExp < derivedExp) return false;
+    } else if (derivedExp < 0) {
+      if (remainingExp > derivedExp) return false;
+    }
+  }
+  return true;
+};
+
+// Subtract derived unit dimensions from remaining (for normalization)
+export const subtractDerivedUnit = (remaining: DimensionalFormula, derived: DimensionalFormula): DimensionalFormula => {
+  const result: DimensionalFormula = { ...remaining };
+  for (const [dim, derivedExp] of Object.entries(derived)) {
+    const key = dim as keyof DimensionalFormula;
+    result[key] = (result[key] || 0) - derivedExp;
+    if (result[key] === 0) delete result[key];
+  }
+  return result;
+};
+
+// Greedy normalization: decompose dimensions into derived units + base units
+export const normalizeDimensions = (dims: DimensionalFormula): string => {
+  if (isDimensionEmpty(dims)) return '';
+  
+  let remaining = { ...dims };
+  const usedUnits: Map<string, number> = new Map(); // symbol -> exponent count
+  
+  // Greedy loop: keep finding derived units that consume the most exponents
+  let foundMatch = true;
+  while (foundMatch && !isDimensionEmpty(remaining)) {
+    foundMatch = false;
+    
+    // Find the best derived unit (first one that fits, since list is sorted by complexity)
+    for (const derivedUnit of NORMALIZABLE_DERIVED_UNITS) {
+      if (canApplyDerivedUnit(remaining, derivedUnit.dimensions)) {
+        // Apply this derived unit
+        remaining = subtractDerivedUnit(remaining, derivedUnit.dimensions);
+        usedUnits.set(derivedUnit.symbol, (usedUnits.get(derivedUnit.symbol) || 0) + 1);
+        foundMatch = true;
+        break; // Restart the loop to find the next best match
+      }
+    }
+  }
+  
+  // Build the result symbol
+  const parts: string[] = [];
+  
+  // Sort derived units alphabetically by symbol
+  const sortedDerivedUnits = Array.from(usedUnits.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+  
+  // Add remaining base unit dimensions (positive exponents first)
+  const remainingSymbol = formatDimensions(remaining);
+  if (remainingSymbol) {
+    // Split positive and negative parts
+    const positiveDims: DimensionalFormula = {};
+    const negativeDims: DimensionalFormula = {};
+    for (const [dim, exp] of Object.entries(remaining)) {
+      if (exp > 0) positiveDims[dim as keyof DimensionalFormula] = exp;
+      else if (exp < 0) negativeDims[dim as keyof DimensionalFormula] = exp;
+    }
+    
+    // Add positive base units first
+    const positiveSymbol = formatDimensions(positiveDims);
+    if (positiveSymbol) parts.push(positiveSymbol);
+    
+    // Add derived units (sorted alphabetically)
+    sortedDerivedUnits.forEach(([symbol, count]) => {
+      if (count === 1) {
+        parts.push(symbol);
+      } else {
+        parts.push(symbol + toSuperscript(count));
+      }
+    });
+    
+    // Add negative base units last
+    const negativeSymbol = formatDimensions(negativeDims);
+    if (negativeSymbol) parts.push(negativeSymbol);
+  } else {
+    // Only derived units (sorted alphabetically)
+    sortedDerivedUnits.forEach(([symbol, count]) => {
+      if (count === 1) {
+        parts.push(symbol);
+      } else {
+        parts.push(symbol + toSuperscript(count));
+      }
+    });
+  }
+  
+  return parts.join('⋅') || formatDimensions(dims);
+};
