@@ -20,7 +20,7 @@ import {
   isValidSymbolRepresentation, countUnits,
   generateSIRepresentations as generateSIRepresentationsLib,
   isDimensionEmpty, SIRepresentation,
-  canAddSubtract, subtractDimensions
+  canAddSubtract, subtractDimensions, canFactorOut, hasOnlyOriginalDimensions
 } from '@/lib/calculator';
 import { 
   PREFIX_EXPONENTS, GRAM_TO_KG_UNIT_PAIRS, KG_TO_GRAM_UNIT_PAIRS, 
@@ -2219,30 +2219,6 @@ export default function UnitConverter() {
   };
 
 
-  // Helper: Check if derived unit can be factored out of dimensions
-  const canFactorOut = (dimensions: DimensionalFormula, derivedUnit: DerivedUnitInfo): boolean => {
-    for (const key of Object.keys(derivedUnit.dimensions) as (keyof DimensionalFormula)[]) {
-      const dimValue = dimensions[key] || 0;
-      const derivedValue = derivedUnit.dimensions[key] || 0;
-      
-      // Check if the derived unit dimension has the same sign and magnitude <= target dimension
-      if (derivedValue > 0 && dimValue < derivedValue) return false;
-      if (derivedValue < 0 && dimValue > derivedValue) return false;
-      if (derivedValue !== 0 && dimValue === 0) return false;
-    }
-    return true;
-  };
-
-  // Helper: Check if remaining dimensions introduce new dimensional types
-  const hasOnlyOriginalDimensions = (original: DimensionalFormula, remaining: DimensionalFormula): boolean => {
-    for (const key of Object.keys(remaining) as (keyof DimensionalFormula)[]) {
-      // If the remaining has a dimension that the original doesn't have, reject
-      if (remaining[key] !== 0 && original[key] === undefined) {
-        return false;
-      }
-    }
-    return true;
-  };
 
   // Helper: Generate alternative representations for complex dimensions
   // Ordering: (1) Normalized SI unit, (2) Bare base units, (3) SI units alphabetically, (4) Non-SI units alphabetically

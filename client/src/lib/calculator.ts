@@ -642,3 +642,28 @@ export const canAddSubtract = (
          isDimensionless(v1.dimensions) || 
          isDimensionless(v2.dimensions);
 };
+
+// Check if derived unit can be factored out of dimensions
+export const canFactorOut = (dimensions: DimensionalFormula, derivedUnit: DerivedUnitInfo): boolean => {
+  for (const key of Object.keys(derivedUnit.dimensions) as (keyof DimensionalFormula)[]) {
+    const dimValue = dimensions[key] || 0;
+    const derivedValue = derivedUnit.dimensions[key] || 0;
+    
+    // Check if the derived unit dimension has the same sign and magnitude <= target dimension
+    if (derivedValue > 0 && dimValue < derivedValue) return false;
+    if (derivedValue < 0 && dimValue > derivedValue) return false;
+    if (derivedValue !== 0 && dimValue === 0) return false;
+  }
+  return true;
+};
+
+// Check if remaining dimensions introduce new dimensional types
+export const hasOnlyOriginalDimensions = (original: DimensionalFormula, remaining: DimensionalFormula): boolean => {
+  for (const key of Object.keys(remaining) as (keyof DimensionalFormula)[]) {
+    // If the remaining has a dimension that the original doesn't have, reject
+    if (remaining[key] !== 0 && original[key] === undefined) {
+      return false;
+    }
+  }
+  return true;
+};
