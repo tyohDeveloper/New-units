@@ -2137,3 +2137,52 @@ export function parseUnitText(
     dimensions
   };
 }
+
+// Categories with special ordering that shouldn't be re-sorted
+const PRESERVE_ORDER_CATEGORIES = [
+  'lightbulb', 'math', 'fuel_economy', 'temperature', 
+  'radioactive_decay', 'fuel', 'photon', 'rack_geometry', 'shipping'
+];
+
+// Get filtered and sorted units for a category
+// Rule: SI base unit first (factor=1 or matches baseSISymbol), then ALL other units sorted by ascending factor
+// Special handling for offset/inverse units to preserve data ordering
+export function getFilteredSortedUnits(category: string): UnitDefinition[] {
+  const catData = CONVERSION_DATA.find(c => c.id === category);
+  if (!catData) return [];
+  
+  const units = catData.units;
+  
+  if (PRESERVE_ORDER_CATEGORIES.includes(category)) {
+    return units;
+  }
+  
+  // Auto-detect categories with offset or inverse units - these need special ordering
+  const hasOffsetUnits = units.some(u => u.offset !== undefined && u.offset !== 0);
+  const hasInverseUnits = units.some(u => u.isInverse === true);
+  if (hasOffsetUnits || hasInverseUnits) {
+    return units;
+  }
+  
+  // Find the SI base unit by criteria (not by position)
+  const findSIBaseUnit = () => {
+    const baseFactor1 = units.find(u => Math.abs(u.factor - 1) < 1e-10);
+    if (baseFactor1) return baseFactor1;
+    if (catData.baseSISymbol) {
+      const bySymbol = units.find(u => u.symbol === catData.baseSISymbol);
+      if (bySymbol) return bySymbol;
+    }
+    return undefined;
+  };
+  
+  const siBaseUnit = findSIBaseUnit();
+    
+  // Sort: SI base unit first, then all others by ascending factor
+  return [...units].sort((a, b) => {
+    if (siBaseUnit) {
+      if (a.id === siBaseUnit.id && b.id !== siBaseUnit.id) return -1;
+      if (a.id !== siBaseUnit.id && b.id === siBaseUnit.id) return 1;
+    }
+    return a.factor - b.factor;
+  });
+}
