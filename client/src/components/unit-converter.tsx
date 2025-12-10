@@ -10,6 +10,8 @@ import {
   getDimensionSignature
 } from '@/lib/units/shared-types';
 import { PREFIX_EXPONENTS, GRAM_TO_KG_UNIT_PAIRS, KG_TO_GRAM_UNIT_PAIRS, normalizeMassUnit as normalizeMassUnitHelper } from '@/lib/units/helpers';
+import { useRpnStack } from '@/components/unit-converter/hooks/useRpnStack';
+import { useAllFlashFlags } from '@/components/unit-converter/hooks/useFlashFlag';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,34 +42,41 @@ export default function UnitConverter() {
   const [result, setResult] = useState<number | null>(null);
   const [precision, setPrecision] = useState<number>(4);
   const [calculatorPrecision, setCalculatorPrecision] = useState<number>(4);
-  const [flashCopyResult, setFlashCopyResult] = useState<boolean>(false);
-  const [flashCopyCalc, setFlashCopyCalc] = useState<boolean>(false);
-  const [flashCalcField1, setFlashCalcField1] = useState<boolean>(false);
-  const [flashCalcField2, setFlashCalcField2] = useState<boolean>(false);
-  const [flashCalcField3, setFlashCalcField3] = useState<boolean>(false);
-  const [flashFromBaseFactor, setFlashFromBaseFactor] = useState<boolean>(false);
-  const [flashFromSIBase, setFlashFromSIBase] = useState<boolean>(false);
-  const [flashToBaseFactor, setFlashToBaseFactor] = useState<boolean>(false);
-  const [flashToSIBase, setFlashToSIBase] = useState<boolean>(false);
-  const [flashConversionRatio, setFlashConversionRatio] = useState<boolean>(false);
   const [comparisonMode, setComparisonMode] = useState<boolean>(false);
+  
+  // Flash flags for copy feedback animations (using consolidated hook)
+  const flash = useAllFlashFlags(300);
+  const [flashCopyResult, triggerFlashCopyResult] = flash.copyResult;
+  const [flashCopyCalc, triggerFlashCopyCalc] = flash.copyCalc;
+  const [flashCalcField1, triggerFlashCalcField1] = flash.calcField1;
+  const [flashCalcField2, triggerFlashCalcField2] = flash.calcField2;
+  const [flashCalcField3, triggerFlashCalcField3] = flash.calcField3;
+  const [flashFromBaseFactor, triggerFlashFromBaseFactor] = flash.fromBaseFactor;
+  const [flashFromSIBase, triggerFlashFromSIBase] = flash.fromSIBase;
+  const [flashToBaseFactor, triggerFlashToBaseFactor] = flash.toBaseFactor;
+  const [flashToSIBase, triggerFlashToSIBase] = flash.toSIBase;
+  const [flashConversionRatio, triggerFlashConversionRatio] = flash.conversionRatio;
+  const [flashRpnField1, triggerFlashRpnField1] = flash.rpnField1;
+  const [flashRpnField2, triggerFlashRpnField2] = flash.rpnField2;
+  const [flashRpnField3, triggerFlashRpnField3] = flash.rpnField3;
+  const [flashRpnResult, triggerFlashRpnResult] = flash.rpnResult;
+  const [flashDirectCopy, triggerFlashDirectCopy] = flash.directCopy;
   
   // Calculator mode state ('simple' | 'rpn')
   const [calculatorMode, setCalculatorMode] = useState<'simple' | 'rpn'>('rpn');
   const [shiftActive, setShiftActive] = useState(false);
   
-  // RPN calculator state - independent from simple calculator
-  const [rpnStack, setRpnStack] = useState<Array<CalcValue | null>>([null, null, null, null]);
-  const [previousRpnStack, setPreviousRpnStack] = useState<Array<CalcValue | null>>([null, null, null, null]);
-  const [lastX, setLastX] = useState<CalcValue | null>(null); // LASTx register - stores X before operations
-  const [flashRpnField1, setFlashRpnField1] = useState<boolean>(false);
-  const [flashRpnField2, setFlashRpnField2] = useState<boolean>(false);
-  const [flashRpnField3, setFlashRpnField3] = useState<boolean>(false);
-  const [flashRpnResult, setFlashRpnResult] = useState<boolean>(false);
-  const [rpnResultPrefix, setRpnResultPrefix] = useState<string>('none');
-  const [rpnSelectedAlternative, setRpnSelectedAlternative] = useState<number>(0);
-  const [rpnXEditing, setRpnXEditing] = useState<boolean>(false);
-  const [rpnXEditValue, setRpnXEditValue] = useState<string>('');
+  // RPN calculator state (using consolidated hook)
+  const rpn = useRpnStack();
+  const {
+    rpnStack, setRpnStack, previousRpnStack, setPreviousRpnStack,
+    lastX, setLastX, rpnResultPrefix, setRpnResultPrefix,
+    rpnSelectedAlternative, setRpnSelectedAlternative,
+    rpnXEditing, setRpnXEditing, rpnXEditValue, setRpnXEditValue,
+    saveAndUpdateStack, pushValue: rpnPushValue, dropValue: rpnDropValue,
+    swapXY: rpnSwapXY, clearStack: rpnClearStack, undoStack: rpnUndoStack,
+    recallLastX: rpnRecallLastX
+  } = rpn;
   
   // Tab state
   const [activeTab, setActiveTab] = useState<string>('converter');
@@ -86,7 +95,6 @@ export default function UnitConverter() {
     rad: 0,  // angle (radian)
     sr: 0    // solid angle (steradian)
   });
-  const [flashDirectCopy, setFlashDirectCopy] = useState<boolean>(false);
 
   // Backward compatibility alias - types and catalogs imported from shared-types
   const DERIVED_UNITS_CATALOG = SI_DERIVED_UNITS;
@@ -1874,8 +1882,7 @@ export default function UnitConverter() {
         const textToCopy = unitSymbol ? `${cleanValue} ${unitSymbol}` : cleanValue;
         
         navigator.clipboard.writeText(textToCopy);
-        setFlashRpnResult(true);
-        setTimeout(() => setFlashRpnResult(false), 300);
+        triggerFlashRpnResult();
         e.preventDefault();
         return;
       }
@@ -1894,8 +1901,7 @@ export default function UnitConverter() {
         const textToCopy = unitSymbol ? `${formattedValue} ${unitSymbol}` : formattedValue;
         
         navigator.clipboard.writeText(textToCopy);
-        setFlashCopyCalc(true);
-        setTimeout(() => setFlashCopyCalc(false), 300);
+        triggerFlashCopyCalc();
         e.preventDefault();
         return;
       }
@@ -1907,8 +1913,7 @@ export default function UnitConverter() {
         const textToCopy = `${formatForClipboard(result, precision)} ${prefixSymbol}${unitSymbol}`;
         
         navigator.clipboard.writeText(textToCopy);
-        setFlashCopyResult(true);
-        setTimeout(() => setFlashCopyResult(false), 300);
+        triggerFlashCopyResult();
         e.preventDefault();
         return;
       }
@@ -2538,8 +2543,7 @@ export default function UnitConverter() {
       navigator.clipboard.writeText(textToCopy);
       
       // Trigger flash animation
-      setFlashCopyResult(true);
-      setTimeout(() => setFlashCopyResult(false), 300);
+      triggerFlashCopyResult();
       
       // Add to calculator (first three fields only) - convert to SI base units
       // Use appropriate stack based on calculator mode
@@ -2565,8 +2569,7 @@ export default function UnitConverter() {
         });
         setRpnResultPrefix('none');
         setRpnSelectedAlternative(0);
-        setFlashRpnResult(true);
-        setTimeout(() => setFlashRpnResult(false), 300);
+        triggerFlashRpnResult();
       } else {
         // UNIT mode: Find first empty field in positions 0-2
         const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
@@ -2583,8 +2586,7 @@ export default function UnitConverter() {
     if (fromUnitData) {
       const factor = fromUnitData.factor * fromPrefixData.factor;
       navigator.clipboard.writeText(factor.toString());
-      setFlashFromBaseFactor(true);
-      setTimeout(() => setFlashFromBaseFactor(false), 300);
+      triggerFlashFromBaseFactor();
     }
   };
 
@@ -2592,8 +2594,7 @@ export default function UnitConverter() {
     const siBaseUnits = formatDimensions(getCategoryDimensions(activeCategory));
     if (siBaseUnits) {
       navigator.clipboard.writeText(siBaseUnits);
-      setFlashFromSIBase(true);
-      setTimeout(() => setFlashFromSIBase(false), 300);
+      triggerFlashFromSIBase();
     }
   };
 
@@ -2601,8 +2602,7 @@ export default function UnitConverter() {
     if (toUnitData) {
       const factor = toUnitData.factor * toPrefixData.factor;
       navigator.clipboard.writeText(factor.toString());
-      setFlashToBaseFactor(true);
-      setTimeout(() => setFlashToBaseFactor(false), 300);
+      triggerFlashToBaseFactor();
     }
   };
 
@@ -2610,8 +2610,7 @@ export default function UnitConverter() {
     const siBaseUnits = formatDimensions(getCategoryDimensions(activeCategory));
     if (siBaseUnits) {
       navigator.clipboard.writeText(siBaseUnits);
-      setFlashToSIBase(true);
-      setTimeout(() => setFlashToSIBase(false), 300);
+      triggerFlashToSIBase();
     }
   };
 
@@ -2628,8 +2627,7 @@ export default function UnitConverter() {
       
       const ratioText = `1 ${fromPrefixSymbol}${fromUnitData.symbol} = ${formattedRatio} ${toPrefixSymbol}${toUnitData.symbol}`;
       navigator.clipboard.writeText(ratioText);
-      setFlashConversionRatio(true);
-      setTimeout(() => setFlashConversionRatio(false), 300);
+      triggerFlashConversionRatio();
     }
   };
 
@@ -3570,8 +3568,7 @@ export default function UnitConverter() {
     });
     setRpnResultPrefix('none');
     setRpnSelectedAlternative(0);
-    setFlashRpnResult(true);
-    setTimeout(() => setFlashRpnResult(false), 300);
+    triggerFlashRpnResult();
   };
 
   // RPN unary operation types
@@ -3879,8 +3876,7 @@ export default function UnitConverter() {
     });
     setRpnResultPrefix('none');
     setRpnSelectedAlternative(0);
-    setFlashRpnResult(true);
-    setTimeout(() => setFlashRpnResult(false), 300);
+    triggerFlashRpnResult();
   };
 
   // RPN binary operation types
@@ -4028,8 +4024,7 @@ export default function UnitConverter() {
     });
     setRpnResultPrefix('none');
     setRpnSelectedAlternative(0);
-    setFlashRpnResult(true);
-    setTimeout(() => setFlashRpnResult(false), 300);
+    triggerFlashRpnResult();
   };
 
   // Push a constant value onto the RPN stack (dimensionless)
@@ -4050,8 +4045,7 @@ export default function UnitConverter() {
     });
     setRpnResultPrefix('none');
     setRpnSelectedAlternative(0);
-    setFlashRpnResult(true);
-    setTimeout(() => setFlashRpnResult(false), 300);
+    triggerFlashRpnResult();
   };
 
   // Get RPN result display (similar to getCalcResultDisplay but for RPN)
@@ -4095,8 +4089,7 @@ export default function UnitConverter() {
     const textToCopy = display.unitSymbol ? `${cleanValue} ${display.unitSymbol}` : cleanValue;
     
     navigator.clipboard.writeText(textToCopy);
-    setFlashRpnResult(true);
-    setTimeout(() => setFlashRpnResult(false), 300);
+    triggerFlashRpnResult();
   };
 
   const copyRpnField = (index: number) => {
@@ -4118,14 +4111,11 @@ export default function UnitConverter() {
     navigator.clipboard.writeText(textToCopy);
     
     if (index === 0) {
-      setFlashRpnField1(true);
-      setTimeout(() => setFlashRpnField1(false), 300);
+      triggerFlashRpnField1();
     } else if (index === 1) {
-      setFlashRpnField2(true);
-      setTimeout(() => setFlashRpnField2(false), 300);
+      triggerFlashRpnField2();
     } else if (index === 2) {
-      setFlashRpnField3(true);
-      setTimeout(() => setFlashRpnField3(false), 300);
+      triggerFlashRpnField3();
     }
   };
 
@@ -4213,8 +4203,7 @@ export default function UnitConverter() {
     navigator.clipboard.writeText(textToCopy);
     
     // Trigger flash animation
-    setFlashCopyCalc(true);
-    setTimeout(() => setFlashCopyCalc(false), 300);
+    triggerFlashCopyCalc();
   };
 
   // Helper to clean up trailing zeros from decimal numbers
@@ -4263,14 +4252,11 @@ export default function UnitConverter() {
     
     // Trigger flash animation for the specific field
     if (fieldIndex === 0) {
-      setFlashCalcField1(true);
-      setTimeout(() => setFlashCalcField1(false), 300);
+      triggerFlashCalcField1();
     } else if (fieldIndex === 1) {
-      setFlashCalcField2(true);
-      setTimeout(() => setFlashCalcField2(false), 300);
+      triggerFlashCalcField2();
     } else if (fieldIndex === 2) {
-      setFlashCalcField3(true);
-      setTimeout(() => setFlashCalcField3(false), 300);
+      triggerFlashCalcField3();
     }
   };
 
@@ -5128,8 +5114,7 @@ export default function UnitConverter() {
                     const valueStr = formatForClipboard(numValue, precision);
                     const textToCopy = unitSymbol ? `${valueStr} ${unitSymbol}` : valueStr;
                     navigator.clipboard.writeText(textToCopy);
-                    setFlashDirectCopy(true);
-                    setTimeout(() => setFlashDirectCopy(false), 300);
+                    triggerFlashDirectCopy();
                     
                     // Add to calculator - same behavior as Converter pane result click
                     const dims = buildDirectDimensions();
@@ -5152,8 +5137,7 @@ export default function UnitConverter() {
                       });
                       setRpnResultPrefix('none');
                       setRpnSelectedAlternative(0);
-                      setFlashRpnResult(true);
-                      setTimeout(() => setFlashRpnResult(false), 300);
+                      triggerFlashRpnResult();
                     } else {
                       // UNIT mode: Find first empty field in positions 0-2
                       const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
@@ -5299,8 +5283,7 @@ export default function UnitConverter() {
                   const valueStr = formatForClipboard(numValue, precision);
                   const textToCopy = unitSymbol ? `${valueStr} ${unitSymbol}` : valueStr;
                   navigator.clipboard.writeText(textToCopy);
-                  setFlashDirectCopy(true);
-                  setTimeout(() => setFlashDirectCopy(false), 300);
+                  triggerFlashDirectCopy();
                   
                   // Add to calculator - same behavior as Converter pane
                   const dims = buildDirectDimensions();
@@ -5323,8 +5306,7 @@ export default function UnitConverter() {
                     });
                     setRpnResultPrefix('none');
                     setRpnSelectedAlternative(0);
-                    setFlashRpnResult(true);
-                    setTimeout(() => setFlashRpnResult(false), 300);
+                    triggerFlashRpnResult();
                   } else {
                     // UNIT mode: Find first empty field in positions 0-2
                     const firstEmptyIndex = calcValues.findIndex((v, i) => i < 3 && v === null);
@@ -5489,8 +5471,7 @@ export default function UnitConverter() {
                     });
                     setRpnResultPrefix('none');
                     setRpnSelectedAlternative(0);
-                    setFlashRpnResult(true);
-                    setTimeout(() => setFlashRpnResult(false), 300);
+                    triggerFlashRpnResult();
                   } catch (err) {
                     console.error('Failed to read clipboard:', err);
                   }
