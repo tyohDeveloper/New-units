@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES, Prefix, findOptimalPrefix, parseUnitText, ParsedUnitResult } from '@/lib/conversion-data';
-import { UNIT_NAME_TRANSLATIONS, type SupportedLanguage } from '@/lib/localization';
+import { UNIT_NAME_TRANSLATIONS, UI_TRANSLATIONS, type SupportedLanguage, type Translation } from '@/lib/localization';
 import { fixPrecision } from '@/lib/formatting';
 import { 
   DimensionalFormula, CalcValue, DerivedUnitInfo, SI_DERIVED_UNITS,
@@ -1551,15 +1551,26 @@ export default function UnitConverter() {
     'Se (Korea)': { en: 'Se (Korea)', ar: 'سي (كوريا)', de: 'Se (Korea)', es: 'Se (Corea)', fr: 'Se (Corée)', it: 'Se (Corea)', ko: '세', pt: 'Se (Coreia)', ru: 'Се (Корея)', zh: '세（韩国）', ja: '畝（韓国）' },
   };
 
+  // Helper: Get translation from a translation record
+  const getTranslationFromRecord = (trans: Translation, lang: SupportedLanguage): string | undefined => {
+    if (lang === 'en' || lang === 'en-us') return trans.en;
+    const langValue = trans[lang as keyof Translation];
+    return langValue as string | undefined;
+  };
+
   // Helper: Get translated text - uses language dropdown
   // Translates ALL labels: UI labels, category names, quantity names, and unit names
   // NOTE: Symbols (m, ft, kg) and prefixes (k, M, G) are NEVER translated - they always remain in Latin/ISO SI
   const t = (key: string): string => {
-    // Check if we have a translation for the selected language
+    // Check UI_TRANSLATIONS from localization.ts first
+    if (UI_TRANSLATIONS[key]) {
+      const result = getTranslationFromRecord(UI_TRANSLATIONS[key], language);
+      if (result) return result;
+      return UI_TRANSLATIONS[key].en || key;
+    }
+    // Fall back to component-local TRANSLATIONS
     if (TRANSLATIONS[key]) {
       const trans = TRANSLATIONS[key];
-      // Check for translation in selected language
-      // en-us uses English translations (spelling handled separately by applyRegionalSpelling)
       if ((language === 'en' || language === 'en-us') && trans.en) return trans.en;
       if (language === 'de' && trans.de) return trans.de;
       if (language === 'es' && trans.es) return trans.es;
@@ -1571,7 +1582,6 @@ export default function UnitConverter() {
       if (language === 'zh' && trans.zh) return trans.zh;
       if (language === 'ja' && trans.ja) return trans.ja;
       if (language === 'ar' && trans.ar) return trans.ar;
-      // Falls back to English if no translation exists for the selected language
       return trans.en || key;
     }
     return key;
