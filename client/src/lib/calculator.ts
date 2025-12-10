@@ -10,6 +10,11 @@ export interface DimensionalFormula {
   solid_angle?: number;
 }
 
+export interface CalcValue {
+  value: number;
+  dimensions: DimensionalFormula;
+}
+
 export interface DerivedUnitInfo {
   symbol: string;
   category: string;
@@ -624,4 +629,16 @@ export const generateSIRepresentations = (
   }
   
   return filteredRepresentations;
+};
+
+// Check if addition/subtraction is valid between two values
+export const canAddSubtract = (
+  v1: CalcValue | null, 
+  v2: CalcValue | null
+): boolean => {
+  if (!v1 || !v2) return false;
+  // Can add/subtract if: same dimensions, or either is dimensionless (math)
+  return dimensionsEqual(v1.dimensions, v2.dimensions) || 
+         isDimensionless(v1.dimensions) || 
+         isDimensionless(v2.dimensions);
 };

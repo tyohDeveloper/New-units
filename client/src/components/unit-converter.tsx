@@ -19,7 +19,8 @@ import {
   dimensionsEqual, isDimensionless, findCrossDomainMatches,
   isValidSymbolRepresentation, countUnits,
   generateSIRepresentations as generateSIRepresentationsLib,
-  isDimensionEmpty, SIRepresentation
+  isDimensionEmpty, SIRepresentation,
+  canAddSubtract, subtractDimensions
 } from '@/lib/calculator';
 import { 
   PREFIX_EXPONENTS, GRAM_TO_KG_UNIT_PAIRS, KG_TO_GRAM_UNIT_PAIRS, 
@@ -2124,14 +2125,6 @@ export default function UnitConverter() {
     }
   };
 
-  // Helper: Check if addition/subtraction is valid between two values
-  const canAddSubtract = (v1: CalcValue | null, v2: CalcValue | null): boolean => {
-    if (!v1 || !v2) return false;
-    // Can add/subtract if: same dimensions, or either is dimensionless (math)
-    return dimensionsEqual(v1.dimensions, v2.dimensions) || 
-           isDimensionless(v1.dimensions) || 
-           isDimensionless(v2.dimensions);
-  };
 
   // Helper: Find category that matches dimensions
   const findCategoryForDimensions = (dims: DimensionalFormula): UnitCategory | null => {
@@ -2225,25 +2218,6 @@ export default function UnitConverter() {
     return bestPrefix;
   };
 
-  // Helper: Subtract dimensions (for factorization)
-  const subtractDimensions = (d1: DimensionalFormula, d2: DimensionalFormula): DimensionalFormula => {
-    const result: DimensionalFormula = { ...d1 };
-    
-    for (const key of Object.keys(d2) as (keyof DimensionalFormula)[]) {
-      if (result[key] === undefined) {
-        result[key] = -(d2[key] || 0);
-      } else {
-        const newVal = (result[key] || 0) - (d2[key] || 0);
-        if (newVal === 0) {
-          delete result[key];
-        } else {
-          result[key] = newVal;
-        }
-      }
-    }
-    
-    return result;
-  };
 
   // Helper: Check if derived unit can be factored out of dimensions
   const canFactorOut = (dimensions: DimensionalFormula, derivedUnit: DerivedUnitInfo): boolean => {
