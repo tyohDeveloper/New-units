@@ -398,6 +398,97 @@ describe('useRpnStack', () => {
       
       expect(result.current.rpnStack).toEqual(stackAfterFirstPush);
     });
+
+    it('should restore state after multiple operations', () => {
+      const { result } = renderHook(() => useRpnStack());
+      const value1 = createTestValue(1);
+      const value2 = createTestValue(2);
+      const value3 = createTestValue(3);
+      
+      act(() => {
+        result.current.pushValue(value1);
+        result.current.pushValue(value2);
+      });
+      
+      act(() => {
+        result.current.pushValue(value3);
+      });
+      
+      act(() => {
+        result.current.undoStack();
+      });
+      
+      expect(result.current.rpnStack[0]).toEqual(value2);
+      expect(result.current.rpnStack[1]).toEqual(value1);
+      expect(result.current.rpnStack[2]).toBeNull();
+    });
+
+    it('should restore state after drop operation', () => {
+      const { result } = renderHook(() => useRpnStack());
+      const value1 = createTestValue(1);
+      const value2 = createTestValue(2);
+      
+      act(() => {
+        result.current.pushValue(value1);
+        result.current.pushValue(value2);
+      });
+      
+      const stackBeforeDrop = [...result.current.rpnStack];
+      
+      act(() => {
+        result.current.dropValue();
+      });
+      
+      act(() => {
+        result.current.undoStack();
+      });
+      
+      expect(result.current.rpnStack).toEqual(stackBeforeDrop);
+    });
+
+    it('should restore state after swap operation', () => {
+      const { result } = renderHook(() => useRpnStack());
+      const value1 = createTestValue(1);
+      const value2 = createTestValue(2);
+      
+      act(() => {
+        result.current.pushValue(value1);
+        result.current.pushValue(value2);
+      });
+      
+      const stackBeforeSwap = [...result.current.rpnStack];
+      
+      act(() => {
+        result.current.swapXY();
+      });
+      
+      act(() => {
+        result.current.undoStack();
+      });
+      
+      expect(result.current.rpnStack).toEqual(stackBeforeSwap);
+    });
+
+    it('should restore state after clear operation', () => {
+      const { result } = renderHook(() => useRpnStack());
+      const value1 = createTestValue(1);
+      
+      act(() => {
+        result.current.pushValue(value1);
+      });
+      
+      const stackBeforeClear = [...result.current.rpnStack];
+      
+      act(() => {
+        result.current.clearStack();
+      });
+      
+      act(() => {
+        result.current.undoStack();
+      });
+      
+      expect(result.current.rpnStack).toEqual(stackBeforeClear);
+    });
   });
 
   describe('recallLastX', () => {
@@ -424,6 +515,67 @@ describe('useRpnStack', () => {
       });
       
       expect(result.current.rpnStack).toEqual([null, null, null, null]);
+    });
+
+    it('should shift existing stack values when recalling lastX', () => {
+      const { result } = renderHook(() => useRpnStack());
+      const existingValue = createTestValue(1);
+      const lastXValue = createTestValue(99);
+      
+      act(() => {
+        result.current.pushValue(existingValue);
+        result.current.setLastX(lastXValue);
+      });
+      
+      act(() => {
+        result.current.recallLastX();
+      });
+      
+      expect(result.current.rpnStack[0]).toEqual(lastXValue);
+      expect(result.current.rpnStack[1]).toEqual(existingValue);
+    });
+
+    it('should preserve lastX value after recall (for multiple recalls)', () => {
+      const { result } = renderHook(() => useRpnStack());
+      const lastXValue = createTestValue(99);
+      
+      act(() => {
+        result.current.setLastX(lastXValue);
+      });
+      
+      act(() => {
+        result.current.recallLastX();
+      });
+      
+      expect(result.current.lastX).toEqual(lastXValue);
+      
+      act(() => {
+        result.current.recallLastX();
+      });
+      
+      expect(result.current.rpnStack[0]).toEqual(lastXValue);
+      expect(result.current.rpnStack[1]).toEqual(lastXValue);
+    });
+
+    it('should handle lastX with dimensions', () => {
+      const { result } = renderHook(() => useRpnStack());
+      const lastXValue: CalcValue = {
+        value: 42,
+        dimensions: { mass: 1, length: 2, time: -2 },
+        prefix: 'k'
+      };
+      
+      act(() => {
+        result.current.setLastX(lastXValue);
+      });
+      
+      act(() => {
+        result.current.recallLastX();
+      });
+      
+      expect(result.current.rpnStack[0]).toEqual(lastXValue);
+      expect(result.current.rpnStack[0]!.dimensions).toEqual({ mass: 1, length: 2, time: -2 });
+      expect(result.current.rpnStack[0]!.prefix).toBe('k');
     });
   });
 
