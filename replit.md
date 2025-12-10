@@ -44,6 +44,31 @@ OmniUnit is a comprehensive, frontend-only unit conversion web application built
 - **Build Process**: Vite for development; `npm run build` generates a single `dist/public/index.html` file.
 - **Testing**: Extensive unit (Vitest, React Testing Library) and end-to-end (Playwright) tests covering conversion, localization, calculator logic, formatting, smart paste, RPN, edge cases, math functions, and precision comparison.
 
+### Modular File Structure
+The codebase is organized for multi-person development collaboration:
+
+**Core Libraries (`client/src/lib/`)**:
+- `conversion-data.ts` - Unit definitions, conversion functions, and parsing logic (~2140 lines)
+- `calculator.ts` - Calculator-specific logic for dimensional analysis and operations
+- `formatting.ts` - Number formatting utilities (separators, precision, Arabic numerals)
+- `localization.ts` - Translation data for 12 languages
+- `test-utils.ts` - Testing helpers
+
+**Unit System (`client/src/lib/units/`)**:
+- `types.ts` - Core type definitions (UnitCategory, Prefix, UnitDefinition, CategoryDefinition)
+- `prefixes.ts` - SI and binary prefix definitions with helper functions
+- `shared-types.ts` - Shared interfaces (DimensionalFormula, CalcValue, SI_DERIVED_UNITS)
+- `index.ts` - Central export aggregator for all unit-related code
+
+**Components (`client/src/components/`)**:
+- `unit-converter.tsx` - Main converter with Converter, Custom, and Calculator tabs (~6658 lines)
+- `help-section.tsx` - Help documentation component
+- `ui/` - shadcn/ui component library
+
+**Tests (`tests/`)**:
+- 10 test files with 1018 total tests
+- Coverage: conversion, localization, calculator, formatting, smart paste, RPN, edge cases, math, precision
+
 ## External Dependencies
 ### UI Libraries
 - **Radix UI**: Primitives for accessible UI components.
