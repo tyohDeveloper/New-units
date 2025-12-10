@@ -4,7 +4,9 @@ import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES, Prefix,
 import { UNIT_NAME_TRANSLATIONS, UI_TRANSLATIONS, type SupportedLanguage, type Translation } from '@/lib/localization';
 import { 
   fixPrecision, toArabicNumerals, toLatinNumerals, roundToNearestEven, 
-  toFixedBanker, toTitleCase, NUMBER_FORMATS, type NumberFormat 
+  toFixedBanker, toTitleCase, NUMBER_FORMATS, type NumberFormat,
+  parseNumberWithFormat as parseNumberWithSpecificFormat,
+  formatNumberWithFormat as formatNumberWithSpecificFormat
 } from '@/lib/formatting';
 import { 
   DimensionalFormula, CalcValue, DerivedUnitInfo, SI_DERIVED_UNITS,
@@ -2100,70 +2102,9 @@ export default function UnitConverter() {
     return derivedUnits[dimsStr] || '';
   };
 
-  // Helper to parse number from string with a specific format
-  const parseNumberWithSpecificFormat = (str: string, formatKey: NumberFormat): number => {
-    const format = NUMBER_FORMATS[formatKey];
-    // Convert Arabic numerals to Latin if present
-    let cleaned = toLatinNumerals(str);
-    // Remove thousands separator
-    if (format.thousands) {
-      cleaned = cleaned.split(format.thousands).join('');
-    }
-    // Replace decimal separator with period for parsing
-    if (format.decimal !== '.') {
-      cleaned = cleaned.replace(format.decimal, '.');
-    }
-    return parseFloat(cleaned);
-  };
-
   // Helper to parse number from string with current format
   const parseNumberWithFormat = (str: string): number => {
     return parseNumberWithSpecificFormat(str, numberFormat);
-  };
-
-  // Helper to format number with a specific format (for reformatting when locale changes)
-  const formatNumberWithSpecificFormat = (num: number, formatKey: NumberFormat): string => {
-    const format = NUMBER_FORMATS[formatKey];
-    
-    // Handle special cases
-    if (isNaN(num) || !isFinite(num)) return '';
-    
-    // Get the string representation
-    const numStr = num.toString();
-    const [integer, decimal] = numStr.split('.');
-    
-    // Add thousands separator if format has one
-    let formattedInteger = integer;
-    if (format.thousands) {
-      if (formatKey === 'south-asian') {
-        // Indian numbering system: 3-2-2 grouping (e.g., 12,34,56,789)
-        const reversed = integer.split('').reverse().join('');
-        let result = '';
-        for (let i = 0; i < reversed.length; i++) {
-          if (i === 3 || (i > 3 && (i - 3) % 2 === 0)) {
-            result += format.thousands;
-          }
-          result += reversed[i];
-        }
-        formattedInteger = result.split('').reverse().join('');
-      } else if (format.myriad) {
-        // Myriad grouping: 4-4-4 grouping (e.g., 1,2345,6789)
-        formattedInteger = integer.replace(/\B(?=(\d{4})+(?!\d))/g, format.thousands);
-      } else {
-        // Standard 3-3-3 grouping
-        formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, format.thousands);
-      }
-    }
-    
-    // Combine with decimal part
-    let result = decimal ? `${formattedInteger}${format.decimal}${decimal}` : formattedInteger;
-    
-    // Convert to Arabic numerals if needed
-    if (format.useArabicNumerals) {
-      result = toArabicNumerals(result);
-    }
-    
-    return result;
   };
 
   // Reformat input value when number format changes
