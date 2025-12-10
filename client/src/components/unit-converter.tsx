@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES, Prefix, findOptimalPrefix, parseUnitText, ParsedUnitResult } from '@/lib/conversion-data';
 import { UNIT_NAME_TRANSLATIONS, type SupportedLanguage } from '@/lib/localization';
 import { fixPrecision } from '@/lib/formatting';
+import { DimensionalFormula, CalcValue, DerivedUnitInfo, SI_DERIVED_UNITS } from '@/lib/units/shared-types';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -81,66 +82,7 @@ export default function UnitConverter() {
   });
   const [flashDirectCopy, setFlashDirectCopy] = useState<boolean>(false);
 
-  // Dimensional formula tracking for calculator
-  interface DimensionalFormula {
-    length?: number;
-    mass?: number;
-    time?: number;
-    current?: number;
-    temperature?: number;
-    amount?: number;
-    intensity?: number;
-    angle?: number;
-    solid_angle?: number;
-  }
-
-  interface CalcValue {
-    value: number; // SI base unit value
-    dimensions: DimensionalFormula;
-    prefix: string; // The prefix to display with (e.g., 'k', 'M', 'none')
-  }
-
-  // Derived unit catalog for alternative representations
-  interface DerivedUnitInfo {
-    symbol: string;
-    category: UnitCategory | string; // Allow extended categories for SI derived units
-    unitId: string;
-    dimensions: DimensionalFormula;
-    allowPrefixes: boolean;
-  }
-
-  // Catalog of SI derived units with their dimensional formulas
-  // Used for generating all possible SI representations in calculator dropdown
-  const SI_DERIVED_UNITS: DerivedUnitInfo[] = [
-    // Named SI derived units (22 total)
-    { symbol: 'Hz', category: 'frequency', unitId: 'hz', dimensions: { time: -1 }, allowPrefixes: true },
-    { symbol: 'N', category: 'force', unitId: 'n', dimensions: { mass: 1, length: 1, time: -2 }, allowPrefixes: true },
-    { symbol: 'Pa', category: 'pressure', unitId: 'pa', dimensions: { mass: 1, length: -1, time: -2 }, allowPrefixes: true },
-    { symbol: 'J', category: 'energy', unitId: 'j', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
-    { symbol: 'W', category: 'power', unitId: 'w', dimensions: { mass: 1, length: 2, time: -3 }, allowPrefixes: true },
-    { symbol: 'C', category: 'charge', unitId: 'c', dimensions: { current: 1, time: 1 }, allowPrefixes: true },
-    { symbol: 'V', category: 'potential', unitId: 'v', dimensions: { mass: 1, length: 2, time: -3, current: -1 }, allowPrefixes: true },
-    { symbol: 'F', category: 'capacitance', unitId: 'f', dimensions: { mass: -1, length: -2, time: 4, current: 2 }, allowPrefixes: true },
-    { symbol: 'Ω', category: 'resistance', unitId: 'ohm', dimensions: { mass: 1, length: 2, time: -3, current: -2 }, allowPrefixes: true },
-    { symbol: 'S', category: 'conductance', unitId: 's', dimensions: { mass: -1, length: -2, time: 3, current: 2 }, allowPrefixes: true },
-    { symbol: 'Wb', category: 'magnetic_flux', unitId: 'wb', dimensions: { mass: 1, length: 2, time: -2, current: -1 }, allowPrefixes: true },
-    { symbol: 'T', category: 'magnetic_density', unitId: 't', dimensions: { mass: 1, time: -2, current: -1 }, allowPrefixes: true },
-    { symbol: 'H', category: 'inductance', unitId: 'h', dimensions: { mass: 1, length: 2, time: -2, current: -2 }, allowPrefixes: true },
-    { symbol: 'lm', category: 'luminous_flux', unitId: 'lm', dimensions: { intensity: 1, solid_angle: 1 }, allowPrefixes: true },
-    { symbol: 'lx', category: 'illuminance', unitId: 'lx', dimensions: { intensity: 1, solid_angle: 1, length: -2 }, allowPrefixes: true },
-    { symbol: 'Bq', category: 'radioactivity', unitId: 'bq', dimensions: { time: -1 }, allowPrefixes: true },
-    { symbol: 'Gy', category: 'absorbed_dose', unitId: 'gy', dimensions: { length: 2, time: -2 }, allowPrefixes: true },
-    { symbol: 'Sv', category: 'equivalent_dose', unitId: 'sv', dimensions: { length: 2, time: -2 }, allowPrefixes: true },
-    { symbol: 'kat', category: 'catalytic', unitId: 'kat', dimensions: { amount: 1, time: -1 }, allowPrefixes: true },
-    // Geometric SI derived units
-    { symbol: 'rad', category: 'angle', unitId: 'rad', dimensions: { angle: 1 }, allowPrefixes: true },
-    { symbol: 'sr', category: 'solid_angle', unitId: 'sr', dimensions: { solid_angle: 1 }, allowPrefixes: true },
-    // Photon energy-equivalents (via Planck relations E = hν and E = hc/λ)
-    { symbol: 'ν', category: 'photon', unitId: 'photon_freq', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
-    { symbol: 'λ', category: 'photon', unitId: 'photon_wavelength', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
-  ];
-  
-  // Backward compatibility alias
+  // Backward compatibility alias - types and SI_DERIVED_UNITS imported from shared-types
   const DERIVED_UNITS_CATALOG = SI_DERIVED_UNITS;
 
   // Non-SI units catalog (CGS, Imperial, specialized) for dropdown alternatives
