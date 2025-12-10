@@ -58,11 +58,11 @@ The codebase is organized for multi-person development collaboration:
 - `types.ts` - Core type definitions (UnitCategory, Prefix, UnitDefinition, CategoryDefinition)
 - `prefixes.ts` - SI and binary prefix definitions with helper functions
 - `shared-types.ts` - Shared interfaces (DimensionalFormula, CalcValue, SI_DERIVED_UNITS, NON_SI_UNITS_CATALOG, CATEGORY_DIMENSIONS, getDimensionSignature)
-- `helpers.ts` - Pure helper functions (mass normalization, dimensional analysis, cross-domain matching, regional spelling, prefix constants)
+- `helpers.ts` - Pure helper functions (~456 lines): mass normalization, dimensional analysis, cross-domain matching, regional spelling, prefix constants, findBestPrefix
 - `index.ts` - Central export aggregator for all unit-related code
 
 **Components (`client/src/components/`)**:
-- `unit-converter.tsx` - Main converter with Converter, Custom, and Calculator tabs (~5325 lines, down from 6278 original - 953 lines saved, 15.2% reduction)
+- `unit-converter.tsx` - Main converter with Converter, Custom, and Calculator tabs (~5296 lines, down from 6278 original - 982 lines saved, 15.6% reduction)
 - `unit-converter/components/` - Shared UI components:
   - `CalculatorFieldDisplay.tsx` - Reusable calculator field display component with animation support (~78 lines)
 - `unit-converter/hooks/` - Custom hooks for state management:
