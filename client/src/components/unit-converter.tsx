@@ -2,7 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CONVERSION_DATA, UnitCategory, convert, PREFIXES, ALL_PREFIXES, Prefix, findOptimalPrefix, parseUnitText, ParsedUnitResult } from '@/lib/conversion-data';
 import { UNIT_NAME_TRANSLATIONS, UI_TRANSLATIONS, type SupportedLanguage, type Translation } from '@/lib/localization';
-import { fixPrecision } from '@/lib/formatting';
+import { 
+  fixPrecision, toArabicNumerals, toLatinNumerals, roundToNearestEven, 
+  toFixedBanker, toTitleCase, NUMBER_FORMATS, type NumberFormat 
+} from '@/lib/formatting';
 import { 
   DimensionalFormula, CalcValue, DerivedUnitInfo, SI_DERIVED_UNITS,
   NON_SI_UNITS_CATALOG, CATEGORY_DIMENSIONS, CategoryDimensionInfo,
@@ -148,7 +151,6 @@ export default function UnitConverter() {
   const [selectedAlternative, setSelectedAlternative] = useState<number>(0); // Index of selected alternative representation
 
   // Number format state
-  type NumberFormat = 'uk' | 'south-asian' | 'europe-latin' | 'swiss' | 'arabic' | 'east-asian' | 'period' | 'comma';
   const [numberFormat, setNumberFormat] = useState<NumberFormat>('uk');
   
   // Language state (ISO 639-1 codes)
@@ -171,83 +173,6 @@ export default function UnitConverter() {
     'zh', // Chinese (920M+)
   ];
   
-  const NUMBER_FORMATS: Record<NumberFormat, { name: string; thousands: string; decimal: string; useArabicNumerals?: boolean; myriad?: boolean }> = {
-    'uk': { name: 'English', thousands: ',', decimal: '.' },
-    'south-asian': { name: 'South Asian (Indian)', thousands: ',', decimal: '.' },
-    'europe-latin': { name: 'World', thousands: ' ', decimal: ',' },
-    'swiss': { name: 'Swiss', thousands: "'", decimal: '.' },
-    'arabic': { name: 'Arabic', thousands: ',', decimal: '.', useArabicNumerals: true },
-    'east-asian': { name: 'East Asian', thousands: ',', decimal: '.', myriad: true },
-    'period': { name: 'Period', thousands: '', decimal: '.' },
-    'comma': { name: 'Comma', thousands: '', decimal: ',' },
-  };
-
-  // Helper: Convert Latin numerals to Arabic numerals
-  const toArabicNumerals = (str: string): string => {
-    const arabicMap: Record<string, string> = {
-      '0': '٠', '1': '١', '2': '٢', '3': '٣', '4': '٤',
-      '5': '٥', '6': '٦', '7': '٧', '8': '٨', '9': '٩'
-    };
-    return str.split('').map(c => arabicMap[c] || c).join('');
-  };
-
-  // Helper: Convert Arabic numerals to Latin numerals
-  const toLatinNumerals = (str: string): string => {
-    const latinMap: Record<string, string> = {
-      '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
-      '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
-    };
-    return str.split('').map(c => latinMap[c] || c).join('');
-  };
-
-  // Helper: Round to nearest even (banker's rounding)
-  const roundToNearestEven = (num: number, precision: number): number => {
-    // For extremely large or small numbers, check if we're beyond floating-point precision
-    const absNum = Math.abs(num);
-    if (absNum > 1e15 || (absNum < 1e-15 && absNum > 0)) {
-      // Beyond reliable precision - just round to the nearest integer if precision allows
-      if (precision === 0) {
-        return Math.round(num);
-      }
-    }
-    
-    const multiplier = Math.pow(10, precision);
-    const scaled = num * multiplier;
-    
-    // Check for floating-point errors in scaled value
-    const nearestInt = Math.round(scaled);
-    const diff = Math.abs(scaled - nearestInt);
-    
-    // If the difference is tiny (floating-point error), treat as exact integer
-    if (diff < 1e-10) {
-      return nearestInt / multiplier;
-    }
-    
-    const floor = Math.floor(scaled);
-    const fraction = scaled - floor;
-    
-    if (Math.abs(fraction - 0.5) < 1e-10) {
-      // Exactly halfway - round to nearest even number
-      return (floor % 2 === 0 ? floor : floor + 1) / multiplier;
-    } else {
-      // Not exactly halfway - use standard rounding
-      return Math.round(scaled) / multiplier;
-    }
-  };
-
-  // Helper: toFixed with banker's rounding
-  const toFixedBanker = (num: number, precision: number): string => {
-    const rounded = roundToNearestEven(num, precision);
-    return rounded.toFixed(precision);
-  };
-
-  // Helper: Title case a string (capitalize first letter of each word)
-  const toTitleCase = (str: string): string => {
-    return str.split(' ').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    ).join(' ');
-  };
-
   // Helper: Apply regional spelling variations (ONLY for English language)
   // This function should ONLY be called when the language is English
   // Handles: meter/metre, liter/litre, gasoline/petrol, kerosene/paraffin
