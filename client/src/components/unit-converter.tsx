@@ -29,6 +29,7 @@ import {
   FIELD_HEIGHT, CommonFieldWidth, OperatorBtnWidth, ClearBtnWidth, 
   RpnBtnWidth, RpnBtnCount, CALC_CONTENT_HEIGHT, ISO_LANGUAGES 
 } from '@/components/unit-converter/constants';
+import { CalculatorFieldDisplay } from '@/components/unit-converter/components/CalculatorFieldDisplay';
 
 export default function UnitConverter() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -5398,42 +5399,19 @@ export default function UnitConverter() {
               className="grid gap-2 items-center"
               style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
             >
-              <motion.div 
-                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
-                onClick={() => calcValues[0] && copyCalcField(0)}
-                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
-                animate={{
-                  opacity: flashCalcField1 ? [1, 0.3, 1] : 1,
-                  scale: flashCalcField1 ? [1, 1.02, 1] : 1
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[0] ? (() => {
-                    const val = calcValues[0];
-                    if (!val) return '';
-                    const baseUnitSymbol = formatDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    const displayValue = val.value / kgResult.effectivePrefixFactor;
-                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
-                  })() : ''}
-                </span>
-                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[0] ? (() => {
-                    const val = calcValues[0];
-                    if (!val) return '';
-                    const baseUnitSymbol = formatDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    const prefixData = PREFIXES.find(p => p.id === val.prefix);
-                    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
-                    return prefixSymbol + kgResult.displaySymbol;
-                  })() : ''}
-                </span>
-              </motion.div>
-              <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for × column */}
-              <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for / column */}
-              <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for + column */}
-              <div style={{ visibility: 'hidden' }} /> {/* Invisible spacer for - column */}
+              <CalculatorFieldDisplay
+                value={calcValues[0]}
+                onClick={() => copyCalcField(0)}
+                isFlashing={flashCalcField1}
+                formatDimensions={formatDimensions}
+                applyPrefixToKgUnit={applyPrefixToKgUnit}
+                formatNumberWithSeparators={formatNumberWithSeparators}
+                precision={calculatorPrecision}
+              />
+              <div style={{ visibility: 'hidden' }} />
+              <div style={{ visibility: 'hidden' }} />
+              <div style={{ visibility: 'hidden' }} />
+              <div style={{ visibility: 'hidden' }} />
               <Button 
                 variant="ghost" 
                 size="sm"
@@ -5450,38 +5428,15 @@ export default function UnitConverter() {
               className="grid gap-2 items-center"
               style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
             >
-              <motion.div 
-                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
-                onClick={() => calcValues[1] && copyCalcField(1)}
-                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
-                animate={{
-                  opacity: flashCalcField2 ? [1, 0.3, 1] : 1,
-                  scale: flashCalcField2 ? [1, 1.02, 1] : 1
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[1] ? (() => {
-                    const val = calcValues[1];
-                    if (!val) return '';
-                    const baseUnitSymbol = formatDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    const displayValue = val.value / kgResult.effectivePrefixFactor;
-                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
-                  })() : ''}
-                </span>
-                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[1] ? (() => {
-                    const val = calcValues[1];
-                    if (!val) return '';
-                    const baseUnitSymbol = formatDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    const prefixData = PREFIXES.find(p => p.id === val.prefix);
-                    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
-                    return prefixSymbol + kgResult.displaySymbol;
-                  })() : ''}
-                </span>
-              </motion.div>
+              <CalculatorFieldDisplay
+                value={calcValues[1]}
+                onClick={() => copyCalcField(1)}
+                isFlashing={flashCalcField2}
+                formatDimensions={formatDimensions}
+                applyPrefixToKgUnit={applyPrefixToKgUnit}
+                formatNumberWithSeparators={formatNumberWithSeparators}
+                precision={calculatorPrecision}
+              />
               <Button 
                 variant="ghost" 
                 size="sm"
@@ -5534,38 +5489,15 @@ export default function UnitConverter() {
               className="grid gap-2 items-center"
               style={{ gridTemplateColumns: `${CommonFieldWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${OperatorBtnWidth} ${ClearBtnWidth}` }}
             >
-              <motion.div 
-                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${calcValues[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
-                onClick={() => calcValues[2] && copyCalcField(2)}
-                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
-                animate={{
-                  opacity: flashCalcField3 ? [1, 0.3, 1] : 1,
-                  scale: flashCalcField3 ? [1, 1.02, 1] : 1
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                <span className="text-sm font-mono text-foreground truncate">
-                  {calcValues[2] ? (() => {
-                    const val = calcValues[2];
-                    if (!val) return '';
-                    const baseUnitSymbol = formatDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    const displayValue = val.value / kgResult.effectivePrefixFactor;
-                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
-                  })() : ''}
-                </span>
-                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {calcValues[2] ? (() => {
-                    const val = calcValues[2];
-                    if (!val) return '';
-                    const baseUnitSymbol = formatDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    const prefixData = PREFIXES.find(p => p.id === val.prefix);
-                    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
-                    return prefixSymbol + kgResult.displaySymbol;
-                  })() : ''}
-                </span>
-              </motion.div>
+              <CalculatorFieldDisplay
+                value={calcValues[2]}
+                onClick={() => copyCalcField(2)}
+                isFlashing={flashCalcField3}
+                formatDimensions={formatDimensions}
+                applyPrefixToKgUnit={applyPrefixToKgUnit}
+                formatNumberWithSeparators={formatNumberWithSeparators}
+                precision={calculatorPrecision}
+              />
               <Button 
                 variant="ghost" 
                 size="sm"
@@ -5771,38 +5703,15 @@ export default function UnitConverter() {
               className="grid gap-2 items-center"
               style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(8, ${RpnBtnWidth})` }}
             >
-              <motion.div 
-                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[0] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
-                onClick={() => rpnStack[0] && copyRpnField(0)}
-                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
-                animate={{
-                  opacity: flashRpnField1 ? [1, 0.3, 1] : 1,
-                  scale: flashRpnField1 ? [1, 1.02, 1] : 1
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                <span className="text-sm font-mono text-foreground truncate">
-                  {rpnStack[0] ? (() => {
-                    const val = rpnStack[0];
-                    if (!val) return '';
-                    const baseUnitSymbol = formatDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    const displayValue = val.value / kgResult.effectivePrefixFactor;
-                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
-                  })() : ''}
-                </span>
-                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {rpnStack[0] ? (() => {
-                    const val = rpnStack[0];
-                    if (!val) return '';
-                    const baseUnitSymbol = formatDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    const prefixData = PREFIXES.find(p => p.id === val.prefix);
-                    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
-                    return prefixSymbol + kgResult.displaySymbol;
-                  })() : ''}
-                </span>
-              </motion.div>
+              <CalculatorFieldDisplay
+                value={rpnStack[0]}
+                onClick={() => copyRpnField(0)}
+                isFlashing={flashRpnField1}
+                formatDimensions={formatDimensions}
+                applyPrefixToKgUnit={applyPrefixToKgUnit}
+                formatNumberWithSeparators={formatNumberWithSeparators}
+                precision={calculatorPrecision}
+              />
               {/* Power/Root/Exp/Log buttons for s.3 row (8 buttons) */}
               {(() => {
                 const s3Buttons: Array<{ label: string; shiftLabel: string; op?: RpnUnaryOp; shiftOp?: RpnUnaryOp; binaryOp?: RpnBinaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number }> = [
@@ -5858,38 +5767,15 @@ export default function UnitConverter() {
               className="grid gap-2 items-center"
               style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(8, ${RpnBtnWidth})` }}
             >
-              <motion.div 
-                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[1] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
-                onClick={() => rpnStack[1] && copyRpnField(1)}
-                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
-                animate={{
-                  opacity: flashRpnField2 ? [1, 0.3, 1] : 1,
-                  scale: flashRpnField2 ? [1, 1.02, 1] : 1
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                <span className="text-sm font-mono text-foreground truncate">
-                  {rpnStack[1] ? (() => {
-                    const val = rpnStack[1];
-                    if (!val) return '';
-                    const baseUnitSymbol = formatDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    const displayValue = val.value / kgResult.effectivePrefixFactor;
-                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
-                  })() : ''}
-                </span>
-                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {rpnStack[1] ? (() => {
-                    const val = rpnStack[1];
-                    if (!val) return '';
-                    const baseUnitSymbol = formatDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    const prefixData = PREFIXES.find(p => p.id === val.prefix);
-                    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
-                    return prefixSymbol + kgResult.displaySymbol;
-                  })() : ''}
-                </span>
-              </motion.div>
+              <CalculatorFieldDisplay
+                value={rpnStack[1]}
+                onClick={() => copyRpnField(1)}
+                isFlashing={flashRpnField2}
+                formatDimensions={formatDimensions}
+                applyPrefixToKgUnit={applyPrefixToKgUnit}
+                formatNumberWithSeparators={formatNumberWithSeparators}
+                precision={calculatorPrecision}
+              />
               {/* Trig/Hyperbolic buttons for s2 row - 8 buttons */}
               {(() => {
                 const s2Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number }> = [
@@ -5938,38 +5824,15 @@ export default function UnitConverter() {
               className="grid gap-2 items-center"
               style={{ gridTemplateColumns: `${CommonFieldWidth} repeat(8, ${RpnBtnWidth})` }}
             >
-              <motion.div 
-                className={`px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none ${rpnStack[2] ? 'cursor-pointer hover:bg-muted/50 active:bg-muted/70' : ''}`}
-                onClick={() => rpnStack[2] && copyRpnField(2)}
-                style={{ height: FIELD_HEIGHT, pointerEvents: 'auto' }}
-                animate={{
-                  opacity: flashRpnField3 ? [1, 0.3, 1] : 1,
-                  scale: flashRpnField3 ? [1, 1.02, 1] : 1
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                <span className="text-sm font-mono text-foreground truncate">
-                  {rpnStack[2] ? (() => {
-                    const val = rpnStack[2];
-                    if (!val) return '';
-                    const baseUnitSymbol = formatDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    const displayValue = val.value / kgResult.effectivePrefixFactor;
-                    return formatNumberWithSeparators(displayValue, calculatorPrecision);
-                  })() : ''}
-                </span>
-                <span className="text-xs font-mono text-muted-foreground ml-2 shrink-0">
-                  {rpnStack[2] ? (() => {
-                    const val = rpnStack[2];
-                    if (!val) return '';
-                    const baseUnitSymbol = formatDimensions(val.dimensions);
-                    const kgResult = applyPrefixToKgUnit(baseUnitSymbol, val.prefix);
-                    const prefixData = PREFIXES.find(p => p.id === val.prefix);
-                    const prefixSymbol = kgResult.showPrefix && prefixData ? prefixData.symbol : '';
-                    return prefixSymbol + kgResult.displaySymbol;
-                  })() : ''}
-                </span>
-              </motion.div>
+              <CalculatorFieldDisplay
+                value={rpnStack[2]}
+                onClick={() => copyRpnField(2)}
+                isFlashing={flashRpnField3}
+                formatDimensions={formatDimensions}
+                applyPrefixToKgUnit={applyPrefixToKgUnit}
+                formatNumberWithSeparators={formatNumberWithSeparators}
+                precision={calculatorPrecision}
+              />
               {/* Binary operation buttons for y row: 1-2=Enter/Drop (double width), 3=undo/undo, 4-7=×/÷/+/−, 8=LASTx/x⇆y */}
               <Button 
                 variant="ghost" 
