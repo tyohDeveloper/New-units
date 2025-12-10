@@ -57,16 +57,17 @@ The codebase is organized for multi-person development collaboration:
 **Unit System (`client/src/lib/units/`)**:
 - `types.ts` - Core type definitions (UnitCategory, Prefix, UnitDefinition, CategoryDefinition)
 - `prefixes.ts` - SI and binary prefix definitions with helper functions
-- `shared-types.ts` - Shared interfaces (DimensionalFormula, CalcValue, SI_DERIVED_UNITS)
-- `helpers.ts` - Pure helper functions (mass normalization, dimensional analysis, cross-domain matching, regional spelling)
+- `shared-types.ts` - Shared interfaces (DimensionalFormula, CalcValue, SI_DERIVED_UNITS, NON_SI_UNITS_CATALOG, CATEGORY_DIMENSIONS, getDimensionSignature)
+- `helpers.ts` - Pure helper functions (mass normalization, dimensional analysis, cross-domain matching, regional spelling, prefix constants)
 - `index.ts` - Central export aggregator for all unit-related code
 
 **Components (`client/src/components/`)**:
-- `unit-converter.tsx` - Main converter with Converter, Custom, and Calculator tabs (~6600 lines)
+- `unit-converter.tsx` - Main converter with Converter, Custom, and Calculator tabs (~6390 lines)
 - `unit-converter/hooks/` - Custom hooks for state management:
   - `useConverterState.ts` - Converter tab state (category, units, prefixes, result)
   - `useCalculatorState.ts` - Calculator mode state and simple calculator values
   - `useRpnStack.ts` - RPN calculator stack state with operations (push, drop, swap, undo)
+  - `useFlashFlag.ts` - Reusable hook for copy feedback flash animations
 - `help-section.tsx` - Help documentation component
 - `ui/` - shadcn/ui component library
 
