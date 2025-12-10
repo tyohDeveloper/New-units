@@ -72,8 +72,8 @@ The codebase is organized for multi-person development collaboration:
 - `ui/` - shadcn/ui component library
 
 **Tests (`tests/`)**:
-- 10 test files with 1018 total tests
-- Coverage: conversion, localization, calculator, formatting, smart paste, RPN, edge cases, math, precision
+- 12 test files with 1092 total tests
+- Coverage: conversion, localization, calculator, formatting, smart paste, RPN, edge cases, math, precision, hooks, shared-types
 
 ## External Dependencies
 ### UI Libraries
