@@ -365,3 +365,263 @@ export const findDerivedUnitPower = (dimensions: DimensionalFormula): DerivedUni
   
   return null;
 };
+
+// ============================================================================
+// SI Representation Generation
+// Pure functions for generating all valid SI unit representations for dimensions
+// ============================================================================
+
+// SI representation for calculator dropdown
+export interface SIRepresentation {
+  displaySymbol: string;      // How to display, e.g., "W", "J⋅s⁻¹", "kg⋅m²⋅s⁻³"
+  derivedUnits: string[];     // List of derived unit symbols used (e.g., ["J", "s⁻¹"])
+  depth: number;              // Number of derived units used (0 = raw base units)
+  crossDomainMatches?: string[]; // Categories from other domains with same dimensions
+}
+
+// Sort SI derived units by complexity (most base dimensions consumed first)
+export const SI_UNITS_BY_COMPLEXITY: DerivedUnitInfo[] = [...SI_DERIVED_UNITS].sort((a, b) => {
+  const aSum = Object.values(a.dimensions).reduce((sum, exp) => sum + Math.abs(exp || 0), 0);
+  const bSum = Object.values(b.dimensions).reduce((sum, exp) => sum + Math.abs(exp || 0), 0);
+  return bSum - aSum; // Most complex first
+});
+
+// Core SI derived units for general purpose compositions
+// Exclude units that resolve to a single SI base unit (Hz, Bq → s⁻¹)
+export const GENERAL_SI_DERIVED: DerivedUnitInfo[] = SI_UNITS_BY_COMPLEXITY.filter(u => 
+  !['Hz', 'Bq'].includes(u.symbol)
+);
+
+// Specialty/rare derived units - sorted after main path units
+export const SPECIALTY_DERIVED_UNITS = new Set([
+  'Gy',   // Gray - absorbed radiation dose
+  'Sv',   // Sievert - equivalent radiation dose  
+  'Bq',   // Becquerel - radioactivity
+  'kat',  // katal - catalytic activity
+  'lm',   // lumen - luminous flux
+  'lx',   // lux - illuminance
+  'rad',  // radian - plane angle (less common in compositions)
+  'sr',   // steradian - solid angle
+  'ν',    // photon frequency
+  'λ',    // photon wavelength
+]);
+
+// Check if dimensions are empty (all zeros or undefined)
+export const isDimensionEmpty = (dims: DimensionalFormula): boolean => {
+  return Object.values(dims).every(v => v === 0 || v === undefined);
+};
+
+// Subtract derived unit dimensions from target dimensions
+export const subtractDimensions = (dims: DimensionalFormula, derived: DimensionalFormula): DimensionalFormula => {
+  const result: DimensionalFormula = { ...dims };
+  for (const [dim, derivedExp] of Object.entries(derived)) {
+    const key = dim as keyof DimensionalFormula;
+    result[key] = (result[key] || 0) - derivedExp;
+    if (result[key] === 0) delete result[key];
+  }
+  return result;
+};
+
+// Check if composition is valid (all SI base dimension remainders are valid)
+export const isValidSIComposition = (target: DimensionalFormula, derived: DimensionalFormula): boolean => {
+  // All SI base dimension remainders are valid
+  return true;
+};
+
+// Format dimensions with derived unit + remaining base units
+export const formatSIComposition = (derivedSymbols: string[], remainingDims: DimensionalFormula): string => {
+  const parts: string[] = [];
+  
+  // Add remaining positive base dimensions first
+  const positiveDims: DimensionalFormula = {};
+  const negativeDims: DimensionalFormula = {};
+  for (const [dim, exp] of Object.entries(remainingDims)) {
+    if (exp > 0) positiveDims[dim as keyof DimensionalFormula] = exp;
+    else if (exp < 0) negativeDims[dim as keyof DimensionalFormula] = exp;
+  }
+  
+  const positiveBase = formatDimensions(positiveDims);
+  if (positiveBase) parts.push(positiveBase);
+  
+  // Add derived units in order
+  parts.push(...derivedSymbols);
+  
+  // Add remaining negative base dimensions last
+  const negativeBase = formatDimensions(negativeDims);
+  if (negativeBase) parts.push(negativeBase);
+  
+  return parts.join('⋅');
+};
+
+// Sum of absolute exponents in expression
+export const sumAbsExponents = (symbol: string): number => {
+  if (!symbol || symbol === '1') return 0;
+  let sum = 0;
+  const parts = symbol.split('⋅');
+  for (const part of parts) {
+    const expMatch = part.match(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]+$/);
+    if (expMatch) {
+      const superscriptMap: Record<string, string> = {
+        '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
+        '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9',
+        '⁻': '-', '⁺': '+'
+      };
+      const expStr = expMatch[0].split('').map(c => superscriptMap[c] || c).join('');
+      const exp = parseInt(expStr, 10);
+      sum += Math.abs(isNaN(exp) ? 1 : exp);
+    } else {
+      sum += 1;
+    }
+  }
+  return sum;
+};
+
+// Generate all SI representations for given dimensions
+// Key constraint: Only ONE derived unit per composition (plus base units)
+export const generateSIRepresentations = (
+  dimensions: DimensionalFormula,
+  getDimensionSignature: (dims: DimensionalFormula) => string,
+  PREFERRED_REPRESENTATIONS: Record<string, { displaySymbol: string; isSI: boolean }>
+): SIRepresentation[] => {
+  if (isDimensionEmpty(dimensions)) {
+    return [{ displaySymbol: '1', derivedUnits: [], depth: 0 }];
+  }
+  
+  const representations: SIRepresentation[] = [];
+  const seenSymbols = new Set<string>();
+  
+  // 1. Try each general-purpose derived unit that can form a valid composition
+  for (const derivedUnit of GENERAL_SI_DERIVED) {
+    if (isValidSIComposition(dimensions, derivedUnit.dimensions)) {
+      const remaining = subtractDimensions(dimensions, derivedUnit.dimensions);
+      
+      // For SINGLE-dimension derived units (rad, sr), skip if remaining has same dimension
+      const derivedDimCount = Object.keys(derivedUnit.dimensions).filter(
+        k => derivedUnit.dimensions[k as keyof DimensionalFormula] !== 0
+      ).length;
+      
+      if (derivedDimCount === 1) {
+        const derivedDimKey = Object.keys(derivedUnit.dimensions).find(
+          k => derivedUnit.dimensions[k as keyof DimensionalFormula] !== 0
+        ) as keyof DimensionalFormula;
+        if (remaining[derivedDimKey] !== undefined && remaining[derivedDimKey] !== 0) {
+          continue;
+        }
+      }
+      
+      const compositionSymbol = formatSIComposition([derivedUnit.symbol], remaining);
+      
+      if (!seenSymbols.has(compositionSymbol) && isValidSymbolRepresentation(compositionSymbol)) {
+        seenSymbols.add(compositionSymbol);
+        representations.push({
+          displaySymbol: compositionSymbol,
+          derivedUnits: [derivedUnit.symbol],
+          depth: 1
+        });
+      }
+    }
+  }
+  
+  // 2. Always add raw base unit representation
+  const rawSymbol = formatDimensions(dimensions);
+  if (rawSymbol && !seenSymbols.has(rawSymbol) && isValidSymbolRepresentation(rawSymbol)) {
+    representations.push({
+      displaySymbol: rawSymbol,
+      derivedUnits: [],
+      depth: 0
+    });
+  }
+  
+  // Get the base unit term count to use as the maximum complexity threshold
+  const baseTermCount = rawSymbol ? countUnits(rawSymbol) : 0;
+  
+  // Filter out representations with more terms than the base unit expression
+  const filteredRepresentations = baseTermCount === 0 
+    ? representations 
+    : representations.filter(rep => {
+        if (rep.depth === 0) return true;
+        return countUnits(rep.displaySymbol) <= baseTermCount;
+      });
+  
+  // Helper: Check if representation uses a specialty derived unit
+  const usesSpecialtyUnit = (rep: SIRepresentation): boolean => {
+    if (!rep.derivedUnits || rep.derivedUnits.length === 0) return false;
+    return rep.derivedUnits.some(u => SPECIALTY_DERIVED_UNITS.has(u));
+  };
+  
+  // Sort: (1) pure base units last, (2) fewest units, (3) lowest sum of abs exponents, 
+  //       (4) main-path units before specialty, (5) alphabetically
+  filteredRepresentations.sort((a, b) => {
+    const aIsRaw = a.depth === 0;
+    const bIsRaw = b.depth === 0;
+    if (aIsRaw && !bIsRaw) return 1;
+    if (!aIsRaw && bIsRaw) return -1;
+    
+    const aUnits = countUnits(a.displaySymbol);
+    const bUnits = countUnits(b.displaySymbol);
+    if (aUnits !== bUnits) return aUnits - bUnits;
+    
+    const aExpSum = sumAbsExponents(a.displaySymbol);
+    const bExpSum = sumAbsExponents(b.displaySymbol);
+    if (aExpSum !== bExpSum) return aExpSum - bExpSum;
+    
+    const aIsSpecialty = usesSpecialtyUnit(a);
+    const bIsSpecialty = usesSpecialtyUnit(b);
+    if (aIsSpecialty && !bIsSpecialty) return 1;
+    if (!aIsSpecialty && bIsSpecialty) return -1;
+    
+    return a.displaySymbol.localeCompare(b.displaySymbol);
+  });
+  
+  // Promote "perfect match" SI derived unit to index 0
+  const perfectMatchIndex = filteredRepresentations.findIndex(rep => {
+    if (rep.derivedUnits.length !== 1) return false;
+    if (rep.displaySymbol !== rep.derivedUnits[0]) return false;
+    const siUnit = SI_DERIVED_UNITS.find(u => u.symbol === rep.derivedUnits[0]);
+    return siUnit !== undefined;
+  });
+  
+  if (perfectMatchIndex > 0) {
+    const [perfectMatch] = filteredRepresentations.splice(perfectMatchIndex, 1);
+    filteredRepresentations.unshift(perfectMatch);
+  }
+  
+  // 3. Check for preferred representation override
+  const dimSignature = getDimensionSignature(dimensions);
+  const preferred = PREFERRED_REPRESENTATIONS[dimSignature];
+  if (preferred) {
+    const existingIndex = filteredRepresentations.findIndex(
+      rep => rep.displaySymbol === preferred.displaySymbol
+    );
+    
+    if (existingIndex > 0) {
+      const [existing] = filteredRepresentations.splice(existingIndex, 1);
+      filteredRepresentations.unshift(existing);
+    } else if (existingIndex === -1) {
+      filteredRepresentations.unshift({
+        displaySymbol: preferred.displaySymbol,
+        derivedUnits: preferred.isSI ? [preferred.displaySymbol.split('⋅')[0]] : [],
+        depth: preferred.isSI ? 1 : 0
+      });
+    }
+  }
+  
+  // 4. Add cross-domain matches to each representation
+  for (const rep of filteredRepresentations) {
+    let excludeCategory: string | undefined;
+    if (rep.derivedUnits && rep.derivedUnits.length > 0) {
+      const firstDerivedSymbol = rep.derivedUnits[0];
+      const derivedUnitInfo = SI_DERIVED_UNITS.find(u => u.symbol === firstDerivedSymbol);
+      if (derivedUnitInfo) {
+        excludeCategory = derivedUnitInfo.category;
+      }
+    }
+    
+    const crossMatches = findCrossDomainMatches(dimensions, excludeCategory);
+    if (crossMatches.length > 0) {
+      rep.crossDomainMatches = crossMatches;
+    }
+  }
+  
+  return filteredRepresentations;
+};
