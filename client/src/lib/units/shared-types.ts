@@ -26,13 +26,14 @@ export interface DerivedUnitInfo {
 
 export type NumberFormat = 
   | 'uk' 
+  | 'south-asian'
   | 'europe-latin' 
+  | 'swiss'
+  | 'arabic'
+  | 'arabic-latin'
+  | 'east-asian'
   | 'period' 
-  | 'comma' 
-  | 'arabic' 
-  | 'east-asian' 
-  | 'south-asian' 
-  | 'swiss';
+  | 'comma';
 
 export const SI_DERIVED_UNITS: DerivedUnitInfo[] = [
   { symbol: 'Hz', category: 'frequency', unitId: 'hz', dimensions: { time: -1 }, allowPrefixes: true },
@@ -56,6 +57,9 @@ export const SI_DERIVED_UNITS: DerivedUnitInfo[] = [
   { symbol: 'kat', category: 'catalytic', unitId: 'kat', dimensions: { amount: 1, time: -1 }, allowPrefixes: true },
   { symbol: 'rad', category: 'angle', unitId: 'rad', dimensions: { angle: 1 }, allowPrefixes: true },
   { symbol: 'sr', category: 'solid_angle', unitId: 'sr', dimensions: { solid_angle: 1 }, allowPrefixes: true },
+  // Photon energy-equivalents (via Planck relations E = hν and E = hc/λ)
+  { symbol: 'ν', category: 'photon', unitId: 'photon_freq', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
+  { symbol: 'λ', category: 'photon', unitId: 'photon_wavelength', dimensions: { mass: 1, length: 2, time: -2 }, allowPrefixes: true },
 ];
 
 export const ISO_LANGUAGES = [
@@ -222,4 +226,30 @@ export const getDimensionSignature = (dims: DimensionalFormula): string => {
     .filter(([_, exp]) => exp !== 0)
     .sort(([a], [b]) => a.localeCompare(b));
   return entries.map(([dim, exp]) => `${dim}:${exp}`).join(',');
+};
+
+export const dimensionsEqual = (a: DimensionalFormula, b: DimensionalFormula): boolean => {
+  const normalize = (d: DimensionalFormula): DimensionalFormula => {
+    const result: DimensionalFormula = {};
+    for (const [key, value] of Object.entries(d)) {
+      if (value !== 0 && value !== undefined) {
+        result[key as keyof DimensionalFormula] = value;
+      }
+    }
+    return result;
+  };
+
+  const normA = normalize(a);
+  const normB = normalize(b);
+
+  const keysA = Object.keys(normA) as (keyof DimensionalFormula)[];
+  const keysB = Object.keys(normB) as (keyof DimensionalFormula)[];
+
+  if (keysA.length !== keysB.length) return false;
+
+  for (const key of keysA) {
+    if (normA[key] !== normB[key]) return false;
+  }
+
+  return true;
 };

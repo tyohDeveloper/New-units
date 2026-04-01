@@ -370,15 +370,14 @@ describe('Dimension Formatting', () => {
 });
 
 describe('SI Derived Units Catalog', () => {
-  it('should have all named SI derived units (Hz excluded - use s⁻¹)', () => {
-    // Hz removed per user requirement: frequency always displays as s⁻¹
-    const expectedSymbols = ['N', 'Pa', 'J', 'W', 'C', 'V', 'F', 'Ω', 'S', 
+  it('should have all named SI derived units including Hz (canonical catalog)', () => {
+    // Hz is included in the canonical SI_DERIVED_UNITS catalog.
+    // Internal calculator logic that needs to exclude Hz uses GENERAL_SI_DERIVED filter.
+    const expectedSymbols = ['Hz', 'N', 'Pa', 'J', 'W', 'C', 'V', 'F', 'Ω', 'S', 
                              'Wb', 'T', 'H', 'lm', 'lx', 'Bq', 'Gy', 'Sv', 'kat', 'rad', 'sr'];
     for (const symbol of expectedSymbols) {
       expect(SI_DERIVED_UNITS.find(u => u.symbol === symbol)).toBeDefined();
     }
-    // Verify Hz is NOT in SI_DERIVED_UNITS
-    expect(SI_DERIVED_UNITS.find(u => u.symbol === 'Hz')).toBeUndefined();
   });
 
   it('should NOT contain CGS units (St, rayl)', () => {
