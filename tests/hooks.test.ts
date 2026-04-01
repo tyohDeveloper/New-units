@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useFlashFlag, useAllFlashFlags } from '../client/src/components/unit-converter/hooks/useFlashFlag';
 import { useRpnStack } from '../client/src/components/unit-converter/hooks/useRpnStack';
+import { useConverterState } from '../client/src/components/unit-converter/hooks/useConverterState';
+import { useCalculatorState } from '../client/src/components/unit-converter/hooks/useCalculatorState';
 import type { CalcValue } from '../client/src/lib/units/shared-types';
 
 describe('useFlashFlag', () => {
@@ -595,6 +597,431 @@ describe('useRpnStack', () => {
       });
       
       expect(result.current.previousRpnStack).toEqual(currentStack);
+    });
+  });
+});
+
+describe('useConverterState', () => {
+  describe('initial state', () => {
+    it('should initialize activeCategory to "length"', () => {
+      const { result } = renderHook(() => useConverterState());
+      expect(result.current.activeCategory).toBe('length');
+    });
+
+    it('should initialize fromUnit to empty string', () => {
+      const { result } = renderHook(() => useConverterState());
+      expect(result.current.fromUnit).toBe('');
+    });
+
+    it('should initialize toUnit to empty string', () => {
+      const { result } = renderHook(() => useConverterState());
+      expect(result.current.toUnit).toBe('');
+    });
+
+    it('should initialize fromPrefix to "none"', () => {
+      const { result } = renderHook(() => useConverterState());
+      expect(result.current.fromPrefix).toBe('none');
+    });
+
+    it('should initialize toPrefix to "none"', () => {
+      const { result } = renderHook(() => useConverterState());
+      expect(result.current.toPrefix).toBe('none');
+    });
+
+    it('should initialize inputValue to "1"', () => {
+      const { result } = renderHook(() => useConverterState());
+      expect(result.current.inputValue).toBe('1');
+    });
+
+    it('should initialize result to null', () => {
+      const { result } = renderHook(() => useConverterState());
+      expect(result.current.result).toBeNull();
+    });
+
+    it('should initialize precision to 4', () => {
+      const { result } = renderHook(() => useConverterState());
+      expect(result.current.precision).toBe(4);
+    });
+
+    it('should initialize comparisonMode to false', () => {
+      const { result } = renderHook(() => useConverterState());
+      expect(result.current.comparisonMode).toBe(false);
+    });
+
+    it('should provide an inputRef object', () => {
+      const { result } = renderHook(() => useConverterState());
+      expect(result.current.inputRef).toBeDefined();
+      expect(result.current.inputRef).toHaveProperty('current');
+    });
+  });
+
+  describe('state transitions', () => {
+    it('should update activeCategory when setActiveCategory is called', () => {
+      const { result } = renderHook(() => useConverterState());
+      act(() => {
+        result.current.setActiveCategory('mass');
+      });
+      expect(result.current.activeCategory).toBe('mass');
+    });
+
+    it('should update fromUnit when setFromUnit is called', () => {
+      const { result } = renderHook(() => useConverterState());
+      act(() => {
+        result.current.setFromUnit('meter');
+      });
+      expect(result.current.fromUnit).toBe('meter');
+    });
+
+    it('should update toUnit when setToUnit is called', () => {
+      const { result } = renderHook(() => useConverterState());
+      act(() => {
+        result.current.setToUnit('foot');
+      });
+      expect(result.current.toUnit).toBe('foot');
+    });
+
+    it('should update fromPrefix when setFromPrefix is called', () => {
+      const { result } = renderHook(() => useConverterState());
+      act(() => {
+        result.current.setFromPrefix('k');
+      });
+      expect(result.current.fromPrefix).toBe('k');
+    });
+
+    it('should update toPrefix when setToPrefix is called', () => {
+      const { result } = renderHook(() => useConverterState());
+      act(() => {
+        result.current.setToPrefix('m');
+      });
+      expect(result.current.toPrefix).toBe('m');
+    });
+
+    it('should update inputValue when setInputValue is called', () => {
+      const { result } = renderHook(() => useConverterState());
+      act(() => {
+        result.current.setInputValue('42');
+      });
+      expect(result.current.inputValue).toBe('42');
+    });
+
+    it('should update result when setResult is called', () => {
+      const { result } = renderHook(() => useConverterState());
+      act(() => {
+        result.current.setResult(3.14159);
+      });
+      expect(result.current.result).toBe(3.14159);
+    });
+
+    it('should allow result to be reset to null', () => {
+      const { result } = renderHook(() => useConverterState());
+      act(() => {
+        result.current.setResult(100);
+      });
+      act(() => {
+        result.current.setResult(null);
+      });
+      expect(result.current.result).toBeNull();
+    });
+
+    it('should update precision when setPrecision is called', () => {
+      const { result } = renderHook(() => useConverterState());
+      act(() => {
+        result.current.setPrecision(8);
+      });
+      expect(result.current.precision).toBe(8);
+    });
+
+    it('should toggle comparisonMode when setComparisonMode is called', () => {
+      const { result } = renderHook(() => useConverterState());
+      act(() => {
+        result.current.setComparisonMode(true);
+      });
+      expect(result.current.comparisonMode).toBe(true);
+      act(() => {
+        result.current.setComparisonMode(false);
+      });
+      expect(result.current.comparisonMode).toBe(false);
+    });
+
+    it('should allow multiple independent state changes', () => {
+      const { result } = renderHook(() => useConverterState());
+      act(() => {
+        result.current.setActiveCategory('temperature');
+        result.current.setFromUnit('celsius');
+        result.current.setToUnit('fahrenheit');
+        result.current.setInputValue('100');
+        result.current.setResult(212);
+        result.current.setPrecision(2);
+      });
+      expect(result.current.activeCategory).toBe('temperature');
+      expect(result.current.fromUnit).toBe('celsius');
+      expect(result.current.toUnit).toBe('fahrenheit');
+      expect(result.current.inputValue).toBe('100');
+      expect(result.current.result).toBe(212);
+      expect(result.current.precision).toBe(2);
+    });
+  });
+});
+
+describe('useCalculatorState', () => {
+  describe('initial state', () => {
+    it('should initialize calculatorMode to "rpn"', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      expect(result.current.calculatorMode).toBe('rpn');
+    });
+
+    it('should initialize shiftActive to false', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      expect(result.current.shiftActive).toBe(false);
+    });
+
+    it('should initialize calculatorPrecision to 4', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      expect(result.current.calculatorPrecision).toBe(4);
+    });
+
+    it('should initialize calcValues to [null, null, null, null]', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      expect(result.current.calcValues).toEqual([null, null, null, null]);
+    });
+
+    it('should initialize calcOp1 to null', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      expect(result.current.calcOp1).toBeNull();
+    });
+
+    it('should initialize calcOp2 to null', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      expect(result.current.calcOp2).toBeNull();
+    });
+
+    it('should initialize resultUnit to null', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      expect(result.current.resultUnit).toBeNull();
+    });
+
+    it('should initialize resultCategory to null', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      expect(result.current.resultCategory).toBeNull();
+    });
+
+    it('should initialize resultPrefix to "none"', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      expect(result.current.resultPrefix).toBe('none');
+    });
+
+    it('should initialize selectedAlternative to 0', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      expect(result.current.selectedAlternative).toBe(0);
+    });
+  });
+
+  describe('mode switching', () => {
+    it('should switch from "rpn" to "simple" mode', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setCalculatorMode('simple');
+      });
+      expect(result.current.calculatorMode).toBe('simple');
+    });
+
+    it('should switch back from "simple" to "rpn" mode', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setCalculatorMode('simple');
+      });
+      act(() => {
+        result.current.setCalculatorMode('rpn');
+      });
+      expect(result.current.calculatorMode).toBe('rpn');
+    });
+  });
+
+  describe('state transitions', () => {
+    it('should update shiftActive when setShiftActive is called', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setShiftActive(true);
+      });
+      expect(result.current.shiftActive).toBe(true);
+    });
+
+    it('should update calculatorPrecision when setCalculatorPrecision is called', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setCalculatorPrecision(6);
+      });
+      expect(result.current.calculatorPrecision).toBe(6);
+    });
+
+    it('should update calcOp1 to a valid operator', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setCalcOp1('+');
+      });
+      expect(result.current.calcOp1).toBe('+');
+    });
+
+    it('should update calcOp2 to a valid operator', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setCalcOp2('-');
+      });
+      expect(result.current.calcOp2).toBe('-');
+    });
+
+    it('should reset calcOp1 to null', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setCalcOp1('*');
+      });
+      act(() => {
+        result.current.setCalcOp1(null);
+      });
+      expect(result.current.calcOp1).toBeNull();
+    });
+
+    it('should reset calcOp2 to null', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setCalcOp2('/');
+      });
+      act(() => {
+        result.current.setCalcOp2(null);
+      });
+      expect(result.current.calcOp2).toBeNull();
+    });
+
+    it('should update resultUnit when setResultUnit is called', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setResultUnit('meter');
+      });
+      expect(result.current.resultUnit).toBe('meter');
+    });
+
+    it('should update resultCategory when setResultCategory is called', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setResultCategory('length');
+      });
+      expect(result.current.resultCategory).toBe('length');
+    });
+
+    it('should update resultPrefix when setResultPrefix is called', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setResultPrefix('k');
+      });
+      expect(result.current.resultPrefix).toBe('k');
+    });
+
+    it('should update selectedAlternative when setSelectedAlternative is called', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setSelectedAlternative(2);
+      });
+      expect(result.current.selectedAlternative).toBe(2);
+    });
+
+    it('should update calcValues with new entries', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      const newValues: Array<CalcValue | null> = [
+        { value: 10, dimensions: {}, prefix: 'none' },
+        { value: 20, dimensions: {}, prefix: 'none' },
+        null,
+        null,
+      ];
+      act(() => {
+        result.current.setCalcValues(newValues);
+      });
+      expect(result.current.calcValues).toEqual(newValues);
+    });
+  });
+
+  describe('state resets', () => {
+    it('should be able to reset calcValues to all nulls', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setCalcValues([
+          { value: 5, dimensions: {}, prefix: 'none' },
+          null, null, null,
+        ]);
+      });
+      act(() => {
+        result.current.setCalcValues([null, null, null, null]);
+      });
+      expect(result.current.calcValues).toEqual([null, null, null, null]);
+    });
+
+    it('should be able to reset resultUnit to null', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setResultUnit('kilogram');
+      });
+      act(() => {
+        result.current.setResultUnit(null);
+      });
+      expect(result.current.resultUnit).toBeNull();
+    });
+
+    it('should be able to reset resultCategory to null', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setResultCategory('mass');
+      });
+      act(() => {
+        result.current.setResultCategory(null);
+      });
+      expect(result.current.resultCategory).toBeNull();
+    });
+
+    it('should be able to reset shiftActive to false after activating', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setShiftActive(true);
+      });
+      act(() => {
+        result.current.setShiftActive(false);
+      });
+      expect(result.current.shiftActive).toBe(false);
+    });
+
+    it('should support full state reset by resetting each field independently', () => {
+      const { result } = renderHook(() => useCalculatorState());
+      act(() => {
+        result.current.setCalculatorMode('simple');
+        result.current.setShiftActive(true);
+        result.current.setCalculatorPrecision(8);
+        result.current.setCalcOp1('+');
+        result.current.setCalcOp2('-');
+        result.current.setResultUnit('second');
+        result.current.setResultCategory('time');
+        result.current.setResultPrefix('m');
+        result.current.setSelectedAlternative(3);
+      });
+      act(() => {
+        result.current.setCalculatorMode('rpn');
+        result.current.setShiftActive(false);
+        result.current.setCalculatorPrecision(4);
+        result.current.setCalcOp1(null);
+        result.current.setCalcOp2(null);
+        result.current.setCalcValues([null, null, null, null]);
+        result.current.setResultUnit(null);
+        result.current.setResultCategory(null);
+        result.current.setResultPrefix('none');
+        result.current.setSelectedAlternative(0);
+      });
+      expect(result.current.calculatorMode).toBe('rpn');
+      expect(result.current.shiftActive).toBe(false);
+      expect(result.current.calculatorPrecision).toBe(4);
+      expect(result.current.calcOp1).toBeNull();
+      expect(result.current.calcOp2).toBeNull();
+      expect(result.current.calcValues).toEqual([null, null, null, null]);
+      expect(result.current.resultUnit).toBeNull();
+      expect(result.current.resultCategory).toBeNull();
+      expect(result.current.resultPrefix).toBe('none');
+      expect(result.current.selectedAlternative).toBe(0);
     });
   });
 });
