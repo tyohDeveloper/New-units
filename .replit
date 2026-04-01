@@ -51,3 +51,7 @@ mockupState = "FULLSTACK"
 [userenv.development]
 VITE_ALLOWED_HOSTS = "true"
 __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS = "all"
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 120000
