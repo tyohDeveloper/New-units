@@ -429,9 +429,15 @@ export const subtractDimensions = (dims: DimensionalFormula, derived: Dimensiona
   return result;
 };
 
-// Check if composition is valid (all SI base dimension remainders are valid)
+// Check if composition is valid (derived unit dimensions can factor out of target)
 export const isValidSIComposition = (target: DimensionalFormula, derived: DimensionalFormula): boolean => {
-  // All SI base dimension remainders are valid
+  for (const key of Object.keys(derived) as (keyof DimensionalFormula)[]) {
+    const dimValue = target[key] || 0;
+    const derivedValue = derived[key] || 0;
+    if (derivedValue > 0 && dimValue < derivedValue) return false;
+    if (derivedValue < 0 && dimValue > derivedValue) return false;
+    if (derivedValue !== 0 && dimValue === 0) return false;
+  }
   return true;
 };
 
