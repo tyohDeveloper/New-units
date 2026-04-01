@@ -1,4 +1,4 @@
-import type { DimensionalFormula } from '../units/shared-types';
+import type { DimensionalFormula } from '../units/dimensionalFormula';
 
 export const dimensionsEqual = (d1: DimensionalFormula, d2: DimensionalFormula): boolean => {
   const keys1 = Object.keys(d1) as (keyof DimensionalFormula)[];

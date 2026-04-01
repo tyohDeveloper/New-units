@@ -1,4 +1,4 @@
-import type { CalcValue } from '@/lib/units/shared-types';
+import type { CalcValue } from '@/lib/units/calcValue';
 
 export interface RpnState {
   rpnStack: Array<CalcValue | null>;

@@ -1,8 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { parseUnitText, PREFIXES } from '@/lib/conversion-data';
-import type { CalcValue, DimensionalFormula } from '@/lib/units/shared-types';
-import { formatDimensions, isDimensionEmpty, canAddSubtract } from '@/lib/calculator';
+import type { CalcValue } from '@/lib/units/calcValue';
+import type { DimensionalFormula } from '@/lib/units/dimensionalFormula';
+import { formatDimensions } from '@/lib/calculator/formatDimensions';
+import { isDimensionEmpty } from '@/lib/calculator/isDimensionEmpty';
+import { canAddSubtract } from '@/lib/calculator/canAddSubtract';
 import { toArabicNumerals } from '@/lib/formatting';
 import type { NumberFormat } from '@/lib/formatting';
 import { Card } from '@/components/ui/card';

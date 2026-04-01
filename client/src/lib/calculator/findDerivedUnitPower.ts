@@ -1,4 +1,4 @@
-import type { DimensionalFormula } from '../units/shared-types';
+import type { DimensionalFormula } from '../units/dimensionalFormula';
 import type { DerivedUnitPowerMatch } from './types';
 import { isDimensionless } from './isDimensionless';
 import { toSuperscript } from './toSuperscript';

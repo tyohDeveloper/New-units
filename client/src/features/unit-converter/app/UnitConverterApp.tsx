@@ -8,31 +8,43 @@ import {
   parseNumberWithFormat as parseNumberWithSpecificFormat,
   formatNumberWithFormat as formatNumberWithSpecificFormat
 } from '@/lib/formatting';
-import {
-  DimensionalFormula, CalcValue, DerivedUnitInfo, SI_DERIVED_UNITS,
-  NON_SI_UNITS_CATALOG, CATEGORY_DIMENSIONS, CategoryDimensionInfo,
-  EXCLUDED_CROSS_DOMAIN_CATEGORIES, PREFERRED_REPRESENTATIONS, PreferredRepresentation,
-  getDimensionSignature
-} from '@/lib/units/shared-types';
-import {
-  formatDimensions, toSuperscript, multiplyDimensions, divideDimensions,
-  dimensionsEqual, isDimensionless, findCrossDomainMatches,
-  isValidSymbolRepresentation, countUnits,
-  generateSIRepresentations as generateSIRepresentationsLib,
-  isDimensionEmpty, SIRepresentation,
-  canAddSubtract, subtractDimensions, canFactorOut, hasOnlyOriginalDimensions,
-  normalizeDimensions, generateAlternativeRepresentations, AlternativeRepresentation,
-  getDerivedUnit
-} from '@/lib/calculator';
-import {
-  PREFIX_EXPONENTS, GRAM_TO_KG_UNIT_PAIRS, KG_TO_GRAM_UNIT_PAIRS,
-  normalizeMassUnit as normalizeMassUnitHelper, EXPONENT_TO_PREFIX,
-  normalizeMassValue as normalizeMassValueLib,
-  normalizeMassDisplay as normalizeMassDisplayLib,
-  applyPrefixToKgUnit as applyPrefixToKgUnitLib,
-  applyRegionalSpelling as applyRegionalSpellingLib,
-  findBestPrefix
-} from '@/lib/units/helpers';
+import type { DimensionalFormula } from '@/lib/units/dimensionalFormula';
+import type { CalcValue } from '@/lib/units/calcValue';
+import type { DerivedUnitInfo } from '@/lib/units/derivedUnitInfo';
+import { SI_DERIVED_UNITS } from '@/lib/units/siDerivedUnitsCatalog';
+import { NON_SI_UNITS_CATALOG } from '@/lib/units/nonSiUnitsCatalog';
+import type { CategoryDimensionInfo } from '@/lib/units/categoryDimensions';
+import { CATEGORY_DIMENSIONS, EXCLUDED_CROSS_DOMAIN_CATEGORIES } from '@/lib/units/categoryDimensions';
+import type { PreferredRepresentation } from '@/lib/units/preferredRepresentations';
+import { PREFERRED_REPRESENTATIONS } from '@/lib/units/preferredRepresentations';
+import { getDimensionSignature } from '@/lib/units/getDimensionSignature';
+import { formatDimensions } from '@/lib/calculator/formatDimensions';
+import { toSuperscript } from '@/lib/calculator/toSuperscript';
+import { multiplyDimensions } from '@/lib/calculator/multiplyDimensions';
+import { divideDimensions } from '@/lib/calculator/divideDimensions';
+import { dimensionsEqual } from '@/lib/calculator/dimensionsEqual';
+import { isDimensionless } from '@/lib/calculator/isDimensionless';
+import { findCrossDomainMatches } from '@/lib/calculator/findCrossDomainMatches';
+import { isValidSymbolRepresentation } from '@/lib/calculator/isValidSymbolRepresentation';
+import { countUnits } from '@/lib/calculator/countUnits';
+import { generateSIRepresentations as generateSIRepresentationsLib } from '@/lib/calculator/generateSIRepresentations';
+import { isDimensionEmpty } from '@/lib/calculator/isDimensionEmpty';
+import type { SIRepresentation } from '@/lib/calculator/types';
+import { canAddSubtract } from '@/lib/calculator/canAddSubtract';
+import { subtractDimensions } from '@/lib/calculator/subtractDimensions';
+import { canFactorOut } from '@/lib/calculator/canFactorOut';
+import { hasOnlyOriginalDimensions } from '@/lib/calculator/hasOnlyOriginalDimensions';
+import { normalizeDimensions } from '@/lib/calculator/normalizeDimensions';
+import { generateAlternativeRepresentations } from '@/lib/calculator/generateAlternativeRepresentations';
+import type { AlternativeRepresentation } from '@/lib/calculator/types';
+import { getDerivedUnit } from '@/lib/calculator/getDerivedUnit';
+import { PREFIX_EXPONENTS, EXPONENT_TO_PREFIX } from '@/lib/units/prefixExponents';
+import { GRAM_TO_KG_UNIT_PAIRS, KG_TO_GRAM_UNIT_PAIRS, normalizeMassUnit as normalizeMassUnitHelper } from '@/lib/units/normalizeMassUnit';
+import { normalizeMassValue as normalizeMassValueLib } from '@/lib/units/normalizeMassValue';
+import { normalizeMassDisplay as normalizeMassDisplayLib } from '@/lib/units/normalizeMassDisplay';
+import { applyPrefixToKgUnit as applyPrefixToKgUnitLib } from '@/lib/units/applyPrefixToKgUnit';
+import { applyRegionalSpelling as applyRegionalSpellingLib } from '@/lib/units/applyRegionalSpelling';
+import { findBestPrefix } from '@/lib/units/findBestPrefix';
 import { useRpnStack } from '@/components/unit-converter/hooks/useRpnStack';
 import { useAllFlashFlags } from '@/components/unit-converter/hooks/useFlashFlag';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';

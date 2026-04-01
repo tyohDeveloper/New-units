@@ -1,4 +1,4 @@
-import type { DimensionalFormula } from '../units/shared-types';
+import type { DimensionalFormula } from '../units/dimensionalFormula';
 import { isDimensionless } from './isDimensionless';
 import { dimensionsEqual } from './dimensionsEqual';
 import { CATEGORY_DIMENSIONS, EXCLUDED_CROSS_DOMAIN_CATEGORIES } from './categoryDimensions';

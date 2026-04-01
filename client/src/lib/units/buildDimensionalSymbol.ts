@@ -1,4 +1,4 @@
-import type { DimensionalFormula } from './shared-types';
+import type { DimensionalFormula } from './dimensionalFormula';
 
 const SI_SYMBOLS: Record<keyof DimensionalFormula, string> = {
   length: 'm', mass: 'kg', time: 's', current: 'A',

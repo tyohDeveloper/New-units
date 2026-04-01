@@ -1,4 +1,4 @@
-import type { DimensionalFormula } from '../units/shared-types';
+import type { DimensionalFormula } from '../units/dimensionalFormula';
 
 const DERIVED_UNIT_MAP: Record<string, string> = {
   [JSON.stringify({ length: 1 })]: 'm',

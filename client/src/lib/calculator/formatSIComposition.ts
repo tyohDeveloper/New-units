@@ -1,4 +1,4 @@
-import type { DimensionalFormula } from '../units/shared-types';
+import type { DimensionalFormula } from '../units/dimensionalFormula';
 import { formatDimensions } from './formatDimensions';
 
 function splitSignedDims(dims: DimensionalFormula): { pos: DimensionalFormula; neg: DimensionalFormula } {

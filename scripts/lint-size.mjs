@@ -35,10 +35,10 @@ const EXPORT_COUNT_RULE_DIRS = [
  * Each exclusion must have a stated reason.
  *
  * - index.ts:                   barrel re-export file
- * - shared-types.ts:            data constants + shared types (multi-purpose)
+ * - shared-types.ts:            re-export barrel (post-split compatibility shim)
  * - siDerivedUnits.ts:          data-only, no functions
- * - categoryDimensions.ts:      data-only, no functions
- * - types.ts:                   type definitions only
+ * - categoryDimensions.ts:      data-only, no functions (canonical home post-split)
+ * - types.ts:                   type definitions only (re-export shim post-split)
  * - prefixes.ts:                data-only
  * - prefixExponents.ts:         data-only
  * - helpers.ts:                 re-export barrel aggregating canonical helpers
@@ -56,6 +56,13 @@ const EXPORT_COUNT_RULE_DIRS = [
  * - test-utils.ts:              test helper utilities; not production logic
  * - translateUi.ts:             translation data + accessor (data and function are coupled)
  * - translateUnit.ts:           translation data + accessor (data and function are coupled)
+ * - siBaseUnits.ts:             data-only constants (SI_BASE_UNIT_SYMBOLS, SI_BASE_TO_DIMENSION,
+ *                               DIMENSION_TO_SI_SYMBOL are strongly coupled and always imported together)
+ * - siDerivedUnitsCatalog.ts:   data-only, single array constant
+ * - nonSiUnitsCatalog.ts:       data-only, single array constant
+ * - preferredRepresentations.ts: exports interface + constant (co-located by design)
+ * - languageTypes.ts:           exports constant + derived type (co-located by design)
+ * - unitDefinition.ts:          type definitions only (UnitDefinition + CategoryDefinition are coupled)
  */
 const EXPORT_RULE_EXCLUDES = new Set([
   'index.ts', 'shared-types.ts', 'siDerivedUnits.ts', 'categoryDimensions.ts',
@@ -65,6 +72,8 @@ const EXPORT_RULE_EXCLUDES = new Set([
   'generateSIRepresentations.ts', 'generateAlternativeRepresentations.ts',
   'conversion-data.ts', 'localization.ts', 'formatting.ts',
   'queryClient.ts', 'test-utils.ts', 'translateUi.ts', 'translateUnit.ts',
+  'siBaseUnits.ts', 'siDerivedUnitsCatalog.ts', 'nonSiUnitsCatalog.ts',
+  'preferredRepresentations.ts', 'languageTypes.ts', 'unitDefinition.ts',
 ]);
 
 /**
@@ -86,6 +95,8 @@ const FILE_LENGTH_EXCLUDES = new Set([
   'applyRpnUnary.ts', 'applyRpnBinary.ts',
   'generateSIRepresentations.ts', 'generateAlternativeRepresentations.ts',
   'normalizeDimensions.ts', 'findDerivedUnitPower.ts', 'getDerivedUnit.ts',
+  'siBaseUnits.ts', 'siDerivedUnitsCatalog.ts', 'nonSiUnitsCatalog.ts',
+  'preferredRepresentations.ts',
 ]);
 
 /**
@@ -99,6 +110,8 @@ const FUNCTION_RULE_DATA_EXCLUDES = new Set([
   'shared-types.ts', 'siDerivedUnits.ts', 'categoryDimensions.ts',
   'types.ts', 'prefixes.ts', 'prefixExponents.ts',
   'localization.ts',
+  'siBaseUnits.ts', 'siDerivedUnitsCatalog.ts', 'nonSiUnitsCatalog.ts',
+  'preferredRepresentations.ts', 'languageTypes.ts',
 ]);
 
 const MAX_FUNCTION_LINES = 20;

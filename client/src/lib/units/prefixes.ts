@@ -1,4 +1,6 @@
-import type { Prefix } from './types';
+import type { Prefix } from './prefix';
+
+export type { Prefix };
 
 export const PREFIXES: Prefix[] = [
   { id: 'yotta', name: 'Yotta', symbol: 'Y', factor: 1e24 },
@@ -32,55 +34,4 @@ export const BINARY_PREFIXES: Prefix[] = [
 
 export const ALL_PREFIXES: Prefix[] = [...PREFIXES, ...BINARY_PREFIXES].sort((a, b) => b.factor - a.factor);
 
-export function findOptimalPrefix(
-  value: number, 
-  unitSymbol: string = '',
-  precision: number = 8
-): { prefix: Prefix; adjustedValue: number } {
-  const nonePrefix = PREFIXES.find(p => p.id === 'none')!;
-  
-  const containsKg = unitSymbol.includes('kg');
-  const effectiveValue = containsKg ? value * 1000 : value;
-  
-  const absValue = Math.abs(effectiveValue);
-  if (absValue === 0 || !isFinite(absValue)) {
-    return { prefix: nonePrefix, adjustedValue: value };
-  }
-  
-  let bestPrefix = nonePrefix;
-  let bestScore = Math.abs(Math.log10(absValue));
-  
-  for (const prefix of PREFIXES) {
-    if (prefix.id === 'none') continue;
-    
-    const adjustedAbs = absValue / prefix.factor;
-    
-    if (adjustedAbs >= 1 && adjustedAbs < 1000) {
-      const score = Math.abs(Math.log10(adjustedAbs));
-      if (score < bestScore) {
-        bestScore = score;
-        bestPrefix = prefix;
-      }
-    }
-  }
-  
-  const adjustedWithBest = effectiveValue / bestPrefix.factor;
-  const roundedWithBest = parseFloat(adjustedWithBest.toFixed(precision));
-  
-  if (roundedWithBest === 0 && effectiveValue !== 0) {
-    for (const prefix of PREFIXES) {
-      if (prefix.factor >= bestPrefix.factor) continue;
-      const adjusted = absValue / prefix.factor;
-      const rounded = parseFloat(adjusted.toFixed(precision));
-      if (rounded !== 0) {
-        bestPrefix = prefix;
-        break;
-      }
-    }
-  }
-  
-  return { 
-    prefix: bestPrefix, 
-    adjustedValue: effectiveValue / bestPrefix.factor 
-  };
-}
+export { findOptimalPrefix } from './findOptimalPrefix';

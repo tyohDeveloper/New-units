@@ -1,6 +1,6 @@
-import type { DimensionalFormula } from '../units/shared-types';
+import type { DimensionalFormula } from '../units/dimensionalFormula';
 import type { AlternativeRepresentation } from './types';
-import { NON_SI_UNITS_CATALOG } from '../units/shared-types';
+import { NON_SI_UNITS_CATALOG } from '../units/nonSiUnitsCatalog';
 import { normalizeDimensions } from './normalizeDimensions';
 import { formatDimensions } from './formatDimensions';
 import { dimensionsEqual } from './dimensionsEqual';

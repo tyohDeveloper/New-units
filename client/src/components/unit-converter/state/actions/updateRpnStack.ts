@@ -1,4 +1,4 @@
-import type { CalcValue } from '@/lib/units/shared-types';
+import type { CalcValue } from '@/lib/units/calcValue';
 import type { RpnAction } from '../rpnReducer';
 export const updateRpnStack = (
   updater: (prev: Array<CalcValue | null>) => Array<CalcValue | null>

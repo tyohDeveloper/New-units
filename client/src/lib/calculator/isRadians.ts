@@ -1,4 +1,4 @@
-import type { DimensionalFormula } from '../units/shared-types';
+import type { DimensionalFormula } from '../units/dimensionalFormula';
 
 export const isRadians = (dimensions: DimensionalFormula): boolean => {
   if (dimensions.angle !== 1) return false;

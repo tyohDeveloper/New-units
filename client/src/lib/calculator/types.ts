@@ -1,4 +1,5 @@
-import type { DimensionalFormula, DerivedUnitInfo } from '../units/shared-types';
+import type { DimensionalFormula } from '../units/dimensionalFormula';
+import type { DerivedUnitInfo } from '../units/derivedUnitInfo';
 
 export type { DimensionalFormula, DerivedUnitInfo };
 

@@ -1,4 +1,4 @@
-import type { CalcValue } from '@/lib/units/shared-types';
+import type { CalcValue } from '@/lib/units/calcValue';
 import { useConverterContext } from '../context/ConverterContext';
 
 export interface UseRpnStackReturn {

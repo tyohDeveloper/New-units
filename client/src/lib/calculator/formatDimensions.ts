@@ -1,4 +1,4 @@
-import type { DimensionalFormula } from '../units/shared-types';
+import type { DimensionalFormula } from '../units/dimensionalFormula';
 import { toSuperscript } from './toSuperscript';
 
 const BASE_SYMBOLS: Record<string, string> = {

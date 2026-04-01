@@ -1,4 +1,4 @@
-import type { DimensionalFormula } from '../units/shared-types';
+import type { DimensionalFormula } from '../units/dimensionalFormula';
 import type { SIRepresentation } from './types';
 import { isDimensionEmpty } from './isDimensionEmpty';
 import { isValidSIComposition } from './isValidSIComposition';
@@ -10,15 +10,10 @@ import { countUnits } from './countUnits';
 import { sumAbsExponents } from './sumAbsExponents';
 import { findCrossDomainMatches } from './findCrossDomainMatches';
 import { SI_DERIVED_UNITS, GENERAL_SI_DERIVED, SPECIALTY_DERIVED_UNITS } from './siDerivedUnits';
-import { getDimensionSignature } from '../units/shared-types';
+import { getDimensionSignature } from '../units/getDimensionSignature';
+import { PREFERRED_REPRESENTATIONS } from '../units/preferredRepresentations';
 
-export const PREFERRED_REPRESENTATIONS: Record<string, { displaySymbol: string; isSI: boolean }> = {
-  'length:2,time:-1': { displaySymbol: 'St', isSI: false },
-  'length:2,mass:1,time:-1': { displaySymbol: 'J⋅s', isSI: true },
-  'length:2,time:-2': { displaySymbol: 'Gy', isSI: true },
-  'length:-2,mass:1,time:-1': { displaySymbol: 'Pa⋅s⋅m⁻¹', isSI: true },
-  'mass:1,time:-3': { displaySymbol: 'W⋅m⁻²', isSI: true },
-};
+export { PREFERRED_REPRESENTATIONS };
 
 export const generateSIRepresentations = (
   dimensions: DimensionalFormula,

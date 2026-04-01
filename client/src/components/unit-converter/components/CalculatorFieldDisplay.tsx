@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import type { CalcValue, DimensionalFormula } from '@/lib/units/shared-types';
+import type { CalcValue } from '@/lib/units/calcValue';
+import type { DimensionalFormula } from '@/lib/units/dimensionalFormula';
 import { PREFIXES } from '@/lib/conversion-data';
 import { FIELD_HEIGHT } from '../constants';
 

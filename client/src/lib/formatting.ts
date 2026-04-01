@@ -1,4 +1,4 @@
-import type { NumberFormat } from './units/shared-types';
+import type { NumberFormat } from './units/numberFormat';
 export type { NumberFormat };
 
 export interface NumberFormatConfig {

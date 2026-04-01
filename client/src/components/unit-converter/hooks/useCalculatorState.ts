@@ -1,5 +1,5 @@
-import type { CalcValue } from '@/lib/units/shared-types';
-import type { UnitCategory } from '@/lib/units/types';
+import type { CalcValue } from '@/lib/units/calcValue';
+import type { UnitCategory } from '@/lib/units/unitCategory';
 import { useConverterContext } from '../context/ConverterContext';
 
 export interface UseCalculatorStateReturn {

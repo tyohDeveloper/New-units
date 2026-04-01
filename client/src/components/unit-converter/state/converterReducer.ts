@@ -1,4 +1,4 @@
-import type { UnitCategory } from '@/lib/units/types';
+import type { UnitCategory } from '@/lib/units/unitCategory';
 
 export interface ConverterState {
   activeCategory: UnitCategory;

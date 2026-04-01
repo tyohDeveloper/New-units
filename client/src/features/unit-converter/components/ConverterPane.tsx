@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CONVERSION_DATA, PREFIXES, ALL_PREFIXES, convert, findOptimalPrefix, getFilteredSortedUnits } from '@/lib/conversion-data';
 import type { UnitCategory } from '@/lib/conversion-data';
 import { toArabicNumerals, NUMBER_FORMATS, type NumberFormat } from '@/lib/formatting';
-import { formatDimensions } from '@/lib/calculator';
-import { applyPrefixToKgUnit as applyPrefixToKgUnitLib } from '@/lib/units/helpers';
+import { formatDimensions } from '@/lib/calculator/formatDimensions';
+import { applyPrefixToKgUnit as applyPrefixToKgUnitLib } from '@/lib/units/applyPrefixToKgUnit';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRightLeft, Copy, Info } from 'lucide-react';
 import { testId } from '@/lib/test-utils';
 import { FIELD_HEIGHT, CommonFieldWidth } from '@/components/unit-converter/constants';
-import { KG_TO_GRAM_UNIT_PAIRS } from '@/lib/units/helpers';
+import { KG_TO_GRAM_UNIT_PAIRS } from '@/lib/units/normalizeMassUnit';
 
 interface ConverterPaneProps {
   activeTab: string;

@@ -1,4 +1,5 @@
-export type { DimensionalFormula, DerivedUnitInfo } from './units/shared-types';
+export type { DimensionalFormula } from './units/dimensionalFormula';
+export type { DerivedUnitInfo } from './units/derivedUnitInfo';
 export type { CalcValue, CategoryDimensionInfo, SIRepresentation, AlternativeRepresentation, NormalizableDerivedUnit, DerivedUnitPowerMatch } from './calculator/types';
 
 export { dimensionsEqual } from './calculator/dimensionsEqual';

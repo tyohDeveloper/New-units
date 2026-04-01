@@ -1,4 +1,4 @@
-import type { DimensionalFormula } from '../units/shared-types';
+import type { DimensionalFormula } from '../units/dimensionalFormula';
 
 const KEY_MAP: Record<string, keyof DimensionalFormula> = {
   'm': 'length', 'kg': 'mass', 's': 'time', 'A': 'current',

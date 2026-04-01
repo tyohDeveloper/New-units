@@ -1,4 +1,4 @@
-import type { DimensionalFormula } from '../units/shared-types';
+import type { DimensionalFormula } from '../units/dimensionalFormula';
 import { isDimensionEmpty } from './isDimensionEmpty';
 import { canApplyDerivedUnit } from './canApplyDerivedUnit';
 import { subtractDerivedUnit } from './subtractDerivedUnit';
