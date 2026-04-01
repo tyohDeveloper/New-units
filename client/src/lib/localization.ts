@@ -17,6 +17,7 @@ export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
 
 export interface Translation {
   en: string;
+  'en-us'?: string;
   ar: string;
   de?: string;
   es?: string;
@@ -56,7 +57,8 @@ export const translate = (
   
   const trans = translations[key];
   
-  if (language === 'en' || language === 'en-us') return trans.en;
+  if (language === 'en-us') return trans['en-us'] ?? trans.en;
+  if (language === 'en') return trans.en;
   
   const langKey = language as keyof Translation;
   if (trans[langKey]) return trans[langKey] as string;

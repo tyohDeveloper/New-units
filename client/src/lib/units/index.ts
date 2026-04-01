@@ -40,6 +40,4 @@ export { applyPrefixToKgUnit } from './applyPrefixToKgUnit';
 export { dimensionsEqual } from '../calculator/dimensionsEqual';
 export { findCrossDomainMatches } from '../calculator/findCrossDomainMatches';
 export { toTitleCase } from './toTitleCase';
-export { applyRegionalSpelling } from './applyRegionalSpelling';
 export { buildDimensionalSymbol } from './buildDimensionalSymbol';
-export { findBestPrefix } from './findBestPrefix';

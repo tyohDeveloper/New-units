@@ -12,7 +12,8 @@ export const UNIT_NAME_TRANSLATIONS: Record<string, Translation> = asTranslation
 export function translateUnit(key: string, language: SupportedLanguage): string {
   const entry = UNIT_NAME_TRANSLATIONS[key];
   if (!entry) return key;
-  if (language === 'en' || language === 'en-us') return entry.en;
+  if (language === 'en-us') return entry['en-us'] ?? entry.en;
+  if (language === 'en') return entry.en;
   const val = entry[language as keyof Translation];
   if (val) return val as string;
   return entry.en || key;

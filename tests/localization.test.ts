@@ -408,8 +408,8 @@ describe('Language Localization', () => {
       expect(translate('Meter', 'en-us', UNIT_NAME_TRANSLATIONS)).toBe('Meter');
     });
 
-    it('should use "Meter" for en (British uses "Metre" in display, but base is "Meter")', () => {
-      expect(translate('Meter', 'en', UNIT_NAME_TRANSLATIONS)).toBe('Meter');
+    it('should use "Metre" for en (British English spelling)', () => {
+      expect(translate('Meter', 'en', UNIT_NAME_TRANSLATIONS)).toBe('Metre');
     });
   });
 
@@ -540,67 +540,46 @@ describe('Arabic-Indic Numeral Conversion', () => {
 });
 
 describe('EN vs EN-US Regional Spelling', () => {
-  const applyRegionalSpelling = (unitName: string, language: 'en' | 'en-us'): string => {
-    if (language === 'en-us') {
-      return unitName
-        .replace(/\s*\(Petrol\)/g, '')
-        .replace(/\s*\(Paraffin\)/g, '');
-    }
-    return unitName
-      .replace(/Gasoline\s*\(Petrol\)/g, 'Petrol')
-      .replace(/Kerosene\s*\(Paraffin\)/g, 'Paraffin')
-      .replace(/Gasoline/g, 'Petrol')
-      .replace(/Kerosene/g, 'Paraffin')
-      .replace(/Meter/g, 'Metre')
-      .replace(/meter/g, 'metre')
-      .replace(/Liter/g, 'Litre')
-      .replace(/liter/g, 'litre');
-  };
-
   describe('Fuel Type Names', () => {
     it('should display Gasoline for en-us locale', () => {
-      expect(applyRegionalSpelling('Litre of Gasoline (Petrol)', 'en-us')).toBe('Litre of Gasoline');
-      expect(applyRegionalSpelling('Kilogram of Gasoline (Petrol)', 'en-us')).toBe('Kilogram of Gasoline');
-      expect(applyRegionalSpelling('Gallon of Gasoline (US)', 'en-us')).toBe('Gallon of Gasoline (US)');
+      expect(translate('Litre of Gasoline (Petrol)', 'en-us', UNIT_NAME_TRANSLATIONS)).toBe('Liter of Gasoline');
+      expect(translate('Kilogram of Gasoline (Petrol)', 'en-us', UNIT_NAME_TRANSLATIONS)).toBe('Kilogram of Gasoline');
+      expect(translate('Gallon of Gasoline (US)', 'en-us', UNIT_NAME_TRANSLATIONS)).toBe('Gallon of Gasoline (US)');
     });
 
     it('should display Petrol for en (UK) locale', () => {
-      expect(applyRegionalSpelling('Litre of Gasoline (Petrol)', 'en')).toBe('Litre of Petrol');
-      expect(applyRegionalSpelling('Kilogram of Gasoline (Petrol)', 'en')).toBe('Kilogram of Petrol');
+      expect(translate('Litre of Gasoline (Petrol)', 'en', UNIT_NAME_TRANSLATIONS)).toBe('Litre of Petrol');
+      expect(translate('Kilogram of Gasoline (Petrol)', 'en', UNIT_NAME_TRANSLATIONS)).toBe('Kilogram of Petrol');
     });
 
     it('should display Kerosene for en-us locale', () => {
-      expect(applyRegionalSpelling('Litre of Kerosene (Paraffin)', 'en-us')).toBe('Litre of Kerosene');
-      expect(applyRegionalSpelling('Kilogram of Kerosene (Paraffin)', 'en-us')).toBe('Kilogram of Kerosene');
+      expect(translate('Litre of Kerosene (Paraffin)', 'en-us', UNIT_NAME_TRANSLATIONS)).toBe('Liter of Kerosene');
+      expect(translate('Kilogram of Kerosene (Paraffin)', 'en-us', UNIT_NAME_TRANSLATIONS)).toBe('Kilogram of Kerosene');
     });
 
     it('should display Paraffin for en (UK) locale', () => {
-      expect(applyRegionalSpelling('Litre of Kerosene (Paraffin)', 'en')).toBe('Litre of Paraffin');
-      expect(applyRegionalSpelling('Kilogram of Kerosene (Paraffin)', 'en')).toBe('Kilogram of Paraffin');
+      expect(translate('Litre of Kerosene (Paraffin)', 'en', UNIT_NAME_TRANSLATIONS)).toBe('Litre of Paraffin');
+      expect(translate('Kilogram of Kerosene (Paraffin)', 'en', UNIT_NAME_TRANSLATIONS)).toBe('Kilogram of Paraffin');
     });
   });
 
   describe('Meter/Metre Spelling', () => {
     it('should keep Meter spelling for en-us', () => {
-      expect(applyRegionalSpelling('Meter', 'en-us')).toBe('Meter');
-      expect(applyRegionalSpelling('meter', 'en-us')).toBe('meter');
+      expect(translate('Meter', 'en-us', UNIT_NAME_TRANSLATIONS)).toBe('Meter');
     });
 
     it('should convert to Metre spelling for en (UK)', () => {
-      expect(applyRegionalSpelling('Meter', 'en')).toBe('Metre');
-      expect(applyRegionalSpelling('meter', 'en')).toBe('metre');
+      expect(translate('Meter', 'en', UNIT_NAME_TRANSLATIONS)).toBe('Metre');
     });
   });
 
   describe('Liter/Litre Spelling', () => {
     it('should keep Liter spelling for en-us', () => {
-      expect(applyRegionalSpelling('Liter', 'en-us')).toBe('Liter');
-      expect(applyRegionalSpelling('liter', 'en-us')).toBe('liter');
+      expect(translate('Liter', 'en-us', UNIT_NAME_TRANSLATIONS)).toBe('Liter');
     });
 
     it('should convert to Litre spelling for en (UK)', () => {
-      expect(applyRegionalSpelling('Liter', 'en')).toBe('Litre');
-      expect(applyRegionalSpelling('liter', 'en')).toBe('litre');
+      expect(translate('Liter', 'en', UNIT_NAME_TRANSLATIONS)).toBe('Litre');
     });
   });
 });

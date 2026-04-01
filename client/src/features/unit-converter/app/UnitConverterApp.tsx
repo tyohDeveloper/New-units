@@ -43,8 +43,6 @@ import { GRAM_TO_KG_UNIT_PAIRS, KG_TO_GRAM_UNIT_PAIRS, normalizeMassUnit as norm
 import { normalizeMassValue as normalizeMassValueLib } from '@/lib/units/normalizeMassValue';
 import { normalizeMassDisplay as normalizeMassDisplayLib } from '@/lib/units/normalizeMassDisplay';
 import { applyPrefixToKgUnit as applyPrefixToKgUnitLib } from '@/lib/units/applyPrefixToKgUnit';
-import { applyRegionalSpelling as applyRegionalSpellingLib } from '@/lib/units/applyRegionalSpelling';
-import { findBestPrefix } from '@/lib/units/findBestPrefix';
 import { useRpnStack } from '@/components/unit-converter/hooks/useRpnStack';
 import { useAllFlashFlags } from '@/components/unit-converter/hooks/useFlashFlag';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -123,7 +121,6 @@ export default function UnitConverterApp() {
   const [numberFormat, setNumberFormat] = useState<NumberFormat>('uk');
   const [language, setLanguage] = useState<SupportedLanguage>('en');
 
-  const applyRegionalSpelling = (unitName: string): string => applyRegionalSpellingLib(unitName, language);
   const normalizeMassUnit = normalizeMassUnitHelper;
   const normalizeMassValue = normalizeMassValueLib;
   const applyPrefixToKgUnit = applyPrefixToKgUnitLib;
@@ -137,7 +134,8 @@ export default function UnitConverterApp() {
     normalizeMassDisplayLib(valueInKg, currentPrefix, unitId, getMassUnitInfo);
 
   const getTranslationFromRecord = (trans: Translation, lang: SupportedLanguage): string | undefined => {
-    if (lang === 'en' || lang === 'en-us') return trans.en;
+    if (lang === 'en-us') return trans['en-us'] ?? trans.en;
+    if (lang === 'en') return trans.en;
     const langValue = trans[lang as keyof Translation];
     return langValue as string | undefined;
   };
@@ -162,12 +160,13 @@ export default function UnitConverterApp() {
     if (UNIT_NAME_TRANSLATIONS[unitName]) {
       const trans = UNIT_NAME_TRANSLATIONS[unitName];
       const langKey = language as SupportedLanguage;
-      if (langKey === 'en' || langKey === 'en-us') return trans.en || unitName;
+      if (langKey === 'en-us') return trans['en-us'] ?? trans.en ?? unitName;
+      if (langKey === 'en') return trans.en || unitName;
       const langValue = trans[langKey as keyof typeof trans];
       if (langValue) return langValue as string;
       return trans.en || unitName;
     }
-    return applyRegionalSpelling(unitName);
+    return unitName;
   };
 
   React.useEffect(() => {
@@ -1142,9 +1141,9 @@ export default function UnitConverterApp() {
           </div>
           {activeTab === 'converter' && (
             <div className="mt-2">
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">{t(applyRegionalSpelling(categoryData.name))}</h1>
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">{t(categoryData.name)}</h1>
               <p className="text-muted-foreground text-sm font-mono mt-1">
-                {t('Base unit:')} <span className="text-primary">{t(applyRegionalSpelling(toTitleCase(categoryData.baseUnit)))}</span>
+                {t('Base unit:')} <span className="text-primary">{translateUnitName(toTitleCase(categoryData.baseUnit))}</span>
               </p>
             </div>
           )}

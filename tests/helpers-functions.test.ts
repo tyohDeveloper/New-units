@@ -8,9 +8,7 @@ import {
   getDimensionSignature,
   dimensionsEqual,
   toTitleCase,
-  applyRegionalSpelling,
   buildDimensionalSymbol,
-  findBestPrefix,
 } from '../client/src/lib/units/helpers';
 
 // ── PREFIX_EXPONENTS ─────────────────────────────────────────────────────────
@@ -111,27 +109,6 @@ describe('toTitleCase', () => {
   });
 });
 
-// ── applyRegionalSpelling ─────────────────────────────────────────────────────
-
-describe('applyRegionalSpelling', () => {
-  it('no change for non-english language', () => {
-    expect(applyRegionalSpelling('Meter', 'de')).toBe('Meter');
-  });
-
-  it('en-us strips Petrol/Paraffin qualifiers', () => {
-    expect(applyRegionalSpelling('Gasoline (Petrol)', 'en-us')).toBe('Gasoline');
-    expect(applyRegionalSpelling('Kerosene (Paraffin)', 'en-us')).toBe('Kerosene');
-  });
-
-  it('en changes Meter to Metre', () => {
-    expect(applyRegionalSpelling('Meter', 'en')).toBe('Metre');
-  });
-
-  it('en changes Liter to Litre', () => {
-    expect(applyRegionalSpelling('Liter', 'en')).toBe('Litre');
-  });
-});
-
 // ── buildDimensionalSymbol ────────────────────────────────────────────────────
 
 describe('buildDimensionalSymbol', () => {
@@ -150,24 +127,3 @@ describe('buildDimensionalSymbol', () => {
   });
 });
 
-// ── findBestPrefix ────────────────────────────────────────────────────────────
-
-describe('findBestPrefix', () => {
-  it('returns none for zero', () => {
-    expect(findBestPrefix(0)).toBe('none');
-  });
-
-  it('returns kilo for 5000', () => {
-    const prefix = findBestPrefix(5000);
-    expect(prefix).toBe('kilo');
-  });
-
-  it('returns milli for 0.005', () => {
-    const prefix = findBestPrefix(0.005);
-    expect(prefix).toBe('milli');
-  });
-
-  it('returns none for 1', () => {
-    expect(findBestPrefix(1)).toBe('none');
-  });
-});

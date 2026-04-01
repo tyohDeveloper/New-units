@@ -88,7 +88,8 @@ describe('JSON Integrity: unit-name-translations.json', () => {
   });
 
   it('specific fixture: Meter translates correctly', () => {
-    expect(translate('Meter', 'en', UNIT_NAME_TRANSLATIONS)).toBe('Meter');
+    expect(translate('Meter', 'en', UNIT_NAME_TRANSLATIONS)).toBe('Metre');
+    expect(translate('Meter', 'en-us', UNIT_NAME_TRANSLATIONS)).toBe('Meter');
     expect(translate('Meter', 'de', UNIT_NAME_TRANSLATIONS)).toBe('Meter');
     expect(translate('Meter', 'es', UNIT_NAME_TRANSLATIONS)).toBe('Metro');
     expect(translate('Meter', 'fr', UNIT_NAME_TRANSLATIONS)).toBe('Mètre');

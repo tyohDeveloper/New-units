@@ -1,6 +1,7 @@
 {
   "Meter": {
-    "en": "Meter",
+    "en": "Metre",
+    "en-us": "Meter",
     "ar": "متر",
     "de": "Meter",
     "es": "Metro",
@@ -3588,7 +3589,8 @@
     "zh": "米"
   },
   "Millimeter": {
-    "en": "Millimeter",
+    "en": "Millimetre",
+    "en-us": "Millimeter",
     "ar": "مليمتر",
     "de": "Millimeter",
     "es": "Milímetro",
@@ -3926,7 +3928,8 @@
     "zh": "赫夫纳烛光"
   },
   "Square Meter": {
-    "en": "Square Meter",
+    "en": "Square Metre",
+    "en-us": "Square Meter",
     "ar": "متر مربع",
     "de": "Quadratmeter",
     "es": "Metro Cuadrado",
@@ -4056,7 +4059,8 @@
     "zh": "平方度"
   },
   "Cubic Meter": {
-    "en": "Cubic Meter",
+    "en": "Cubic Metre",
+    "en-us": "Cubic Meter",
     "ar": "متر مكعب",
     "de": "Kubikmeter",
     "es": "Metro Cúbico",
@@ -4069,7 +4073,8 @@
     "zh": "立方米"
   },
   "Liter": {
-    "en": "Liter",
+    "en": "Litre",
+    "en-us": "Liter",
     "ar": "لتر",
     "de": "Liter",
     "es": "Litro",
@@ -4082,7 +4087,8 @@
     "zh": "升"
   },
   "Milliliter": {
-    "en": "Milliliter",
+    "en": "Millilitre",
+    "en-us": "Milliliter",
     "ar": "مليلتر",
     "de": "Milliliter",
     "es": "Mililitro",
@@ -4459,7 +4465,8 @@
     "zh": "立方英里"
   },
   "Meter/Second": {
-    "en": "Meter/Second",
+    "en": "Metre/Second",
+    "en-us": "Meter/Second",
     "ar": "متر/ثانية",
     "de": "Meter/Sekunde",
     "es": "Metro/Segundo",
@@ -4472,7 +4479,8 @@
     "zh": "米/秒"
   },
   "Meter/sq sec": {
-    "en": "Meter/sq sec",
+    "en": "Metre/sq sec",
+    "en-us": "Meter/sq sec",
     "ar": "متر/ثانية²",
     "de": "Meter/Sek²",
     "es": "Metro/seg²",
@@ -4485,7 +4493,8 @@
     "zh": "米/秒²"
   },
   "Kilometer/Hour": {
-    "en": "Kilometer/Hour",
+    "en": "Kilometre/Hour",
+    "en-us": "Kilometer/Hour",
     "ar": "كيلومتر/ساعة",
     "de": "Kilometer/Stunde",
     "es": "Kilómetro/Hora",
@@ -5304,7 +5313,8 @@
     "zh": "缇"
   },
   "Newton-meter": {
-    "en": "Newton-meter",
+    "en": "Newton-metre",
+    "en-us": "Newton-meter",
     "ar": "نيوتن متر",
     "de": "Newtonmeter",
     "es": "Newton-metro",
@@ -5395,7 +5405,8 @@
     "zh": "lb/ft³"
   },
   "Liter/second": {
-    "en": "Liter/second",
+    "en": "Litre/second",
+    "en-us": "Liter/second",
     "ar": "لتر/ثانية",
     "de": "Liter/Sekunde",
     "es": "Litro/segundo",
@@ -5408,7 +5419,8 @@
     "zh": "升/秒"
   },
   "Liter/minute": {
-    "en": "Liter/minute",
+    "en": "Litre/minute",
+    "en-us": "Liter/minute",
     "ar": "لتر/دقيقة",
     "de": "Liter/Minute",
     "es": "Litro/minuto",
@@ -5486,7 +5498,8 @@
     "zh": "厘泊"
   },
   "Newton/meter": {
-    "en": "Newton/meter",
+    "en": "Newton/metre",
+    "en-us": "Newton/meter",
     "ar": "نيوتن/متر",
     "de": "Newton/Meter",
     "es": "Newton/metro",
@@ -5692,5 +5705,45 @@
     "pt": "Lâmpada de vapor de sódio (watts)",
     "ru": "Натриевая лампа (ватт)",
     "zh": "钠灯（瓦特）"
+  },
+  "Pound of Gasoline (Petrol)": {
+    "en": "Pound of Petrol",
+    "en-us": "Pound of Gasoline",
+    "ar": "رطل من البنزين"
+  },
+  "Pound of Kerosene (Paraffin)": {
+    "en": "Pound of Paraffin",
+    "en-us": "Pound of Kerosene",
+    "ar": "رطل من الكيروسين"
+  },
+  "Litre of Gasoline (Petrol)": {
+    "en": "Litre of Petrol",
+    "en-us": "Liter of Gasoline",
+    "ar": "لتر من البنزين"
+  },
+  "Litre of Kerosene (Paraffin)": {
+    "en": "Litre of Paraffin",
+    "en-us": "Liter of Kerosene",
+    "ar": "لتر من الكيروسين"
+  },
+  "Kilogram of Gasoline (Petrol)": {
+    "en": "Kilogram of Petrol",
+    "en-us": "Kilogram of Gasoline",
+    "ar": "كيلوغرام من البنزين"
+  },
+  "Kilogram of Kerosene (Paraffin)": {
+    "en": "Kilogram of Paraffin",
+    "en-us": "Kilogram of Kerosene",
+    "ar": "كيلوغرام من الكيروسين"
+  },
+  "Gallon of Gasoline (US)": {
+    "en": "Gallon of Petrol (US)",
+    "en-us": "Gallon of Gasoline (US)",
+    "ar": "غالون من البنزين (أمريكي)"
+  },
+  "Gallon of Kerosene (US)": {
+    "en": "Gallon of Paraffin (US)",
+    "en-us": "Gallon of Kerosene (US)",
+    "ar": "غالون من الكيروسين (أمريكي)"
   }
 }
