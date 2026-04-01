@@ -1,0 +1,39 @@
+export type { CalcValue, CategoryDimensionInfo, SIRepresentation, AlternativeRepresentation, NormalizableDerivedUnit, DerivedUnitPowerMatch } from './types';
+export type { DimensionalFormula, DerivedUnitInfo } from '../units/shared-types';
+
+export { dimensionsEqual } from './dimensionsEqual';
+export { isDimensionless } from './isDimensionless';
+export { isDimensionEmpty } from './isDimensionEmpty';
+export { multiplyDimensions } from './multiplyDimensions';
+export { divideDimensions } from './divideDimensions';
+export { subtractDimensions } from './subtractDimensions';
+export { toSuperscript } from './toSuperscript';
+export { formatDimensions } from './formatDimensions';
+export { isValidSymbolRepresentation } from './isValidSymbolRepresentation';
+export { countUnits } from './countUnits';
+export { sumAbsExponents } from './sumAbsExponents';
+export { canAddSubtract } from './canAddSubtract';
+export { canFactorOut } from './canFactorOut';
+export { hasOnlyOriginalDimensions } from './hasOnlyOriginalDimensions';
+export { isValidSIComposition } from './isValidSIComposition';
+export { formatSIComposition } from './formatSIComposition';
+export { canApplyDerivedUnit } from './canApplyDerivedUnit';
+export { subtractDerivedUnit } from './subtractDerivedUnit';
+
+export { CATEGORY_DIMENSIONS, EXCLUDED_CROSS_DOMAIN_CATEGORIES } from './categoryDimensions';
+export { SI_DERIVED_UNITS, SPECIALTY_DERIVED_UNITS, SI_UNITS_BY_COMPLEXITY, GENERAL_SI_DERIVED, NORMALIZABLE_DERIVED_UNITS } from './siDerivedUnits';
+
+export { findCrossDomainMatches } from './findCrossDomainMatches';
+export { findDerivedUnitPower } from './findDerivedUnitPower';
+export { normalizeDimensions } from './normalizeDimensions';
+export { generateSIRepresentations, PREFERRED_REPRESENTATIONS } from './generateSIRepresentations';
+export { generateAlternativeRepresentations } from './generateAlternativeRepresentations';
+export { getDerivedUnit } from './getDerivedUnit';
+export { isRadians } from './isRadians';
+export { fixPrecision } from './fixPrecision';
+export { buildDirectUnitSymbol } from './buildDirectUnitSymbol';
+export { buildDirectDimensions } from './buildDirectDimensions';
+export type { RpnUnaryOp } from './applyRpnUnary';
+export { applyRpnUnary } from './applyRpnUnary';
+export type { RpnBinaryOp } from './applyRpnBinary';
+export { applyRpnBinary } from './applyRpnBinary';
