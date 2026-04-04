@@ -820,6 +820,7 @@ export function CalculatorPane({
                   autoFocus
                   data-testid="rpn-x-input"
                   value={rpnXEditValue}
+                  onFocus={(e) => e.target.select()}
                   onChange={(e) => setRpnXEditValue(e.target.value)}
                   onBlur={() => {
                     if (rpnXEditValue.trim()) {
