@@ -1,4 +1,5 @@
 import UnitConverterApp from '@/features/unit-converter/app/UnitConverterApp';
+import { ConverterProvider } from '@/components/unit-converter/context/ConverterContext';
 
 const APP_VERSION = '3.1.0.0';
 
@@ -23,7 +24,9 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="py-4 md:py-6">
-        <UnitConverterApp />
+        <ConverterProvider>
+          <UnitConverterApp />
+        </ConverterProvider>
       </main>
     </div>
   );
