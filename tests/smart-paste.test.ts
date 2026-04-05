@@ -960,4 +960,42 @@ describe('findCategoryByDimensions - Compound Unit Routing', () => {
       }
     });
   });
+
+  describe('Symbol route takes priority over dimension route', () => {
+    it('"5 MeV" has a specific categoryId (photon) — dimension route must NOT override it', () => {
+      const parsed = parseUnitText('5 MeV');
+      expect(parsed.categoryId).toBe('photon');
+      expect(parsed.unitId).toBeTruthy();
+      // Dimension route would return 'energy' for the same dims; symbol route must win
+      const dimCatId = findCategoryByDimensions(parsed.dimensions as Parameters<typeof findCategoryByDimensions>[0]);
+      expect(dimCatId).toBe('energy');
+      // Confirm the symbol route (categoryId) differs from dimension route result
+      expect(parsed.categoryId).not.toBe(dimCatId);
+    });
+
+    it('"9.8 N" has specific categoryId (force) — dimension route agrees in this case', () => {
+      const parsed = parseUnitText('9.8 N');
+      expect(parsed.categoryId).toBe('force');
+      const dimCatId = findCategoryByDimensions(parsed.dimensions as Parameters<typeof findCategoryByDimensions>[0]);
+      expect(dimCatId).toBe('force');
+    });
+  });
+
+  describe('Graceful fallback when dimensions have no non-excluded match', () => {
+    it('truly dimensionless input {} returns null', () => {
+      expect(findCategoryByDimensions({})).toBeNull();
+    });
+
+    it('data/math dimensions (empty) return null since those categories are excluded', () => {
+      // Both data and math have dimensions:{} and are in EXCLUDED_CROSS_DOMAIN_CATEGORIES
+      const result = findCategoryByDimensions({});
+      expect(result).toBeNull();
+    });
+
+    it('unusual combination that has no standard category match returns null', () => {
+      // e.g. time^3 is not a standard physical quantity
+      const result = findCategoryByDimensions({ time: 3 });
+      expect(result).toBeNull();
+    });
+  });
 });

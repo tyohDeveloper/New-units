@@ -526,6 +526,15 @@ export default function UnitConverterApp() {
         return;
       }
       const parsed = parseUnitText(text);
+      if (parsed.categoryId && parsed.unitId) {
+        setActiveTab('converter');
+        setActiveCategory(parsed.categoryId);
+        setFromUnit(parsed.unitId);
+        setFromPrefix(parsed.prefixId || 'none');
+        setInputValue(parsed.originalValue.toString());
+        setCustomPasteStatus('idle');
+        return;
+      }
       const hasDimensions = Object.values(parsed.dimensions).some(v => v !== 0);
       if (hasDimensions) {
         const catId = findCategoryByDimensions(parsed.dimensions as DimensionalFormula);
