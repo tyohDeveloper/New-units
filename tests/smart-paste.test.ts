@@ -913,11 +913,11 @@ describe('findCategoryByDimensions - Compound Unit Routing', () => {
   });
 
   describe('Compound expressions parsed by parseUnitText feed correctly', () => {
-    it('"45N·m" parses to energy dimensions and routes to "energy"', () => {
+    it('"45N·m" parses to torque (direct symbol match before dimensional decomposition)', () => {
       const parsed = parseUnitText('45N·m');
       expect(parsed.dimensions).toMatchObject({ mass: 1, length: 2, time: -2 });
-      const catId = findCategoryByDimensions(parsed.dimensions as Parameters<typeof findCategoryByDimensions>[0]);
-      expect(catId).toBe('energy');
+      expect(parsed.categoryId).toBe('torque');
+      expect(parsed.unitId).toBe('nm');
     });
 
     it('"9.8 m/s²" parses to acceleration dimensions and routes to "acceleration"', () => {
@@ -958,6 +958,86 @@ describe('findCategoryByDimensions - Compound Unit Routing', () => {
           expect(catData!.baseUnit).toBeTruthy();
         }
       }
+    });
+  });
+
+  describe('Compound unit symbol match routes before dimensional decomposition', () => {
+    it('"N*m" routes to torque, not energy', () => {
+      const parsed = parseUnitText('N*m');
+      expect(parsed.categoryId).toBe('torque');
+      expect(parsed.unitId).toBe('nm');
+      expect(parsed.dimensions).toEqual({ mass: 1, length: 2, time: -2 });
+    });
+
+    it('"N·m" (middle dot) routes to torque, not energy', () => {
+      const parsed = parseUnitText('N·m');
+      expect(parsed.categoryId).toBe('torque');
+      expect(parsed.unitId).toBe('nm');
+    });
+
+    it('"N⋅m" (dot operator) routes to torque, not energy', () => {
+      const parsed = parseUnitText('N⋅m');
+      expect(parsed.categoryId).toBe('torque');
+      expect(parsed.unitId).toBe('nm');
+    });
+
+    it('"10 N*m" with numeric prefix routes to torque', () => {
+      const parsed = parseUnitText('10 N*m');
+      expect(parsed.categoryId).toBe('torque');
+      expect(parsed.unitId).toBe('nm');
+      expect(parsed.originalValue).toBe(10);
+    });
+
+    it('"ft*lb" routes to torque', () => {
+      const parsed = parseUnitText('ft*lb');
+      expect(parsed.categoryId).toBe('torque');
+      expect(parsed.unitId).toBe('ftlb');
+    });
+
+    it('"ft·lb" routes to torque', () => {
+      const parsed = parseUnitText('ft·lb');
+      expect(parsed.categoryId).toBe('torque');
+      expect(parsed.unitId).toBe('ftlb');
+    });
+
+    it('"ft-lb" (hyphen separator) routes to torque', () => {
+      const parsed = parseUnitText('ft-lb');
+      expect(parsed.categoryId).toBe('torque');
+      expect(parsed.unitId).toBe('ftlb');
+    });
+
+    it('pure energy symbols (J) still route to energy', () => {
+      const parsed = parseUnitText('J');
+      expect(parsed.categoryId).toBe('energy');
+    });
+
+    it('pure energy symbols (kJ) still route to energy', () => {
+      const parsed = parseUnitText('kJ');
+      expect(parsed.categoryId).toBe('energy');
+    });
+
+    it('"ft·lbf" (foot-pound-force) routes to torque via lbf→lb alias', () => {
+      const parsed = parseUnitText('ft·lbf');
+      expect(parsed.categoryId).toBe('torque');
+      expect(parsed.unitId).toBe('ftlb');
+    });
+
+    it('"ft*lbf" routes to torque via lbf→lb alias', () => {
+      const parsed = parseUnitText('ft*lbf');
+      expect(parsed.categoryId).toBe('torque');
+      expect(parsed.unitId).toBe('ftlb');
+    });
+
+    it('"ft-lbf" (hyphen separator) routes to torque via lbf→lb alias', () => {
+      const parsed = parseUnitText('ft-lbf');
+      expect(parsed.categoryId).toBe('torque');
+      expect(parsed.unitId).toBe('ftlb');
+    });
+
+    it('ambiguous dimension-only string (kg·m²/s²) falls back to dimensional decomposition', () => {
+      const parsed = parseUnitText('kg·m²/s²');
+      expect(parsed.categoryId).toBeNull();
+      expect(parsed.dimensions).toEqual({ mass: 1, length: 2, time: -2 });
     });
   });
 

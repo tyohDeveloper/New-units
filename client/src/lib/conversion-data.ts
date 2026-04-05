@@ -835,6 +835,36 @@ export function looksLikeDimensionalFormula(text: string): boolean {
   return false;
 }
 
+// Normalize compound unit separators (*,·,×,between-token -) to the canonical ⋅
+function normalizeCompoundSeparators(unitText: string): string {
+  return unitText
+    .replace(/[*·×]/g, '⋅')
+    .replace(/(?<=[a-zA-Z0-9])[-](?=[a-zA-Z])/g, '⋅');
+}
+
+// Map a SymbolMapEntry to the compact result shape used by lookupCompoundUnitSymbol
+function mapEntry(e: SymbolMapEntry): { categoryId: UnitCategory; unitId: string } {
+  return { categoryId: e.categoryId, unitId: e.unitId };
+}
+
+// Attempt a direct symbol lookup in the unit catalog after normalising separators.
+// Also handles the lbf→lb alias so "ft⋅lbf" resolves to the torque "ft⋅lb" entry.
+// Returns a match if found, null otherwise.
+function lookupCompoundUnitSymbol(
+  unitText: string
+): { categoryId: UnitCategory; unitId: string } | null {
+  const normalized = normalizeCompoundSeparators(unitText);
+  if (normalized === unitText && !unitText.includes('⋅')) return null;
+  const map = getUnitSymbolMap();
+  const withLbAlias = normalized.replace(/(^|⋅)lbf(⋅|$)/g, '$1lb$2');
+  if (withLbAlias !== normalized) {
+    const aliasEntry = map.get(withLbAlias);
+    if (aliasEntry) return mapEntry(aliasEntry);
+  }
+  const entry = map.get(normalized);
+  return entry ? mapEntry(entry) : null;
+}
+
 // Parse complete text with number and unit
 export function parseUnitText(
   text: string,
@@ -896,8 +926,29 @@ export function parseUnitText(
     }
   }
   
-  // If unit text looks like a dimensional formula, try parsing it as such
+  // If unit text looks like a dimensional formula, first attempt a direct symbol
+  // lookup (after normalising separator characters). If a registered unit matches
+  // exactly, use its category rather than falling through to dimensional
+  // decomposition — this prevents ambiguous dimension strings (e.g. N⋅m which
+  // shares dimensions with Joules) from routing to the wrong category.
   if (unitText && looksLikeDimensionalFormula(unitText)) {
+    const directMatch = lookupCompoundUnitSymbol(unitText);
+    if (directMatch) {
+      const matchedCategoryId = directMatch.categoryId;
+      const matchedUnitId = directMatch.unitId;
+      const category = CONVERSION_DATA.find(c => c.id === matchedCategoryId);
+      const unit = category?.units.find(u => u.id === matchedUnitId);
+      const unitFactor = unit?.factor ?? 1;
+      return {
+        value: numValue * unitFactor,
+        originalValue: numValue,
+        categoryId: matchedCategoryId,
+        unitId: matchedUnitId,
+        prefixId: 'none',
+        dimensions: getCategoryDimensionsForParse(matchedCategoryId)
+      };
+    }
+
     const dimResult = parseDimensionalFormula(unitText);
     if (dimResult.isValid) {
       return {
@@ -948,6 +999,28 @@ export function parseUnitText(
     };
   }
   
+  // Before falling through to symbol matching, try a compound lookup for
+  // hyphen-separated compound units like "ft-lb" that would not have been caught
+  // by looksLikeDimensionalFormula (which does not treat `-` as a separator).
+  if (unitText && /(?<=[a-zA-Z0-9])-(?=[a-zA-Z])/.test(unitText)) {
+    const directMatch = lookupCompoundUnitSymbol(unitText);
+    if (directMatch) {
+      const matchedCategoryId = directMatch.categoryId;
+      const matchedUnitId = directMatch.unitId;
+      const category = CONVERSION_DATA.find(c => c.id === matchedCategoryId);
+      const unit = category?.units.find(u => u.id === matchedUnitId);
+      const unitFactor = unit?.factor ?? 1;
+      return {
+        value: numValue * unitFactor,
+        originalValue: numValue,
+        categoryId: matchedCategoryId,
+        unitId: matchedUnitId,
+        prefixId: 'none',
+        dimensions: getCategoryDimensionsForParse(matchedCategoryId)
+      };
+    }
+  }
+
   // Parse the unit part using standard symbol matching
   const unitResult = parseUnitSymbol(unitText, unitNameLookup);
   

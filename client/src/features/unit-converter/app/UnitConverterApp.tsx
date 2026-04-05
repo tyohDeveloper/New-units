@@ -62,6 +62,10 @@ import { CalculatorPane } from '@/features/unit-converter/components/CalculatorP
 
 export default function UnitConverterApp() {
   const inputRef = useRef<HTMLInputElement>(null);
+  // When a paste sets both category and a non-base unit simultaneously, the
+  // activeCategory useEffect would otherwise reset fromUnit to sorted[0].
+  // Store the intended unit/prefix here so the effect can honour the paste choice.
+  const pendingPasteUnitRef = useRef<{ fromUnit: string; prefixId: string } | null>(null);
   const [activeCategory, setActiveCategory] = useState<UnitCategory>('length');
   const [fromUnit, setFromUnit] = useState<string>('');
   const [toUnit, setToUnit] = useState<string>('');
@@ -204,16 +208,26 @@ export default function UnitConverterApp() {
   useEffect(() => {
     const sorted = getFilteredSortedUnits(activeCategory);
     if (sorted.length > 0) {
-      if (activeCategory === 'temperature') {
+      const pending = pendingPasteUnitRef.current;
+      pendingPasteUnitRef.current = null;
+      if (pending && sorted.some(u => u.id === pending.fromUnit)) {
+        setFromUnit(pending.fromUnit);
+        setToUnit(pending.fromUnit);
+        setFromPrefix(pending.prefixId);
+        setToPrefix('none');
+      } else if (activeCategory === 'temperature') {
         setFromUnit('k'); setToUnit('k');
+        setFromPrefix('none'); setToPrefix('none');
       } else if (activeCategory === 'capacitance') {
         setFromUnit('f'); setToUnit('f');
+        setFromPrefix('none'); setToPrefix('none');
       } else if (activeCategory === 'math') {
         setFromUnit('num'); setToUnit('num');
+        setFromPrefix('none'); setToPrefix('none');
       } else {
         setFromUnit(sorted[0].id); setToUnit(sorted[0].id);
+        setFromPrefix('none'); setToPrefix('none');
       }
-      setFromPrefix('none'); setToPrefix('none');
     }
   }, [activeCategory]);
 
@@ -229,9 +243,13 @@ export default function UnitConverterApp() {
       const parsed = parseUnitText(pastedText);
       if (activeTab === 'converter') {
         if (parsed.categoryId && parsed.unitId) {
-          setActiveCategory(parsed.categoryId);
-          setFromUnit(parsed.unitId);
-          setFromPrefix(parsed.prefixId);
+          if (parsed.categoryId === activeCategory) {
+            setFromUnit(parsed.unitId);
+            setFromPrefix(parsed.prefixId);
+          } else {
+            pendingPasteUnitRef.current = { fromUnit: parsed.unitId, prefixId: parsed.prefixId };
+            setActiveCategory(parsed.categoryId);
+          }
         }
         setInputValue(parsed.originalValue.toString());
       } else if (activeTab === 'custom') {
@@ -479,9 +497,13 @@ export default function UnitConverterApp() {
       if (!text) return 'unrecognised';
       const parsed = parseUnitText(text);
       if (parsed.categoryId && parsed.unitId) {
-        setActiveCategory(parsed.categoryId);
-        setFromUnit(parsed.unitId);
-        setFromPrefix(parsed.prefixId || 'none');
+        if (parsed.categoryId === activeCategory) {
+          setFromUnit(parsed.unitId);
+          setFromPrefix(parsed.prefixId || 'none');
+        } else {
+          pendingPasteUnitRef.current = { fromUnit: parsed.unitId, prefixId: parsed.prefixId || 'none' };
+          setActiveCategory(parsed.categoryId);
+        }
         setInputValue(parsed.originalValue.toString());
         return 'ok';
       }
@@ -528,9 +550,8 @@ export default function UnitConverterApp() {
       const parsed = parseUnitText(text);
       if (parsed.categoryId && parsed.unitId) {
         setActiveTab('converter');
+        pendingPasteUnitRef.current = { fromUnit: parsed.unitId, prefixId: parsed.prefixId || 'none' };
         setActiveCategory(parsed.categoryId);
-        setFromUnit(parsed.unitId);
-        setFromPrefix(parsed.prefixId || 'none');
         setInputValue(parsed.originalValue.toString());
         setCustomPasteStatus('idle');
         return;
