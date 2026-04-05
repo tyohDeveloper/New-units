@@ -9,11 +9,35 @@ import { formatDimensions } from './formatDimensions';
 import { countUnits } from './countUnits';
 import { sumAbsExponents } from './sumAbsExponents';
 import { findCrossDomainMatches } from './findCrossDomainMatches';
+import { findCrossDomainMatchesByKey } from './findCrossDomainMatchesByKey';
 import { SI_DERIVED_UNITS, GENERAL_SI_DERIVED, SPECIALTY_DERIVED_UNITS } from './siDerivedUnits';
 import { getDimensionSignature } from '../units/getDimensionSignature';
 import { PREFERRED_REPRESENTATIONS } from '../units/preferredRepresentations';
 
 export { PREFERRED_REPRESENTATIONS };
+
+const CATEGORY_DEFAULT_SYMBOLS: Record<string, string> = {
+  energy: 'J',
+  torque: 'N⋅m',
+  photon: 'eV',
+  force: 'N',
+  pressure: 'Pa',
+  power: 'W',
+  frequency: 'Hz',
+  charge: 'C',
+  potential: 'V',
+  capacitance: 'F',
+  resistance: 'Ω',
+  conductance: 'S',
+  magnetic_flux: 'Wb',
+  magnetic_density: 'T',
+  inductance: 'H',
+  luminous_flux: 'lm',
+  illuminance: 'lx',
+  radiation_dose: 'Gy',
+  equivalent_dose: 'Sv',
+  catalytic: 'kat',
+};
 
 export const generateSIRepresentations = (
   dimensions: DimensionalFormula,
@@ -85,13 +109,70 @@ export const generateSIRepresentations = (
   promotePerfectSIMatch(filteredRepresentations);
   applyPreferredRepresentation(filteredRepresentations, dimensions);
 
+  const crossMatchKeys = findCrossDomainMatchesByKey(dimensions);
+  if (crossMatchKeys.length > 0) {
+    applyCrossDomainOrdering(filteredRepresentations, crossMatchKeys);
+  }
+
+  const crossMatches = findCrossDomainMatches(dimensions);
   for (const rep of filteredRepresentations) {
-    const crossMatches = findCrossDomainMatches(dimensions);
     if (crossMatches.length > 0) rep.crossDomainMatches = crossMatches;
   }
 
   return filteredRepresentations;
 };
+
+function applyCrossDomainOrdering(
+  reps: SIRepresentation[],
+  crossMatchKeys: string[]
+): void {
+  const phase1: SIRepresentation[] = [];
+  const usedIndices = new Set<number>();
+
+  for (const catKey of crossMatchKeys) {
+    const defaultSymbol = CATEGORY_DEFAULT_SYMBOLS[catKey];
+
+    let foundIdx = -1;
+
+    if (defaultSymbol) {
+      foundIdx = reps.findIndex(
+        (r, i) => !usedIndices.has(i) && r.displaySymbol === defaultSymbol
+      );
+      if (foundIdx !== -1) {
+        usedIndices.add(foundIdx);
+        phase1.push(reps[foundIdx]);
+      } else {
+        phase1.push({ displaySymbol: defaultSymbol, derivedUnits: [], depth: 1 });
+      }
+    } else {
+      const siUnitsForCat = SI_DERIVED_UNITS.filter(u => u.category === catKey);
+      for (const siUnit of siUnitsForCat) {
+        foundIdx = reps.findIndex(
+          (r, i) => !usedIndices.has(i) && r.derivedUnits?.includes(siUnit.symbol)
+        );
+        if (foundIdx !== -1) break;
+      }
+      if (foundIdx !== -1) {
+        usedIndices.add(foundIdx);
+        phase1.push(reps[foundIdx]);
+      }
+    }
+  }
+
+  const phase2: SIRepresentation[] = [];
+  const phase3: SIRepresentation[] = [];
+
+  for (let i = 0; i < reps.length; i++) {
+    if (usedIndices.has(i)) continue;
+    if (reps[i].depth === 0) {
+      phase3.push(reps[i]);
+    } else {
+      phase2.push(reps[i]);
+    }
+  }
+
+  reps.splice(0, reps.length, ...phase1, ...phase2, ...phase3);
+}
 
 function promotePerfectSIMatch(reps: SIRepresentation[]): void {
   const idx = reps.findIndex(rep =>
