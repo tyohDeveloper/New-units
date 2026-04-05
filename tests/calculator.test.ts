@@ -143,7 +143,7 @@ describe('Cross-Domain Matching', () => {
       const matches = findCrossDomainMatches(energyDims, 'energy');
       expect(matches).toContain('Energy');
       expect(matches).toContain('Torque');
-      expect(matches).toContain('Photon');
+      expect(matches).toContain('Photon Energy');
     });
 
     it('should find all matching categories for Torque dimensions (including Torque)', () => {
@@ -151,7 +151,7 @@ describe('Cross-Domain Matching', () => {
       const matches = findCrossDomainMatches(torqueDims, 'torque');
       expect(matches).toContain('Energy');
       expect(matches).toContain('Torque');
-      expect(matches).toContain('Photon');
+      expect(matches).toContain('Photon Energy');
     });
 
     it('should find all matching categories for Frequency dimensions (including Frequency)', () => {

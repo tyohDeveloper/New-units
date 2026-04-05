@@ -264,7 +264,7 @@ export function DirectPane({
         {/* Physical quantity labels below Dimensions block */}
         {matchingQuantities.length > 0 && (
           <div className="flex flex-col gap-2">
-            {matchingQuantities.map((quantity) => (
+            {matchingQuantities.slice(0, 3).map((quantity) => (
               <button
                 key={quantity}
                 className="flex items-center px-3 py-1.5 rounded-md text-xs font-mono text-accent bg-accent/5 border border-accent/20 cursor-pointer hover:bg-accent/15 hover:border-accent/50 hover:shadow-sm active:bg-accent/25 transition-all duration-150 text-left w-fit"
@@ -274,6 +274,9 @@ export function DirectPane({
                 {quantity}
               </button>
             ))}
+            {matchingQuantities.length > 3 && (
+              <span className="text-xs font-mono text-muted-foreground">…</span>
+            )}
           </div>
         )}
 
