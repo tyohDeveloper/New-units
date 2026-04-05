@@ -1402,7 +1402,6 @@ export default function UnitConverterApp() {
             getPlaceholder={getPlaceholder}
             getCategoryDimensions={getCategoryDimensions}
             formatNumberWithSeparators={formatNumberWithSeparators}
-            onSmartPaste={handleConverterSmartPaste}
           />
 
           <DirectPane

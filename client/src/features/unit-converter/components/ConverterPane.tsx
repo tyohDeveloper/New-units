@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CONVERSION_DATA, PREFIXES, ALL_PREFIXES, convert, findOptimalPrefix, getFilteredSortedUnits } from '@/lib/conversion-data';
 import type { UnitCategory } from '@/lib/conversion-data';
@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { ArrowRightLeft, ClipboardPaste, Copy, Info } from 'lucide-react';
+import { ArrowRightLeft, Copy, Info } from 'lucide-react';
 import { testId } from '@/lib/test-utils';
 import { FIELD_HEIGHT, CommonFieldWidth } from '@/components/unit-converter/constants';
 import { KG_TO_GRAM_UNIT_PAIRS } from '@/lib/units/normalizeMassUnit';
@@ -62,7 +62,6 @@ interface ConverterPaneProps {
   getPlaceholder: () => string;
   getCategoryDimensions: (category: UnitCategory) => { [key: string]: number };
   formatNumberWithSeparators: (num: number, precision: number) => string;
-  onSmartPaste: () => Promise<'ok' | 'unrecognised' | 'unavailable'>;
 }
 
 export function ConverterPane({
@@ -112,26 +111,7 @@ export function ConverterPane({
   getPlaceholder,
   getCategoryDimensions,
   formatNumberWithSeparators,
-  onSmartPaste,
 }: ConverterPaneProps) {
-  const [smartPasteStatus, setSmartPasteStatus] = useState<'idle' | 'unrecognised' | 'unavailable'>('idle');
-  const smartPasteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => () => {
-    if (smartPasteTimerRef.current) clearTimeout(smartPasteTimerRef.current);
-  }, []);
-
-  const handleSmartPasteClick = async () => {
-    const status = await onSmartPaste();
-    if (status !== 'ok') {
-      setSmartPasteStatus(status);
-      if (smartPasteTimerRef.current) clearTimeout(smartPasteTimerRef.current);
-      smartPasteTimerRef.current = setTimeout(() => setSmartPasteStatus('idle'), 3000);
-    } else {
-      if (smartPasteTimerRef.current) clearTimeout(smartPasteTimerRef.current);
-      setSmartPasteStatus('idle');
-    }
-  };
 
   const categoryData = CONVERSION_DATA.find(c => c.id === activeCategory)!;
   const filteredUnits = getFilteredSortedUnits(activeCategory);
@@ -453,54 +433,25 @@ export function ConverterPane({
               )}
             </div>
 
-            <div className="flex flex-col gap-1 items-end">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleSmartPasteClick}
-                className={`text-xs gap-2 border !border-border/30 ${smartPasteStatus !== 'idle' ? 'text-destructive hover:text-destructive' : 'hover:text-accent'}`}
-                {...testId('button-smart-paste')}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => { copyResult(); refocusInput(); }}
+              onBlur={refocusInput}
+              tabIndex={5}
+              className="text-xs hover:text-accent gap-2 border !border-border/30"
+            >
+              <Copy className="w-3 h-3" />
+              <motion.span
+                animate={{
+                  opacity: flashCopyResult ? [1, 0.3, 1] : 1,
+                  scale: flashCopyResult ? [1, 1.1, 1] : 1
+                }}
+                transition={{ duration: 0.3 }}
               >
-                <ClipboardPaste className="w-3 h-3" />
-                {smartPasteStatus === 'unrecognised' ? t('Not recognised') : smartPasteStatus === 'unavailable' ? t('Unavailable') : t('Smart Paste')}
-              </Button>
-              <AnimatePresence>
-                {smartPasteStatus !== 'idle' && (
-                  <motion.p
-                    key="smart-paste-notice"
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15 }}
-                    className="text-xs text-destructive text-right leading-tight"
-                    {...testId('text-smart-paste-notice')}
-                  >
-                    {smartPasteStatus === 'unavailable'
-                      ? t("Clipboard unavailable — paste manually")
-                      : t("Couldn't recognise a unit — try Custom Entry")}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => { copyResult(); refocusInput(); }}
-                onBlur={refocusInput}
-                tabIndex={5}
-                className="text-xs hover:text-accent gap-2 border !border-border/30"
-              >
-                <Copy className="w-3 h-3" />
-                <motion.span
-                  animate={{
-                    opacity: flashCopyResult ? [1, 0.3, 1] : 1,
-                    scale: flashCopyResult ? [1, 1.1, 1] : 1
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {t('Copy')}
-                </motion.span>
-              </Button>
-            </div>
+                {t('Copy')}
+              </motion.span>
+            </Button>
           </div>
 
           {/* Comparison Mode Panel */}
