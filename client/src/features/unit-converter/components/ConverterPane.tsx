@@ -490,26 +490,17 @@ export function ConverterPane({
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.2 }}
-                className="overflow-hidden"
                 data-testid="comparison-panel"
               >
                 <div className="mt-4 p-3 rounded-lg bg-muted/10 border border-border/30">
                   <div className="text-[10px] font-mono text-muted-foreground mb-2">
                     <span className="uppercase">{t('Compare')}</span> {inputValue} {fromPrefixData.id !== 'none' ? fromPrefixData.symbol : ''}{fromUnitData.symbol}
                   </div>
-                  <div className="grid gap-1">
+                  <div className="grid gap-1 max-h-64 overflow-y-auto">
                     {(() => {
                       const allUnits = categoryData.units.filter(u => u.id !== fromUnit);
-                      let displayUnits = allUnits.slice(0, 8);
 
-                      if (activeCategory === 'length') {
-                        const lyUnit = allUnits.find(u => u.id === 'ly');
-                        if (lyUnit && !displayUnits.find(u => u.id === 'ly')) {
-                          displayUnits = [...displayUnits.slice(0, 7), lyUnit];
-                        }
-                      }
-
-                      return displayUnits.map(unit => {
+                      return allUnits.map(unit => {
                         const convertedValue = convert(
                           parseFloat(inputValue) || 0,
                           fromUnit,
