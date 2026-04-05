@@ -458,6 +458,24 @@ export default function UnitConverterApp() {
     setToUnit(tempUnit); setToPrefix(tempPrefix);
   };
 
+  const handleConverterSmartPaste = async (): Promise<'ok' | 'unrecognised' | 'unavailable'> => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text) return 'unrecognised';
+      const parsed = parseUnitText(text);
+      if (parsed.categoryId && parsed.unitId) {
+        setActiveCategory(parsed.categoryId);
+        setFromUnit(parsed.unitId);
+        setFromPrefix(parsed.prefixId || 'none');
+        setInputValue(parsed.originalValue.toString());
+        return 'ok';
+      }
+      return 'unrecognised';
+    } catch {
+      return 'unavailable';
+    }
+  };
+
   const formatForClipboard = (num: number, precisionValue: number): string => {
     const format = NUMBER_FORMATS[numberFormat];
     const fixed = fixPrecision(num);
@@ -1205,6 +1223,7 @@ export default function UnitConverterApp() {
             handleInputBlur={handleInputBlur}
             refocusInput={refocusInput}
             normalizeMassUnit={normalizeMassUnit}
+            onSmartPaste={handleConverterSmartPaste}
             t={t}
             translateUnitName={translateUnitName}
             formatFactor={formatFactor}

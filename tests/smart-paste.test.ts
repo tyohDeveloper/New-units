@@ -443,6 +443,29 @@ describe('Smart Paste - Special Cases', () => {
   });
 });
 
+describe('Symbol Priority — Base Unit Wins', () => {
+  it('should route "eV" to Photon Energy, not plain Energy', () => {
+    const result = parseUnitText('23eV');
+    expect(result.categoryId).toBe('photon');
+    expect(result.unitId).toBe('eV');
+    expect(result.originalValue).toBe(23);
+  });
+
+  it('should route "li" to Archaic Length, not Shipping', () => {
+    const result = parseUnitText('7li');
+    expect(result.categoryId).toBe('archaic_length');
+    expect(result.unitId).toBe('link');
+    expect(result.originalValue).toBe(7);
+  });
+
+  it('should route "MeV" (mega-electronvolt) to Photon Energy', () => {
+    const result = parseUnitText('5 MeV');
+    expect(result.categoryId).toBe('photon');
+    expect(result.prefixId).toBe('mega');
+    expect(result.originalValue).toBe(5);
+  });
+});
+
 describe('Unit Symbol Uniqueness', () => {
   it('should not have duplicate symbols across categories (critical symbols)', () => {
     const criticalSymbols = ['s', 'min', 'h', 'd', 'Po'];

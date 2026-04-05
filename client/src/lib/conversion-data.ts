@@ -339,9 +339,9 @@ export const CONVERSION_DATA: CategoryDefinition[] = [
   fuelData,
   dataData,
   rackGeometryData,
+  archaicLengthData,
   shippingData,
   beerWineVolumeData,
-  archaicLengthData,
   archaicMassData,
   archaicVolumeData,
   archaicAreaData,
@@ -409,28 +409,35 @@ export interface ParsedUnitResult {
   dimensions: Record<string, number>;
 }
 
-// Build a lookup map for quick unit matching
-// Returns Map<symbol, {categoryId, unitId, allowPrefixes}>
-// First-wins: core categories (length, mass, time, etc.) are defined first in CONVERSION_DATA
-// and take priority over specialty categories (shipping, typography, etc.)
-export function buildUnitSymbolMap(): Map<string, { categoryId: UnitCategory; unitId: string; symbol: string; allowPrefixes: boolean; factor: number }> {
-  const map = new Map();
+type SymbolMapEntry = { categoryId: UnitCategory; unitId: string; symbol: string; allowPrefixes: boolean; factor: number };
+type SymbolMap = Map<string, SymbolMapEntry>;
+
+function makeEntry(category: CategoryDefinition, unit: UnitDefinition): SymbolMapEntry {
+  return { categoryId: category.id as UnitCategory, unitId: unit.id, symbol: unit.symbol, allowPrefixes: unit.allowPrefixes || false, factor: unit.factor };
+}
+
+function registerBaseUnits(map: SymbolMap): void {
+  for (const category of CONVERSION_DATA) {
+    const base = category.units.find(u => !u.mathFunction);
+    if (base && base.factor === 1 && !map.has(base.symbol)) map.set(base.symbol, makeEntry(category, base));
+  }
+}
+
+function registerRemainingUnits(map: SymbolMap): void {
   for (const category of CONVERSION_DATA) {
     for (const unit of category.units) {
-      // Skip math functions as they're not units
-      if (unit.mathFunction) continue;
-      // Only add if not already present (first wins - core categories take priority)
-      if (!map.has(unit.symbol)) {
-        map.set(unit.symbol, {
-          categoryId: category.id,
-          unitId: unit.id,
-          symbol: unit.symbol,
-          allowPrefixes: unit.allowPrefixes || false,
-          factor: unit.factor
-        });
-      }
+      if (!unit.mathFunction && !map.has(unit.symbol)) map.set(unit.symbol, makeEntry(category, unit));
     }
   }
+}
+
+// Build a lookup map for quick unit matching.
+// Two-pass priority: category base units (factor === 1) win over secondary units elsewhere.
+// Within the same tier, first-wins based on CONVERSION_DATA order.
+export function buildUnitSymbolMap(): SymbolMap {
+  const map: SymbolMap = new Map();
+  registerBaseUnits(map);
+  registerRemainingUnits(map);
   return map;
 }
 
