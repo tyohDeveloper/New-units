@@ -41,7 +41,9 @@ export function CalculatorFieldDisplay({
     : 'px-3 bg-muted/30 border border-border/50 rounded-md flex items-center justify-between select-none';
   
   const interactiveClass = value 
-    ? (isResult ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : 'cursor-pointer hover:bg-muted/50 active:bg-muted/70')
+    ? (isResult
+        ? 'cursor-pointer hover:bg-accent/15 active:bg-accent/25 hover:border-accent/70 hover:shadow-sm transition-all duration-150'
+        : 'cursor-pointer hover:bg-accent/10 active:bg-accent/20 hover:border-l-accent hover:border-l-2 hover:shadow-sm transition-all duration-150')
     : '';
 
   const displayData = value ? (() => {

@@ -303,7 +303,7 @@ export function CalculatorPane({
       <div style={{ minHeight: CALC_CONTENT_HEIGHT }}>
         {/* Simple Calculator Mode */}
         {calculatorMode === 'simple' && (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {/* Field 1 */}
             <div
               className="grid gap-2 items-center"
@@ -458,7 +458,7 @@ export function CalculatorPane({
             {/* Result Field 4 */}
             <div className="flex gap-2 items-center" style={{ width: '100%' }}>
               <motion.div
-                className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between select-none shrink-0 ${calcValues[3] ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+                className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between select-none shrink-0 ${calcValues[3] ? 'cursor-pointer hover:bg-accent/15 active:bg-accent/25 hover:border-accent/70 hover:shadow-sm transition-all duration-150' : ''}`}
                 style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
                 onClick={() => calcValues[3] && copyCalcResult()}
                 animate={{
