@@ -25,6 +25,7 @@ import { divideDimensions } from '@/lib/calculator/divideDimensions';
 import { dimensionsEqual } from '@/lib/calculator/dimensionsEqual';
 import { isDimensionless } from '@/lib/calculator/isDimensionless';
 import { findCrossDomainMatches } from '@/lib/calculator/findCrossDomainMatches';
+import { findCategoryByDimensions } from '@/lib/calculator/findCategoryByDimensions';
 import { isValidSymbolRepresentation } from '@/lib/calculator/isValidSymbolRepresentation';
 import { countUnits } from '@/lib/calculator/countUnits';
 import { generateSIRepresentations as generateSIRepresentationsLib } from '@/lib/calculator/generateSIRepresentations';
@@ -484,6 +485,20 @@ export default function UnitConverterApp() {
         setInputValue(parsed.originalValue.toString());
         return 'ok';
       }
+      const hasDimensions = Object.values(parsed.dimensions).some(v => v !== 0);
+      if (hasDimensions) {
+        const catId = findCategoryByDimensions(parsed.dimensions as DimensionalFormula);
+        if (catId) {
+          const catData = CONVERSION_DATA.find(c => c.id === catId);
+          if (catData) {
+            setActiveCategory(catId as UnitCategory);
+            setFromUnit(catData.baseUnit);
+            setFromPrefix('none');
+            setInputValue(parsed.originalValue.toString());
+            return 'ok';
+          }
+        }
+      }
       return 'unrecognised';
     } catch {
       return 'unavailable';
@@ -511,6 +526,22 @@ export default function UnitConverterApp() {
         return;
       }
       const parsed = parseUnitText(text);
+      const hasDimensions = Object.values(parsed.dimensions).some(v => v !== 0);
+      if (hasDimensions) {
+        const catId = findCategoryByDimensions(parsed.dimensions as DimensionalFormula);
+        if (catId) {
+          const catData = CONVERSION_DATA.find(c => c.id === catId);
+          if (catData) {
+            setActiveTab('converter');
+            setActiveCategory(catId as UnitCategory);
+            setFromUnit(catData.baseUnit);
+            setFromPrefix('none');
+            setInputValue(parsed.originalValue.toString());
+            setCustomPasteStatus('idle');
+            return;
+          }
+        }
+      }
       setDirectValue(parsed.value.toString());
       const newExponents: Record<string, number> = {
         m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0

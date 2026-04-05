@@ -25,6 +25,7 @@ export { CATEGORY_DIMENSIONS, EXCLUDED_CROSS_DOMAIN_CATEGORIES } from './categor
 export { SI_DERIVED_UNITS, SPECIALTY_DERIVED_UNITS, SI_UNITS_BY_COMPLEXITY, GENERAL_SI_DERIVED, NORMALIZABLE_DERIVED_UNITS } from './siDerivedUnits';
 
 export { findCrossDomainMatches } from './findCrossDomainMatches';
+export { findCategoryByDimensions } from './findCategoryByDimensions';
 export { findDerivedUnitPower } from './findDerivedUnitPower';
 export { normalizeDimensions } from './normalizeDimensions';
 export { generateSIRepresentations, PREFERRED_REPRESENTATIONS } from './generateSIRepresentations';

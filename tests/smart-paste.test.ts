@@ -3,6 +3,7 @@ import {
   parseUnitText,
   CONVERSION_DATA,
 } from '../client/src/lib/conversion-data';
+import { findCategoryByDimensions } from '../client/src/lib/calculator/findCategoryByDimensions';
 
 /**
  * Smart Paste and Localization Tests
@@ -855,6 +856,108 @@ describe('Smart Paste - Division and Compound Units', () => {
     it('should convert mcg correctly (1 mcg = 1e-9 kg)', () => {
       const result = parseUnitText('1000000 mcg');
       expect(result.value).toBeCloseTo(0.001, 6); // 1,000,000 mcg = 1 g = 0.001 kg
+    });
+  });
+});
+
+describe('findCategoryByDimensions - Compound Unit Routing', () => {
+  describe('Basic dimension matching', () => {
+    it('routes { length: 1 } to "length"', () => {
+      expect(findCategoryByDimensions({ length: 1 })).toBe('length');
+    });
+
+    it('routes { mass: 1 } to "mass"', () => {
+      expect(findCategoryByDimensions({ mass: 1 })).toBe('mass');
+    });
+
+    it('routes { time: 1 } to "time"', () => {
+      expect(findCategoryByDimensions({ time: 1 })).toBe('time');
+    });
+
+    it('routes acceleration { length: 1, time: -2 } to "acceleration"', () => {
+      expect(findCategoryByDimensions({ length: 1, time: -2 })).toBe('acceleration');
+    });
+
+    it('routes force { mass: 1, length: 1, time: -2 } to "force"', () => {
+      expect(findCategoryByDimensions({ mass: 1, length: 1, time: -2 })).toBe('force');
+    });
+
+    it('routes power { mass: 1, length: 2, time: -3 } to "power"', () => {
+      expect(findCategoryByDimensions({ mass: 1, length: 2, time: -3 })).toBe('power');
+    });
+  });
+
+  describe('First-match disambiguation (energy wins over torque)', () => {
+    it('routes { mass: 1, length: 2, time: -2 } to "energy" (not torque)', () => {
+      const result = findCategoryByDimensions({ mass: 1, length: 2, time: -2 });
+      expect(result).toBe('energy');
+    });
+  });
+
+  describe('Excluded / archaic / local categories are never returned', () => {
+    it('does not return "archaic_length" for { length: 1 } — returns "length" instead', () => {
+      const result = findCategoryByDimensions({ length: 1 });
+      expect(result).not.toBe('archaic_length');
+      expect(result).toBe('length');
+    });
+
+    it('does not return "cooking" for { length: 3 } — returns "volume" instead', () => {
+      const result = findCategoryByDimensions({ length: 3 });
+      expect(result).not.toBe('cooking');
+      expect(result).toBe('volume');
+    });
+
+    it('does not return "data" or "math" (dimensionless) — returns null', () => {
+      expect(findCategoryByDimensions({})).toBeNull();
+    });
+  });
+
+  describe('Compound expressions parsed by parseUnitText feed correctly', () => {
+    it('"45N·m" parses to energy dimensions and routes to "energy"', () => {
+      const parsed = parseUnitText('45N·m');
+      expect(parsed.dimensions).toMatchObject({ mass: 1, length: 2, time: -2 });
+      const catId = findCategoryByDimensions(parsed.dimensions as Parameters<typeof findCategoryByDimensions>[0]);
+      expect(catId).toBe('energy');
+    });
+
+    it('"9.8 m/s²" parses to acceleration dimensions and routes to "acceleration"', () => {
+      const parsed = parseUnitText('9.8 m/s²');
+      expect(parsed.dimensions).toMatchObject({ length: 1, time: -2 });
+      const catId = findCategoryByDimensions(parsed.dimensions as Parameters<typeof findCategoryByDimensions>[0]);
+      expect(catId).toBe('acceleration');
+    });
+
+    it('"127.2342 J/s" parses to power dimensions and routes to "power"', () => {
+      const parsed = parseUnitText('127.2342 J/s');
+      expect(parsed.dimensions).toMatchObject({ mass: 1, length: 2, time: -3 });
+      const catId = findCategoryByDimensions(parsed.dimensions as Parameters<typeof findCategoryByDimensions>[0]);
+      expect(catId).toBe('power');
+    });
+
+    it('"100 Pa" parses to pressure dimensions and routes to "pressure"', () => {
+      const parsed = parseUnitText('100 Pa');
+      expect(parsed.dimensions).toMatchObject({ mass: 1, length: -1, time: -2 });
+      const catId = findCategoryByDimensions(parsed.dimensions as Parameters<typeof findCategoryByDimensions>[0]);
+      expect(catId).toBe('pressure');
+    });
+  });
+
+  describe('CONVERSION_DATA has baseUnit for all routable categories', () => {
+    it('every non-excluded category returned by findCategoryByDimensions has a baseUnit in CONVERSION_DATA', () => {
+      const testDims = [
+        { length: 1 }, { mass: 1 }, { time: 1 }, { length: 2 }, { length: 3 },
+        { length: 1, time: -1 }, { length: 1, time: -2 }, { mass: 1, length: 1, time: -2 },
+        { mass: 1, length: -1, time: -2 }, { mass: 1, length: 2, time: -2 },
+        { mass: 1, length: 2, time: -3 },
+      ];
+      for (const dims of testDims) {
+        const catId = findCategoryByDimensions(dims);
+        if (catId) {
+          const catData = CONVERSION_DATA.find(c => c.id === catId);
+          expect(catData).toBeDefined();
+          expect(catData!.baseUnit).toBeTruthy();
+        }
+      }
     });
   });
 });
