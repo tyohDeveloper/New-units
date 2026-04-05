@@ -38,8 +38,8 @@
     },
     {
       "id": "ft_in",
-      "name": "Foot:Inch",
-      "symbol": "ft:in",
+      "name": "Foot & Inch",
+      "symbol": "ft'in\"",
       "factor": 0.3048
     },
     {
