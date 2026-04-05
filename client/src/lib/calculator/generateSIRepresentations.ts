@@ -13,6 +13,52 @@ import { findCrossDomainMatchesByKey } from './findCrossDomainMatchesByKey';
 import { SI_DERIVED_UNITS, GENERAL_SI_DERIVED, SPECIALTY_DERIVED_UNITS } from './siDerivedUnits';
 import { getDimensionSignature } from '../units/getDimensionSignature';
 import { PREFERRED_REPRESENTATIONS } from '../units/preferredRepresentations';
+import { CONVERSION_DATA } from '../conversion-data';
+import { CATEGORY_DIMENSIONS } from '../units/categoryDimensions';
+
+const EXCLUDED_DROPDOWN_CATEGORIES = new Set([
+  'archaic_length', 'archaic_mass', 'archaic_volume', 'archaic_area', 'archaic_energy', 'archaic_power',
+  'math', 'data', 'fuel', 'fuel_economy', 'rack_geometry', 'shipping', 'beer_wine_volume', 'lightbulb',
+  'cooking', 'typography',
+]);
+
+function dimensionsMatch(a: DimensionalFormula, b: DimensionalFormula): boolean {
+  const allKeys = Array.from(new Set([...Object.keys(a), ...Object.keys(b)])) as (keyof DimensionalFormula)[];
+  for (const k of allKeys) {
+    const aVal = (a as Record<string, number>)[k as string] ?? 0;
+    const bVal = (b as Record<string, number>)[k as string] ?? 0;
+    if (aVal !== bVal) return false;
+  }
+  return true;
+}
+
+function collectCategoryUnits(
+  categoryData: (typeof CONVERSION_DATA)[number],
+  seenSymbols: Set<string>
+): SIRepresentation[] {
+  const result: SIRepresentation[] = [];
+  for (const unit of categoryData.units) {
+    if (unit.mathFunction || seenSymbols.has(unit.symbol)) continue;
+    seenSymbols.add(unit.symbol);
+    result.push({ displaySymbol: unit.symbol, derivedUnits: [], depth: 2 });
+  }
+  return result;
+}
+
+function buildCategoryUnitsForDropdown(
+  dimensions: DimensionalFormula,
+  seenSymbols: Set<string>
+): SIRepresentation[] {
+  const result: SIRepresentation[] = [];
+  for (const categoryData of CONVERSION_DATA) {
+    const catId = categoryData.id;
+    if (EXCLUDED_DROPDOWN_CATEGORIES.has(catId)) continue;
+    const catDimInfo = CATEGORY_DIMENSIONS[catId];
+    if (!catDimInfo || !dimensionsMatch(dimensions, catDimInfo.dimensions)) continue;
+    result.push(...collectCategoryUnits(categoryData, seenSymbols));
+  }
+  return result;
+}
 
 export { PREFERRED_REPRESENTATIONS };
 
@@ -118,6 +164,13 @@ export const generateSIRepresentations = (
   for (const rep of filteredRepresentations) {
     if (crossMatches.length > 0) rep.crossDomainMatches = crossMatches;
   }
+
+  const allSeenSymbols = new Set(filteredRepresentations.map(r => r.displaySymbol));
+  const categoryUnits = buildCategoryUnitsForDropdown(dimensions, allSeenSymbols);
+  if (crossMatches.length > 0) {
+    for (const rep of categoryUnits) rep.crossDomainMatches = crossMatches;
+  }
+  filteredRepresentations.push(...categoryUnits);
 
   return filteredRepresentations;
 };
