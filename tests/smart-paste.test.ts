@@ -997,5 +997,11 @@ describe('findCategoryByDimensions - Compound Unit Routing', () => {
       const result = findCategoryByDimensions({ time: 3 });
       expect(result).toBeNull();
     });
+
+    it('{ length: -2 } (fuel_economy dimensions) returns null — fuel_economy is excluded', () => {
+      // fuel_economy has dimensions { length: -2 } but is in EXCLUDED_CROSS_DOMAIN_CATEGORIES
+      const result = findCategoryByDimensions({ length: -2 });
+      expect(result).toBeNull();
+    });
   });
 });
