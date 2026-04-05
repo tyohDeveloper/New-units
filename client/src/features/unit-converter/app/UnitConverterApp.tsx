@@ -14,7 +14,7 @@ import type { DerivedUnitInfo } from '@/lib/units/derivedUnitInfo';
 import { SI_DERIVED_UNITS } from '@/lib/units/siDerivedUnitsCatalog';
 import { NON_SI_UNITS_CATALOG } from '@/lib/units/nonSiUnitsCatalog';
 import type { CategoryDimensionInfo } from '@/lib/units/categoryDimensions';
-import { CATEGORY_DIMENSIONS, EXCLUDED_CROSS_DOMAIN_CATEGORIES } from '@/lib/units/categoryDimensions';
+import { CATEGORY_DIMENSIONS, EXCLUDED_CROSS_DOMAIN_CATEGORIES, getCategoryKeyForQuantityName } from '@/lib/units/categoryDimensions';
 import type { PreferredRepresentation } from '@/lib/units/preferredRepresentations';
 import { PREFERRED_REPRESENTATIONS } from '@/lib/units/preferredRepresentations';
 import { getDimensionSignature } from '@/lib/units/getDimensionSignature';
@@ -1029,6 +1029,14 @@ export default function UnitConverterApp() {
     }
   };
 
+  const handleQuantityClick = (quantityName: string) => {
+    const categoryKey = getCategoryKeyForQuantityName(quantityName);
+    if (!categoryKey) return;
+    setActiveCategory(categoryKey as UnitCategory);
+    setInputValue(directValue);
+    setActiveTab('converter');
+  };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:pb-8 md:pt-1 grid md:grid-cols-[260px_1fr] gap-8">
 
@@ -1224,6 +1232,7 @@ export default function UnitConverterApp() {
             buildDirectUnitSymbol={buildDirectUnitSymbol}
             buildDirectDimensions={buildDirectDimensions}
             onCopyAndPushToCalculator={handleDirectCopyAndPushToCalculator}
+            onQuantityClick={handleQuantityClick}
           />
         </div>
 

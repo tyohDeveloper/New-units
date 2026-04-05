@@ -27,6 +27,7 @@ interface DirectPaneProps {
   buildDirectUnitSymbol: () => string;
   buildDirectDimensions: () => Record<string, number>;
   onCopyAndPushToCalculator: (value: number, dims: Record<string, number>) => void;
+  onQuantityClick: (quantityName: string) => void;
 }
 
 export function DirectPane({
@@ -45,6 +46,7 @@ export function DirectPane({
   buildDirectUnitSymbol,
   buildDirectDimensions,
   onCopyAndPushToCalculator,
+  onQuantityClick,
 }: DirectPaneProps) {
   const clearExponents = () => setDirectExponents({
     m: 0, kg: 0, s: 0, A: 0, K: 0, mol: 0, cd: 0, rad: 0, sr: 0
@@ -52,7 +54,6 @@ export function DirectPane({
 
   const currentDimensions = buildDirectDimensions();
   const matchingQuantities = getMatchingPhysicalQuantities(currentDimensions);
-  const physicalQuantityLabel = matchingQuantities.length > 0 ? matchingQuantities.join(' / ') : null;
 
   const handleCopyAndPush = () => {
     const numValue = parseNumberWithFormat(directValue);
@@ -169,17 +170,7 @@ export function DirectPane({
 
           {/* Result display */}
           <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Result')}</Label>
-              {physicalQuantityLabel && (
-                <span
-                  className="text-xs font-mono text-accent"
-                  {...testId('custom-physical-quantity-label')}
-                >
-                  {physicalQuantityLabel}
-                </span>
-              )}
-            </div>
+            <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Result')}</Label>
             <motion.div
               className="px-4 bg-background/50 border border-border rounded-md font-mono text-primary cursor-pointer hover:bg-background/70 flex items-center justify-between gap-4"
               style={{ height: FIELD_HEIGHT, minWidth: CommonFieldWidth }}
@@ -269,6 +260,22 @@ export function DirectPane({
             </div>
           ))}
         </div>
+
+        {/* Physical quantity labels below Dimensions block */}
+        {matchingQuantities.length > 0 && (
+          <div className="flex flex-col gap-0.5">
+            {matchingQuantities.map((quantity) => (
+              <span
+                key={quantity}
+                className="text-xs font-mono text-accent cursor-pointer hover:underline"
+                onClick={() => onQuantityClick(quantity)}
+                {...testId('custom-physical-quantity-label')}
+              >
+                {quantity}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Copy button at bottom, aligned far right */}
         <div className="flex justify-end mt-4">

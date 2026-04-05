@@ -103,6 +103,13 @@ export const ALL_EXCLUDED_CATEGORIES = [
   ...EXCLUDED_DOMAIN_ALIAS_CATEGORIES,
 ];
 
+export function getCategoryKeyForQuantityName(name: string): string | null {
+  for (const [key, info] of Object.entries(CATEGORY_DIMENSIONS)) {
+    if (info.name === name) return key;
+  }
+  return null;
+}
+
 export function getMatchingPhysicalQuantities(dimensions: DimensionalFormula): string[] {
   const keys = Object.keys(dimensions) as (keyof DimensionalFormula)[];
   const hasNonZero = keys.some(k => (dimensions[k] ?? 0) !== 0);
