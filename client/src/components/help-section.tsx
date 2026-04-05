@@ -49,7 +49,7 @@ export default function HelpSection({ t, language }: HelpSectionProps) {
                 rel="noopener noreferrer"
                 className="underline hover:text-foreground"
               >
-                https://github.com/tyohDeveloper/New-units
+                https://github.com/tyohDeveloper/OmniUnitConverter-Calculator
               </a>
             </p>
             <p className="text-xs text-muted-foreground/70">
