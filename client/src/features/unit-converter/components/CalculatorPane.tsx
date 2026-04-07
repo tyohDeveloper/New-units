@@ -232,6 +232,7 @@ export function CalculatorPane({
         >
           <div className="flex items-center justify-between" style={{ width: CommonFieldWidth, maxWidth: CommonFieldWidth }}>
             <Label
+              data-testid="button-switch-to-rpn"
               className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
               onClick={() => switchToRpn()}
             >
@@ -243,7 +244,7 @@ export function CalculatorPane({
                 value={calculatorPrecision.toString()}
                 onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
               >
-                <SelectTrigger className="h-8 w-[50px] text-xs">
+                <SelectTrigger data-testid="select-calc-precision" className="h-8 w-[50px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent align="end">
@@ -260,6 +261,7 @@ export function CalculatorPane({
             variant="ghost"
             size="sm"
             onClick={clearCalculator}
+            data-testid="button-clear-calculator"
             className="text-xs text-foreground hover:text-accent border !border-border/30"
             style={{ justifySelf: 'start' }}
           >
@@ -280,6 +282,7 @@ export function CalculatorPane({
         >
           <div className="flex items-center justify-between" style={{ width: CommonFieldWidth, maxWidth: CommonFieldWidth }}>
             <Label
+              data-testid="button-switch-to-simple"
               className="text-xs font-mono uppercase text-foreground cursor-pointer hover:text-accent transition-colors px-2 py-1 rounded border border-border/30"
               onClick={() => switchToSimple()}
             >
@@ -291,7 +294,7 @@ export function CalculatorPane({
                 value={calculatorPrecision.toString()}
                 onValueChange={(val) => setCalculatorPrecision(parseInt(val))}
               >
-                <SelectTrigger className="h-8 w-[50px] text-xs">
+                <SelectTrigger data-testid="select-rpn-precision" className="h-8 w-[50px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent align="end">
@@ -308,6 +311,7 @@ export function CalculatorPane({
             variant="ghost"
             size="sm"
             onClick={clearRpnStack}
+            data-testid="button-clear-rpn"
             className="text-xs text-foreground hover:text-accent border !border-border/30"
             style={{ justifySelf: 'start' }}
           >
@@ -317,6 +321,7 @@ export function CalculatorPane({
           <Button
             variant="ghost"
             size="sm"
+            data-testid="button-rpn-paste"
             onClick={async () => {
               try {
                 const text = await navigator.clipboard.readText();
@@ -380,6 +385,7 @@ export function CalculatorPane({
                 applyPrefixToKgUnit={applyPrefixToKgUnit}
                 formatNumberWithSeparators={formatNumberWithSeparators}
                 precision={calculatorPrecision}
+                testId="calc-field-1"
               />
               <div style={{ visibility: 'hidden' }} />
               <div style={{ visibility: 'hidden' }} />
@@ -390,6 +396,7 @@ export function CalculatorPane({
                 size="sm"
                 onClick={clearField1}
                 disabled={!calcValues[0]}
+                data-testid="button-clear-field-1"
                 className="text-xs justify-self-start border !border-border/30"
               >
                 {t('Clear')}
@@ -409,12 +416,14 @@ export function CalculatorPane({
                 applyPrefixToKgUnit={applyPrefixToKgUnit}
                 formatNumberWithSeparators={formatNumberWithSeparators}
                 precision={calculatorPrecision}
+                testId="calc-field-2"
               />
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setCalcOp1('*')}
                 disabled={!calcValues[0] || !calcValues[1]}
+                data-testid="button-op1-multiply"
                 className={`text-sm w-full border !border-border/30 ${calcOp1 === '*' ? 'text-accent font-bold' : ''}`}
               >
                 ×
@@ -424,6 +433,7 @@ export function CalculatorPane({
                 size="sm"
                 onClick={() => setCalcOp1('/')}
                 disabled={!calcValues[0] || !calcValues[1]}
+                data-testid="button-op1-divide"
                 className={`text-sm w-full border !border-border/30 ${calcOp1 === '/' ? 'text-accent font-bold' : ''}`}
               >
                 /
@@ -433,6 +443,7 @@ export function CalculatorPane({
                 size="sm"
                 onClick={() => setCalcOp1('+')}
                 disabled={!canAddSubtract(calcValues[0], calcValues[1])}
+                data-testid="button-op1-add"
                 className={`text-sm w-full border !border-border/30 ${calcOp1 === '+' ? 'text-accent font-bold' : ''}`}
               >
                 +
@@ -442,6 +453,7 @@ export function CalculatorPane({
                 size="sm"
                 onClick={() => setCalcOp1('-')}
                 disabled={!canAddSubtract(calcValues[0], calcValues[1])}
+                data-testid="button-op1-subtract"
                 className={`text-sm w-full border !border-border/30 ${calcOp1 === '-' ? 'text-accent font-bold' : ''}`}
               >
                 −
@@ -451,6 +463,7 @@ export function CalculatorPane({
                 size="sm"
                 onClick={clearField2}
                 disabled={!calcValues[1]}
+                data-testid="button-clear-field-2"
                 className="text-xs justify-self-start border !border-border/30"
               >
                 {t('Clear')}
@@ -470,12 +483,14 @@ export function CalculatorPane({
                 applyPrefixToKgUnit={applyPrefixToKgUnit}
                 formatNumberWithSeparators={formatNumberWithSeparators}
                 precision={calculatorPrecision}
+                testId="calc-field-3"
               />
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setCalcOp2('*')}
                 disabled={!calcValues[1] || !calcValues[2]}
+                data-testid="button-op2-multiply"
                 className={`text-sm w-full border !border-border/30 ${calcOp2 === '*' ? 'text-accent font-bold' : ''}`}
               >
                 ×
@@ -485,6 +500,7 @@ export function CalculatorPane({
                 size="sm"
                 onClick={() => setCalcOp2('/')}
                 disabled={!calcValues[1] || !calcValues[2]}
+                data-testid="button-op2-divide"
                 className={`text-sm w-full border !border-border/30 ${calcOp2 === '/' ? 'text-accent font-bold' : ''}`}
               >
                 /
@@ -494,6 +510,7 @@ export function CalculatorPane({
                 size="sm"
                 onClick={() => setCalcOp2('+')}
                 disabled={!canAddSubtract(calcValues[1], calcValues[2])}
+                data-testid="button-op2-add"
                 className={`text-sm w-full border !border-border/30 ${calcOp2 === '+' ? 'text-accent font-bold' : ''}`}
               >
                 +
@@ -503,6 +520,7 @@ export function CalculatorPane({
                 size="sm"
                 onClick={() => setCalcOp2('-')}
                 disabled={!canAddSubtract(calcValues[1], calcValues[2])}
+                data-testid="button-op2-subtract"
                 className={`text-sm w-full border !border-border/30 ${calcOp2 === '-' ? 'text-accent font-bold' : ''}`}
               >
                 −
@@ -512,6 +530,7 @@ export function CalculatorPane({
                 size="sm"
                 onClick={clearField3}
                 disabled={!calcValues[2]}
+                data-testid="button-clear-field-3"
                 className="text-xs justify-self-start border !border-border/30"
               >
                 {t('Clear')}
@@ -524,6 +543,7 @@ export function CalculatorPane({
                 className={`px-3 bg-muted/20 border border-accent/50 rounded-md flex items-center justify-between select-none shrink-0 ${calcValues[3] ? 'cursor-pointer hover:bg-accent/15 active:bg-accent/25 hover:border-accent/70 hover:shadow-sm transition-all duration-150' : ''}`}
                 style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
                 onClick={() => calcValues[3] && copyCalcResult()}
+                data-testid="calc-result"
                 animate={{
                   opacity: flashCopyCalc ? [1, 0.3, 1] : 1,
                   scale: flashCopyCalc ? [1, 1.02, 1] : 1
@@ -560,7 +580,7 @@ export function CalculatorPane({
                           }
                         }}
                       >
-                        <SelectTrigger className="h-10 w-[50px] text-xs shrink-0">
+                        <SelectTrigger data-testid="select-calc-result-prefix" className="h-10 w-[50px] text-xs shrink-0">
                           <SelectValue placeholder={t('Prefix')} />
                         </SelectTrigger>
                         <SelectContent className="max-h-[50vh]">
@@ -575,7 +595,7 @@ export function CalculatorPane({
                         value={selectedAlternative.toString()}
                         onValueChange={(val) => { setSelectedAlternative(parseInt(val)); setResultPrefix('none'); }}
                       >
-                        <SelectTrigger className="h-10 flex-1 min-w-0 text-xs">
+                        <SelectTrigger data-testid="select-calc-result-unit" className="h-10 flex-1 min-w-0 text-xs">
                           <SelectValue placeholder={t('Select SI representation')} />
                         </SelectTrigger>
                         <SelectContent className="max-h-[50vh]">
@@ -640,6 +660,7 @@ export function CalculatorPane({
               <Button
                 variant="ghost"
                 size="sm"
+                data-testid="button-copy-calc-result"
                 onClick={copyCalcResult}
                 disabled={!calcValues[3]}
                 className="text-xs text-muted-foreground hover:text-foreground gap-2 shrink-0 border !border-border/30"
@@ -675,17 +696,18 @@ export function CalculatorPane({
                 applyPrefixToKgUnit={applyPrefixToKgUnit}
                 formatNumberWithSeparators={formatNumberWithSeparators}
                 precision={calculatorPrecision}
+                testId="rpn-field-s3"
               />
               {(() => {
-                const s3Buttons: Array<{ label: string; shiftLabel: string; op?: RpnUnaryOp; shiftOp?: RpnUnaryOp; binaryOp?: RpnBinaryOp; tooltip?: string; shiftTooltip?: string } | { label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number; tooltip?: string; shiftTooltip?: string }> = [
-                  { label: 'x²ᵤ', shiftLabel: '√ᵤ', op: 'square', shiftOp: 'sqrt' },
-                  { label: '1/x', shiftLabel: 'yˣ', op: 'recip', binaryOp: 'pow' },
-                  { label: '+/−', shiftLabel: 'ABS', op: 'neg', shiftOp: 'abs', tooltip: t('rpn-tooltip-negate'), shiftTooltip: t('rpn-tooltip-abs') },
-                  { label: 'eˣ', shiftLabel: 'ln', op: 'exp', shiftOp: 'ln' },
-                  { label: '10ˣ', shiftLabel: 'log₁₀', op: 'pow10', shiftOp: 'log10' },
-                  { label: '2ˣ', shiftLabel: 'log₂', op: 'pow2', shiftOp: 'log2' },
-                  { label: 'rnd', shiftLabel: 'trunc', op: 'rnd', shiftOp: 'trunc', tooltip: t('rpn-tooltip-rnd'), shiftTooltip: t('rpn-tooltip-trunc') },
-                  { label: 'π', shiftLabel: 'π⁻¹', isConstant: true, value: Math.PI, shiftValue: 1 / Math.PI },
+                const s3Buttons: Array<{ id: string; shiftId?: string; label: string; shiftLabel: string; op?: RpnUnaryOp; shiftOp?: RpnUnaryOp; binaryOp?: RpnBinaryOp; tooltip?: string; shiftTooltip?: string } | { id: string; shiftId?: string; label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number; tooltip?: string; shiftTooltip?: string }> = [
+                  { id: 'square', shiftId: 'sqrt', label: 'x²ᵤ', shiftLabel: '√ᵤ', op: 'square', shiftOp: 'sqrt' },
+                  { id: 'inv', shiftId: 'pow', label: '1/x', shiftLabel: 'yˣ', op: 'recip', binaryOp: 'pow' },
+                  { id: 'neg', shiftId: 'abs', label: '+/−', shiftLabel: 'ABS', op: 'neg', shiftOp: 'abs', tooltip: t('rpn-tooltip-negate'), shiftTooltip: t('rpn-tooltip-abs') },
+                  { id: 'exp', shiftId: 'ln', label: 'eˣ', shiftLabel: 'ln', op: 'exp', shiftOp: 'ln' },
+                  { id: 'pow10', shiftId: 'log', label: '10ˣ', shiftLabel: 'log₁₀', op: 'pow10', shiftOp: 'log10' },
+                  { id: 'pow2', shiftId: 'log2', label: '2ˣ', shiftLabel: 'log₂', op: 'pow2', shiftOp: 'log2' },
+                  { id: 'rnd', shiftId: 'trunc', label: 'rnd', shiftLabel: 'trunc', op: 'rnd', shiftOp: 'trunc', tooltip: t('rpn-tooltip-rnd'), shiftTooltip: t('rpn-tooltip-trunc') },
+                  { id: 'pi', label: 'π', shiftLabel: 'π⁻¹', isConstant: true, value: Math.PI, shiftValue: 1 / Math.PI },
                 ];
                 return s3Buttons.map((btn, i) => {
                   const hasOp = 'op' in btn;
@@ -697,11 +719,13 @@ export function CalculatorPane({
                     ? !canApplyRpnBinary(currentBinaryOp)
                     : (hasOp && !rpnStack[3]);
                   const tooltipText = shiftActive ? btn.shiftTooltip : btn.tooltip;
+                  const activeId = shiftActive && btn.shiftId ? btn.shiftId : btn.id;
                   const buttonEl = (
                     <Button
                       key={`s3-btn-${i}`}
                       variant="ghost"
                       size="sm"
+                      data-testid={`button-rpn-${activeId}`}
                       className={`text-xs font-mono w-full border !border-border/30 ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                       onClick={() => {
                         if (isConstant && 'value' in btn) {
@@ -747,28 +771,31 @@ export function CalculatorPane({
                 applyPrefixToKgUnit={applyPrefixToKgUnit}
                 formatNumberWithSeparators={formatNumberWithSeparators}
                 precision={calculatorPrecision}
+                testId="rpn-field-s2"
               />
               {(() => {
-                const s2Buttons: Array<{ label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number }> = [
-                  { label: 'sin', shiftLabel: 'asin', op: 'sin', shiftOp: 'asin' },
-                  { label: 'cos', shiftLabel: 'acos', op: 'cos', shiftOp: 'acos' },
-                  { label: 'tan', shiftLabel: 'atan', op: 'tan', shiftOp: 'atan' },
-                  { label: 'sinh', shiftLabel: 'asinh', op: 'sinh', shiftOp: 'asinh' },
-                  { label: 'cosh', shiftLabel: 'acosh', op: 'cosh', shiftOp: 'acosh' },
-                  { label: 'tanh', shiftLabel: 'atanh', op: 'tanh', shiftOp: 'atanh' },
-                  { label: '⌊x⌋', shiftLabel: '⌈x⌉', op: 'floor', shiftOp: 'ceil' },
-                  { label: 'ℯ', shiftLabel: 'ℯ⁻¹', isConstant: true, value: Math.E, shiftValue: 1 / Math.E },
+                const s2Buttons: Array<{ id: string; shiftId?: string; label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { id: string; shiftId?: string; label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number }> = [
+                  { id: 'sin', shiftId: 'asin', label: 'sin', shiftLabel: 'asin', op: 'sin', shiftOp: 'asin' },
+                  { id: 'cos', shiftId: 'acos', label: 'cos', shiftLabel: 'acos', op: 'cos', shiftOp: 'acos' },
+                  { id: 'tan', shiftId: 'atan', label: 'tan', shiftLabel: 'atan', op: 'tan', shiftOp: 'atan' },
+                  { id: 'sinh', shiftId: 'asinh', label: 'sinh', shiftLabel: 'asinh', op: 'sinh', shiftOp: 'asinh' },
+                  { id: 'cosh', shiftId: 'acosh', label: 'cosh', shiftLabel: 'acosh', op: 'cosh', shiftOp: 'acosh' },
+                  { id: 'tanh', shiftId: 'atanh', label: 'tanh', shiftLabel: 'atanh', op: 'tanh', shiftOp: 'atanh' },
+                  { id: 'floor', shiftId: 'ceil', label: '⌊x⌋', shiftLabel: '⌈x⌉', op: 'floor', shiftOp: 'ceil' },
+                  { id: 'e', label: 'ℯ', shiftLabel: 'ℯ⁻¹', isConstant: true, value: Math.E, shiftValue: 1 / Math.E },
                 ];
                 return s2Buttons.map((btn, i) => {
                   const hasOp = 'op' in btn;
                   const isConstant = 'isConstant' in btn;
                   const currentOp = hasOp ? (shiftActive ? btn.shiftOp : btn.op) : undefined;
                   const isDisabled = hasOp && !rpnStack[3];
+                  const activeId = shiftActive && btn.shiftId ? btn.shiftId : btn.id;
                   return (
                     <Button
                       key={`s2-btn-${i}`}
                       variant="ghost"
                       size="sm"
+                      data-testid={`button-rpn-${activeId}`}
                       className={`text-xs font-mono w-full border !border-border/30 ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                       onClick={() => {
                         if (isConstant && 'value' in btn) {
@@ -803,12 +830,14 @@ export function CalculatorPane({
                 applyPrefixToKgUnit={applyPrefixToKgUnit}
                 formatNumberWithSeparators={formatNumberWithSeparators}
                 precision={calculatorPrecision}
+                testId="rpn-field-y"
               />
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
                     size="sm"
+                    data-testid={shiftActive ? 'button-rpn-drop' : 'button-rpn-enter'}
                     className={`text-xs font-mono w-full border !border-border/30 ${shiftActive && !rpnStack[3] ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                     style={{ gridColumn: 'span 2' }}
                     disabled={shiftActive && !rpnStack[3]}
@@ -824,6 +853,7 @@ export function CalculatorPane({
                   <Button
                     variant="ghost"
                     size="sm"
+                    data-testid={shiftActive ? 'button-rpn-pull' : 'button-rpn-undo'}
                     className={`text-xs font-mono w-full border !border-border/30 ${shiftActive ? 'text-foreground hover:text-accent' : (!previousRpnStack.some(v => v !== null) ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent')}`}
                     disabled={!shiftActive && !previousRpnStack.some(v => v !== null)}
                     onClick={() => shiftActive ? pullFromPane() : undoRpnStack()}
@@ -834,11 +864,11 @@ export function CalculatorPane({
                 <TooltipContent>{shiftActive ? t('rpn-tooltip-pull') : t('rpn-tooltip-undo')}</TooltipContent>
               </Tooltip>
               {(() => {
-                const yBinaryButtons: Array<{ label: string; shiftLabel: string; op: RpnBinaryOp; shiftOp: RpnBinaryOp }> = [
-                  { label: '×ᵤ', shiftLabel: '×', op: 'mulUnit', shiftOp: 'mul' },
-                  { label: '÷ᵤ', shiftLabel: '÷', op: 'divUnit', shiftOp: 'div' },
-                  { label: '+ᵤ', shiftLabel: '+', op: 'addUnit', shiftOp: 'add' },
-                  { label: '−ᵤ', shiftLabel: '−', op: 'subUnit', shiftOp: 'sub' },
+                const yBinaryButtons: Array<{ id: string; label: string; shiftLabel: string; op: RpnBinaryOp; shiftOp: RpnBinaryOp }> = [
+                  { id: 'mul', label: '×ᵤ', shiftLabel: '×', op: 'mulUnit', shiftOp: 'mul' },
+                  { id: 'div', label: '÷ᵤ', shiftLabel: '÷', op: 'divUnit', shiftOp: 'div' },
+                  { id: 'add', label: '+ᵤ', shiftLabel: '+', op: 'addUnit', shiftOp: 'add' },
+                  { id: 'sub', label: '−ᵤ', shiftLabel: '−', op: 'subUnit', shiftOp: 'sub' },
                 ];
                 return yBinaryButtons.map((btn, i) => {
                   const currentOp = shiftActive ? btn.shiftOp : btn.op;
@@ -848,6 +878,7 @@ export function CalculatorPane({
                       key={`y-bin-${i}`}
                       variant="ghost"
                       size="sm"
+                      data-testid={`button-rpn-${btn.id}`}
                       className={`text-xs font-mono w-full border !border-border/30 ${isDisabled ? 'text-muted-foreground/50' : 'text-foreground hover:text-accent'}`}
                       onClick={() => applyRpnBinary(currentOp)}
                       disabled={isDisabled}
@@ -862,6 +893,7 @@ export function CalculatorPane({
                   <Button
                     variant="ghost"
                     size="sm"
+                    data-testid={shiftActive ? 'button-rpn-swap' : 'button-rpn-lastx'}
                     className="text-xs font-mono w-full border !border-border/30 text-foreground hover:text-accent"
                     onClick={() => shiftActive ? swapRpnXY() : recallLastX()}
                   >
@@ -983,6 +1015,7 @@ export function CalculatorPane({
                         }}
                       >
                         <SelectTrigger
+                          data-testid="select-rpn-result-prefix"
                           className={`h-10 text-xs${!prefixEnabled ? ' opacity-40 cursor-not-allowed' : ''}`}
                           onMouseDown={(e) => {
                             if (rpnXEditing && prefixEnabled) {
@@ -1020,6 +1053,7 @@ export function CalculatorPane({
                         }}
                       >
                         <SelectTrigger
+                          data-testid="select-rpn-result-unit"
                           className="h-10 text-xs"
                           onMouseDown={(e) => {
                             if (rpnXEditing) {
@@ -1105,6 +1139,7 @@ export function CalculatorPane({
                 <Button
                   variant="ghost"
                   size="sm"
+                  data-testid="button-rpn-clear-x"
                   onClick={() => {
                     if (!rpnStack[3]) return;
                     saveRpnStackForUndo();
@@ -1121,6 +1156,7 @@ export function CalculatorPane({
                 <Button
                   variant="ghost"
                   size="sm"
+                  data-testid="button-rpn-clear-unit"
                   onClick={() => {
                     if (!rpnStack[3]) return;
                     saveRpnStackForUndo();
@@ -1156,6 +1192,7 @@ export function CalculatorPane({
               <Button
                 variant="ghost"
                 size="sm"
+                data-testid="button-rpn-copy-result"
                 onClick={copyRpnResult}
                 className="text-xs text-foreground hover:text-accent gap-1 border !border-border/30"
               >

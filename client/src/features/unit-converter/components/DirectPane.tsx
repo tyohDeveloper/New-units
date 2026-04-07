@@ -141,6 +141,7 @@ export function DirectPane({
             <motion.div
               className="px-4 bg-background/50 border border-border rounded-md font-mono text-primary cursor-pointer hover:bg-background/70 flex items-center justify-between gap-4"
               style={{ height: FIELD_HEIGHT, minWidth: CommonFieldWidth }}
+              data-testid="custom-display-result"
               onClick={handleCopyAndPush}
               animate={{
                 opacity: flashDirectCopy ? [1, 0.3, 1] : 1,
@@ -167,6 +168,7 @@ export function DirectPane({
             variant="ghost"
             size="sm"
             onClick={handleCopyAndPush}
+            data-testid="button-custom-copy"
             className="text-xs hover:text-accent gap-2 border !border-border/30"
             style={{ height: FIELD_HEIGHT }}
           >
@@ -192,6 +194,7 @@ export function DirectPane({
               variant="ghost"
               size="sm"
               onClick={clearExponents}
+              data-testid="button-custom-clear-dimensions"
               className="text-xs hover:text-accent border !border-border/30"
               style={{ height: FIELD_HEIGHT }}
             >
@@ -244,6 +247,7 @@ export function DirectPane({
                 className="flex items-center px-3 py-1.5 rounded-md text-xs font-mono text-accent bg-accent/5 border border-accent/20 cursor-pointer hover:bg-accent/15 hover:border-accent/50 hover:shadow-sm active:bg-accent/25 transition-all duration-150 text-left w-fit"
                 onClick={() => onQuantityClick(quantity)}
                 {...testId('custom-physical-quantity-label')}
+                data-quantity-id={quantity.toLowerCase().replace(/\s+/g, '-')}
               >
                 {quantity}
               </button>

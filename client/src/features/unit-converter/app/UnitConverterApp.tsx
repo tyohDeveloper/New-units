@@ -1199,6 +1199,8 @@ export default function UnitConverterApp() {
                     key={cat.id}
                     onClick={() => { setActiveCategory(cat.id as UnitCategory); setInputValue('1'); }}
                     disabled={activeTab === 'custom'}
+                    data-testid="display-category"
+                    data-category-id={cat.id}
                     className={`w-full text-start px-3 py-[1px] rounded-sm text-xs font-medium transition-all duration-200 border-s-2 flex items-center justify-between group ${
                       isSelected
                         ? 'border-accent text-accent'

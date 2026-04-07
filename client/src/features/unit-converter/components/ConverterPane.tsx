@@ -166,7 +166,7 @@ export function ConverterPane({
                 onOpenChange={(open) => { if (!open) refocusInput(); }}
                 disabled={!fromUnitData?.allowPrefixes && !KG_TO_GRAM_UNIT_PAIRS[fromUnit]}
               >
-                <SelectTrigger tabIndex={2} className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
+                <SelectTrigger tabIndex={2} data-testid="select-from-prefix" className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
                   <SelectValue placeholder={t('Prefix')} />
                 </SelectTrigger>
                 <SelectContent position="item-aligned" className="max-h-[50vh]">
@@ -183,8 +183,8 @@ export function ConverterPane({
                 onValueChange={(val) => { setFromUnit(val); setFromPrefix('none'); refocusInput(); }}
                 onOpenChange={(open) => { if (!open) refocusInput(); }}
               >
-                <SelectTrigger tabIndex={3} className="flex-1 min-w-0 bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
-                  <SelectValue placeholder={t('Unit')} />
+                <SelectTrigger tabIndex={3} data-testid="select-from-unit" className="flex-1 min-w-0 bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
+                  <span data-testid="display-from-unit-name" className="truncate"><SelectValue placeholder={t('Unit')} /></span>
                 </SelectTrigger>
                 <SelectContent position="item-aligned" className="max-h-[50vh]">
                   {filteredUnits.map((u) => (
@@ -252,6 +252,7 @@ export function ConverterPane({
             variant="outline"
             size="icon"
             onClick={swapUnits}
+            data-testid="button-swap"
             className="rounded-full w-10 h-10 border-border bg-background hover:border-accent hover:text-accent transition-colors"
           >
             <ArrowRightLeft className="w-4 h-4" />
@@ -270,7 +271,7 @@ export function ConverterPane({
                   onValueChange={(val) => { setPrecision(parseInt(val)); refocusInput(); }}
                   onOpenChange={(open) => { if (!open) refocusInput(); }}
                 >
-                  <SelectTrigger tabIndex={4} className="h-10 w-[70px] text-xs">
+                  <SelectTrigger tabIndex={4} data-testid="select-precision" className="h-10 w-[70px] text-xs">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent align="end">
@@ -303,6 +304,7 @@ export function ConverterPane({
                 className={`px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-start justify-start select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
                 style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
                 onClick={() => result !== null && copyResult()}
+                data-testid="display-result"
                 animate={{
                   opacity: flashCopyResult ? [1, 0.3, 1] : 1,
                   scale: flashCopyResult ? [1, 1.02, 1] : 1
@@ -330,7 +332,7 @@ export function ConverterPane({
                 }}
                 disabled={!toUnitData?.allowPrefixes && !KG_TO_GRAM_UNIT_PAIRS[toUnit]}
               >
-                <SelectTrigger className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
+                <SelectTrigger data-testid="select-to-prefix" className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
                   <SelectValue placeholder={t('Prefix')} />
                 </SelectTrigger>
                 <SelectContent position="item-aligned" className="max-h-[50vh]">
@@ -343,8 +345,8 @@ export function ConverterPane({
               </Select>
 
               <Select value={toUnit} onValueChange={(val) => { setToUnit(val); setToPrefix('none'); }}>
-                <SelectTrigger className="flex-1 min-w-0 bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
-                  <SelectValue placeholder={t('Unit')} />
+                <SelectTrigger data-testid="select-to-unit" className="flex-1 min-w-0 bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
+                  <span data-testid="display-to-unit-name" className="truncate"><SelectValue placeholder={t('Unit')} /></span>
                 </SelectTrigger>
                 <SelectContent position="item-aligned" className="max-h-[50vh]">
                   {toFilteredUnits.map((u) => (
@@ -409,6 +411,7 @@ export function ConverterPane({
               {result !== null && fromUnitData && toUnitData && (
                 <motion.div
                   className="p-2 rounded bg-muted/20 border border-border/50 cursor-pointer hover:bg-muted/40 active:bg-muted/60 select-none"
+                  data-testid="display-factor"
                   onClick={copyConversionRatio}
                   animate={{
                     opacity: flashConversionRatio ? [1, 0.3, 1] : 1,
