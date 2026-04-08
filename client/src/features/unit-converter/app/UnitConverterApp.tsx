@@ -1330,10 +1330,10 @@ export default function UnitConverterApp() {
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:pb-8 md:pt-1 grid md:grid-cols-[260px_1fr] gap-8">
+    <div className="w-full max-w-[1400px] mx-auto p-4 md:px-8 md:pb-0 md:pt-1 grid md:grid-cols-[260px_1fr] gap-8 md:h-full md:overflow-hidden">
 
       {/* Sidebar */}
-      <nav className={`space-y-2 h-fit sticky top-0 pe-2 -mt-1 transition-opacity ${activeTab === 'custom' ? 'opacity-40 pointer-events-none' : ''}`}>
+      <nav className={`space-y-2 overflow-y-auto pe-2 -mt-1 pt-1 transition-opacity ${activeTab === 'custom' ? 'opacity-40 pointer-events-none' : ''}`}>
         {CATEGORY_GROUPS.map((group) => (
           <div key={group.name} className="space-y-1">
             <h2 className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80 px-2 font-bold">{t(group.name)}</h2>
@@ -1368,7 +1368,7 @@ export default function UnitConverterApp() {
       </nav>
 
       {/* Main Content Area with Tabs */}
-      <div className="space-y-4 -mt-1">
+      <div className="space-y-4 -mt-1 md:overflow-y-auto md:pr-1">
         {/* Header with formatting options */}
         <div className="mb-2">
           <div className="flex items-center justify-between">
@@ -1663,6 +1663,7 @@ export default function UnitConverterApp() {
           formatNumberWithSeparators={formatNumberWithSeparators}
           t={t}
         />
+
 
         {/* Help Pane */}
         <HelpSection t={t} language={language} />
