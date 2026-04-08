@@ -13,8 +13,6 @@ export default function NotFound() {
     if (lang && SUPPORTED_LANGUAGES.includes(lang as SupportedLanguage)) {
       setLanguage(lang as SupportedLanguage);
     }
-    const isRtl = lang === 'ar';
-    document.documentElement.setAttribute('dir', isRtl ? 'rtl' : 'ltr');
   }, []);
 
   const t = (key: string): string => translate(key, language, UI_TRANSLATIONS);

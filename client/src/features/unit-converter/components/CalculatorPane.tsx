@@ -374,7 +374,6 @@ export function CalculatorPane({
                 precision={calculatorPrecision}
                 testId="calc-field-1"
                 preserveSourceUnit={preserveSourceUnit}
-                useLatinNumerals={!NUMBER_FORMATS[numberFormat].useArabicNumerals}
               />
               <div style={{ visibility: 'hidden' }} />
               <div style={{ visibility: 'hidden' }} />
@@ -407,7 +406,6 @@ export function CalculatorPane({
                 precision={calculatorPrecision}
                 testId="calc-field-2"
                 preserveSourceUnit={preserveSourceUnit}
-                useLatinNumerals={!NUMBER_FORMATS[numberFormat].useArabicNumerals}
               />
               <Button
                 variant="ghost"
@@ -476,7 +474,6 @@ export function CalculatorPane({
                 precision={calculatorPrecision}
                 testId="calc-field-3"
                 preserveSourceUnit={preserveSourceUnit}
-                useLatinNumerals={!NUMBER_FORMATS[numberFormat].useArabicNumerals}
               />
               <Button
                 variant="ghost"
@@ -551,7 +548,7 @@ export function CalculatorPane({
                     : getCalcResultDisplay();
                   return (
                     <>
-                      <span className="text-sm font-mono text-primary font-bold truncate" dir={!NUMBER_FORMATS[numberFormat].useArabicNumerals ? 'ltr' : undefined}>
+                      <span className="text-sm font-mono text-primary font-bold truncate">
                         {display?.formattedValue || ''}
                       </span>
                       <span className="text-xs font-mono text-muted-foreground ms-2 shrink-0">
@@ -695,7 +692,6 @@ export function CalculatorPane({
                 precision={calculatorPrecision}
                 testId="rpn-field-s3"
                 preserveSourceUnit={preserveSourceUnit}
-                useLatinNumerals={!NUMBER_FORMATS[numberFormat].useArabicNumerals}
               />
               {(() => {
                 const s3Buttons: Array<{ id: string; shiftId?: string; label: string; shiftLabel: string; op?: RpnUnaryOp; shiftOp?: RpnUnaryOp; binaryOp?: RpnBinaryOp; tooltip?: string; shiftTooltip?: string } | { id: string; shiftId?: string; label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number; tooltip?: string; shiftTooltip?: string }> = [
@@ -773,7 +769,6 @@ export function CalculatorPane({
                 precision={calculatorPrecision}
                 testId="rpn-field-s2"
                 preserveSourceUnit={preserveSourceUnit}
-                useLatinNumerals={!NUMBER_FORMATS[numberFormat].useArabicNumerals}
               />
               {(() => {
                 const s2Buttons: Array<{ id: string; shiftId?: string; label: string; shiftLabel: string; op: RpnUnaryOp; shiftOp: RpnUnaryOp } | { id: string; shiftId?: string; label: string; shiftLabel: string; isConstant: true; value: number; shiftValue: number }> = [
@@ -835,7 +830,6 @@ export function CalculatorPane({
                 precision={calculatorPrecision}
                 testId="rpn-field-y"
                 preserveSourceUnit={preserveSourceUnit}
-                useLatinNumerals={!NUMBER_FORMATS[numberFormat].useArabicNumerals}
               />
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -999,7 +993,7 @@ export function CalculatorPane({
                       : getRpnResultDisplay();
                     return (
                       <>
-                        <span className="text-sm font-mono text-primary font-bold truncate" data-testid="text-rpn-x-value" dir={!NUMBER_FORMATS[numberFormat].useArabicNumerals ? 'ltr' : undefined}>
+                        <span className="text-sm font-mono text-primary font-bold truncate" data-testid="text-rpn-x-value">
                           {display?.formattedValue || ''}
                         </span>
                         <span className="text-xs font-mono text-muted-foreground ms-2 shrink-0" data-testid="text-rpn-x-unit">

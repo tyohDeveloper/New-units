@@ -186,10 +186,7 @@ export default function UnitConverterApp() {
   };
 
   React.useEffect(() => {
-    const isRtl = language === 'ar';
-    document.documentElement.setAttribute('dir', isRtl ? 'rtl' : 'ltr');
     document.documentElement.setAttribute('lang', language);
-    return () => { document.documentElement.setAttribute('dir', 'ltr'); };
   }, [language]);
 
   const CATEGORY_GROUPS = [

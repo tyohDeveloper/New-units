@@ -151,7 +151,6 @@ export function ConverterPane({
                 className="font-mono px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-start"
                 style={{ height: FIELD_HEIGHT, fontSize: '0.875rem', width: CommonFieldWidth }}
                 placeholder={getPlaceholder()}
-                dir={fromUnit === 'ft_in' ? 'ltr' : undefined}
                 {...testId('input-value')}
               />
 
@@ -217,7 +216,7 @@ export function ConverterPane({
                 transition={{ duration: 0.3 }}
               >
                 <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('Base Factor')}</div>
-                <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''} dir={!NUMBER_FORMATS[numberFormat].useArabicNumerals ? 'ltr' : undefined}>
+                <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''}>
                   {fromUnitData ? formatFactor(fromUnitData.factor * fromPrefixData.factor) : '-'}
                 </div>
               </motion.div>
@@ -312,7 +311,7 @@ export function ConverterPane({
                 }}
                 transition={{ duration: 0.3 }}
               >
-                <span className="font-mono text-primary whitespace-nowrap" style={{ fontSize: '0.875rem' }} dir={!NUMBER_FORMATS[numberFormat].useArabicNumerals || toUnit === 'ft_in' ? 'ltr' : undefined}>
+                <span className="font-mono text-primary whitespace-nowrap" style={{ fontSize: '0.875rem' }}>
                   {result !== null
                     ? (toUnit === 'deg_dms'
                         ? formatDMS(result)
@@ -379,7 +378,7 @@ export function ConverterPane({
                 transition={{ duration: 0.3 }}
               >
                 <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">{t('Base Factor')}</div>
-                <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''} dir={!NUMBER_FORMATS[numberFormat].useArabicNumerals ? 'ltr' : undefined}>
+                <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''}>
                   {toUnitData ? formatFactor(toUnitData.factor * toPrefixData.factor) : '-'}
                 </div>
               </motion.div>
@@ -421,11 +420,11 @@ export function ConverterPane({
                   transition={{ duration: 0.3 }}
                 >
                   <div className="text-xs font-mono text-muted-foreground flex gap-2 items-center">
-                    <span className="text-foreground font-bold" dir={!NUMBER_FORMATS[numberFormat].useArabicNumerals || fromUnit === 'ft_in' ? 'ltr' : undefined}>
+                    <span className="text-foreground font-bold">
                       {NUMBER_FORMATS[numberFormat].useArabicNumerals ? '١' : '1'} {fromPrefixData.id !== 'none' ? fromPrefixData.symbol : ''}{fromUnitData.symbol}
                     </span>
                     <span>=</span>
-                    <span className="text-foreground font-bold" dir={!NUMBER_FORMATS[numberFormat].useArabicNumerals || toUnit === 'ft_in' || fromUnit === 'ft_in' ? 'ltr' : undefined}>
+                    <span className="text-foreground font-bold">
                       {toUnit === 'deg_dms'
                         ? formatDMS(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor))
                         : toUnit === 'ft_in'
@@ -471,7 +470,7 @@ export function ConverterPane({
                 <div className="mt-4 p-3 rounded-lg bg-muted/10 border border-border/30">
                   <div className="text-[10px] font-mono text-muted-foreground mb-2">
                     <span className="uppercase">{t('Compare')}</span>{' '}
-                    <span dir={!NUMBER_FORMATS[numberFormat].useArabicNumerals ? 'ltr' : undefined}>{inputValue}</span>
+                    <span>{inputValue}</span>
                     {' '}{fromPrefixData.id !== 'none' ? fromPrefixData.symbol : ''}{fromUnitData.symbol}
                   </div>
                   <div className="grid gap-1 max-h-64 overflow-y-auto">
@@ -520,7 +519,7 @@ export function ConverterPane({
                             <span className="text-xs text-muted-foreground flex-1 truncate px-1" data-testid={`comparison-name-${unit.id}`}>
                               {translateUnitName(unit.name)}
                             </span>
-                            <span className="text-sm font-mono text-foreground shrink-0" dir={!NUMBER_FORMATS[numberFormat].useArabicNumerals ? 'ltr' : undefined}>
+                            <span className="text-sm font-mono text-foreground shrink-0">
                               {formatNumberWithSeparators(displayValue, precision)}
                             </span>
                           </div>
