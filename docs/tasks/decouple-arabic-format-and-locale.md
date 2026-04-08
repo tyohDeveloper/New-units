@@ -1,33 +1,33 @@
-# Decouple Arabic Number Format from Arabic Locale
+# Arabic Text RTL, Layout Stays LTR
 
 ## What & Why
-Currently the Arabic number format and the Arabic locale are tightly coupled: selecting the Arabic number format forces the language to Arabic and disables the language picker, and the RTL layout direction is driven by the locale (`language === 'ar'`) rather than the number format. This makes it impossible to write an Arabic-localized scientific paper that uses Western numerals in a LTR layout.
+Currently, selecting Arabic language or the Arabic numeral format sets `dir="rtl"` on the entire document, which flips the whole app layout (sidebars, buttons, input alignment, etc.). The user wants Arabic text to read right-to-left, but the overall app layout should remain left-to-right at all times.
 
-The goal is to make the two settings fully independent, with a sensible default and RTL tied exclusively to the number format.
+The fix is to stop applying `dir="rtl"` globally, and instead apply it only to text content elements (labels, translated strings, result values) when the language is Arabic.
 
 ## Done looks like
-- Selecting "Arabic" locale defaults the number format to "Arabic" (Eastern Arabic numerals), but the user can freely change the number format to any other option (Standard, etc.) without being locked out.
-- Selecting any non-Arabic number format while Arabic locale is active keeps the translated Arabic UI text but switches the layout to LTR and uses Western numerals.
-- RTL page direction (`dir="rtl"`) is applied if and only if the number format is set to "Arabic". It is NOT applied when Arabic locale is chosen with a non-Arabic number format.
-- The language/locale picker is never disabled regardless of which number format is active.
-- The number format picker is never disabled regardless of which locale is active.
-- Selecting the Arabic number format does NOT force the locale to Arabic; it only controls numeral style and layout direction.
+- The overall app layout (button positions, sidebar, input fields, number pickers) always stays left-to-right, regardless of language or number format.
+- When Arabic language is selected, Arabic text content (unit labels, category names, translated strings) renders right-to-left within its own element.
+- When a non-Arabic language is selected, all text renders left-to-right as normal.
+- Switching between Arabic and Latin numeral formats does not affect the layout direction.
+- The `document.documentElement` never has `dir="rtl"` set.
 
 ## Out of scope
-- Changes to the numeral conversion logic itself (already correct in formatting.ts).
+- Changes to numeral conversion logic (already correct in formatting.ts).
 - Adding new number formats or locales.
-- Any RTL-specific layout fixes beyond the direction coupling change.
+- Full i18n text layout audit beyond the direction attribute on text elements.
 
 ## Tasks
-1. **Reverse the coupling direction** — Remove the `useEffect` that sets `language = 'ar'` when `numberFormat === 'arabic'`. Replace it with a `useEffect` that sets `numberFormat` to `'arabic'` as a default when `language` changes to `'ar'` (but does not force it back if the user changes it afterwards).
+1. **Remove global RTL** — Delete (or neutralize) the `useEffect` in `UnitConverterApp.tsx` that sets `document.documentElement.dir` to `rtl`. The document root should always be `ltr`.
 
-2. **Move RTL control to number format** — Change the `useEffect` that sets `document.documentElement.dir` so that RTL is applied when `numberFormat === 'arabic'`, not when `language === 'ar'`.
+2. **Apply RTL to text content only** — Identify the elements that render translated/Arabic text (unit names, category labels, result labels, any translated UI strings) and add `dir="rtl"` (or a utility class that sets `direction: rtl`) conditionally when `language === 'ar'`.
 
-3. **Re-enable the language picker** — Remove the `disabled` prop (and any related condition) from the language selector that was gating it on `numberFormat === 'arabic'`.
+3. **Decouple format and language pickers** — Remove any remaining logic that disables or forces one setting based on the other, so both the language picker and number format picker are always independently usable.
 
-4. **Verify no other coupling points** — Audit `UnitConverterApp.tsx` and any child components for any remaining places that conditionally disable or override one setting based on the other, and remove them.
+4. **Audit for regressions** — Check `ConverterPane.tsx` and other components for any `dir="ltr"` overrides that were workarounds for the global RTL; remove ones that are no longer needed and keep any that are genuinely required for number/symbol ordering.
 
 ## Relevant files
 - `client/src/features/unit-converter/app/UnitConverterApp.tsx`
+- `client/src/features/unit-converter/components/ConverterPane.tsx`
 - `client/src/lib/formatting.ts`
 - `client/src/lib/units/numberFormat.ts`
