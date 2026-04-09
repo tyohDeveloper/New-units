@@ -4,52 +4,60 @@ import {
   converterInitialState,
   type ConverterState,
 } from '../client/src/components/unit-converter/state/converterReducer';
-import { selectActiveCategory } from '../client/src/components/unit-converter/state/selectors/selectActiveCategory';
-import { selectFromUnit } from '../client/src/components/unit-converter/state/selectors/selectFromUnit';
-import { selectToUnit } from '../client/src/components/unit-converter/state/selectors/selectToUnit';
-import { selectFromPrefix } from '../client/src/components/unit-converter/state/selectors/selectFromPrefix';
-import { selectToPrefix } from '../client/src/components/unit-converter/state/selectors/selectToPrefix';
-import { selectInputValue } from '../client/src/components/unit-converter/state/selectors/selectInputValue';
-import { selectResult } from '../client/src/components/unit-converter/state/selectors/selectResult';
-import { selectPrecision } from '../client/src/components/unit-converter/state/selectors/selectPrecision';
-import { selectComparisonMode } from '../client/src/components/unit-converter/state/selectors/selectComparisonMode';
+import {
+  selectActiveCategory,
+  selectFromUnit,
+  selectToUnit,
+  selectFromPrefix,
+  selectToPrefix,
+  selectInputValue,
+  selectResult,
+  selectPrecision,
+  selectComparisonMode,
+} from '../client/src/components/unit-converter/state/selectors/converterSelectors';
 import {
   calculatorReducer,
   calculatorInitialState,
   type CalculatorState,
 } from '../client/src/components/unit-converter/state/calculatorReducer';
-import { selectCalculatorMode } from '../client/src/components/unit-converter/state/selectors/selectCalculatorMode';
-import { selectShiftActive } from '../client/src/components/unit-converter/state/selectors/selectShiftActive';
-import { selectCalculatorPrecision } from '../client/src/components/unit-converter/state/selectors/selectCalculatorPrecision';
-import { selectCalcValues } from '../client/src/components/unit-converter/state/selectors/selectCalcValues';
-import { selectCalcOp1 } from '../client/src/components/unit-converter/state/selectors/selectCalcOp1';
-import { selectCalcOp2 } from '../client/src/components/unit-converter/state/selectors/selectCalcOp2';
-import { selectResultUnit } from '../client/src/components/unit-converter/state/selectors/selectResultUnit';
-import { selectResultCategory } from '../client/src/components/unit-converter/state/selectors/selectResultCategory';
-import { selectResultPrefix } from '../client/src/components/unit-converter/state/selectors/selectResultPrefix';
-import { selectSelectedAlternative } from '../client/src/components/unit-converter/state/selectors/selectSelectedAlternative';
+import {
+  selectCalculatorMode,
+  selectShiftActive,
+  selectCalculatorPrecision,
+  selectCalcValues,
+  selectCalcOp1,
+  selectCalcOp2,
+  selectResultUnit,
+  selectResultCategory,
+  selectResultPrefix,
+  selectSelectedAlternative,
+} from '../client/src/components/unit-converter/state/selectors/calculatorSelectors';
 import {
   rpnReducer,
   rpnInitialState,
   type RpnState,
 } from '../client/src/components/unit-converter/state/rpnReducer';
-import { selectRpnStack } from '../client/src/components/unit-converter/state/selectors/selectRpnStack';
-import { selectPreviousRpnStack } from '../client/src/components/unit-converter/state/selectors/selectPreviousRpnStack';
-import { selectLastX } from '../client/src/components/unit-converter/state/selectors/selectLastX';
-import { selectRpnResultPrefix } from '../client/src/components/unit-converter/state/selectors/selectRpnResultPrefix';
-import { selectRpnSelectedAlternative } from '../client/src/components/unit-converter/state/selectors/selectRpnSelectedAlternative';
-import { selectRpnXEditing } from '../client/src/components/unit-converter/state/selectors/selectRpnXEditing';
-import { selectRpnXEditValue } from '../client/src/components/unit-converter/state/selectors/selectRpnXEditValue';
+import {
+  selectRpnStack,
+  selectPreviousRpnStack,
+  selectLastX,
+  selectRpnResultPrefix,
+  selectRpnSelectedAlternative,
+  selectRpnXEditing,
+  selectRpnXEditValue,
+} from '../client/src/components/unit-converter/state/selectors/rpnSelectors';
 import {
   uiPrefsReducer,
   uiPrefsInitialState,
   type UiPrefsState,
 } from '../client/src/components/unit-converter/state/uiPrefsReducer';
-import { selectNumberFormat } from '../client/src/components/unit-converter/state/selectors/selectNumberFormat';
-import { selectLanguage } from '../client/src/components/unit-converter/state/selectors/selectLanguage';
-import { selectActiveTab } from '../client/src/components/unit-converter/state/selectors/selectActiveTab';
-import { selectDirectValue } from '../client/src/components/unit-converter/state/selectors/selectDirectValue';
-import { selectDirectExponents } from '../client/src/components/unit-converter/state/selectors/selectDirectExponents';
+import {
+  selectNumberFormat,
+  selectLanguage,
+  selectActiveTab,
+  selectDirectValue,
+  selectDirectExponents,
+} from '../client/src/components/unit-converter/state/selectors/uiSelectors';
 import type { CalcValue } from '../client/src/lib/units/shared-types';
 
 const makeCalcValue = (value: number): CalcValue => ({
