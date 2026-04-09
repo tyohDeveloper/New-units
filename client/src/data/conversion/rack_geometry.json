@@ -6,17 +6,10 @@
   "units": [
     {
       "id": "m",
-      "name": "Meter",
+      "name": "Metre",
       "symbol": "m",
       "factor": 1,
       "allowPrefixes": true,
-      "unitType": "SI_BASE"
-    },
-    {
-      "id": "angstrom",
-      "name": "Angstrom",
-      "symbol": "Å",
-      "factor": 1e-10,
       "unitType": "SI_BASE"
     },
     {
@@ -98,45 +91,10 @@
       "unitType": "SI_BASE"
     },
     {
-      "id": "fathom",
-      "name": "Fathom",
-      "symbol": "ftm",
-      "factor": 1.8288,
-      "unitType": "US_COMMON"
-    },
-    {
       "id": "rack_42u",
       "name": "Full Rack (42U)",
       "symbol": "42U",
       "factor": 1.8669,
-      "unitType": "SI_BASE"
-    },
-    {
-      "id": "mi",
-      "name": "Mile",
-      "symbol": "mi",
-      "factor": 1609.344,
-      "unitType": "US_COMMON"
-    },
-    {
-      "id": "nmi",
-      "name": "Nautical Mile",
-      "symbol": "nmi",
-      "factor": 1852,
-      "unitType": "SI_BASE"
-    },
-    {
-      "id": "au",
-      "name": "Astronomical Unit",
-      "symbol": "AU",
-      "factor": 149600000000,
-      "unitType": "SI_BASE"
-    },
-    {
-      "id": "ly",
-      "name": "Light Year",
-      "symbol": "ly",
-      "factor": 9461000000000000,
       "unitType": "SI_BASE"
     },
     {
