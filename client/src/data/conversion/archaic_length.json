@@ -125,6 +125,27 @@
       "unitType": "SI_BASE"
     },
     {
+      "id": "palm",
+      "name": "Palm (Ancient)",
+      "symbol": "palm",
+      "factor": 0.075,
+      "unitType": "SI_BASE"
+    },
+    {
+      "id": "span",
+      "name": "Span (Ancient)",
+      "symbol": "span",
+      "factor": 0.2286,
+      "unitType": "SI_BASE"
+    },
+    {
+      "id": "cubit_common",
+      "name": "Cubit (Common)",
+      "symbol": "cubit",
+      "factor": 0.4572,
+      "unitType": "SI_BASE"
+    },
+    {
       "id": "stade",
       "name": "Stade (Greek)",
       "symbol": "stade",
@@ -158,27 +179,6 @@
       "symbol": "ell",
       "factor": 1.143,
       "unitType": "IMPERIAL"
-    },
-    {
-      "id": "palm",
-      "name": "Palm (Ancient)",
-      "symbol": "palm",
-      "factor": 0.075,
-      "unitType": "SI_BASE"
-    },
-    {
-      "id": "span",
-      "name": "Span (Ancient)",
-      "symbol": "span",
-      "factor": 0.2286,
-      "unitType": "SI_BASE"
-    },
-    {
-      "id": "cubit_common",
-      "name": "Cubit (Common)",
-      "symbol": "cubit",
-      "factor": 0.4572,
-      "unitType": "SI_BASE"
     },
     {
       "id": "hand",

@@ -12,18 +12,18 @@
       "unitType": "SI_BASE"
     },
     {
-      "id": "fun_jp",
-      "name": "Fun (Japan)",
-      "symbol": "fun",
-      "factor": 0.000375,
-      "unitType": "SI_BASE"
-    },
-    {
       "id": "g",
       "name": "Gram",
       "symbol": "g",
       "factor": 0.001,
       "allowPrefixes": true,
+      "unitType": "SI_BASE"
+    },
+    {
+      "id": "fun_jp",
+      "name": "Fun (Japan)",
+      "symbol": "fun",
+      "factor": 0.000375,
       "unitType": "SI_BASE"
     },
     {
@@ -160,13 +160,6 @@
       "unitType": "SI_BASE"
     },
     {
-      "id": "scruple",
-      "name": "Scruple (Apothecaries')",
-      "symbol": "s ap",
-      "factor": 0.001296,
-      "unitType": "IMPERIAL"
-    },
-    {
       "id": "pennyweight",
       "name": "Pennyweight (Imperial)",
       "symbol": "dwt",
@@ -186,6 +179,13 @@
       "symbol": "gr",
       "factor": 0.00006479891,
       "unitType": "US_COMMON"
+    },
+    {
+      "id": "scruple",
+      "name": "Scruple (Apothecaries')",
+      "symbol": "s ap",
+      "factor": 0.001296,
+      "unitType": "IMPERIAL"
     },
     {
       "id": "dram",

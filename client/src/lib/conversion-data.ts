@@ -1049,7 +1049,9 @@ export function parseUnitText(
 // Categories with special ordering that shouldn't be re-sorted
 const PRESERVE_ORDER_CATEGORIES = [
   'lightbulb', 'math', 'fuel_economy', 'temperature', 
-  'radioactive_decay', 'fuel', 'photon', 'rack_geometry', 'shipping'
+  'radioactive_decay', 'fuel', 'photon', 'rack_geometry', 'shipping',
+  'archaic_mass', 'archaic_length', 'archaic_area', 'archaic_volume',
+  'archaic_energy', 'archaic_power'
 ];
 
 // Get filtered and sorted units for a category

@@ -13,6 +13,13 @@
       "unitType": "SI_BASE"
     },
     {
+      "id": "ml",
+      "name": "Millilitre",
+      "symbol": "mL",
+      "factor": 0.001,
+      "unitType": "SI_BASE"
+    },
+    {
       "id": "go_jp",
       "name": "Go (Japan)",
       "symbol": "go",
@@ -90,11 +97,32 @@
       "unitType": "SI_BASE"
     },
     {
-      "id": "ml",
-      "name": "Millilitre",
-      "symbol": "mL",
-      "factor": 0.001,
-      "unitType": "SI_BASE"
+      "id": "fl_scruple",
+      "name": "Fluid Scruple (Apothecaries')",
+      "symbol": "fl s",
+      "factor": 0.00123223,
+      "unitType": "IMPERIAL"
+    },
+    {
+      "id": "apoth_oz",
+      "name": "Fluid Ounce (Apothecaries')",
+      "symbol": "fl oz ap",
+      "factor": 0.0295735,
+      "unitType": "US_COMMON"
+    },
+    {
+      "id": "gill_imp",
+      "name": "Gill (Imperial)",
+      "symbol": "gi Imp",
+      "factor": 0.142065,
+      "unitType": "IMPERIAL"
+    },
+    {
+      "id": "firkin",
+      "name": "Firkin (Imperial)",
+      "symbol": "firkin",
+      "factor": 40.9148,
+      "unitType": "IMPERIAL"
     },
     {
       "id": "minim",
@@ -122,13 +150,6 @@
       "name": "Tablespoon (US)",
       "symbol": "tbsp (US)",
       "factor": 0.0147868,
-      "unitType": "US_COMMON"
-    },
-    {
-      "id": "apoth_oz",
-      "name": "Fluid Ounce (Apothecaries')",
-      "symbol": "fl oz ap",
-      "factor": 0.0295735,
       "unitType": "US_COMMON"
     },
     {
@@ -179,27 +200,6 @@
       "symbol": "cord",
       "factor": 3624.56,
       "unitType": "US_COMMON"
-    },
-    {
-      "id": "fl_scruple",
-      "name": "Fluid Scruple (Apothecaries')",
-      "symbol": "fl s",
-      "factor": 0.00123223,
-      "unitType": "IMPERIAL"
-    },
-    {
-      "id": "gill_imp",
-      "name": "Gill (Imperial)",
-      "symbol": "gi Imp",
-      "factor": 0.142065,
-      "unitType": "IMPERIAL"
-    },
-    {
-      "id": "firkin",
-      "name": "Firkin (Imperial)",
-      "symbol": "firkin",
-      "factor": 40.9148,
-      "unitType": "IMPERIAL"
     },
     {
       "id": "m3",
