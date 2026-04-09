@@ -286,6 +286,7 @@ Every unit in the converter, sorted by category then symbol. Symbols, English na
 | `kip` | Kip | Force | kg⋅m⋅s⁻² | 4448.22 |
 | `lbf` | Pound-force | Force | kg⋅m⋅s⁻² | 4.44822 |
 | `N` | Newton | Force | kg⋅m⋅s⁻² | 1 |
+| `bph` | Beats/Hour | Frequency | s⁻¹ | 2.777777777777778e-4 |
 | `d⁻¹` | Per Day | Frequency | s⁻¹ | 1.1574074074074073e-5 |
 | `h⁻¹` | Per Hour | Frequency | s⁻¹ | 2.777777777777778e-4 |
 | `Hz` | Hertz | Frequency | s⁻¹ | 1 |

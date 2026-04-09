@@ -445,6 +445,7 @@ One section per measurement category. Each row shows how many base SI units one 
 | `wk⁻¹` | Per Week | 1.6534391534391533e-6 s⁻¹ |
 | `d⁻¹` | Per Day | 1.1574074074074073e-5 s⁻¹ |
 | `h⁻¹` | Per Hour | 2.777777777777778e-4 s⁻¹ |
+| `bph` | Beats/Hour | 2.777777777777778e-4 s⁻¹ |
 | `min⁻¹` | Per Minute | 0.016666666666666666 s⁻¹ |
 | `rpm` | Revolutions/Minute | 0.016666666666666666 s⁻¹ |
 | `rad⋅s⁻¹` | Radians/Second | 0.15915494309189535 s⁻¹ |

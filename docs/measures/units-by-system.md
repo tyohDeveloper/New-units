@@ -678,6 +678,7 @@ One section per measurement system or tradition.
 | `feddan` | Feddan (Egypt) | 4200.833 m² |
 | `dunam` | Dunam (Israel) | 1000 m² |
 | `jerib` | Jerib (Middle East) | 2000 m² |
+| `bph` | Beats/Hour | 2.777777777777778e-4 s⁻¹ |
 
 
 
