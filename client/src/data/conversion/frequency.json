@@ -45,6 +45,13 @@
       "measurementSystem": "SI"
     },
     {
+      "id": "beats_per_hour",
+      "name": "Beats/Hour",
+      "symbol": "bph",
+      "factor": 0.0002777777777777778,
+      "unitType": "OTHER"
+    },
+    {
       "id": "per_min",
       "name": "Per Minute",
       "symbol": "min⁻¹",
