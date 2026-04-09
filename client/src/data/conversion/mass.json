@@ -49,6 +49,13 @@
       "unitType": "US_COMMON"
     },
     {
+      "id": "lb_t",
+      "name": "Troy Pound",
+      "symbol": "lb t",
+      "factor": 0.3732417,
+      "unitType": "US_COMMON"
+    },
+    {
       "id": "lb",
       "name": "Pound",
       "symbol": "lb",

@@ -167,13 +167,6 @@
       "unitType": "IMPERIAL"
     },
     {
-      "id": "stone_uk",
-      "name": "Stone (UK)",
-      "symbol": "st",
-      "factor": 6.35029,
-      "unitType": "IMPERIAL"
-    },
-    {
       "id": "grain",
       "name": "Grain",
       "symbol": "gr",
@@ -200,20 +193,6 @@
       "symbol": "dr ap",
       "factor": 0.0038879346,
       "unitType": "IMPERIAL"
-    },
-    {
-      "id": "troy_oz",
-      "name": "Troy Ounce",
-      "symbol": "oz t",
-      "factor": 0.0311034768,
-      "unitType": "US_COMMON"
-    },
-    {
-      "id": "troy_lb",
-      "name": "Troy Pound",
-      "symbol": "lb t",
-      "factor": 0.3732417,
-      "unitType": "US_COMMON"
     }
   ]
 }

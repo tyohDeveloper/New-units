@@ -603,9 +603,9 @@ describe("Archaic & Regional Units", () => {
       expect(don?.factor).toBe(0.00375);
     });
 
-    it("should have troy pound with correct factor", () => {
-      const troyLb = massCategory?.units.find((u) => u.id === "troy_lb");
-      expect(troyLb?.factor).toBeCloseTo(0.3732417, 5);
+    it("should not have troy pound (moved to main mass category)", () => {
+      const troyLb = massCategory?.units.find((u) => u.id === "troy_lb" || u.name.includes("Troy Pound"));
+      expect(troyLb).toBeUndefined();
     });
   });
 
@@ -784,7 +784,7 @@ describe("Unit Ordering - SI Base First, Then Ascending Factor", () => {
   });
 
   describe("Specific Category Order Verification", () => {
-    it("Mass should be ordered: kg, eV/c², mcg, g, oz, oz_t, lb, st, slug, ton_us, t, ton_uk", () => {
+    it("Mass should be ordered: kg, eV/c², mcg, g, oz, oz_t, lb_t, lb, st, slug, ton_us, t, ton_uk", () => {
       const mass = CONVERSION_DATA.find(c => c.id === "mass");
       const ids = mass?.units.map(u => u.id);
       
@@ -794,7 +794,8 @@ describe("Unit Ordering - SI Base First, Then Ascending Factor", () => {
       expect(ids?.[3]).toBe("g");
       expect(ids?.[4]).toBe("oz");
       expect(ids?.[5]).toBe("oz_t");
-      expect(ids?.[6]).toBe("lb");
+      expect(ids?.[6]).toBe("lb_t");
+      expect(ids?.[7]).toBe("lb");
     });
 
     it("Length should be ordered: m, Å, in, ft, ft:in, yd, mi, nmi, AU, ly, pc", () => {
@@ -831,15 +832,16 @@ describe("Unit Ordering - SI Base First, Then Ascending Factor", () => {
   });
 
   describe("Troy Pound Location", () => {
-    it("should have Troy Pound in archaic_mass, not main mass category", () => {
+    it("should have Troy Pound in main mass category, not archaic_mass", () => {
       const mainMass = CONVERSION_DATA.find(c => c.id === "mass");
       const archaicMass = CONVERSION_DATA.find(c => c.id === "archaic_mass");
       
       const troyInMain = mainMass?.units.find(u => u.id === "lb_t" || u.name.includes("Troy Pound"));
       const troyInArchaic = archaicMass?.units.find(u => u.id === "troy_lb" || u.name.includes("Troy Pound"));
       
-      expect(troyInMain).toBeUndefined();
-      expect(troyInArchaic).toBeDefined();
+      expect(troyInMain).toBeDefined();
+      expect(troyInMain?.factor).toBeCloseTo(0.3732417, 5);
+      expect(troyInArchaic).toBeUndefined();
     });
   });
 });
