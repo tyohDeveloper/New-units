@@ -254,11 +254,24 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
           <div className="flex flex-col gap-2">
             {/* Row 1: Result, Prefix, Unit Selector */}
             <div className="flex gap-2">
+              {/* Dedicated live region — more robust across assistive tech than aria-live on an interactive element */}
+              <span
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                className="sr-only"
+              >
+                {result !== null
+                  ? (toUnit === 'deg_dms'
+                      ? formatDMS(result)
+                      : toUnit === 'ft_in'
+                        ? formatFtIn(result)
+                        : formatResultValue(result, precision))
+                  : ''}
+              </span>
               <motion.button
                 type="button"
                 aria-label={t('Copy result')}
-                aria-live="polite"
-                aria-atomic="true"
                 className={`px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-start justify-start ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : 'cursor-default'}`}
                 style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
                 onClick={() => result !== null && copyResult()}
