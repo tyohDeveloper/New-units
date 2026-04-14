@@ -95,7 +95,6 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
                 onChange={(e) => handleInputChange(e.target.value)}
                 onKeyDown={handleInputKeyDown}
                 onBlur={handleInputBlur}
-                tabIndex={1}
                 className="font-mono px-4 bg-background/50 border-border focus:border-accent focus:ring-accent/20 transition-all text-start"
                 style={{ height: FIELD_HEIGHT, fontSize: '0.875rem', width: CommonFieldWidth }}
                 placeholder={getPlaceholder()}
@@ -114,7 +113,7 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
                 onOpenChange={(open) => { if (!open) refocusInput(); }}
                 disabled={!fromUnitData?.allowPrefixes && !KG_TO_GRAM_UNIT_PAIRS[fromUnit]}
               >
-                <SelectTrigger tabIndex={2} data-testid="select-from-prefix" className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
+                <SelectTrigger data-testid="select-from-prefix" className="w-[50px] bg-background/30 border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed shrink-0" style={{ height: FIELD_HEIGHT }}>
                   <SelectValue placeholder={t('Prefix')} />
                 </SelectTrigger>
                 <SelectContent position="item-aligned" className="max-h-[50vh]">
@@ -131,7 +130,7 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
                 onValueChange={(val) => { setFromUnit(val); setFromPrefix('none'); refocusInput(); }}
                 onOpenChange={(open) => { if (!open) refocusInput(); }}
               >
-                <SelectTrigger tabIndex={3} data-testid="select-from-unit" className="flex-1 min-w-0 bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
+                <SelectTrigger data-testid="select-from-unit" className="flex-1 min-w-0 bg-background/30 border-border font-medium" style={{ height: FIELD_HEIGHT }}>
                   <span data-testid="display-from-unit-name" className="truncate"><SelectValue placeholder={t('Unit')} /></span>
                 </SelectTrigger>
                 <SelectContent position="item-aligned" className="max-h-[50vh]">
@@ -153,10 +152,13 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
 
             {/* Row 2: Base Factor, Spacer, SI Base Units */}
             <div className="flex gap-2">
-              <motion.div
-                className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${fromUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+              <motion.button
+                type="button"
+                aria-label={t('Copy base factor')}
+                className={`px-3 rounded bg-muted/20 border border-border/50 flex flex-col justify-center text-left ${fromUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : 'cursor-default'}`}
                 style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
                 onClick={copyFromBaseFactor}
+                disabled={!fromUnitData}
                 animate={{
                   opacity: flashFromBaseFactor ? [1, 0.3, 1] : 1,
                   scale: flashFromBaseFactor ? [1, 1.02, 1] : 1
@@ -167,12 +169,15 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
                 <div className="font-mono text-sm text-foreground/80 truncate" title={fromUnitData ? (fromUnitData.factor * fromPrefixData.factor).toString() : ''}>
                   {fromUnitData ? formatFactor(fromUnitData.factor * fromPrefixData.factor) : '-'}
                 </div>
-              </motion.div>
+              </motion.button>
               <div className="w-[50px] shrink-0" />
-              <motion.div
-                className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center flex-1 min-w-0 ${formatDimensions(getCategoryDimensions(activeCategory)) ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+              <motion.button
+                type="button"
+                aria-label={t('Copy SI base units')}
+                className={`px-3 rounded bg-muted/20 border border-border/50 flex flex-col justify-center flex-1 min-w-0 text-left ${formatDimensions(getCategoryDimensions(activeCategory)) ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : 'cursor-default'}`}
                 style={{ height: FIELD_HEIGHT }}
                 onClick={copyFromSIBase}
+                disabled={!formatDimensions(getCategoryDimensions(activeCategory))}
                 animate={{
                   opacity: flashFromSIBase ? [1, 0.3, 1] : 1,
                   scale: flashFromSIBase ? [1, 1.02, 1] : 1
@@ -183,7 +188,7 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
                 <div className="font-mono text-sm text-foreground/80 truncate">
                   {formatDimensions(getCategoryDimensions(activeCategory)) || '-'}
                 </div>
-              </motion.div>
+              </motion.button>
             </div>
           </div>
 
@@ -201,9 +206,10 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
             size="icon"
             onClick={swapUnits}
             data-testid="button-swap"
+            aria-label={t('Swap units')}
             className="rounded-full w-10 h-10 border-border bg-background hover:border-accent hover:text-accent transition-colors"
           >
-            <ArrowRightLeft className="w-4 h-4" />
+            <ArrowRightLeft className="w-4 h-4" aria-hidden="true" />
           </Button>
         </div>
 
@@ -219,7 +225,7 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
                   onValueChange={(val) => { setPrecision(parseInt(val)); refocusInput(); }}
                   onOpenChange={(open) => { if (!open) refocusInput(); }}
                 >
-                  <SelectTrigger tabIndex={4} data-testid="select-precision" className="h-10 w-[70px] text-xs">
+                  <SelectTrigger data-testid="select-precision" className="h-10 w-[70px] text-xs">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent align="end">
@@ -248,11 +254,16 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
           <div className="flex flex-col gap-2">
             {/* Row 1: Result, Prefix, Unit Selector */}
             <div className="flex gap-2">
-              <motion.div
-                className={`px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-start justify-start select-none ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : ''}`}
-                style={{ height: FIELD_HEIGHT, width: CommonFieldWidth, pointerEvents: 'auto' }}
+              <motion.button
+                type="button"
+                aria-label={t('Copy result')}
+                aria-live="polite"
+                aria-atomic="true"
+                className={`px-4 bg-background/50 border border-border rounded-md flex items-center overflow-x-auto text-start justify-start ${result !== null ? 'cursor-pointer hover:bg-background/70 active:bg-background/90' : 'cursor-default'}`}
+                style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
                 onClick={() => result !== null && copyResult()}
                 data-testid="display-result"
+                disabled={result === null}
                 animate={{
                   opacity: flashCopyResult ? [1, 0.3, 1] : 1,
                   scale: flashCopyResult ? [1, 1.02, 1] : 1
@@ -268,7 +279,7 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
                           : formatResultValue(result, precision))
                     : '...'}
                 </span>
-              </motion.div>
+              </motion.button>
 
               {/* Prefix Dropdown */}
               <Select
@@ -315,10 +326,13 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
 
             {/* Row 2: Base Factor, Spacer, SI Base Units */}
             <div className="flex gap-2">
-              <motion.div
-                className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center ${toUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+              <motion.button
+                type="button"
+                aria-label={t('Copy base factor')}
+                className={`px-3 rounded bg-muted/20 border border-border/50 flex flex-col justify-center text-left ${toUnitData ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : 'cursor-default'}`}
                 style={{ height: FIELD_HEIGHT, width: CommonFieldWidth }}
                 onClick={copyToBaseFactor}
+                disabled={!toUnitData}
                 animate={{
                   opacity: flashToBaseFactor ? [1, 0.3, 1] : 1,
                   scale: flashToBaseFactor ? [1, 1.02, 1] : 1
@@ -329,12 +343,15 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
                 <div className="font-mono text-sm text-foreground/80 truncate" title={toUnitData ? (toUnitData.factor * toPrefixData.factor).toString() : ''}>
                   {toUnitData ? formatFactor(toUnitData.factor * toPrefixData.factor) : '-'}
                 </div>
-              </motion.div>
+              </motion.button>
               <div className="w-[50px] shrink-0" />
-              <motion.div
-                className={`px-3 rounded bg-muted/20 border border-border/50 select-none flex flex-col justify-center flex-1 min-w-0 ${formatDimensions(getCategoryDimensions(activeCategory)) ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : ''}`}
+              <motion.button
+                type="button"
+                aria-label={t('Copy SI base units')}
+                className={`px-3 rounded bg-muted/20 border border-border/50 flex flex-col justify-center flex-1 min-w-0 text-left ${formatDimensions(getCategoryDimensions(activeCategory)) ? 'cursor-pointer hover:bg-muted/40 active:bg-muted/60' : 'cursor-default'}`}
                 style={{ height: FIELD_HEIGHT }}
                 onClick={copyToSIBase}
+                disabled={!formatDimensions(getCategoryDimensions(activeCategory))}
                 animate={{
                   opacity: flashToSIBase ? [1, 0.3, 1] : 1,
                   scale: flashToSIBase ? [1, 1.02, 1] : 1
@@ -345,7 +362,7 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
                 <div className="font-mono text-sm text-foreground/80 truncate">
                   {formatDimensions(getCategoryDimensions(activeCategory)) || '-'}
                 </div>
-              </motion.div>
+              </motion.button>
             </div>
           </div>
 
@@ -357,8 +374,10 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
                 </p>
               )}
               {result !== null && fromUnitData && toUnitData && (
-                <motion.div
-                  className="p-2 rounded bg-muted/20 border border-border/50 cursor-pointer hover:bg-muted/40 active:bg-muted/60 select-none"
+                <motion.button
+                  type="button"
+                  aria-label={t('Copy conversion ratio')}
+                  className="w-full text-left p-2 rounded bg-muted/20 border border-border/50 cursor-pointer hover:bg-muted/40 active:bg-muted/60"
                   data-testid="display-factor"
                   onClick={copyConversionRatio}
                   animate={{
@@ -380,7 +399,7 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
                           : `${formatResultValue(convert(1, fromUnit, toUnit, activeCategory, fromPrefixData.factor, toPrefixData.factor), precision)} ${toPrefixData.id !== 'none' ? toPrefixData.symbol : ''}${toUnitData.symbol}`}
                     </span>
                   </div>
-                </motion.div>
+                </motion.button>
               )}
             </div>
 
@@ -389,10 +408,9 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
               size="sm"
               onClick={() => { copyResult(); refocusInput(); }}
               onBlur={refocusInput}
-              tabIndex={5}
               className="text-xs hover:text-accent gap-2 border !border-border/30"
             >
-              <Copy className="w-3 h-3" />
+              <Copy className="w-3 h-3" aria-hidden="true" />
               <motion.span
                 animate={{
                   opacity: flashCopyResult ? [1, 0.3, 1] : 1,
@@ -451,9 +469,10 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
                           : kgResult.displaySymbol;
 
                         return (
-                          <div
+                          <button
+                            type="button"
                             key={unit.id}
-                            className="flex items-center px-2 py-1 rounded hover:bg-muted/20 cursor-pointer select-none"
+                            className="w-full flex items-center px-2 py-1 rounded hover:bg-muted/20 cursor-pointer text-left"
                             onClick={() => {
                               setToUnit(unit.id);
                               setToPrefix('none');
@@ -470,7 +489,7 @@ export function ConverterPane({ controller, flash }: ConverterPaneProps) {
                             <span className="text-sm font-mono text-foreground shrink-0">
                               {formatNumberWithSeparators(displayValue, precision)}
                             </span>
-                          </div>
+                          </button>
                         );
                       });
                     })()}

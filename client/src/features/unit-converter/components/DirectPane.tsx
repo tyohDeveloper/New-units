@@ -138,8 +138,10 @@ export function DirectPane({
           {/* Result display */}
           <div className="flex flex-col gap-2">
             <Label className="text-xs font-mono uppercase text-muted-foreground">{t('Result')}</Label>
-            <motion.div
-              className="px-4 bg-background/50 border border-border rounded-md font-mono text-primary cursor-pointer hover:bg-background/70 flex items-center justify-between gap-4"
+            <motion.button
+              type="button"
+              aria-label={t('Copy result')}
+              className="px-4 bg-background/50 border border-border rounded-md font-mono text-primary cursor-pointer hover:bg-background/70 flex items-center justify-between gap-4 text-left"
               style={{ height: FIELD_HEIGHT, minWidth: CommonFieldWidth }}
               data-testid="custom-display-result"
               onClick={handleCopyAndPush}
@@ -160,7 +162,7 @@ export function DirectPane({
                   </>
                 );
               })()}
-            </motion.div>
+            </motion.button>
           </div>
 
           {/* Copy button inline with result */}

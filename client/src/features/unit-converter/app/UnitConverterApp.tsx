@@ -261,9 +261,10 @@ export default function UnitConverterApp() {
       <div className="space-y-4 -mt-1 md:overflow-y-auto md:pr-1">
         <div className="mb-2">
           <div className="flex items-center justify-between">
-            <div className="flex gap-2">
+            <nav aria-label={t('Main tabs')} className="flex gap-2">
               <button
                 onClick={() => setActiveTab('converter')}
+                aria-current={activeTab === 'converter' ? 'page' : undefined}
                 className={`text-sm px-4 py-1.5 rounded-md font-medium transition-all ${
                   activeTab === 'converter'
                     ? 'bg-accent text-accent-foreground'
@@ -275,6 +276,7 @@ export default function UnitConverterApp() {
               </button>
               <button
                 onClick={() => setActiveTab('custom')}
+                aria-current={activeTab === 'custom' ? 'page' : undefined}
                 className={`text-sm px-4 py-1.5 rounded-md font-medium transition-all ${
                   activeTab === 'custom'
                     ? 'bg-accent text-accent-foreground'
@@ -284,7 +286,7 @@ export default function UnitConverterApp() {
               >
                 {t('Custom')}
               </button>
-            </div>
+            </nav>
             <div className="flex items-center gap-3">
               <Label className="text-xs text-muted-foreground">{t('Number formatting')}</Label>
               <Select
@@ -298,7 +300,7 @@ export default function UnitConverterApp() {
                 }}
                 onOpenChange={(open) => { if (!open) refocusInput(); }}
               >
-                <SelectTrigger tabIndex={6} className="h-10 w-[180px] text-xs">
+                <SelectTrigger className="h-10 w-[180px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -317,7 +319,7 @@ export default function UnitConverterApp() {
                 onValueChange={(val) => { setLanguage(val as SupportedLanguage); refocusInput(); }}
                 onOpenChange={(open) => { if (!open) refocusInput(); }}
               >
-                <SelectTrigger tabIndex={7} className="h-10 w-[75px] text-xs">
+                <SelectTrigger className="h-10 w-[75px] text-xs">
                   <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent className="max-h-[50vh]">
@@ -330,7 +332,7 @@ export default function UnitConverterApp() {
           </div>
           {activeTab === 'converter' && (
             <div className="mt-2">
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">{t(categoryData.name)}</h1>
+              <h2 className="text-3xl font-bold text-foreground tracking-tight">{t(categoryData.name)}</h2>
               <div className="flex items-center justify-between mt-1">
                 <p className="text-muted-foreground text-sm font-mono">
                   {t('Base unit:')} <span className="text-primary">{translateUnitName(toTitleCase(categoryData.baseUnit))}</span>
@@ -372,7 +374,7 @@ export default function UnitConverterApp() {
           )}
           {activeTab === 'custom' && (
             <div className="mt-2">
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">{t('Custom Entry')}</h1>
+              <h2 className="text-3xl font-bold text-foreground tracking-tight">{t('Custom Entry')}</h2>
               <div className="flex items-center justify-between mt-1">
                 <p className="text-muted-foreground text-sm font-mono">
                   {t('Build dimensional units from SI base units')}
