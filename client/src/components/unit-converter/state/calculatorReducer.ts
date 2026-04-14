@@ -27,7 +27,7 @@ export const calculatorInitialState: CalculatorState = {
   resultCategory: null,
   resultPrefix: 'none',
   selectedAlternative: 0,
-  preserveSourceUnit: false,
+  preserveSourceUnit: true,
 };
 
 export type CalculatorAction =
