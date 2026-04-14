@@ -8,7 +8,7 @@ export const OperatorBtnWidth = '32px';
 export const ClearBtnWidth = '100px';
 export const RpnBtnWidth = '43px';
 export const RpnBtnCount = 8;
-export const CALC_CONTENT_HEIGHT = '235px';
+export const CALC_CONTENT_HEIGHT = '250px';
 
 export const ISO_LANGUAGES = [
   'en',

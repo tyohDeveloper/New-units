@@ -155,7 +155,7 @@ export function CalculatorPane({ controller, numberFormat, flash }: CalculatorPa
             >
               {t('CALCULATOR') + ' ⇅'}
             </Label>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <Label className="text-xs text-foreground">{t('Precision')}</Label>
               <Select
                 value={calculatorPrecision.toString()}
@@ -215,7 +215,7 @@ export function CalculatorPane({ controller, numberFormat, flash }: CalculatorPa
             >
               {t('CALCULATOR - RPN') + ' ⇅'}
             </Label>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <Label className="text-xs text-foreground">{t('Precision')}</Label>
               <Select
                 value={calculatorPrecision.toString()}
@@ -265,7 +265,7 @@ export function CalculatorPane({ controller, numberFormat, flash }: CalculatorPa
       )}
 
       {/* Fixed-height container to prevent flicker on mode switch */}
-      <div style={{ minHeight: CALC_CONTENT_HEIGHT }}>
+      <div style={{ height: CALC_CONTENT_HEIGHT, overflowY: 'auto' }}>
         {/* Simple Calculator Mode */}
         {calculatorMode === 'simple' && (
           <div className="space-y-3">

@@ -253,7 +253,8 @@ export default function UnitConverterApp({ helpOpen, setHelpOpen }: UnitConverte
         ))}
       </nav>
 
-      <div className="space-y-4 -mt-1 md:overflow-y-auto md:pr-1">
+      <div className="-mt-1 md:overflow-y-auto md:pr-1 overflow-x-auto">
+        <div className="min-w-max space-y-4">
         <div className="mb-2">
           <div className="flex items-center justify-between">
             <nav aria-label={t('Main tabs')} className="flex gap-2">
@@ -459,6 +460,7 @@ export default function UnitConverterApp({ helpOpen, setHelpOpen }: UnitConverte
           }}
         />
 
+        </div>
       </div>
 
       {/* Help overlay panel */}
