@@ -34,7 +34,12 @@ const CATEGORY_GROUPS = [
   { name: 'Archaic & Regional', categories: ['archaic_length', 'archaic_mass', 'archaic_volume', 'archaic_area', 'archaic_energy', 'archaic_power'] },
 ];
 
-export default function UnitConverterApp() {
+interface UnitConverterAppProps {
+  helpOpen: boolean;
+  setHelpOpen: (open: boolean) => void;
+}
+
+export default function UnitConverterApp({ helpOpen, setHelpOpen }: UnitConverterAppProps) {
   const { inputRef, flash } = useConverterContext();
 
   const conv = useConverterController();
@@ -454,8 +459,31 @@ export default function UnitConverterApp() {
           }}
         />
 
-        <HelpSection t={t} language={language} />
       </div>
+
+      {/* Help overlay panel */}
+      {helpOpen && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) setHelpOpen(false); }}
+          data-testid="backdrop-help"
+        >
+          <div
+            className="relative bg-card border border-border rounded-lg w-full max-w-2xl max-h-[85vh] overflow-y-auto shadow-xl"
+            data-testid="panel-help"
+          >
+            <button
+              onClick={() => setHelpOpen(false)}
+              data-testid="button-close-help"
+              aria-label="Close help"
+              className="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors text-lg leading-none"
+            >
+              ×
+            </button>
+            <HelpSection t={t} language={language} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
