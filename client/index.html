@@ -12,8 +12,26 @@
     <meta name="robots" content="index, follow" />
     <meta name="language" content="English" />
     <meta name="author" content="OmniUnit & Calculator" />
+  <style>
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 0.5rem;
+      z-index: 9999;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      font-weight: 500;
+      background: hsl(var(--accent, 220 90% 56%));
+      color: #fff;
+      text-decoration: none;
+    }
+    .skip-link:focus {
+      top: 0.5rem;
+    }
+  </style>
   </head>
   <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

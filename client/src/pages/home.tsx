@@ -6,13 +6,6 @@ const APP_VERSION = '3.2.1.1';
 export default function Home() {
   return (
     <div className="h-dvh overflow-hidden flex flex-col bg-background text-foreground font-sans selection:bg-accent selection:text-accent-foreground">
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded focus:bg-accent focus:text-accent-foreground focus:font-medium"
-      >
-        Skip to main content
-      </a>
-
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm flex-none z-50">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
