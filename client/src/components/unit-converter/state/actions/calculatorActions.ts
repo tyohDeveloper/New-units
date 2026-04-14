@@ -35,3 +35,6 @@ export const setResultPrefix = (v: string): CalculatorAction =>
 
 export const setSelectedAlternative = (v: number): CalculatorAction =>
   ({ type: 'SET_SELECTED_ALTERNATIVE', payload: v });
+
+export const togglePreserveSourceUnit = (): CalculatorAction =>
+  ({ type: 'TOGGLE_PRESERVE_SOURCE_UNIT' });

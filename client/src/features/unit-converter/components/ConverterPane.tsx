@@ -1,10 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CONVERSION_DATA, PREFIXES, ALL_PREFIXES, convert, findOptimalPrefix, getFilteredSortedUnits } from '@/lib/conversion-data';
-import type { UnitCategory } from '@/lib/conversion-data';
-import { NUMBER_FORMATS, type NumberFormat } from '@/lib/formatting';
+import { NUMBER_FORMATS } from '@/lib/formatting';
 import { formatDimensions } from '@/lib/calculator/formatDimensions';
-import { applyPrefixToKgUnit as applyPrefixToKgUnitLib } from '@/lib/units/applyPrefixToKgUnit';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,104 +12,54 @@ import { ArrowRightLeft, Copy, Info } from 'lucide-react';
 import { testId } from '@/lib/test-utils';
 import { FIELD_HEIGHT, CommonFieldWidth } from '@/components/unit-converter/constants';
 import { KG_TO_GRAM_UNIT_PAIRS } from '@/lib/units/normalizeMassUnit';
+import { applyPrefixToKgUnit as applyPrefixToKgUnitLib } from '@/lib/units/applyPrefixToKgUnit';
+import type { UseConverterControllerReturn } from '@/components/unit-converter/hooks/useConverterController';
 
-interface ConverterPaneProps {
-  activeTab: string;
-  activeCategory: UnitCategory;
-  fromUnit: string;
-  toUnit: string;
-  fromPrefix: string;
-  toPrefix: string;
-  inputValue: string;
-  result: number | null;
-  precision: number;
-  comparisonMode: boolean;
-  numberFormat: NumberFormat;
-  inputRef: React.RefObject<HTMLInputElement | null>;
-  flashCopyResult: boolean;
-  flashFromBaseFactor: boolean;
-  flashFromSIBase: boolean;
-  flashToBaseFactor: boolean;
-  flashToSIBase: boolean;
-  flashConversionRatio: boolean;
-  setFromUnit: (val: string) => void;
-  setToUnit: (val: string) => void;
-  setFromPrefix: (val: string) => void;
-  setToPrefix: (val: string) => void;
-  setInputValue: (val: string) => void;
-  setPrecision: (val: number) => void;
-  setComparisonMode: (val: boolean) => void;
-  swapUnits: () => void;
-  copyResult: () => void;
-  copyFromBaseFactor: () => void;
-  copyFromSIBase: () => void;
-  copyToBaseFactor: () => void;
-  copyToSIBase: () => void;
-  copyConversionRatio: () => void;
-  handleInputChange: (val: string) => void;
-  handleInputKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  handleInputBlur: () => void;
-  refocusInput: () => void;
-  normalizeMassUnit: (unit: string, prefix: string) => { unit: string; prefix: string };
-  t: (key: string) => string;
-  translateUnitName: (name: string) => string;
-  formatFactor: (f: number) => string;
-  formatResultValue: (num: number, precision: number) => string;
-  formatDMS: (decimal: number) => string;
-  formatFtIn: (decimalFeet: number) => string;
-  getPlaceholder: () => string;
-  getCategoryDimensions: (category: UnitCategory) => { [key: string]: number };
-  formatNumberWithSeparators: (num: number, precision: number) => string;
+export interface ConverterFlash {
+  copyResult: boolean;
+  fromBaseFactor: boolean;
+  fromSIBase: boolean;
+  toBaseFactor: boolean;
+  toSIBase: boolean;
+  conversionRatio: boolean;
 }
 
-export function ConverterPane({
-  activeTab,
-  activeCategory,
-  fromUnit,
-  toUnit,
-  fromPrefix,
-  toPrefix,
-  inputValue,
-  result,
-  precision,
-  comparisonMode,
-  numberFormat,
-  inputRef,
-  flashCopyResult,
-  flashFromBaseFactor,
-  flashFromSIBase,
-  flashToBaseFactor,
-  flashToSIBase,
-  flashConversionRatio,
-  setFromUnit,
-  setToUnit,
-  setFromPrefix,
-  setToPrefix,
-  setInputValue,
-  setPrecision,
-  setComparisonMode,
-  swapUnits,
-  copyResult,
-  copyFromBaseFactor,
-  copyFromSIBase,
-  copyToBaseFactor,
-  copyToSIBase,
-  copyConversionRatio,
-  handleInputChange,
-  handleInputKeyDown,
-  handleInputBlur,
-  refocusInput,
-  normalizeMassUnit,
-  t,
-  translateUnitName,
-  formatFactor,
-  formatResultValue,
-  formatDMS,
-  formatFtIn,
-  getPlaceholder,
-  getCategoryDimensions,
-  formatNumberWithSeparators,
-}: ConverterPaneProps) {
+interface ConverterPaneProps {
+  controller: UseConverterControllerReturn;
+  flash: ConverterFlash;
+}
+
+export function ConverterPane({ controller, flash }: ConverterPaneProps) {
+  const {
+    activeTab,
+    activeCategory,
+    fromUnit, setFromUnit,
+    toUnit, setToUnit,
+    fromPrefix, setFromPrefix,
+    toPrefix, setToPrefix,
+    inputValue, setInputValue,
+    result,
+    precision, setPrecision,
+    comparisonMode, setComparisonMode,
+    numberFormat,
+    inputRef,
+    swapUnits, copyResult,
+    copyFromBaseFactor, copyFromSIBase, copyToBaseFactor, copyToSIBase, copyConversionRatio,
+    handleInputChange, handleInputKeyDown, handleInputBlur,
+    refocusInput,
+    normalizeMassUnit, t, translateUnitName,
+    formatFactor, formatResultValue, formatDMS, formatFtIn,
+    getPlaceholder, getCategoryDimensions, formatNumberWithSeparators,
+  } = controller;
+
+  const {
+    copyResult: flashCopyResult,
+    fromBaseFactor: flashFromBaseFactor,
+    fromSIBase: flashFromSIBase,
+    toBaseFactor: flashToBaseFactor,
+    toSIBase: flashToSIBase,
+    conversionRatio: flashConversionRatio,
+  } = flash;
 
   const categoryData = CONVERSION_DATA.find(c => c.id === activeCategory)!;
   const filteredUnits = getFilteredSortedUnits(activeCategory);

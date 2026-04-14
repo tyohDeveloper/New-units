@@ -1,6 +1,7 @@
 import type { CalcValue } from '@/lib/units/calcValue';
 import type { UnitCategory } from '@/lib/units/unitCategory';
 import { useConverterContext } from '../context/ConverterContext';
+import * as actions from '../state/actions/calculatorActions';
 
 export interface UseCalculatorStateReturn {
   calculatorMode: 'simple' | 'rpn';
@@ -23,6 +24,8 @@ export interface UseCalculatorStateReturn {
   setResultPrefix: (value: string) => void;
   selectedAlternative: number;
   setSelectedAlternative: (value: number) => void;
+  preserveSourceUnit: boolean;
+  togglePreserveSourceUnit: () => void;
 }
 
 export function useCalculatorState(): UseCalculatorStateReturn {
@@ -31,26 +34,28 @@ export function useCalculatorState(): UseCalculatorStateReturn {
 
   return {
     calculatorMode: s.calculatorMode,
-    setCalculatorMode: (v) => dispatch({ domain: 'calculator', type: 'SET_CALCULATOR_MODE', payload: v }),
+    setCalculatorMode: (v) => dispatch({ domain: 'calculator', ...actions.setCalculatorMode(v) }),
     shiftActive: s.shiftActive,
-    setShiftActive: (v) => dispatch({ domain: 'calculator', type: 'SET_SHIFT_ACTIVE', payload: v }),
+    setShiftActive: (v) => dispatch({ domain: 'calculator', ...actions.setShiftActive(v) }),
     calculatorPrecision: s.calculatorPrecision,
-    setCalculatorPrecision: (v) => dispatch({ domain: 'calculator', type: 'SET_CALCULATOR_PRECISION', payload: v }),
+    setCalculatorPrecision: (v) => dispatch({ domain: 'calculator', ...actions.setCalculatorPrecision(v) }),
     calcValues: s.calcValues,
     setCalcValues: (v) => typeof v === 'function'
-      ? dispatch({ domain: 'calculator', type: 'UPDATE_CALC_VALUES', payload: v })
-      : dispatch({ domain: 'calculator', type: 'SET_CALC_VALUES', payload: v }),
+      ? dispatch({ domain: 'calculator', ...actions.updateCalcValues(v) })
+      : dispatch({ domain: 'calculator', ...actions.setCalcValues(v) }),
     calcOp1: s.calcOp1,
-    setCalcOp1: (v) => dispatch({ domain: 'calculator', type: 'SET_CALC_OP1', payload: v }),
+    setCalcOp1: (v) => dispatch({ domain: 'calculator', ...actions.setCalcOp1(v) }),
     calcOp2: s.calcOp2,
-    setCalcOp2: (v) => dispatch({ domain: 'calculator', type: 'SET_CALC_OP2', payload: v }),
+    setCalcOp2: (v) => dispatch({ domain: 'calculator', ...actions.setCalcOp2(v) }),
     resultUnit: s.resultUnit,
-    setResultUnit: (v) => dispatch({ domain: 'calculator', type: 'SET_RESULT_UNIT', payload: v }),
+    setResultUnit: (v) => dispatch({ domain: 'calculator', ...actions.setResultUnit(v) }),
     resultCategory: s.resultCategory,
-    setResultCategory: (v) => dispatch({ domain: 'calculator', type: 'SET_RESULT_CATEGORY', payload: v }),
+    setResultCategory: (v) => dispatch({ domain: 'calculator', ...actions.setResultCategory(v) }),
     resultPrefix: s.resultPrefix,
-    setResultPrefix: (v) => dispatch({ domain: 'calculator', type: 'SET_RESULT_PREFIX', payload: v }),
+    setResultPrefix: (v) => dispatch({ domain: 'calculator', ...actions.setResultPrefix(v) }),
     selectedAlternative: s.selectedAlternative,
-    setSelectedAlternative: (v) => dispatch({ domain: 'calculator', type: 'SET_SELECTED_ALTERNATIVE', payload: v }),
+    setSelectedAlternative: (v) => dispatch({ domain: 'calculator', ...actions.setSelectedAlternative(v) }),
+    preserveSourceUnit: s.preserveSourceUnit,
+    togglePreserveSourceUnit: () => dispatch({ domain: 'calculator', ...actions.togglePreserveSourceUnit() }),
   };
 }

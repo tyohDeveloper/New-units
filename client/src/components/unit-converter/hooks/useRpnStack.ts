@@ -1,5 +1,6 @@
 import type { CalcValue } from '@/lib/units/calcValue';
 import { useConverterContext } from '../context/ConverterContext';
+import * as actions from '../state/actions/rpnActions';
 
 export interface UseRpnStackReturn {
   rpnStack: Array<CalcValue | null>;
@@ -32,26 +33,26 @@ export function useRpnStack(): UseRpnStackReturn {
   return {
     rpnStack: s.rpnStack,
     setRpnStack: (v) => typeof v === 'function'
-      ? dispatch({ domain: 'rpn', type: 'UPDATE_RPN_STACK', payload: v })
-      : dispatch({ domain: 'rpn', type: 'SET_RPN_STACK', payload: v }),
+      ? dispatch({ domain: 'rpn', ...actions.updateRpnStack(v) })
+      : dispatch({ domain: 'rpn', ...actions.setRpnStack(v) }),
     previousRpnStack: s.previousRpnStack,
-    setPreviousRpnStack: (v) => dispatch({ domain: 'rpn', type: 'SET_PREVIOUS_RPN_STACK', payload: v }),
+    setPreviousRpnStack: (v) => dispatch({ domain: 'rpn', ...actions.setPreviousRpnStack(v) }),
     lastX: s.lastX,
-    setLastX: (v) => dispatch({ domain: 'rpn', type: 'SET_LAST_X', payload: v }),
+    setLastX: (v) => dispatch({ domain: 'rpn', ...actions.setLastX(v) }),
     rpnResultPrefix: s.rpnResultPrefix,
-    setRpnResultPrefix: (v) => dispatch({ domain: 'rpn', type: 'SET_RPN_RESULT_PREFIX', payload: v }),
+    setRpnResultPrefix: (v) => dispatch({ domain: 'rpn', ...actions.setRpnResultPrefix(v) }),
     rpnSelectedAlternative: s.rpnSelectedAlternative,
-    setRpnSelectedAlternative: (v) => dispatch({ domain: 'rpn', type: 'SET_RPN_SELECTED_ALTERNATIVE', payload: v }),
+    setRpnSelectedAlternative: (v) => dispatch({ domain: 'rpn', ...actions.setRpnSelectedAlternative(v) }),
     rpnXEditing: s.rpnXEditing,
-    setRpnXEditing: (v) => dispatch({ domain: 'rpn', type: 'SET_RPN_X_EDITING', payload: v }),
+    setRpnXEditing: (v) => dispatch({ domain: 'rpn', ...actions.setRpnXEditing(v) }),
     rpnXEditValue: s.rpnXEditValue,
-    setRpnXEditValue: (v) => dispatch({ domain: 'rpn', type: 'SET_RPN_X_EDIT_VALUE', payload: v }),
-    saveAndUpdateStack: (updater) => dispatch({ domain: 'rpn', type: 'SAVE_AND_UPDATE_STACK', payload: updater }),
-    pushValue: (v) => dispatch({ domain: 'rpn', type: 'PUSH_VALUE', payload: v }),
-    dropValue: () => dispatch({ domain: 'rpn', type: 'DROP_VALUE' }),
-    swapXY: () => dispatch({ domain: 'rpn', type: 'SWAP_XY' }),
-    clearStack: () => dispatch({ domain: 'rpn', type: 'CLEAR_STACK' }),
-    undoStack: () => dispatch({ domain: 'rpn', type: 'UNDO_STACK' }),
-    recallLastX: () => dispatch({ domain: 'rpn', type: 'RECALL_LAST_X' }),
+    setRpnXEditValue: (v) => dispatch({ domain: 'rpn', ...actions.setRpnXEditValue(v) }),
+    saveAndUpdateStack: (updater) => dispatch({ domain: 'rpn', ...actions.saveAndUpdateStack(updater) }),
+    pushValue: (v) => dispatch({ domain: 'rpn', ...actions.pushValue(v) }),
+    dropValue: () => dispatch({ domain: 'rpn', ...actions.dropValue() }),
+    swapXY: () => dispatch({ domain: 'rpn', ...actions.swapXY() }),
+    clearStack: () => dispatch({ domain: 'rpn', ...actions.clearStack() }),
+    undoStack: () => dispatch({ domain: 'rpn', ...actions.undoStack() }),
+    recallLastX: () => dispatch({ domain: 'rpn', ...actions.recallLastX() }),
   };
 }

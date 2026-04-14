@@ -4,7 +4,6 @@ import { parseUnitText, PREFIXES } from '@/lib/conversion-data';
 import { displayToSI } from '@/lib/calculator/displayToSI';
 import { siToDisplay } from '@/lib/calculator/siToDisplay';
 import { isSymbolSI } from '@/lib/calculator/isSymbolSI';
-import type { CalcValue } from '@/lib/units/calcValue';
 import type { DimensionalFormula } from '@/lib/units/dimensionalFormula';
 import { formatDimensions } from '@/lib/calculator/formatDimensions';
 import { isDimensionEmpty } from '@/lib/calculator/isDimensionEmpty';
@@ -22,152 +21,64 @@ import {
   FIELD_HEIGHT, CommonFieldWidth, OperatorBtnWidth, ClearBtnWidth,
   RpnBtnWidth, CALC_CONTENT_HEIGHT
 } from '@/components/unit-converter/constants';
+import type { UseCalculatorControllerReturn, RpnUnaryOp, RpnBinaryOp } from '@/components/unit-converter/hooks/useCalculatorController';
 
-type RpnUnaryOp =
-  | 'square' | 'cube' | 'sqrt' | 'cbrt' | 'recip'
-  | 'exp' | 'ln' | 'pow10' | 'log10' | 'pow2' | 'log2'
-  | 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan'
-  | 'sinh' | 'cosh' | 'tanh' | 'asinh' | 'acosh' | 'atanh'
-  | 'rnd' | 'trunc' | 'floor' | 'ceil'
-  | 'neg' | 'abs';
-
-type RpnBinaryOp = 'mul' | 'div' | 'add' | 'sub' | 'mulUnit' | 'divUnit' | 'addUnit' | 'subUnit' | 'pow';
-
-interface CalculatorPaneProps {
-  calculatorMode: 'simple' | 'rpn';
-  shiftActive: boolean;
-  calculatorPrecision: number;
-  numberFormat: NumberFormat;
-  calcValues: Array<CalcValue | null>;
-  calcOp1: '+' | '-' | '*' | '/' | null;
-  calcOp2: '+' | '-' | '*' | '/' | null;
-  resultPrefix: string;
-  selectedAlternative: number;
-  rpnStack: Array<CalcValue | null>;
-  previousRpnStack: Array<CalcValue | null>;
-  rpnResultPrefix: string;
-  rpnSelectedAlternative: number;
-  rpnXEditing: boolean;
-  rpnXEditValue: string;
-  preserveSourceUnit: boolean;
-  flashCalcField1: boolean;
-  flashCalcField2: boolean;
-  flashCalcField3: boolean;
-  flashCopyCalc: boolean;
-  flashRpnField1: boolean;
-  flashRpnField2: boolean;
-  flashRpnField3: boolean;
-  flashRpnResult: boolean;
-  setShiftActive: (val: boolean) => void;
-  setCalculatorPrecision: (val: number) => void;
-  setCalcOp1: (val: '+' | '-' | '*' | '/' | null) => void;
-  setCalcOp2: (val: '+' | '-' | '*' | '/' | null) => void;
-  setResultPrefix: (val: string) => void;
-  setSelectedAlternative: (val: number) => void;
-  setRpnResultPrefix: (val: string) => void;
-  setRpnSelectedAlternative: (val: number) => void;
-  setRpnXEditing: (val: boolean) => void;
-  setRpnXEditValue: (val: string) => void;
-  setRpnStack: React.Dispatch<React.SetStateAction<Array<CalcValue | null>>>;
-  clearCalculator: () => void;
-  clearField1: () => void;
-  clearField2: () => void;
-  clearField3: () => void;
-  clearRpnStack: () => void;
-  copyCalcField: (index: number) => void;
-  copyCalcResult: () => void;
-  copyRpnField: (index: number) => void;
-  copyRpnResult: () => void;
-  switchToRpn: () => void;
-  switchToSimple: () => void;
-  applyRpnUnary: (op: RpnUnaryOp) => void;
-  applyRpnBinary: (op: RpnBinaryOp) => void;
-  canApplyRpnBinary: (op: RpnBinaryOp) => boolean;
-  pushToRpnStack: () => void;
-  dropRpnStack: () => void;
-  undoRpnStack: () => void;
-  pullFromPane: () => void;
-  pasteToRpnStack: () => Promise<void>;
-  swapRpnXY: () => void;
-  recallLastX: () => void;
-  pushRpnConstant: (value: number) => void;
-  saveRpnStackForUndo: () => void;
-  getRpnResultDisplay: () => { formattedValue: string; unitSymbol: string } | null;
-  getCalcResultDisplay: () => { formattedValue: string; unitSymbol: string } | null;
-  generateSIRepresentations: (dimensions: DimensionalFormula, sourceCategory?: string) => Array<{ displaySymbol: string; crossDomainMatches?: string[] }>;
-  applyPrefixToKgUnit: (symbol: string, prefixId: string) => { displaySymbol: string; showPrefix: boolean; effectivePrefixFactor: number };
-  formatNumberWithSeparators: (num: number, precision: number) => string;
-  t: (key: string) => string;
-  togglePreserveSourceUnit: () => void;
+export interface CalculatorFlash {
+  calcField1: boolean;
+  calcField2: boolean;
+  calcField3: boolean;
+  copyCalc: boolean;
+  rpnField1: boolean;
+  rpnField2: boolean;
+  rpnField3: boolean;
+  rpnResult: boolean;
 }
 
-export function CalculatorPane({
-  calculatorMode,
-  shiftActive,
-  calculatorPrecision,
-  numberFormat,
-  calcValues,
-  calcOp1,
-  calcOp2,
-  resultPrefix,
-  selectedAlternative,
-  rpnStack,
-  previousRpnStack,
-  rpnResultPrefix,
-  rpnSelectedAlternative,
-  rpnXEditing,
-  rpnXEditValue,
-  preserveSourceUnit,
-  flashCalcField1,
-  flashCalcField2,
-  flashCalcField3,
-  flashCopyCalc,
-  flashRpnField1,
-  flashRpnField2,
-  flashRpnField3,
-  flashRpnResult,
-  setShiftActive,
-  setCalculatorPrecision,
-  setCalcOp1,
-  setCalcOp2,
-  setResultPrefix,
-  setSelectedAlternative,
-  setRpnResultPrefix,
-  setRpnSelectedAlternative,
-  setRpnXEditing,
-  setRpnXEditValue,
-  setRpnStack,
-  clearCalculator,
-  clearField1,
-  clearField2,
-  clearField3,
-  clearRpnStack,
-  copyCalcField,
-  copyCalcResult,
-  copyRpnField,
-  copyRpnResult,
-  switchToRpn,
-  switchToSimple,
-  applyRpnUnary,
-  applyRpnBinary,
-  canApplyRpnBinary,
-  pushToRpnStack,
-  dropRpnStack,
-  undoRpnStack,
-  pullFromPane,
-  pasteToRpnStack,
-  swapRpnXY,
-  recallLastX,
-  pushRpnConstant,
-  saveRpnStackForUndo,
-  getRpnResultDisplay,
-  getCalcResultDisplay,
-  generateSIRepresentations,
-  applyPrefixToKgUnit,
-  formatNumberWithSeparators,
-  t,
-  togglePreserveSourceUnit,
-}: CalculatorPaneProps) {
+interface CalculatorPaneProps {
+  controller: UseCalculatorControllerReturn;
+  numberFormat: NumberFormat;
+  flash: CalculatorFlash;
+}
+
+export function CalculatorPane({ controller, numberFormat, flash }: CalculatorPaneProps) {
+  const {
+    calculatorMode,
+    shiftActive, setShiftActive,
+    calculatorPrecision, setCalculatorPrecision,
+    calcValues,
+    calcOp1, setCalcOp1,
+    calcOp2, setCalcOp2,
+    resultPrefix, setResultPrefix,
+    selectedAlternative, setSelectedAlternative,
+    rpnStack, setRpnStack,
+    previousRpnStack,
+    rpnResultPrefix, setRpnResultPrefix,
+    rpnSelectedAlternative, setRpnSelectedAlternative,
+    rpnXEditing, setRpnXEditing,
+    rpnXEditValue, setRpnXEditValue,
+    preserveSourceUnit, togglePreserveSourceUnit,
+    clearCalculator, clearField1, clearField2, clearField3, clearRpnStack,
+    copyCalcField, copyCalcResult, copyRpnField, copyRpnResult,
+    switchToRpn, switchToSimple,
+    applyRpnUnary, applyRpnBinary, canApplyRpnBinary,
+    pushToRpnStack, dropRpnStack, undoRpnStack, pullFromPane,
+    pasteToRpnStack, swapRpnXY, recallLastX, pushRpnConstant,
+    saveRpnStackForUndo,
+    getRpnResultDisplay, getCalcResultDisplay,
+    generateSIRepresentations, applyPrefixToKgUnit,
+    formatNumberWithSeparators, t,
+  } = controller;
+
+  const {
+    calcField1: flashCalcField1,
+    calcField2: flashCalcField2,
+    calcField3: flashCalcField3,
+    copyCalc: flashCopyCalc,
+    rpnField1: flashRpnField1,
+    rpnField2: flashRpnField2,
+    rpnField3: flashRpnField3,
+    rpnResult: flashRpnResult,
+  } = flash;
   // Ref for the X edit input, used to restore focus after the prefix/alt
   // dropdowns are interacted with while edit mode is active.
   const rpnXInputRef = useRef<HTMLInputElement>(null);

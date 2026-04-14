@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import type { UnitCategory } from '@/lib/units/unitCategory';
 import { useConverterContext } from '../context/ConverterContext';
+import * as actions from '../state/actions/converterActions';
 
 export interface UseConverterStateReturn {
   inputRef: React.RefObject<HTMLInputElement | null>;
@@ -31,22 +32,22 @@ export function useConverterState(): UseConverterStateReturn {
   return {
     inputRef,
     activeCategory: s.activeCategory,
-    setActiveCategory: (v) => dispatch({ domain: 'converter', type: 'SET_ACTIVE_CATEGORY', payload: v }),
+    setActiveCategory: (v) => dispatch({ domain: 'converter', ...actions.setActiveCategory(v) }),
     fromUnit: s.fromUnit,
-    setFromUnit: (v) => dispatch({ domain: 'converter', type: 'SET_FROM_UNIT', payload: v }),
+    setFromUnit: (v) => dispatch({ domain: 'converter', ...actions.setFromUnit(v) }),
     toUnit: s.toUnit,
-    setToUnit: (v) => dispatch({ domain: 'converter', type: 'SET_TO_UNIT', payload: v }),
+    setToUnit: (v) => dispatch({ domain: 'converter', ...actions.setToUnit(v) }),
     fromPrefix: s.fromPrefix,
-    setFromPrefix: (v) => dispatch({ domain: 'converter', type: 'SET_FROM_PREFIX', payload: v }),
+    setFromPrefix: (v) => dispatch({ domain: 'converter', ...actions.setFromPrefix(v) }),
     toPrefix: s.toPrefix,
-    setToPrefix: (v) => dispatch({ domain: 'converter', type: 'SET_TO_PREFIX', payload: v }),
+    setToPrefix: (v) => dispatch({ domain: 'converter', ...actions.setToPrefix(v) }),
     inputValue: s.inputValue,
-    setInputValue: (v) => dispatch({ domain: 'converter', type: 'SET_INPUT_VALUE', payload: v }),
+    setInputValue: (v) => dispatch({ domain: 'converter', ...actions.setInputValue(v) }),
     result: s.result,
-    setResult: (v) => dispatch({ domain: 'converter', type: 'SET_RESULT', payload: v }),
+    setResult: (v) => dispatch({ domain: 'converter', ...actions.setResult(v) }),
     precision: s.precision,
-    setPrecision: (v) => dispatch({ domain: 'converter', type: 'SET_PRECISION', payload: v }),
+    setPrecision: (v) => dispatch({ domain: 'converter', ...actions.setPrecision(v) }),
     comparisonMode: s.comparisonMode,
-    setComparisonMode: (v) => dispatch({ domain: 'converter', type: 'SET_COMPARISON_MODE', payload: v }),
+    setComparisonMode: (v) => dispatch({ domain: 'converter', ...actions.setComparisonMode(v) }),
   };
 }
